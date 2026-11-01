@@ -1,0 +1,19 @@
+flowchart TD
+    subgraph n_a331a60ee1568354["robby_cli [crate]"]
+        direction TB
+        n_874b29800ed524d0["build [module]"]
+        n_c58f68f7fc449f63["example_self_model [module]"]
+        n_099bba204f6689a2["Cli [struct]"]
+        n_07cb3a5c0ad73319["Command [enum]"]
+        n_eb50e92e5843791d["fn main() -> ExitCode [function]"]
+        n_5fb1bc1f5dbdeb45["fn run() -> Result<ExitCode> [function]"]
+        n_0b19cbdc9c790728["fn check(ir: &std::path::Path, source_root: &std::path::Path, json: bool) -> Result<ExitCode> [function]"]
+        n_e3b7ee2025a4b7a1["fn print_human(loaded: &pipeline::Loaded) [function]"]
+        n_b685ee67ac4f2f21["fn extract(root: &std::path::Path, out: Option<PathBuf>) -> Result<ExitCode> [function]"]
+        n_310da90f0204c1aa["fn report( ir: &std::path::Path, source_root: &std::path::Path, out: Option<PathBuf>, ) -> Result<ExitCode> [function]"]
+    end
+    n_0b19cbdc9c790728 -->|calls| n_e3b7ee2025a4b7a1
+    n_5fb1bc1f5dbdeb45 -->|calls| n_0b19cbdc9c790728
+    n_5fb1bc1f5dbdeb45 -->|calls| n_310da90f0204c1aa
+    n_5fb1bc1f5dbdeb45 -->|calls| n_b685ee67ac4f2f21
+    n_b685ee67ac4f2f21 -->|calls| n_b685ee67ac4f2f21

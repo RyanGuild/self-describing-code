@@ -1,0 +1,35 @@
+sequenceDiagram
+    autonumber
+    participant file_coverage as file_coverage()
+    participant as_bytes as as_bytes
+    participant collect as collect
+    participant sort_unstable as sort_unstable
+    participant Vec__with_capacity as Vec::with_capacity
+    participant push as push
+    participant sum as sum
+    participant Vec__new as Vec::new
+    file_coverage-->>file_coverage: source.len() as u32
+    file_coverage-->>as_bytes: source.as_bytes()
+    file_coverage-->>collect: spans .iter() .filter(|s| s.file == file) .map(|s| { let (a, b) = s.b...
+    file_coverage-->>sort_unstable: ranges.sort_unstable()
+    file_coverage-->>Vec__with_capacity: Vec::with_capacity(ranges.len())
+    loop ranges
+    alt match merged.last_mut()
+    file_coverage-->>file_coverage: last.1 = last.1.max(b)
+    else _
+    file_coverage-->>push: merged.push((a, b))
+    end
+    end
+    file_coverage-->>sum: merged.iter().map(|(a, b)| b - a).sum()
+    file_coverage-->>Vec__new: Vec::new()
+    file_coverage-->>file_coverage: 0u32
+    loop &merged
+    alt *a > cursor
+    file_coverage-->>push: gaps.push(make_gap(file, source, bytes, cursor, *a))
+    end
+    file_coverage-->>file_coverage: cursor = (*b).max(cursor)
+    end
+    alt cursor < len
+    file_coverage-->>push: gaps.push(make_gap(file, source, bytes, cursor, len))
+    end
+    file_coverage-->>file_coverage: FileCoverage { file: file.to_owned(), total_bytes: len, covered_bytes...

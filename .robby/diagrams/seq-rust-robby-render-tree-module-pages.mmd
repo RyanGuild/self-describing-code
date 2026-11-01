@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant module_pages as module_pages()
+    participant module_index_path as module_index_path
+    participant push as push
+    participant to_path_buf as to_path_buf
+    participant item_children as item_children
+    participant item_slugs as item_slugs
+    participant get as get
+    participant join as join
+    module_pages-->>module_index_path: module_index_path(node, crate_dir)
+    module_pages-->>push: pages.push(Page { path: index.clone(), body: module_page(doc, node, c...
+    module_pages-->>to_path_buf: index.parent().unwrap_or(Path::new('.')).to_path_buf()
+    module_pages-->>item_children: item_children(doc, node)
+    module_pages-->>item_slugs: item_slugs(&items)
+    loop &node.children
+    module_pages-->>get: doc.get(child)
+    alt is_module(child)
+    module_pages-->>module_pages: module_pages(doc, child, crate_dir, pages, sources, out_rel)
+    end
+    end
+    loop items
+    module_pages-->>get: slugs.get(&item.id)
+    module_pages-->>join: module_dir.join(format!('{slug}.md'))
+    module_pages-->>push: pages.push(Page { path: path.clone(), body: item_page(doc, item, &pat...
+    end

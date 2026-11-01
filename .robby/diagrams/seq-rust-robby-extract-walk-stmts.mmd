@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant walk_stmts as walk_stmts()
+    participant walk_expr as walk_expr
+    participant span_of as span_of
+    participant emit as emit
+    participant clone as clone
+    loop stmts
+    alt match stmt
+    alt match &local.init
+    walk_stmts-->>walk_expr: walk_expr(builder, &init.expr)
+    else None
+    walk_stmts-->>span_of: span_of(local, builder.ctx)
+    walk_stmts-->>emit: builder.emit( &builder.me.clone(), label_of(builder.ctx, span.clone()...
+    end
+    walk_stmts-->>walk_expr: walk_expr(builder, expr)
+    else Stmt::Macro(m)
+    walk_stmts-->>span_of: span_of(m, builder.ctx)
+    walk_stmts-->>clone: builder.me.clone()
+    walk_stmts-->>emit: builder.emit(&me, label_of(builder.ctx, span.clone()), StepKind::Note...
+    else Stmt::Item(item)
+    walk_stmts-->>span_of: span_of(item, builder.ctx)
+    walk_stmts-->>clone: builder.me.clone()
+    walk_stmts-->>emit: builder.emit(&me, label_of(builder.ctx, span.clone()), StepKind::Note...
+    end
+    end

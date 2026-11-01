@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant no_page_is_a_wall_of_text as no_page_is_a_wall_of_text()
+    participant pages as pages
+    participant expect as expect
+    no_page_is_a_wall_of_text-->>pages: pages()
+    no_page_is_a_wall_of_text-->>expect: pages .iter() .map(|page| (page.body.lines().count(), page.path.clone...
+    no_page_is_a_wall_of_text-->>no_page_is_a_wall_of_text: assert!( worst.0 < 1_000, '{} is {} lines split it further', worst.1...

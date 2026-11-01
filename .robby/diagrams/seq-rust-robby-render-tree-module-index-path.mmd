@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant module_index_path as module_index_path()
+    participant Some as Some
+    participant strip_prefix as strip_prefix
+    alt node.fqn == crate_dir
+    module_index_path-->>Some: Some(crate_index_path(crate_dir))
+    module_index_path-->>module_index_path: return
+    end
+    module_index_path-->>strip_prefix: node.fqn.strip_prefix(&format!('{crate_dir}::'))
+    module_index_path-->>module_index_path: ? (propagate)
+    module_index_path-->>Some: Some(PathBuf::from(format!( '{crate_dir}/{}/index.md', rest.replace('...

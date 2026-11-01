@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    participant flowchart_clusters_modules as flowchart_clusters_modules()
+    participant Document__new as Document::new
+    participant Node__new as Node::new
+    participant insert as insert
+    participant push as push
+    participant flowchart as flowchart
+    flowchart_clusters_modules-->>Document__new: Document::new('test')
+    flowchart_clusters_modules-->>Node__new: Node::new(NodeId::from('rust://demo'), code::MODULE, 'demo')
+    flowchart_clusters_modules-->>flowchart_clusters_modules: module.kind = Kind::from(code::MODULE)
+    flowchart_clusters_modules-->>flowchart_clusters_modules: module.provenance.source = Source::Extractor
+    flowchart_clusters_modules-->>insert: doc.insert(module)
+    flowchart_clusters_modules-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::a'), code::FUNCTION, 'demo::a')
+    flowchart_clusters_modules-->>flowchart_clusters_modules: a.parent = Some(NodeId::from('rust://demo'))
+    flowchart_clusters_modules-->>flowchart_clusters_modules: a.signature = Some('fn a()'.to_owned())
+    flowchart_clusters_modules-->>insert: doc.insert(a)
+    flowchart_clusters_modules-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::b'), code::FUNCTION, 'demo::b')
+    flowchart_clusters_modules-->>flowchart_clusters_modules: b.parent = Some(NodeId::from('rust://demo'))
+    flowchart_clusters_modules-->>push: b.edges.push(Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKind::C...
+    flowchart_clusters_modules-->>insert: doc.insert(b)
+    flowchart_clusters_modules-->>flowchart: flowchart(&doc, &NodeId::from('rust://demo'))
+    flowchart_clusters_modules-->>flowchart_clusters_modules: assert!(out.starts_with('flowchart TD\n'))
+    flowchart_clusters_modules-->>flowchart_clusters_modules: assert!(out.contains('subgraph'))
+    flowchart_clusters_modules-->>flowchart_clusters_modules: assert!(out.contains('|calls|'))

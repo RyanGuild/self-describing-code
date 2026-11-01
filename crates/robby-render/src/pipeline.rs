@@ -12,7 +12,7 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use robby_ir::{CoverageReport, Diagnostic, Document, Severity, coverage, validate};
 
-use crate::markdown;
+
 
 /// A document plus everything derived from it.
 pub struct Loaded {
@@ -20,6 +20,8 @@ pub struct Loaded {
     pub sources: BTreeMap<String, String>,
     pub coverage: CoverageReport,
     pub diagnostics: Vec<Diagnostic>,
+    /// Workspace root the source paths are relative to.
+    pub root: PathBuf,
 }
 
 impl Loaded {
@@ -56,10 +58,19 @@ pub fn load_document(path: &Path) -> Result<Document> {
 /// fully unclaimed, which is the more useful failure.
 pub fn load_sources(doc: &Document, root: &Path) -> BTreeMap<String, String> {
     let mut sources = BTreeMap::new();
-    for file in coverage::frontier_spans(doc).keys() {
-        let path = root.join(file);
+
+    // A document that declares its files is authoritative: a declared file that
+    // cannot be read is a missing piece of the map, not something to skip.
+    let files: Vec<String> = if doc.files.is_empty() {
+        coverage::all_spans(doc).keys().cloned().collect()
+    } else {
+        doc.files.clone()
+    };
+
+    for file in files {
+        let path = root.join(&file);
         if let Ok(text) = fs::read_to_string(&path) {
-            sources.insert(file.clone(), text);
+            sources.insert(file, text);
         }
     }
     sources
@@ -68,15 +79,21 @@ pub fn load_sources(doc: &Document, root: &Path) -> BTreeMap<String, String> {
 /// Load a document and everything derived from it.
 pub fn load(ir: &Path, root: &Path) -> Result<Loaded> {
     let document = load_document(ir)?;
+    Ok(from_document(document, root))
+}
+
+/// Compute everything derived from an in-memory document.
+pub fn from_document(document: Document, root: &Path) -> Loaded {
     let sources = load_sources(&document, root);
     let coverage = coverage::document_coverage(&document, &sources);
     let diagnostics = validate(&document);
-    Ok(Loaded {
+    Loaded {
         document,
         sources,
         coverage,
         diagnostics,
-    })
+        root: root.to_path_buf(),
+    }
 }
 
 /// Write one `.mmd` file per process and per root graph.
@@ -97,17 +114,63 @@ pub fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize> {
     Ok(count)
 }
 
-/// Render the single-file Markdown report.
-pub fn write_report(loaded: &Loaded, out: &Path) -> std::io::Result<()> {
+/// Write the IR document itself as a committed artifact.
+pub fn write_document(doc: &Document, out: &Path) -> Result<()> {
     if let Some(parent) = out.parent() {
         fs::create_dir_all(parent)?;
     }
-    let text = markdown::report(
+    fs::write(out, serde_json::to_string_pretty(doc)?)?;
+    Ok(())
+}
+
+/// Render the self-model as a linked tree of Markdown pages.
+///
+/// Returns the number of pages written. Stale pages are removed first so a
+/// deleted module cannot leave a ghost page behind.
+pub fn write_report(loaded: &Loaded, out_dir: &Path) -> std::io::Result<usize> {
+    let out_rel = out_dir
+        .strip_prefix(&loaded.root)
+        .unwrap_or(out_dir)
+        .to_string_lossy()
+        .replace('\\', "/");
+
+    let pages = crate::tree::tree(
         &loaded.document,
         Some(&loaded.coverage),
         Some(&loaded.sources),
+        &out_rel,
     );
-    fs::write(out, text)
+
+    fs::create_dir_all(out_dir)?;
+    remove_markdown(out_dir)?;
+
+    for page in &pages {
+        let path = out_dir.join(&page.path);
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::write(&path, &page.body)?;
+    }
+
+    Ok(pages.len())
+}
+
+/// Delete generated Markdown so removed modules do not linger.
+fn remove_markdown(dir: &Path) -> std::io::Result<()> {
+    if !dir.is_dir() {
+        return Ok(());
+    }
+    for entry in fs::read_dir(dir)? {
+        let path = entry?.path();
+        if path.is_dir() {
+            remove_markdown(&path)?;
+            // Remove directories that became empty.
+            let _ = fs::remove_dir(&path);
+        } else if path.extension().is_some_and(|ext| ext == "md") {
+            fs::remove_file(&path)?;
+        }
+    }
+    Ok(())
 }
 
 /// Files whose change must invalidate a cached build.

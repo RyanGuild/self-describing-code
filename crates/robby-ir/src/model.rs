@@ -270,6 +270,13 @@ pub struct Document {
     pub nodes: BTreeMap<NodeId, Node>,
     /// Node ids with no parent.
     pub roots: Vec<NodeId>,
+    /// Every source file this document claims to describe.
+    ///
+    /// This is what makes "no file is invisible" checkable: the coverage gate
+    /// reads this list, so a file that was never parsed is a failure rather
+    /// than an absence.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub files: Vec<String>,
 }
 
 impl Document {
@@ -279,6 +286,16 @@ impl Document {
             generator: generator.into(),
             nodes: BTreeMap::new(),
             roots: Vec::new(),
+            files: Vec::new(),
+        }
+    }
+
+    /// Record a source file as part of the map.
+    pub fn declare_file(&mut self, path: impl Into<String>) {
+        let path = path.into();
+        if !self.files.contains(&path) {
+            self.files.push(path);
+            self.files.sort();
         }
     }
 
@@ -294,6 +311,40 @@ impl Document {
             }
         }
         self.nodes.insert(id, node);
+    }
+
+    /// Insert, or merge into an existing node with the same id.
+    ///
+    /// Merging matters for modules: a `mod foo;` declaration and the file
+    /// `foo.rs` both describe `crate::foo`. The declaration carries the span,
+    /// the file carries the contents, and they must not overwrite each other.
+    pub fn merge(&mut self, node: Node) {
+        let id = node.id.clone();
+        if let Some(existing) = self.nodes.get_mut(&id) {
+            if existing.span.is_none() {
+                existing.span = node.span;
+            }
+            for child in node.children {
+                if !existing.children.contains(&child) {
+                    existing.children.push(child);
+                }
+            }
+            for edge in node.edges {
+                if !existing.edges.contains(&edge) {
+                    existing.edges.push(edge);
+                }
+            }
+            for (key, value) in node.annotations {
+                existing.annotations.entry(key).or_insert(value);
+            }
+            for tag in node.tags {
+                if !existing.tags.contains(&tag) {
+                    existing.tags.push(tag);
+                }
+            }
+            return;
+        }
+        self.insert(node);
     }
 
     pub fn get(&self, id: &NodeId) -> Option<&Node> {

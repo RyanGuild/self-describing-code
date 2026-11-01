@@ -1,0 +1,6 @@
+sequenceDiagram
+    autonumber
+    participant new as new()
+    participant min as min
+    new-->>min: end.max(start).min(source.len() as u32)
+    new-->>new: Self { file: file.into(), start: Position::at(source, start), end: Po...

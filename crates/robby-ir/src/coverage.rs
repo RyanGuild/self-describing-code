@@ -194,7 +194,7 @@ pub fn file_coverage(file: &str, source: &str, spans: &[Span]) -> FileCoverage {
 /// fully uncovered. A file that exists and is invisible to the map is exactly
 /// the failure mode this tool exists to prevent.
 pub fn document_coverage(doc: &Document, sources: &BTreeMap<String, String>) -> CoverageReport {
-    let spans_by_file = frontier_spans(doc);
+    let spans_by_file = all_spans(doc);
 
     let mut files = Vec::new();
     for (path, source) in sources {
@@ -204,6 +204,23 @@ pub fn document_coverage(doc: &Document, sources: &BTreeMap<String, String>) -> 
     files.sort_by(|a, b| a.file.cmp(&b.file));
 
     CoverageReport { files }
+}
+
+/// Every span in the document, per file.
+///
+/// This is the default claim set: a byte is represented when *some* node owns
+/// it, at any nesting level. It catches missing items, missing files, and code
+/// outside any item. It deliberately does **not** try to catch shallow nesting —
+/// a function span covers its own body, and proving that every statement got a
+/// node needs the AST. That check lives in the extractor.
+pub fn all_spans(doc: &Document) -> BTreeMap<String, Vec<Span>> {
+    let mut out: BTreeMap<String, Vec<Span>> = BTreeMap::new();
+    for node in doc.nodes.values() {
+        if let Some(span) = &node.span {
+            out.entry(span.file.clone()).or_default().push(span.clone());
+        }
+    }
+    out
 }
 
 /// The spans that actually claim source, per file.

@@ -1,0 +1,4 @@
+sequenceDiagram
+    autonumber
+    participant location as location()
+    location-->>location: format!('{}:{}:{}', self.file, self.start.line, self.start.column)

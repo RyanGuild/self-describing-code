@@ -1,0 +1,52 @@
+sequenceDiagram
+    autonumber
+    participant scan_trivia as scan_trivia()
+    participant TriviaFlags__default as TriviaFlags::default
+    participant Err as Err
+    participant Ok as Ok
+    scan_trivia-->>TriviaFlags__default: TriviaFlags::default()
+    scan_trivia-->>scan_trivia: start
+    loop i < end
+    scan_trivia-->>scan_trivia: bytes[i as usize]
+    alt c.is_ascii_whitespace()
+    scan_trivia-->>scan_trivia: flags.whitespace = true
+    scan_trivia-->>scan_trivia: i += 1
+    else else
+    alt c == b'/' && i + 1 < end && bytes[(i + 1) as usize] == b'/'
+    scan_trivia-->>scan_trivia: flags.comment = true
+    loop i < end && bytes[i as usize] != b'\n'
+    scan_trivia-->>scan_trivia: i += 1
+    end
+    alt c == b'/' && i + 1 < end && bytes[(i + 1) as usize] == b'*'
+    scan_trivia-->>scan_trivia: flags.comment = true
+    scan_trivia-->>scan_trivia: 1u32
+    scan_trivia-->>scan_trivia: i += 2
+    loop i < end && depth > 0
+    alt i + 1 < end && bytes[i as usize] == b'/' && bytes[(i + 1) as usize] =...
+    scan_trivia-->>scan_trivia: depth += 1
+    scan_trivia-->>scan_trivia: i += 2
+    else else
+    alt i + 1 < end && bytes[i as usize] == b'*' && bytes[(i + 1) as usize] =...
+    scan_trivia-->>scan_trivia: depth -= 1
+    scan_trivia-->>scan_trivia: i += 2
+    else else
+    scan_trivia-->>scan_trivia: i += 1
+    end
+    end
+    end
+    alt c == b' '
+    alt match skip_attribute(bytes, i, end)
+    scan_trivia-->>scan_trivia: flags.attribute = true
+    scan_trivia-->>scan_trivia: i = next
+    else None
+    scan_trivia-->>Err: Err(i)
+    scan_trivia-->>scan_trivia: return
+    end
+    scan_trivia-->>Err: Err(i)
+    scan_trivia-->>scan_trivia: return
+    end
+    end
+    end
+    end
+    end
+    scan_trivia-->>Ok: Ok(flags)

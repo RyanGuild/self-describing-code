@@ -1,0 +1,80 @@
+sequenceDiagram
+    autonumber
+    participant module_page as module_page()
+    participant String__new as String::new
+    participant unwrap_or_else as unwrap_or_else
+    participant push_str as push_str
+    participant push as push
+    participant collect as collect
+    participant Vec__new as Vec::new
+    participant unwrap_or as unwrap_or
+    participant item_slugs as item_slugs
+    participant get as get
+    participant join as join
+    module_page-->>String__new: String::new()
+    module_page-->>unwrap_or_else: module_index_path(node, crate_dir).unwrap_or_else(|| PathBuf::from('R...
+    module_page-->>module_page: writeln!(out, ' `{}`\n', node.fqn)
+    module_page-->>push_str: out.push_str(&nav(doc, node, &page, false))
+    module_page-->>module_page: writeln!(out, '| | |')
+    module_page-->>module_page: writeln!(out, '|---|---|')
+    module_page-->>module_page: writeln!(out, '| kind | `{}` |', node.kind)
+    alt let Some(span) = &node.span
+    module_page-->>module_page: writeln!(out, '| declared at | {} |', source_link(&page, out_rel, span))
+    end
+    module_page-->>module_page: writeln!( out, '| provenance | {} · confidence {:.2} |', source_name(...
+    module_page-->>module_page: writeln!(out, '| nodes | {} |', doc.subtree(&node.id).len())
+    module_page-->>push: out.push('\n')
+    alt let Some(docs) = &node.docs
+    loop docs.lines()
+    module_page-->>module_page: writeln!(out, '> {line}')
+    end
+    module_page-->>push: out.push('\n')
+    end
+    module_page-->>collect: node .children .iter() .filter_map(|child| doc.get(child)) .collect()
+    alt !children.is_empty()
+    module_page-->>push_str: out.push_str('```mermaid\n')
+    module_page-->>push_str: out.push_str(&flowchart(doc, &node.id))
+    module_page-->>push_str: out.push_str('```\n\n')
+    end
+    module_page-->>collect: children.iter().filter(|c| is_module(c)).collect()
+    alt !submodules.is_empty()
+    module_page-->>push_str: out.push_str(' Modules\n\n')
+    loop submodules
+    alt let Some(target) = module_index_path(sub, crate_dir)
+    module_page-->>module_page: writeln!( out, '- [`{}`]({}) — {} nodes', short_fqn(sub, crate_dir), ...
+    end
+    end
+    module_page-->>push: out.push('\n')
+    end
+    module_page-->>Vec__new: Vec::new()
+    module_page-->>Vec__new: Vec::new()
+    loop &children
+    alt match child.kind.as_str()
+    module_page-->>push: imports.push(child)
+    else _
+    module_page-->>push: items.push(child)
+    end
+    end
+    alt !items.is_empty()
+    module_page-->>unwrap_or: page.parent().unwrap_or(Path::new('.'))
+    module_page-->>item_slugs: item_slugs(&items)
+    module_page-->>push_str: out.push_str(' Items\n\n')
+    module_page-->>push_str: out.push_str('| Item | Kind | Steps | Location |\n|---|---|---:|---|\n')
+    loop items
+    module_page-->>get: slugs.get(&item.id)
+    module_page-->>join: module_dir.join(format!('{slug}.md'))
+    module_page-->>unwrap_or_else: item .span .as_ref() .map(|span| span.location()) .unwrap_or_else(|| ...
+    module_page-->>unwrap_or_else: item .process .as_ref() .map(|process| process.steps.len().to_string(...
+    module_page-->>module_page: writeln!( out, '| [`{}`]({}) | `{}` | {} | `{}` |', item.name, rel_li...
+    end
+    module_page-->>push: out.push('\n')
+    end
+    alt !imports.is_empty()
+    module_page-->>push_str: out.push_str(' Imports\n\n')
+    loop imports
+    module_page-->>unwrap_or_else: sources .and_then(|s| import.span.as_ref().and_then(|span| slice(s, s...
+    module_page-->>module_page: writeln!(out, '- `{}`', cell(&text))
+    end
+    module_page-->>push: out.push('\n')
+    end
+    module_page-->>module_page: out

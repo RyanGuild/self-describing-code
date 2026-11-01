@@ -1,0 +1,78 @@
+sequenceDiagram
+    autonumber
+    participant render_node as render_node()
+    participant repeat as repeat
+    participant push as push
+    participant push_str as push_str
+    participant count as count
+    participant get as get
+    participant collect as collect
+    participant unwrap_or_default as unwrap_or_default
+    alt emit_heading
+    render_node-->>repeat: ' '.repeat(depth.min(6))
+    render_node-->>render_node: writeln!(out, '{hashes} `{}`\n', node.name)
+    end
+    render_node-->>render_node: writeln!(out, '| | |')
+    render_node-->>render_node: writeln!(out, '|---|---|')
+    render_node-->>render_node: writeln!(out, '| kind | `{}` |', node.kind)
+    alt let Some(sig) = &node.signature
+    render_node-->>render_node: writeln!(out, '| signature | `{}` |', cell(sig))
+    end
+    alt let Some(span) = &node.span
+    render_node-->>render_node: writeln!(out, '| location | {} |', source_link(page, out_rel, span))
+    end
+    render_node-->>render_node: writeln!( out, '| provenance | {} · confidence {:.2} |', source_name(...
+    render_node-->>push: out.push('\n')
+    alt let Some(docs) = &node.docs
+    loop docs.lines()
+    render_node-->>render_node: writeln!(out, '> {line}')
+    end
+    render_node-->>push: out.push('\n')
+    end
+    alt let (Some(span), Some(sources)) = (&node.span, sources)
+    alt let Some(text) = slice(sources, span)
+    render_node-->>push_str: out.push_str('```rust\n')
+    render_node-->>push_str: out.push_str(text.trim_end())
+    render_node-->>push_str: out.push_str('\n```\n\n')
+    end
+    end
+    alt let Some(process) = &node.process
+    render_node-->>push_str: out.push_str('```mermaid\n')
+    render_node-->>push_str: out.push_str(&sequence(process))
+    render_node-->>push_str: out.push_str('```\n\n')
+    render_node-->>count: process.steps.iter().filter(|step| step.observed).count()
+    render_node-->>render_node: writeln!( out, '{} steps · {} observed · {} possible only\n', process...
+    end
+    alt !node.edges.is_empty()
+    render_node-->>push_str: out.push_str('**Edges**\n\n')
+    loop &node.edges
+    alt edge.resolved
+    render_node-->>render_node: ''
+    else else
+    render_node-->>render_node: ' (unresolved)'
+    end
+    render_node-->>get: doc.get(&edge.to)
+    alt match target.and_then(|t| page_of_node(doc, t))
+    render_node-->>render_node: writeln!( out, '- {} → [`{}`]({}){marker}', edge_name(edge.kind), tar...
+    else None
+    render_node-->>render_node: writeln!( out, '- {} → `{}`{marker}', edge_name(edge.kind), edge.to )
+    end
+    end
+    render_node-->>push: out.push('\n')
+    end
+    render_node-->>collect: node .children .iter() .filter_map(|child| doc.get(child)) .collect()
+    render_node-->>collect: children.iter().filter(|c| is_compact(c.kind.as_str())).collect()
+    alt !compact.is_empty()
+    render_node-->>push_str: out.push_str('**Fields and variants**\n\n')
+    loop compact
+    render_node-->>unwrap_or_default: child .span .as_ref() .map(|span| span.location()) .unwrap_or_default()
+    render_node-->>render_node: writeln!(out, '- `{}` — `{}`', child.name, location)
+    end
+    render_node-->>push: out.push('\n')
+    end
+    loop &children
+    alt is_compact(child.kind.as_str()) || is_module(child)
+    render_node-->>render_node: continue
+    end
+    render_node-->>render_node: render_node(out, doc, child, depth + 1, page, sources, out_rel, true)
+    end

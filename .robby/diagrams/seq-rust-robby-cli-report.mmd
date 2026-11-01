@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    participant report as report()
+    participant pipeline__load as pipeline::load
+    participant pipeline__write_report as pipeline::write_report
+    participant Ok as Ok
+    report-->>pipeline__load: pipeline::load(ir, source_root)
+    report-->>report: ? (propagate)
+    alt match out
+    report-->>pipeline__write_report: pipeline::write_report(&loaded, &path)
+    report-->>report: ? (propagate)
+    report-->>report: println!('wrote {pages} page(s) to {}', path.display())
+    else None
+    report-->>report: print!( '{}', robby_render::markdown::report( &loaded.document, Some(...
+    end
+    report-->>Ok: Ok(ExitCode::SUCCESS)

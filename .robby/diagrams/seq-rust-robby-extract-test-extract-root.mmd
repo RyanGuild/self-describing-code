@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant root as root()
+    participant join as join
+    root-->>join: PathBuf::from(env!('CARGO_MANIFEST_DIR')).join('../..')

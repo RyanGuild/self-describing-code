@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    participant resolve_calls as resolve_calls()
+    participant BTreeMap__new as BTreeMap::new
+    participant push as push
+    participant get as get
+    participant clone as clone
+    participant Edge__new as Edge::new
+    resolve_calls-->>BTreeMap__new: BTreeMap::new()
+    loop doc.nodes.values()
+    alt matches!( node.kind.as_str(), kind::code::FUNCTION | kind::code::METH...
+    resolve_calls-->>push: by_name.entry(node.name.clone()).or_default().push(node.id.clone())
+    end
+    end
+    loop pending
+    resolve_calls-->>get: by_name.get(&call.name)
+    resolve_calls-->>clone: targets[0].clone()
+    alt targets.len() == 1
+    resolve_calls-->>resolve_calls: 1.0
+    else else
+    resolve_calls-->>resolve_calls: 0.4
+    end
+    alt let Some(node) = doc.nodes.get_mut(&call.from)
+    resolve_calls-->>Edge__new: Edge::new(target, EdgeKind::Calls)
+    resolve_calls-->>resolve_calls: edge.span = Some(call.span)
+    resolve_calls-->>resolve_calls: edge.confidence = confidence
+    alt !node.edges.contains(&edge)
+    resolve_calls-->>push: node.edges.push(edge)
+    end
+    end
+    end

@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant span_of as span_of()
+    participant span as span
+    participant byte as byte
+    participant Span__new as Span::new
+    span_of-->>span: node.span()
+    span_of-->>byte: ctx.index.byte(span.start())
+    span_of-->>byte: ctx.index.byte(span.end())
+    span_of-->>Span__new: Span::new(ctx.file, ctx.source, start, end.max(start))

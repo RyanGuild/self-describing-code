@@ -1,0 +1,13 @@
+[package]
+name = "robby-extract"
+description = "Walks a Rust workspace with syn and emits Robby IR. The bootstrap producer."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+robby-ir.workspace = true
+syn.workspace = true
+proc-macro2.workspace = true
+anyhow.workspace = true

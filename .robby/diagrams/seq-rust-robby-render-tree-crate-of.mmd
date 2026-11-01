@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant crate_of as crate_of()
+    participant map as map
+    crate_of-->>map: node.fqn.split('::').next().map(|s| s.to_owned())

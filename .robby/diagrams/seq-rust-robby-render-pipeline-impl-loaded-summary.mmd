@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant summary as summary()
+    participant len as len
+    participant sum as sum
+    summary-->>len: self.coverage.files.len()
+    summary-->>sum: self.coverage.files.iter().map(|f| f.covered_bytes).sum()
+    summary-->>sum: self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum()
+    summary-->>summary: format!( '{files} file(s), {claimed} bytes claimed, {unclaimed} uncla...

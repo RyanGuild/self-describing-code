@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    participant rel_link as rel_link()
+    participant unwrap_or_default as unwrap_or_default
+    participant collect as collect
+    participant String__new as String::new
+    participant push_str as push_str
+    rel_link-->>unwrap_or_default: from .parent() .map(|parent| { parent .components() .map(|c| c.as_os_...
+    rel_link-->>collect: to .components() .map(|c| c.as_os_str().to_string_lossy().to_string()...
+    rel_link-->>rel_link: 0
+    loop common < from_dir.len() && common + 1 < to_parts.len() && from_dir[co...
+    rel_link-->>rel_link: common += 1
+    end
+    rel_link-->>String__new: String::new()
+    loop common..from_dir.len()
+    rel_link-->>push_str: out.push_str('../')
+    end
+    rel_link-->>push_str: out.push_str(&to_parts[common..].join('/'))
+    rel_link-->>rel_link: out

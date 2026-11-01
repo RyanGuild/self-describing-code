@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant first_line as first_line()
+    participant to_owned as to_owned
+    first_line-->>to_owned: text.lines().next().unwrap_or('').trim().to_owned()

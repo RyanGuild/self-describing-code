@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant load_document as load_document()
+    participant fs__read_to_string as fs::read_to_string
+    participant Ok as Ok
+    load_document-->>fs__read_to_string: fs::read_to_string(path)
+    load_document-->>load_document: ? (propagate)
+    load_document-->>Ok: Ok(serde_json::from_str(&text)?)

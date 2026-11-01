@@ -1,0 +1,38 @@
+sequenceDiagram
+    autonumber
+    participant page_of_node as page_of_node()
+    participant crate_of as crate_of
+    participant unwrap_or as unwrap_or
+    participant item_children as item_children
+    participant item_slugs as item_slugs
+    participant Some as Some
+    participant get as get
+    participant module_index_path as module_index_path
+    page_of_node-->>crate_of: crate_of(node)
+    page_of_node-->>page_of_node: ? (propagate)
+    alt !is_module(node) && !is_compact(node.kind.as_str())
+    alt let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id))
+    alt is_module(parent)
+    alt let Some(index) = module_index_path(parent, &crate_dir)
+    page_of_node-->>unwrap_or: index.parent().unwrap_or(Path::new('.'))
+    page_of_node-->>item_children: item_children(doc, parent)
+    page_of_node-->>item_slugs: item_slugs(&items)
+    alt let Some(slug) = slugs.get(&node.id)
+    page_of_node-->>Some: Some(module_dir.join(format!('{slug}.md')))
+    page_of_node-->>page_of_node: return
+    end
+    end
+    end
+    end
+    end
+    page_of_node-->>Some: Some(node.id.clone())
+    loop let Some(id) = current
+    page_of_node-->>get: doc.get(&id)
+    page_of_node-->>page_of_node: ? (propagate)
+    alt is_module(candidate)
+    page_of_node-->>module_index_path: module_index_path(candidate, &crate_dir)
+    page_of_node-->>page_of_node: return
+    end
+    page_of_node-->>page_of_node: current = candidate.parent.clone()
+    end
+    page_of_node-->>page_of_node: None

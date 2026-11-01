@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant at as at()
+    participant min as min
+    participant unwrap_or as unwrap_or
+    at-->>min: byte.min(source.len() as u32)
+    at-->>at: &source[..byte as usize]
+    at-->>at: prefix.matches('\n').count() as u32 + 1
+    at-->>unwrap_or: prefix.rfind('\n').map(|i| i + 1).unwrap_or(0)
+    at-->>at: prefix[line_start..].chars().count() as u32 + 1
+    at-->>at: Self { line, column, byte }

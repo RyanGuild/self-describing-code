@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant attributes_are_classified as attributes_are_classified()
+    participant file_coverage as file_coverage
+    attributes_are_classified-->>attributes_are_classified: ' [derive(Debug)]\nfn a() {}\n'
+    attributes_are_classified-->>attributes_are_classified: source.find('fn a').unwrap() as u32
+    attributes_are_classified-->>file_coverage: file_coverage(FILE, source, &[span(source, start, source.len() as u32)])
+    attributes_are_classified-->>attributes_are_classified: assert!(report.is_complete())
+    attributes_are_classified-->>attributes_are_classified: assert_eq!(report.gaps.len(), 1)
+    attributes_are_classified-->>attributes_are_classified: assert!(matches!(report.gaps[0].reason, GapReason::Attribute))

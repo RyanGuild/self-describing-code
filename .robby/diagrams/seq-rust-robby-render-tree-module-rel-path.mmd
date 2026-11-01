@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant module_rel_path as module_rel_path()
+    participant strip_prefix as strip_prefix
+    participant Some as Some
+    module_rel_path-->>strip_prefix: node.fqn.strip_prefix(&format!('{crate_slug}::'))
+    module_rel_path-->>module_rel_path: ? (propagate)
+    alt rest.is_empty()
+    module_rel_path-->>module_rel_path: None
+    module_rel_path-->>module_rel_path: return
+    end
+    module_rel_path-->>Some: Some(format!('{}.md', rest.replace('::', '/')))

@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant new as new()
+    participant push as push
+    new-->>new: vec![0u32]
+    loop source.bytes().enumerate()
+    alt b == b'\n'
+    new-->>push: starts.push(i as u32 + 1)
+    end
+    end
+    new-->>new: Self { starts, source: source.to_owned(), }

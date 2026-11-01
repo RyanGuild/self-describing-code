@@ -1,0 +1,6 @@
+sequenceDiagram
+    autonumber
+    participant label as label()
+    participant unwrap_or as unwrap_or
+    label-->>unwrap_or: node.signature.as_deref().unwrap_or(&node.name)
+    label-->>label: format!('{} [{}]', sig, short_kind(&node.kind))

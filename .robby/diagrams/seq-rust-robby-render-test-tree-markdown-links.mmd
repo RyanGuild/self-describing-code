@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant markdown_links as markdown_links()
+    participant Vec__new as Vec::new
+    participant push as push
+    markdown_links-->>Vec__new: Vec::new()
+    markdown_links-->>markdown_links: false
+    loop body.lines()
+    alt line.trim_start().starts_with('```')
+    markdown_links-->>markdown_links: fenced = !fenced
+    markdown_links-->>markdown_links: continue
+    end
+    alt fenced
+    markdown_links-->>markdown_links: continue
+    end
+    markdown_links-->>markdown_links: line
+    loop let Some(start) = rest.find('](')
+    markdown_links-->>markdown_links: &rest[start + 2..]
+    alt match after.find(')')
+    markdown_links-->>push: links.push(after[..end].to_owned())
+    markdown_links-->>markdown_links: rest = &after[end + 1..]
+    else None
+    markdown_links-->>markdown_links: break
+    end
+    end
+    end
+    markdown_links-->>markdown_links: links

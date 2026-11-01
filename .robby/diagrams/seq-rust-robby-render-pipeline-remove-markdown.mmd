@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    participant remove_markdown as remove_markdown()
+    participant Ok as Ok
+    participant path as path
+    participant fs__remove_dir as fs::remove_dir
+    participant fs__remove_file as fs::remove_file
+    alt !dir.is_dir()
+    remove_markdown-->>Ok: Ok(())
+    remove_markdown-->>remove_markdown: return
+    end
+    loop fs::read_dir(dir)?
+    remove_markdown-->>path: entry?.path()
+    alt path.is_dir()
+    remove_markdown-->>remove_markdown: remove_markdown(&path)
+    remove_markdown-->>remove_markdown: ? (propagate)
+    remove_markdown-->>fs__remove_dir: fs::remove_dir(&path)
+    else else
+    alt path.extension().is_some_and(|ext| ext == 'md')
+    remove_markdown-->>fs__remove_file: fs::remove_file(&path)
+    remove_markdown-->>remove_markdown: ? (propagate)
+    end
+    end
+    end
+    remove_markdown-->>Ok: Ok(())

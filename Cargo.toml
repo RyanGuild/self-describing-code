@@ -12,6 +12,7 @@ repository = "https://github.com/robby/robby"
 [workspace.dependencies]
 robby-ir = { path = "crates/robby-ir" }
 robby-render = { path = "crates/robby-render" }
+robby-extract = { path = "crates/robby-extract" }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

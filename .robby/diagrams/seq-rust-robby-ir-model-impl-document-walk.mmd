@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant walk as walk()
+    participant push as push
+    alt let Some(node) = self.nodes.get(id)
+    walk-->>push: out.push(node)
+    loop &node.children
+    walk-->>walk: self.walk(child, out)
+    end
+    end

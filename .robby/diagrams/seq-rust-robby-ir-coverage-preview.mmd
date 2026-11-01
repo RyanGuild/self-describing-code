@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant preview as preview()
+    participant join as join
+    participant collect as collect
+    preview-->>preview: &source[start as usize..end as usize]
+    preview-->>join: slice.split_whitespace().collect::<Vec<_>>().join(' ')
+    alt collapsed.chars().count() > 120
+    preview-->>collect: collapsed.chars().take(117).collect()
+    preview-->>preview: format!('{truncated}...')
+    else else
+    preview-->>preview: collapsed
+    end

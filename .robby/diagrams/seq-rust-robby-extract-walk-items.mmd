@@ -1,0 +1,126 @@
+sequenceDiagram
+    autonumber
+    participant walk_items as walk_items()
+    participant span_of as span_of
+    participant clone as clone
+    participant item_node as item_node
+    participant merge as merge
+    participant push as push
+    participant type_text as type_text
+    participant unwrap_or_default as unwrap_or_default
+    participant clear as clear
+    participant unwrap_or_else as unwrap_or_else
+    loop items
+    walk_items-->>span_of: span_of(item, ctx)
+    walk_items-->>clone: ctx.module.clone()
+    alt match item
+    walk_items-->>walk_items: format!('{fqn_base}::{}', f.sig.ident)
+    walk_items-->>item_node: item_node(kind::code::FUNCTION, &fqn, span.clone(), parent)
+    walk_items-->>walk_items: node.signature = Some(signature_of(f, ctx))
+    walk_items-->>walk_items: node.docs = docs_of(&f.sig, &f.attrs)
+    walk_items-->>walk_items: node.process = Some(build_process(f, ctx, &fqn, pending))
+    walk_items-->>merge: doc.merge(node)
+    else Item::Struct(s)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', s.ident)
+    walk_items-->>item_node: item_node(kind::code::STRUCT, &fqn, span.clone(), parent)
+    walk_items-->>walk_items: node.docs = docs_of(&s.ident, &s.attrs)
+    loop &s.fields
+    alt let Some(ident) = &field.ident
+    walk_items-->>walk_items: format!('{fqn}::{ident}')
+    walk_items-->>item_node: item_node( kind::code::FIELD, &child_fqn, span_of(field, ctx), &NodeI...
+    walk_items-->>merge: doc.merge(child)
+    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
+    end
+    end
+    walk_items-->>merge: doc.merge(node)
+    else Item::Enum(e)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', e.ident)
+    walk_items-->>item_node: item_node(kind::code::ENUM, &fqn, span.clone(), parent)
+    walk_items-->>walk_items: node.docs = docs_of(&e.ident, &e.attrs)
+    loop &e.variants
+    walk_items-->>walk_items: format!('{fqn}::{}', variant.ident)
+    walk_items-->>merge: doc.merge(item_node( kind::code::VARIANT, &child_fqn, span_of(variant...
+    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
+    end
+    walk_items-->>merge: doc.merge(node)
+    else Item::Union(u)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', u.ident)
+    walk_items-->>merge: doc.merge(item_node(kind::code::UNION, &fqn, span, parent))
+    else Item::Trait(t)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', t.ident)
+    walk_items-->>item_node: item_node(kind::code::TRAIT, &fqn, span.clone(), parent)
+    walk_items-->>walk_items: node.docs = docs_of(&t.ident, &t.attrs)
+    loop &t.items
+    alt let syn::TraitItem::Fn(m) = ti
+    walk_items-->>walk_items: format!('{fqn}::{}', m.sig.ident)
+    walk_items-->>merge: doc.merge(item_node( kind::code::METHOD, &child_fqn, span_of(m, ctx),...
+    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
+    end
+    end
+    walk_items-->>merge: doc.merge(node)
+    else Item::Impl(i)
+    walk_items-->>type_text: type_text(&i.self_ty)
+    walk_items-->>unwrap_or_default: i .trait_ .as_ref() .map(|(path, _)| format!('{} for ', path_text(pat...
+    walk_items-->>walk_items: format!('{fqn_base}::impl {trait_part}{self_name}')
+    walk_items-->>item_node: item_node(kind::code::IMPL, &fqn, span.clone(), parent)
+    loop &i.items
+    alt match ii
+    walk_items-->>walk_items: format!('{fqn}::{}', m.sig.ident)
+    walk_items-->>item_node: item_node( kind::code::METHOD, &child_fqn, span_of(m, ctx), &NodeId::...
+    walk_items-->>walk_items: child.signature = Some(format!( 'fn {}({})', m.sig.ident, m.sig.input...
+    walk_items-->>walk_items: child.docs = docs_of(&m.sig, &m.attrs)
+    walk_items-->>walk_items: child.process = Some(build_process_sig(&m.sig, &m.block, ctx, &child_...
+    walk_items-->>merge: doc.merge(child)
+    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
+    else syn::ImplItem::Const(c)
+    walk_items-->>walk_items: format!('{fqn}::{}', c.ident)
+    walk_items-->>merge: doc.merge(item_node( kind::code::CONST, &child_fqn, span_of(c, ctx), ...
+    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
+    else syn::ImplItem::Type(t)
+    walk_items-->>walk_items: format!('{fqn}::{}', t.ident)
+    walk_items-->>merge: doc.merge(item_node( kind::code::TYPE_ALIAS, &child_fqn, span_of(t, c...
+    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
+    end
+    end
+    walk_items-->>merge: doc.merge(node)
+    else Item::Mod(m)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', m.ident)
+    walk_items-->>item_node: item_node(kind::code::MODULE, &fqn, span.clone(), parent)
+    alt let Some((_, items)) = &m.content
+    walk_items-->>clear: node.children.clear()
+    walk_items-->>merge: doc.merge(node)
+    walk_items-->>walk_items: walk_items(doc, items, &NodeId::symbol('rust', &fqn), ctx, pending)
+    else else
+    walk_items-->>merge: doc.merge(node)
+    end
+    walk_items-->>walk_items: format!('{fqn_base}::{}', c.ident)
+    walk_items-->>merge: doc.merge(item_node(kind::code::CONST, &fqn, span, parent))
+    else Item::Static(s)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', s.ident)
+    walk_items-->>merge: doc.merge(item_node(kind::code::STATIC, &fqn, span, parent))
+    else Item::Type(t)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', t.ident)
+    walk_items-->>merge: doc.merge(item_node(kind::code::TYPE_ALIAS, &fqn, span, parent))
+    else Item::TraitAlias(t)
+    walk_items-->>walk_items: format!('{fqn_base}::{}', t.ident)
+    walk_items-->>merge: doc.merge(item_node(kind::code::TRAIT_ALIAS, &fqn, span, parent))
+    else Item::Use(u)
+    walk_items-->>walk_items: format!('{fqn_base}::use@{}', span.start.byte)
+    walk_items-->>merge: doc.merge(item_node(kind::code::IMPORT, &fqn, span, parent))
+    walk_items-->>walk_items: u
+    else Item::ExternCrate(e)
+    walk_items-->>walk_items: format!('{fqn_base}::extern {}', e.ident)
+    walk_items-->>merge: doc.merge(item_node(kind::code::EXTERN_CRATE, &fqn, span, parent))
+    else Item::ForeignMod(f)
+    walk_items-->>walk_items: format!('{fqn_base}::extern@{}', span.start.byte)
+    walk_items-->>merge: doc.merge(item_node(kind::code::FOREIGN_MOD, &fqn, span, parent))
+    walk_items-->>walk_items: f
+    else Item::Macro(m)
+    walk_items-->>unwrap_or_else: m .ident .as_ref() .map(|i| i.to_string()) .unwrap_or_else(|| 'macro'...
+    walk_items-->>walk_items: format!('{fqn_base}::{name}@{}', span.start.byte)
+    walk_items-->>merge: doc.merge(item_node(kind::code::MACRO, &fqn, span, parent))
+    else _
+    walk_items-->>walk_items: format!('{fqn_base}::item@{}', span.start.byte)
+    walk_items-->>merge: doc.merge(item_node(kind::code::VERBATIM, &fqn, span, parent))
+    end
+    end

@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant item_children as item_children()
+    participant collect as collect
+    item_children-->>collect: node.children .iter() .filter_map(|child| doc.get(child)) .filter(|ch...

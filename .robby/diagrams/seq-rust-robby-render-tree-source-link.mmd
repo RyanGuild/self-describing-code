@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant source_link as source_link()
+    participant count as count
+    participant unwrap_or as unwrap_or
+    participant repeat as repeat
+    source_link-->>count: out_rel.split('/').filter(|s| !s.is_empty()).count()
+    source_link-->>unwrap_or: page.parent().map(|p| p.components().count()).unwrap_or(0)
+    source_link-->>repeat: '../'.repeat(out_depth + page_depth)
+    source_link-->>source_link: format!( '[`{}:{}`]({}{} L{})', span.file, span.start.line, prefix, s...

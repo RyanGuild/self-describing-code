@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant unobserved_steps_use_dashed_arrows as unobserved_steps_use_dashed_arrows()
+    participant process as process
+    participant sequence as sequence
+    unobserved_steps_use_dashed_arrows-->>process: process(vec![step('caller', 'io', 'load(path)', false, vec![])])
+    unobserved_steps_use_dashed_arrows-->>sequence: sequence(&p)
+    unobserved_steps_use_dashed_arrows-->>unobserved_steps_use_dashed_arrows: assert!(out.contains('caller-->>io: load(path)'))
+    unobserved_steps_use_dashed_arrows-->>unobserved_steps_use_dashed_arrows: assert!(!out.contains('caller->>io'))

@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant validate as validate()
+    participant Vec__new as Vec::new
+    participant push as push
+    validate-->>Vec__new: Vec::new()
+    alt doc.schema_version != SCHEMA_VERSION
+    validate-->>push: out.push(Diagnostic::error( 'schema/version', format!( 'document sche...
+    end
+    loop &doc.nodes
+    alt let Some(parent) = &node.parent
+    alt !doc.nodes.contains_key(parent)
+    validate-->>push: out.push( Diagnostic::error( 'node/parent-missing', format!('parent {...
+    end
+    end
+    loop &node.children
+    alt !doc.nodes.contains_key(child)
+    validate-->>push: out.push( Diagnostic::error( 'node/child-missing', format!('child {ch...
+    end
+    end
+    loop &node.edges
+    alt edge.resolved && !doc.nodes.contains_key(&edge.to)
+    validate-->>push: out.push( Diagnostic::error( 'edge/target-missing', format!('resolved...
+    end
+    alt !edge.resolved
+    validate-->>push: out.push( Diagnostic::warning( 'edge/unresolved', format!('edge to {}...
+    end
+    end
+    alt !crate::kind::is_known(&node.kind)
+    validate-->>push: out.push( Diagnostic::warning( 'kind/unknown-namespace', format!('kin...
+    end
+    end
+    validate-->>validate: out

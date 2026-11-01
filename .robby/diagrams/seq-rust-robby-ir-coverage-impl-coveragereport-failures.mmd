@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant failures as failures()
+    participant flat_map as flat_map
+    failures-->>flat_map: self.files.iter().flat_map(|f| { f.gaps .iter() .filter(|g| g.reason....

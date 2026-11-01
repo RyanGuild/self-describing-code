@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant page_names_never_collide_with_index as page_names_never_collide_with_index()
+    participant pages as pages
+    participant BTreeSet__new as BTreeSet::new
+    participant to_string as to_string
+    page_names_never_collide_with_index-->>pages: pages()
+    page_names_never_collide_with_index-->>BTreeSet__new: BTreeSet::new()
+    loop &pages
+    page_names_never_collide_with_index-->>to_string: page.path.to_string_lossy().to_string()
+    page_names_never_collide_with_index-->>page_names_never_collide_with_index: assert!(seen.insert(path.clone()), 'duplicate page {path}')
+    end

@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant is_complete as is_complete()
+    participant all as all
+    is_complete-->>all: self.files.iter().all(FileCoverage::is_complete)

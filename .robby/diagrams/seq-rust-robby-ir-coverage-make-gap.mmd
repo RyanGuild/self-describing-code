@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant make_gap as make_gap()
+    participant classify as classify
+    alt match scan_trivia(bytes, start, end)
+    make_gap-->>classify: flags.classify()
+    else Err(at)
+    make_gap-->>make_gap: GapReason::Unknown { at: Position::at(source, at), }
+    end
+    make_gap-->>make_gap: Gap { span: Span::new(file, source, start, end), reason, preview: pre...

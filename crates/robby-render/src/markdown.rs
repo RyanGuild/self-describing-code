@@ -57,7 +57,7 @@ pub fn report(
     out
 }
 
-fn coverage_section(out: &mut String, report: &CoverageReport) {
+pub(crate) fn coverage_section(out: &mut String, report: &CoverageReport) {
     out.push_str("## Coverage\n\n");
     out.push_str("| File | Code | Claimed | Trivia | Status |\n");
     out.push_str("|---|---:|---:|---:|---|\n");
@@ -202,11 +202,11 @@ fn heading_depth(doc: &Document, node: &Node) -> usize {
     depth
 }
 
-fn cell(input: &str) -> String {
+pub(crate) fn cell(input: &str) -> String {
     input.replace('|', "\\|").replace('\n', " ")
 }
 
-fn source_name(source: robby_ir::Source) -> &'static str {
+pub(crate) fn source_name(source: robby_ir::Source) -> &'static str {
     match source {
         robby_ir::Source::Extractor => "extractor",
         robby_ir::Source::Macro => "macro",
@@ -216,7 +216,7 @@ fn source_name(source: robby_ir::Source) -> &'static str {
     }
 }
 
-fn edge_name(kind: EdgeKind) -> &'static str {
+pub(crate) fn edge_name(kind: EdgeKind) -> &'static str {
     match kind {
         EdgeKind::Contains => "contains",
         EdgeKind::Calls => "calls",

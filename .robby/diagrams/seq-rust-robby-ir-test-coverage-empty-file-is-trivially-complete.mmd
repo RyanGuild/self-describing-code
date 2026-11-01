@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant empty_file_is_trivially_complete as empty_file_is_trivially_complete()
+    participant file_coverage as file_coverage
+    empty_file_is_trivially_complete-->>file_coverage: file_coverage(FILE, '', &[])
+    empty_file_is_trivially_complete-->>empty_file_is_trivially_complete: assert!(report.is_complete())
+    empty_file_is_trivially_complete-->>empty_file_is_trivially_complete: assert_eq!(report.ratio(), 1.0)

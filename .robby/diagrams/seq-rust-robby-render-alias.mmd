@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant alias as alias()
+    participant String__with_capacity as String::with_capacity
+    participant push as push
+    participant insert as insert
+    participant push_str as push_str
+    alias-->>String__with_capacity: String::with_capacity(id.len())
+    loop id.chars()
+    alt ch.is_ascii_alphanumeric() || ch == '_'
+    alias-->>push: out.push(ch)
+    else else
+    alias-->>push: out.push('_')
+    end
+    end
+    alt out.chars().next().is_some_and(|c| c.is_ascii_digit())
+    alias-->>insert: out.insert(0, 'p')
+    end
+    alt out.is_empty()
+    alias-->>push_str: out.push_str('p_empty')
+    end
+    alias-->>alias: out

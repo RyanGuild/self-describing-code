@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant absorb as absorb()
+    participant push as push
+    loop &observed.participants
+    alt !self.participants.iter().any(|q| q.id == p.id)
+    absorb-->>push: self.participants.push(p.clone())
+    end
+    end
+    absorb-->>absorb: vec![false observed.steps.len()]
+    loop &mut self.steps
+    alt let Some(idx) = observed.steps.iter().position(|o| { o.from == step.f...
+    absorb-->>absorb: step.observed = true
+    absorb-->>absorb: matched[idx] = true
+    end
+    end
+    loop observed.steps.iter().enumerate()
+    alt !matched[idx]
+    absorb-->>push: self.steps.push(step.clone())
+    end
+    end

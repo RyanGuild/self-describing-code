@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+    participant flowchart as flowchart()
+    participant get as get
+    participant collect as collect
+    participant String__from as String::from
+    participant push_str as push_str
+    participant Vec__new as Vec::new
+    participant push as push
+    participant sort as sort
+    participant dedup as dedup
+    flowchart-->>get: doc.get(root)
+    flowchart-->>collect: root_node .children .iter() .filter_map(|child| doc.get(child)) .filt...
+    flowchart-->>String__from: String::from('flowchart TD\n')
+    flowchart-->>flowchart: writeln!( out, ' subgraph {}[\'{}\']', stable_id(root.as_str()), text...
+    flowchart-->>push_str: out.push_str(' direction TB\n')
+    loop &visible
+    flowchart-->>flowchart: writeln!( out, ' {}[\'{}\']', stable_id(node.id.as_str()), text(&labe...
+    end
+    flowchart-->>push_str: out.push_str(' end\n')
+    flowchart-->>collect: visible.iter().map(|n| &n.id).collect()
+    flowchart-->>Vec__new: Vec::new()
+    loop &visible
+    loop &node.edges
+    alt !ids.contains(&&edge.to)
+    flowchart-->>flowchart: continue
+    end
+    flowchart-->>push: edges.push(( stable_id(node.id.as_str()), stable_id(edge.to.as_str())...
+    end
+    end
+    flowchart-->>sort: edges.sort()
+    flowchart-->>dedup: edges.dedup()
+    loop edges
+    alt resolved
+    flowchart-->>flowchart: '-->'
+    else else
+    flowchart-->>flowchart: '-.->'
+    end
+    flowchart-->>flowchart: writeln!(out, ' {from} {arrow}|{}| {to}', edge_label(edge_kind))
+    end
+    flowchart-->>flowchart: out

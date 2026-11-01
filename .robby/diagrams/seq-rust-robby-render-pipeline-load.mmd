@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant load as load()
+    participant load_document as load_document
+    participant Ok as Ok
+    load-->>load_document: load_document(ir)
+    load-->>load: ? (propagate)
+    load-->>Ok: Ok(from_document(document, root))

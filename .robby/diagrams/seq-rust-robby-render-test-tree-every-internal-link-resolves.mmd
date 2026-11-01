@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant every_internal_link_resolves as every_internal_link_resolves()
+    participant pages as pages
+    participant collect as collect
+    participant Vec__new as Vec::new
+    participant unwrap_or as unwrap_or
+    participant normalize as normalize
+    participant push as push
+    every_internal_link_resolves-->>pages: pages()
+    every_internal_link_resolves-->>collect: pages .iter() .map(|page| page.path.to_string_lossy().replace('\\', '...
+    every_internal_link_resolves-->>Vec__new: Vec::new()
+    loop &pages
+    every_internal_link_resolves-->>unwrap_or: page.path.parent().unwrap_or(Path::new(''))
+    loop markdown_links(&page.body)
+    every_internal_link_resolves-->>unwrap_or: link.split(' ').next().unwrap_or('')
+    alt !target.ends_with('.md')
+    every_internal_link_resolves-->>every_internal_link_resolves: continue
+    end
+    every_internal_link_resolves-->>normalize: normalize(&dir.join(target))
+    alt !known.contains(&resolved)
+    every_internal_link_resolves-->>push: broken.push(format!('{}: {link} -> {resolved}', page.path.display()))
+    end
+    end
+    end
+    every_internal_link_resolves-->>every_internal_link_resolves: assert!(broken.is_empty(), 'broken links:\n{}', broken.join('\n'))

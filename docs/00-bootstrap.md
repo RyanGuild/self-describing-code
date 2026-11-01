@@ -75,11 +75,11 @@ Observed steps draw solid (`->>`), possible-but-unobserved steps draw dashed
 
 ## Step 4 — The report artifact (`robby report`)
 
-The tool now renders the whole self-model to one file instead of leaving the
-diagrams scattered as `.mmd` fragments:
+The tool renders the self-model to Markdown instead of leaving the diagrams
+scattered as `.mmd` fragments:
 
 ```
-$ robby report --ir fixtures/m0/hello.ir.json --out docs/robby-self-model.md
+$ robby report --ir .robby/robby.ir.json --out docs/self-model
 ```
 
 Each node section contains, in order: identity and provenance, the exact source
@@ -113,9 +113,9 @@ So generation moved into `build.rs`:
 
 ```
 cargo build -p robby-cli
-  → build.rs loads the IR
+  → build.rs extracts the workspace
   → enforces the coverage invariant
-  → writes docs/robby-self-model.md
+  → writes docs/self-model/
 ```
 
 If coverage fails, the build fails. Robby cannot be compiled from a codebase
@@ -143,18 +143,86 @@ All three call one pipeline. There is no shell glue anywhere in the repo.
 ### Verification
 
 ```
-cargo build -p robby-cli                         → docs/robby-self-model.md written
-ROBBY_IR=/tmp/broken.ir.json cargo build -p robby-cli
-  robby: unclaimed code at fixtures/m0/hello.rs:14:18  "d(path)?; Ok(raw.len()) }"
-  robby: coverage invariant violated — 245 bytes claimed, 30 unclaimed
-  exit 101
+cargo build -p robby-cli                         → docs/self-model/ written
 ```
 
-### Known gap
+## Step 6 — The extractor (`robby-extract`)
 
-`build.rs` and the example are themselves code, and the map does not yet cover
-them — the IR is still hand-authored for a fixture. That is exactly what M1
-fixes: once `robby-extract` walks the workspace, the tool's own build script
-appears in its own map. Until then this is a documented hole, not a silent one.
+Until this step the map described a hand-written fixture, not Robby. That was
+the documented hole, and closing it is what makes the self-model real.
 
+`robby-extract` walks every crate under `crates/`, parses each `.rs` file with
+`syn`, and emits one node per item with a byte-exact span. Module paths become
+the node hierarchy; `use` items, impls, fields, variants, macros and test files
+are all represented. Function bodies are walked statement by statement to build
+a `Process`: calls become steps, `if`/`match` become `alt`, loops become `loop`.
 
+### Three things that had to change
+
+**Coverage claims became a union, not a frontier.** The frontier model (a parent
+may not claim a child's bytes) was wrong for item-level extraction: a function
+span legitimately covers its own body, and an impl span legitimately covers the
+braces around its methods. The frontier rule forced a synthetic node for every
+header, which is noise, not fidelity. `document_coverage` now unions all spans;
+`frontier_spans` is kept for the stricter mode. Statement-level depth is a
+different check and belongs in the extractor's own tests, where the AST is
+available.
+
+**The document declares its files.** `Document.files` is the set of sources the
+map claims to describe. The coverage gate reads it, so a file that was never
+parsed is a failure rather than an absence. `tests/` is included: an unrepresented
+test file is still unrepresented code.
+
+**Impl identity includes generic arguments.** The first run reported exactly two
+gaps, both the same bug: `impl From<&str> for Kind` and `impl From<String> for
+Kind` collapsed to one id, so one span was silently dropped. Impl ids now carry
+the rendered trait and self type. The gate caught a real extractor bug on its
+first run, which is the point of building it early.
+
+### Verification
+
+```
+crates/robby-ir/src/kind.rs      100.0%   2893/2893
+crates/robby-ir/src/model.rs    100.0%  14320/14320
+crates/robby-extract/src/lib.rs 100.0%  28491/28491
+...
+ok: every byte is owned or classified
+```
+
+Robby now maps itself: 4 crates, 18 files, ~530 nodes, 100% byte coverage. The
+build script and the example are in the map, because they are parsed like any
+other source file.
+
+## Step 7 — The map becomes a tree of pages
+
+One 14,000-line Markdown file is technically complete and practically unusable.
+Total representation does not require total *concatenation*: the map may be
+split, linked, and progressively opened without losing a byte.
+
+The report is now a tree that mirrors the code's own hierarchy:
+
+```
+docs/self-model/README.md                     global index: coverage + crate tree
+docs/self-model/<crate>/index.md              crate overview
+docs/self-model/<crate>/<module>/index.md     module overview: diagram + item table
+docs/self-model/<crate>/<module>/<item>.md    one item: source, process, edges
+```
+
+Module pages carry the `flowchart`; item pages carry the `sequenceDiagram`. Both
+link back up, and every edge links to the page of its target. 260 pages, largest
+421 lines.
+
+### Verification
+
+The link graph is tested like any other invariant:
+
+```
+every_internal_link_resolves ... ok
+no_page_is_a_wall_of_text ... ok        (fails above 1000 lines)
+every_module_has_an_index_page ... ok
+page_names_never_collide_with_index ... ok
+```
+
+`page_names_never_collide_with_index` exists because of a real bug: a function
+named `index` overwrote its own module page. Reserving the name is cheap;
+discovering the collision in a rendered document is not.

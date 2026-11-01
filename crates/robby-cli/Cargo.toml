@@ -13,6 +13,7 @@ path = "src/main.rs"
 [dependencies]
 robby-ir.workspace = true
 robby-render.workspace = true
+robby-extract.workspace = true
 clap.workspace = true
 anyhow.workspace = true
 serde_json.workspace = true
@@ -20,3 +21,4 @@ serde_json.workspace = true
 [build-dependencies]
 robby-ir.workspace = true
 robby-render.workspace = true
+robby-extract.workspace = true

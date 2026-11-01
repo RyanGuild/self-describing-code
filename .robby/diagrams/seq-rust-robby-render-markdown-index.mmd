@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant index as index()
+    participant String__from as String::from
+    participant collect as collect
+    participant unwrap_or_else as unwrap_or_else
+    index-->>String__from: String::from('| Node | Kind | Location |\n|---|---|---|\n')
+    index-->>collect: doc.nodes.keys().collect()
+    loop ids
+    index-->>index: &doc.nodes[id]
+    index-->>unwrap_or_else: node .span .as_ref() .map(|s| s.location()) .unwrap_or_else(|| '—'.to...
+    index-->>index: writeln!( out, '| `{}` | `{}` | `{}` |', node.fqn, node.kind, location )
+    end
+    index-->>index: out

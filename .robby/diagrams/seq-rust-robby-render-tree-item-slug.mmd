@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant item_slug as item_slug()
+    participant String__new as String::new
+    participant push as push
+    participant pop as pop
+    participant push_str as push_str
+    participant crate__stable_id as crate::stable_id
+    participant insert as insert
+    item_slug-->>String__new: String::new()
+    loop name.chars()
+    alt ch.is_ascii_alphanumeric()
+    item_slug-->>push: base.push(ch.to_ascii_lowercase())
+    else else
+    alt !base.is_empty() && !base.ends_with('-')
+    item_slug-->>push: base.push('-')
+    end
+    end
+    end
+    loop base.ends_with('-')
+    item_slug-->>pop: base.pop()
+    end
+    alt base.is_empty()
+    item_slug-->>push_str: base.push_str('item')
+    end
+    alt used.insert(base.clone())
+    item_slug-->>item_slug: base
+    item_slug-->>item_slug: return
+    end
+    item_slug-->>crate__stable_id: crate::stable_id(id.as_str())
+    item_slug-->>item_slug: format!('{base}-{}', &suffix[..suffix.len().min(8)])
+    item_slug-->>insert: used.insert(alt.clone())
+    item_slug-->>item_slug: alt

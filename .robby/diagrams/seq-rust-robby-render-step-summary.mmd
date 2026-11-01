@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant step_summary as step_summary()
+    alt match step.kind
+    step_summary-->>step_summary: 'call'
+    else StepKind::Return
+    step_summary-->>step_summary: 'return'
+    else StepKind::Signal
+    step_summary-->>step_summary: 'signal'
+    else StepKind::Decision
+    step_summary-->>step_summary: 'decision'
+    else StepKind::Note
+    step_summary-->>step_summary: 'note'
+    end
+    step_summary-->>step_summary: format!('{kind} {} -> {}', step.from, step.to)

@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant namespace as namespace()
+    participant unwrap_or as unwrap_or
+    namespace-->>unwrap_or: self.0.split('.').next().unwrap_or(&self.0)

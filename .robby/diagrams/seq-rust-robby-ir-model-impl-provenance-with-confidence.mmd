@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant with_confidence as with_confidence()
+    with_confidence-->>with_confidence: self.confidence = confidence.clamp(0.0, 1.0)
+    with_confidence-->>with_confidence: self

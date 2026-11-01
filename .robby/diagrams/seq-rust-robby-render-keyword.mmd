@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant keyword as keyword()
+    alt match kind
+    keyword-->>keyword: 'alt'
+    else BlockKind::Opt
+    keyword-->>keyword: 'opt'
+    else BlockKind::Loop
+    keyword-->>keyword: 'loop'
+    else BlockKind::Par
+    keyword-->>keyword: 'par'
+    else BlockKind::Break
+    keyword-->>keyword: 'break'
+    end

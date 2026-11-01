@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant item_slugs as item_slugs()
+    participant BTreeSet__new as BTreeSet::new
+    participant insert as insert
+    participant BTreeMap__new as BTreeMap::new
+    participant item_slug as item_slug
+    item_slugs-->>BTreeSet__new: BTreeSet::new()
+    item_slugs-->>insert: used.insert('index'.to_owned())
+    item_slugs-->>BTreeMap__new: BTreeMap::new()
+    loop items
+    item_slugs-->>item_slug: item_slug(&item.name, &item.id, &mut used)
+    item_slugs-->>insert: slugs.insert(item.id.clone(), slug)
+    end
+    item_slugs-->>item_slugs: slugs

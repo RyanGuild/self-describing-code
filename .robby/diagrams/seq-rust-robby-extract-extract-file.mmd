@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    participant extract_file as extract_file()
+    participant with_context as with_context
+    participant replace as replace
+    participant declare_file as declare_file
+    participant LineIndex__new as LineIndex::new
+    participant module_path as module_path
+    participant NodeId__symbol as NodeId::symbol
+    participant Node__new as Node::new
+    participant merge as merge
+    participant walk_items as walk_items
+    participant Ok as Ok
+    extract_file-->>with_context: fs::read_to_string(file).with_context(|| format!('reading {}', file.d...
+    extract_file-->>extract_file: ? (propagate)
+    extract_file-->>replace: file .strip_prefix(krate.dir.parent().and_then(|p| p.parent()).unwrap...
+    extract_file-->>declare_file: doc.declare_file(rel.clone())
+    extract_file-->>with_context: syn::parse_file(&source).with_context(|| format!('parsing {rel}'))
+    extract_file-->>extract_file: ? (propagate)
+    extract_file-->>LineIndex__new: LineIndex::new(&source)
+    extract_file-->>module_path: module_path(krate, file)
+    extract_file-->>NodeId__symbol: NodeId::symbol('rust', &path)
+    extract_file-->>Node__new: Node::new(module_id.clone(), kind::code::MODULE, path.clone())
+    extract_file-->>extract_file: module.provenance = Provenance::new(Source::Extractor)
+    alt path != krate.name
+    extract_file-->>extract_file: module.parent = Some(NodeId::symbol('rust', &krate.name))
+    end
+    extract_file-->>merge: doc.merge(module)
+    extract_file-->>extract_file: Ctx { file: &rel, source: &source, index: &index, module: path.clone(...
+    extract_file-->>walk_items: walk_items(doc, &ast.items, &module_id, &ctx, pending)
+    extract_file-->>Ok: Ok(())

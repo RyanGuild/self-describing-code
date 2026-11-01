@@ -1,0 +1,4 @@
+sequenceDiagram
+    autonumber
+    participant is_complete as is_complete()
+    is_complete-->>is_complete: !self.gaps.iter().any(|g| g.reason.is_failure())

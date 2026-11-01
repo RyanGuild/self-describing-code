@@ -7,6 +7,7 @@
 
 pub mod markdown;
 pub mod pipeline;
+pub mod tree;
 
 use std::fmt::Write as _;
 
@@ -97,60 +98,45 @@ fn keyword(kind: BlockKind) -> &'static str {
     }
 }
 
-/// Render a subtree as a Mermaid `flowchart`, clustering modules.
+/// Render a module overview as a Mermaid `flowchart`.
+///
+/// This shows the *structure* of one module: its items and how they reference
+/// each other. Imports, fields, variants and impl bodies are in the map but not
+/// in this view — they are detail, reachable by drilling down. Presentation is
+/// progressive; representation is not.
 pub fn flowchart(doc: &Document, root: &NodeId) -> String {
-    let nodes = doc.subtree(root);
-    let ids: Vec<&NodeId> = nodes.iter().map(|n| &n.id).collect();
+    let Some(root_node) = doc.get(root) else {
+        return String::from("flowchart TD\n");
+    };
+
+    let visible: Vec<&Node> = root_node
+        .children
+        .iter()
+        .filter_map(|child| doc.get(child))
+        .filter(|node| is_structural(&node.kind))
+        .collect();
 
     let mut out = String::from("flowchart TD\n");
-
-    for node in &nodes {
-        if node.kind.as_str() == kind::code::MODULE || node.kind.as_str() == kind::code::CRATE {
-            let _ = writeln!(
-                out,
-                "    subgraph {}[\"{}\"]",
-                stable_id(node.id.as_str()),
-                text(&label(node))
-            );
-            out.push_str("        direction TB\n");
-            for child in &node.children {
-                if let Some(child_node) = doc.get(child) {
-                    let _ = writeln!(
-                        out,
-                        "        {}[\"{}\"]",
-                        stable_id(child_node.id.as_str()),
-                        text(&label(child_node))
-                    );
-                }
-            }
-            out.push_str("    end\n");
-        }
+    let _ = writeln!(
+        out,
+        "    subgraph {}[\"{}\"]",
+        stable_id(root.as_str()),
+        text(&label(root_node))
+    );
+    out.push_str("        direction TB\n");
+    for node in &visible {
+        let _ = writeln!(
+            out,
+            "        {}[\"{}\"]",
+            stable_id(node.id.as_str()),
+            text(&label(node))
+        );
     }
+    out.push_str("    end\n");
 
-    // Nodes outside a module group, plus any node not already emitted as a child.
-    for node in &nodes {
-        let in_group = node
-            .parent
-            .as_ref()
-            .and_then(|p| doc.get(p))
-            .is_some_and(|p| {
-                p.kind.as_str() == kind::code::MODULE || p.kind.as_str() == kind::code::CRATE
-            });
-        if !in_group
-            && node.kind.as_str() != kind::code::MODULE
-            && node.kind.as_str() != kind::code::CRATE
-        {
-            let _ = writeln!(
-                out,
-                "    {}[\"{}\"]",
-                stable_id(node.id.as_str()),
-                text(&label(node))
-            );
-        }
-    }
-
+    let ids: Vec<&NodeId> = visible.iter().map(|n| &n.id).collect();
     let mut edges: Vec<(String, String, EdgeKind, bool)> = Vec::new();
-    for node in &nodes {
+    for node in &visible {
         for edge in &node.edges {
             if !ids.contains(&&edge.to) {
                 continue;
@@ -172,6 +158,18 @@ pub fn flowchart(doc: &Document, root: &NodeId) -> String {
     }
 
     out
+}
+
+/// Kinds that belong in a module overview.
+fn is_structural(kind: &robby_ir::Kind) -> bool {
+    !matches!(
+        kind.as_str(),
+        kind::code::IMPORT
+            | kind::code::FIELD
+            | kind::code::VARIANT
+            | kind::code::VERBATIM
+            | kind::code::IMPL
+    )
 }
 
 fn edge_label(kind: EdgeKind) -> &'static str {

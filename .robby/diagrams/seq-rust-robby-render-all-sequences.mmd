@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant all_sequences as all_sequences()
+    participant collect as collect
+    participant sort_by as sort_by
+    all_sequences-->>collect: doc .nodes .values() .filter_map(|node| { node.process .as_ref() .map...
+    all_sequences-->>sort_by: out.sort_by(|a, b| a.0.cmp(&b.0))
+    all_sequences-->>all_sequences: out

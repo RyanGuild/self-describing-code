@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant short_fqn as short_fqn()
+    participant to_owned as to_owned
+    short_fqn-->>to_owned: node.fqn .strip_prefix(&format!('{crate_dir}::')) .unwrap_or(&node.fq...

@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant fully_covered_file_has_no_gaps as fully_covered_file_has_no_gaps()
+    participant file_coverage as file_coverage
+    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: 'fn add(a: i32, b: i32) -> i32 { a + b }'
+    fully_covered_file_has_no_gaps-->>file_coverage: file_coverage(FILE, source, &[span(source, 0, source.len() as u32)])
+    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert!(report.is_complete())
+    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert!(report.gaps.is_empty())
+    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert_eq!(report.covered_bytes, source.len() as u32)
+    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert_eq!(report.ratio(), 1.0)

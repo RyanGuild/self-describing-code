@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant uncovered_bytes as uncovered_bytes()
+    participant sum as sum
+    uncovered_bytes-->>sum: self.gaps .iter() .filter(|g| g.reason.is_failure()) .map(|g| g.span....

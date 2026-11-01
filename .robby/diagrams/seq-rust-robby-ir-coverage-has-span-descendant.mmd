@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant has_span_descendant as has_span_descendant()
+    participant get as get
+    participant any as any
+    has_span_descendant-->>get: doc.get(id)
+    has_span_descendant-->>any: node.children.iter().any(|child| { doc.get(child).is_some_and(|c| c.s...

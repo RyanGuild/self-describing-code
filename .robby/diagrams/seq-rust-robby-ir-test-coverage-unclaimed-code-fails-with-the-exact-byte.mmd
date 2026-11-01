@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    participant unclaimed_code_fails_with_the_exact_byte as unclaimed_code_fails_with_the_exact_byte()
+    participant file_coverage as file_coverage
+    participant expect as expect
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: 'fn a() {}\nlet x = 1 \n'
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: source.find('\n').unwrap() as u32 + 1
+    unclaimed_code_fails_with_the_exact_byte-->>file_coverage: file_coverage(FILE, source, &[span(source, 0, end)])
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: assert!(!report.is_complete(), 'unclaimed code must fail the gate')
+    unclaimed_code_fails_with_the_exact_byte-->>expect: report .gaps .iter() .find(|g| g.reason.is_failure()) .expect('a fail...
+    alt match failure.reason
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: assert_eq!(at.byte, 10)
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: assert_eq!(at.line, 2)
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: assert_eq!(at.column, 1)
+    else ref other
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: panic!('expected Unknown, got {other:?}')
+    end
+    unclaimed_code_fails_with_the_exact_byte-->>unclaimed_code_fails_with_the_exact_byte: assert_eq!(report.uncovered_bytes(), source.len() as u32 - end)

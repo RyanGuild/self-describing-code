@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant nav as nav()
+    participant String__new as String::new
+    participant unwrap_or_default as unwrap_or_default
+    participant and_then as and_then
+    participant unwrap_or_else as unwrap_or_else
+    participant push_str as push_str
+    nav-->>String__new: String::new()
+    nav-->>nav: write!(out, '[Self-model]({})', rel_link(page, Path::new('README.md')))
+    nav-->>unwrap_or_default: crate_of(node).unwrap_or_default()
+    alt item
+    nav-->>and_then: node.parent .as_ref() .and_then(|id| doc.get(id)) .and_then(|parent| ...
+    else else
+    nav-->>and_then: node.parent .as_ref() .and_then(|id| doc.get(id)) .and_then(|parent| ...
+    end
+    alt let Some(target) = parent_target
+    alt item
+    nav-->>unwrap_or_default: node.parent .as_ref() .and_then(|id| doc.get(id)) .map(|parent| short...
+    else else
+    nav-->>unwrap_or_else: node.parent .as_ref() .and_then(|id| doc.get(id)) .map(|parent| short...
+    end
+    nav-->>nav: write!(out, ' · [{}]({})', label, rel_link(page, &target))
+    end
+    nav-->>push_str: out.push_str('\n\n')
+    nav-->>nav: out

@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant process as process()
+    participant Process__new as Process::new
+    participant participant as participant
+    participant step as step
+    process-->>Process__new: Process::new()
+    process-->>participant: p.participant('caller', 'caller', Kind::from(code::FUNCTION))
+    process-->>participant: p.participant('io', 'io::load', Kind::from(code::FUNCTION))
+    loop steps
+    process-->>step: p.step(s)
+    end
+    process-->>process: p

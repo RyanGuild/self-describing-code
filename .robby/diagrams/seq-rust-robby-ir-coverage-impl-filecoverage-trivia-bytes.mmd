@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant trivia_bytes as trivia_bytes()
+    participant sum as sum
+    trivia_bytes-->>sum: self.gaps .iter() .filter(|g| !g.reason.is_failure()) .map(|g| g.span...

@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant count_modules as count_modules()
+    participant count as count
+    count_modules-->>count: doc.subtree(&krate.id) .iter() .filter(|node| node.kind.as_str() == k...

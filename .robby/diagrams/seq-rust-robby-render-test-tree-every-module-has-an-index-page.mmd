@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant every_module_has_an_index_page as every_module_has_an_index_page()
+    participant pages as pages
+    participant count as count
+    every_module_has_an_index_page-->>pages: pages()
+    every_module_has_an_index_page-->>count: pages .iter() .filter(|page| page.path.file_name().is_some_and(|name|...
+    every_module_has_an_index_page-->>count: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), r...
+    every_module_has_an_index_page-->>every_module_has_an_index_page: assert_eq!( indexes, modules, 'every module and crate should have exa...

@@ -166,11 +166,8 @@ fn gap_preview_is_whitespace_collapsed() {
 }
 
 #[test]
-fn parent_spans_do_not_cover_their_children() {
-    // A structural parent span must never satisfy the gate on its own,
-    // otherwise every file with one top-level item is trivially 100%.
+fn frontier_spans_exclude_parents_that_have_span_children() {
     let source = "fn a() {}\nfn b() {}\n";
-
     let mut doc = Document::new("test");
     let mut parent = Node::new(NodeId::from("rust://demo"), kind::code::MODULE, "demo");
     parent.span = Some(Span::new(FILE, source, 0, source.len() as u32));
@@ -181,21 +178,27 @@ fn parent_spans_do_not_cover_their_children() {
     a.span = Some(Span::new(FILE, source, 0, 9));
     doc.insert(a);
 
+    let frontier = robby_ir::coverage::frontier_spans(&doc);
+    let spans = frontier.get(FILE).expect("frontier");
+    assert_eq!(spans.len(), 1, "only the leaf claims");
+    assert_eq!(spans[0].byte_range(), (0, 9));
+}
+
+#[test]
+fn document_coverage_is_union_at_any_depth() {
+    let source = "fn a() {}\nfn b() {}\n";
+    let mut doc = Document::new("test");
+    let mut parent = Node::new(NodeId::from("rust://demo"), kind::code::MODULE, "demo");
+    parent.span = Some(Span::new(FILE, source, 0, source.len() as u32));
+    doc.insert(parent);
+
     let mut sources = BTreeMap::new();
     sources.insert(FILE.to_owned(), source.to_owned());
 
     let report = document_coverage(&doc, &sources);
     assert!(
-        !report.is_complete(),
-        "fn b is unclaimed and must fail even though the module span covers it"
+        report.is_complete(),
+        "a parent span is a legitimate claim under the union model"
     );
-
-    // Add the missing child: now the frontier covers the file.
-    let mut b = Node::new(NodeId::symbol("rust", "demo::b"), kind::code::FUNCTION, "demo::b");
-    b.parent = Some(NodeId::from("rust://demo"));
-    b.span = Some(Span::new(FILE, source, 10, source.len() as u32));
-    doc.insert(b);
-
-    let report = document_coverage(&doc, &sources);
-    assert!(report.is_complete());
 }
+

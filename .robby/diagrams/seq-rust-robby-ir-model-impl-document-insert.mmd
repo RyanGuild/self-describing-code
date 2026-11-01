@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    participant insert as insert()
+    participant clone as clone
+    participant push as push
+    insert-->>clone: node.id.clone()
+    alt node.parent.is_none()
+    insert-->>push: self.roots.push(id.clone())
+    else else
+    alt let Some(parent) = &node.parent
+    alt let Some(p) = self.nodes.get_mut(parent)
+    alt !p.children.contains(&id)
+    insert-->>push: p.children.push(id.clone())
+    end
+    end
+    end
+    end
+    insert-->>insert: self.nodes.insert(id, node)

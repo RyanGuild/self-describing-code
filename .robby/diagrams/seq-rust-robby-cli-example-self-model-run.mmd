@@ -1,0 +1,46 @@
+sequenceDiagram
+    autonumber
+    participant run as run()
+    participant Args__parse as Args::parse
+    participant pipeline__load as pipeline::load
+    participant robby_extract__extract as robby_extract::extract
+    participant pipeline__from_document as pipeline::from_document
+    participant pipeline__write_document as pipeline::write_document
+    participant pipeline__write_report as pipeline::write_report
+    participant pipeline__render_files as pipeline::render_files
+    participant Ok as Ok
+    run-->>Args__parse: Args::parse()
+    alt match &args.ir
+    run-->>pipeline__load: pipeline::load(ir, &args.root)
+    run-->>run: ? (propagate)
+    else None
+    run-->>robby_extract__extract: robby_extract::extract(&args.root)
+    run-->>run: ? (propagate)
+    run-->>pipeline__from_document: pipeline::from_document(document, &args.root)
+    end
+    run-->>run: println!('{}', loaded.summary())
+    alt args.stdout
+    run-->>run: print!( '{}', robby_render::markdown::report( &loaded.document, Some(...
+    else else
+    run-->>pipeline__write_document: pipeline::write_document(&loaded.document, &args.document)
+    run-->>run: ? (propagate)
+    run-->>pipeline__write_report: pipeline::write_report(&loaded, &args.out)
+    run-->>run: ? (propagate)
+    run-->>run: println!('wrote {}', args.document.display())
+    run-->>run: println!('wrote {pages} page(s) to {}', args.out.display())
+    end
+    run-->>pipeline__render_files: pipeline::render_files(&loaded.document, &args.diagrams)
+    run-->>run: ? (propagate)
+    run-->>run: println!('wrote {count} diagram(s) to {}', args.diagrams.display())
+    alt loaded.is_ok()
+    run-->>Ok: Ok(ExitCode::SUCCESS)
+    run-->>run: return
+    end
+    loop loaded .diagnostics .iter() .filter(|d| d.severity == robby_ir::Sever...
+    run-->>run: eprintln!('[{}] {}', diagnostic.code, diagnostic.message)
+    end
+    loop loaded.coverage.failures()
+    run-->>run: eprintln!('unclaimed at {} {:?}', gap.span.location(), gap.preview)
+    end
+    run-->>run: eprintln!('coverage invariant violated')
+    run-->>Ok: Ok(ExitCode::FAILURE)

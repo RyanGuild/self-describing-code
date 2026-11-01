@@ -74,6 +74,11 @@ pub mod code {
     pub const BLOCK: &str = "code.block";
     pub const STATEMENT: &str = "code.statement";
     pub const EXPRESSION: &str = "code.expression";
+    pub const IMPORT: &str = "code.import";
+    pub const EXTERN_CRATE: &str = "code.extern_crate";
+    pub const FOREIGN_MOD: &str = "code.foreign_mod";
+    pub const TRAIT_ALIAS: &str = "code.trait_alias";
+    pub const VERBATIM: &str = "code.verbatim";
     pub const UNKNOWN: &str = "code.unknown";
 }
 

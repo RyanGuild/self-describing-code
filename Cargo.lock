@@ -184,9 +184,20 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "clap",
+ "robby-extract",
  "robby-ir",
  "robby-render",
  "serde_json",
+]
+
+[[package]]
+name = "robby-extract"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "proc-macro2",
+ "robby-ir",
+ "syn",
 ]
 
 [[package]]
@@ -204,6 +215,7 @@ name = "robby-render"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "robby-extract",
  "robby-ir",
  "serde",
  "serde_json",

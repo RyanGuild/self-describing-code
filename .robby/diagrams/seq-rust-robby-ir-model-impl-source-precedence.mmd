@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant precedence as precedence()
+    alt match self
+    precedence-->>precedence: 0
+    else Source::Agent
+    precedence-->>precedence: 1
+    else Source::Macro
+    precedence-->>precedence: 2
+    else Source::Extractor
+    precedence-->>precedence: 3
+    else Source::Hand
+    precedence-->>precedence: 4
+    end

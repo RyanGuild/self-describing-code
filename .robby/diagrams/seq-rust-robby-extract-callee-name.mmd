@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    participant callee_name as callee_name()
+    participant unwrap_or_else as unwrap_or_else
+    participant to_string as to_string
+    participant to_owned as to_owned
+    alt match func
+    callee_name-->>unwrap_or_else: p .path .segments .last() .map(|s| s.ident.to_string()) .unwrap_or_el...
+    else Expr::Field(f)
+    alt match &f.member
+    callee_name-->>to_string: n.to_string()
+    else syn::Member::Unnamed(i)
+    callee_name-->>callee_name: format!('field{}', i.index)
+    end
+    callee_name-->>to_owned: 'call'.to_owned()
+    end

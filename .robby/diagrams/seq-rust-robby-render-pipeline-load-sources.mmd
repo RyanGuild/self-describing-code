@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant load_sources as load_sources()
+    participant BTreeMap__new as BTreeMap::new
+    participant collect as collect
+    participant clone as clone
+    participant join as join
+    participant insert as insert
+    load_sources-->>BTreeMap__new: BTreeMap::new()
+    alt doc.files.is_empty()
+    load_sources-->>collect: coverage::all_spans(doc).keys().cloned().collect()
+    else else
+    load_sources-->>clone: doc.files.clone()
+    end
+    loop files
+    load_sources-->>join: root.join(&file)
+    alt let Ok(text) = fs::read_to_string(&path)
+    load_sources-->>insert: sources.insert(file, text)
+    end
+    end
+    load_sources-->>load_sources: sources

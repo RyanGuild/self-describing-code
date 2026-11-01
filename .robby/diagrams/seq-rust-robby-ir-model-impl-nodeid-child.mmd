@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant child as child()
+    participant Self as Self
+    child-->>Self: Self(format!('{} {}', parent.0, ordinal))

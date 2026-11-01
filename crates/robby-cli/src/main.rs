@@ -48,6 +48,15 @@ enum Command {
         #[arg(long)]
         out: PathBuf,
     },
+    /// Extract the workspace with syn and write the IR document.
+    Extract {
+        /// Workspace root to walk.
+        #[arg(long, default_value = ".")]
+        root: PathBuf,
+        /// Write the document here instead of stdout.
+        #[arg(long)]
+        out: Option<PathBuf>,
+    },
     /// Render the whole self-model to one Markdown file.
     Report {
         #[arg(long)]
@@ -99,6 +108,7 @@ fn run() -> Result<ExitCode> {
             println!("wrote {count} diagram(s) to {}", out.display());
             Ok(ExitCode::SUCCESS)
         }
+        Command::Extract { root, out } => extract(&root, out),
         Command::Report {
             ir,
             source_root,
@@ -169,6 +179,27 @@ fn print_human(loaded: &pipeline::Loaded) {
     }
 }
 
+fn extract(root: &std::path::Path, out: Option<PathBuf>) -> Result<ExitCode> {
+    let doc = robby_extract::extract(root)?;
+    let json = serde_json::to_string_pretty(&doc)?;
+    match out {
+        Some(path) => {
+            if let Some(parent) = path.parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+            std::fs::write(&path, json)?;
+            println!(
+                "wrote {} ({} nodes, {} files)",
+                path.display(),
+                doc.nodes.len(),
+                doc.files.len()
+            );
+        }
+        None => println!("{json}"),
+    }
+    Ok(ExitCode::SUCCESS)
+}
+
 fn report(
     ir: &std::path::Path,
     source_root: &std::path::Path,
@@ -177,8 +208,8 @@ fn report(
     let loaded = pipeline::load(ir, source_root)?;
     match out {
         Some(path) => {
-            pipeline::write_report(&loaded, &path)?;
-            println!("wrote {}", path.display());
+            let pages = pipeline::write_report(&loaded, &path)?;
+            println!("wrote {pages} page(s) to {}", path.display());
         }
         None => print!(
             "{}",

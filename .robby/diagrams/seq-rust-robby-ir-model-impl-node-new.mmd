@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant new as new()
+    participant into as into
+    participant to_owned as to_owned
+    new-->>into: fqn.into()
+    new-->>to_owned: fqn.rsplit('::').next().unwrap_or(&fqn).to_owned()
+    new-->>new: Self { id: id.into(), kind: kind.into(), name, fqn, lang: Lang::Rust,...

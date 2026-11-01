@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    participant coverage_section as coverage_section()
+    participant push_str as push_str
+    participant to_owned as to_owned
+    participant push as push
+    participant collect as collect
+    coverage_section-->>push_str: out.push_str(' Coverage\n\n')
+    coverage_section-->>push_str: out.push_str('| File | Code | Claimed | Trivia | Status |\n')
+    coverage_section-->>push_str: out.push_str('|---|---:|---:|---:|---|\n')
+    loop report.worst_first()
+    alt file.is_complete()
+    coverage_section-->>to_owned: 'ok'.to_owned()
+    else else
+    coverage_section-->>coverage_section: format!('**{} bytes unclaimed**', file.uncovered_bytes())
+    end
+    coverage_section-->>coverage_section: writeln!( out, '| `{}` | {:.1}% | {}/{} | {} | {} |', file.file, file...
+    end
+    coverage_section-->>push: out.push('\n')
+    coverage_section-->>collect: report.failures().collect()
+    alt failures.is_empty()
+    coverage_section-->>push_str: out.push_str('Every byte is owned by a node or classified as trivia.\...
+    else else
+    coverage_section-->>push_str: out.push_str(' Unclaimed code\n\n')
+    loop failures
+    coverage_section-->>coverage_section: writeln!( out, '- `{}` — `{}` — `{}`', file.file, gap.span.location()...
+    end
+    coverage_section-->>push: out.push('\n')
+    end

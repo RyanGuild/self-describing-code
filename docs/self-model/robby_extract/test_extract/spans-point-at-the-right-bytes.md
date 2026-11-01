@@ -1,0 +1,59 @@
+# `robby_extract::test_extract::spans_point_at_the_right_bytes`
+
+[Self-model](../../README.md) · [test_extract](index.md)
+
+| | |
+|---|---|
+| kind | `code.function` |
+| signature | `fn spans_point_at_the_right_bytes()` |
+| location | [`crates/robby-extract/tests/extract.rs:71`](../../../../crates/robby-extract/tests/extract.rs#L71) |
+| provenance | extractor · confidence 1.00 |
+
+```rust
+#[test]
+fn spans_point_at_the_right_bytes() {
+    let root = root();
+    let doc = robby_extract::extract(&root).expect("extract");
+
+    let node = doc
+        .nodes
+        .values()
+        .find(|n| n.fqn == "robby_ir::coverage::file_coverage")
+        .expect("file_coverage");
+
+    let span = node.span.as_ref().expect("span");
+    let source = std::fs::read_to_string(root.join(&span.file)).expect("source");
+    let slice = &source[span.start.byte as usize..span.end.byte as usize];
+
+    // The span includes the doc comment: attributes belong to the item, and
+    // that is what makes coverage close over `///` lines without special cases.
+    assert!(
+        slice.contains("pub fn file_coverage"),
+        "span did not land on the function: {slice:?}"
+    );
+    assert!(slice.trim_end().ends_with('}'), "span is truncated");
+}
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant spans_point_at_the_right_bytes as spans_point_at_the_right_bytes()
+    participant root as root
+    participant expect as expect
+    spans_point_at_the_right_bytes-->>root: root()
+    spans_point_at_the_right_bytes-->>expect: robby_extract::extract(&root).expect('extract')
+    spans_point_at_the_right_bytes-->>expect: doc .nodes .values() .find(|n| n.fqn == 'robby_ir::coverage::file_cov...
+    spans_point_at_the_right_bytes-->>expect: node.span.as_ref().expect('span')
+    spans_point_at_the_right_bytes-->>expect: std::fs::read_to_string(root.join(&span.file)).expect('source')
+    spans_point_at_the_right_bytes-->>spans_point_at_the_right_bytes: &source[span.start.byte as usize..span.end.byte as usize]
+    spans_point_at_the_right_bytes-->>spans_point_at_the_right_bytes: assert!( slice.contains('pub fn file_coverage'), 'span did not land o...
+    spans_point_at_the_right_bytes-->>spans_point_at_the_right_bytes: assert!(slice.trim_end().ends_with('}'), 'span is truncated')
+```
+
+8 steps · 0 observed · 8 possible only
+
+**Edges**
+
+- calls → [`robby_extract::test_extract::root`](root.md)
+

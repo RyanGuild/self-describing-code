@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant page_paths as page_paths()
+    participant collect as collect
+    page_paths-->>collect: tree(doc, None, None, 'docs/self-model') .into_iter() .map(|page| pag...

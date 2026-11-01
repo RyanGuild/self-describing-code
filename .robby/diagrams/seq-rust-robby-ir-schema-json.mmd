@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant schema_json as schema_json()
+    participant expect as expect
+    schema_json-->>expect: serde_json::to_string_pretty(&schema()).expect('schema is always seri...

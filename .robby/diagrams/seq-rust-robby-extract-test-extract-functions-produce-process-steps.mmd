@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant functions_produce_process_steps as functions_produce_process_steps()
+    participant root as root
+    participant expect as expect
+    functions_produce_process_steps-->>root: root()
+    functions_produce_process_steps-->>expect: robby_extract::extract(&root).expect('extract')
+    functions_produce_process_steps-->>expect: doc .nodes .values() .find(|node| node.fqn == 'robby_extract::extract...
+    functions_produce_process_steps-->>expect: extract_fn.process.as_ref().expect('process')
+    functions_produce_process_steps-->>functions_produce_process_steps: assert!( process.steps.len() >= 3, 'expected the body to produce step...
+    functions_produce_process_steps-->>functions_produce_process_steps: assert!(process.participants.len() >= 2)

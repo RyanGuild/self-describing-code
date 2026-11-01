@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant report_without_sources_still_renders as report_without_sources_still_renders()
+    participant fixture as fixture
+    participant report as report
+    report_without_sources_still_renders-->>fixture: fixture()
+    report_without_sources_still_renders-->>report: report(&doc, None, None)
+    report_without_sources_still_renders-->>report_without_sources_still_renders: assert!(out.contains('demo::a'))
+    report_without_sources_still_renders-->>report_without_sources_still_renders: assert!(!out.contains('pub fn a() {'))

@@ -1,0 +1,42 @@
+sequenceDiagram
+    autonumber
+    participant run as run()
+    participant Cli__parse as Cli::parse
+    participant robby_ir__schema_json as robby_ir::schema_json
+    participant std__fs__create_dir_all as std::fs::create_dir_all
+    participant std__fs__write as std::fs::write
+    participant Ok as Ok
+    participant check as check
+    participant pipeline__load as pipeline::load
+    participant pipeline__render_files as pipeline::render_files
+    participant extract as extract
+    participant report as report
+    run-->>Cli__parse: Cli::parse()
+    alt match cli.command
+    run-->>robby_ir__schema_json: robby_ir::schema_json()
+    alt match out
+    alt let Some(parent) = path.parent()
+    run-->>std__fs__create_dir_all: std::fs::create_dir_all(parent)
+    run-->>run: ? (propagate)
+    end
+    run-->>std__fs__write: std::fs::write(&path, schema)
+    run-->>run: ? (propagate)
+    run-->>run: println!('wrote {}', path.display())
+    else None
+    run-->>run: println!('{schema}')
+    end
+    run-->>Ok: Ok(ExitCode::SUCCESS)
+    else Command::Check { ir, source_root, json, }
+    run-->>check: check(&ir, &source_root, json)
+    else Command::Render { ir, out }
+    run-->>pipeline__load: pipeline::load(&ir, &PathBuf::from('.'))
+    run-->>run: ? (propagate)
+    run-->>pipeline__render_files: pipeline::render_files(&loaded.document, &out)
+    run-->>run: ? (propagate)
+    run-->>run: println!('wrote {count} diagram(s) to {}', out.display())
+    run-->>Ok: Ok(ExitCode::SUCCESS)
+    else Command::Extract { root, out }
+    run-->>extract: extract(&root, out)
+    else Command::Report { ir, source_root, out, }
+    run-->>report: report(&ir, &source_root, out)
+    end

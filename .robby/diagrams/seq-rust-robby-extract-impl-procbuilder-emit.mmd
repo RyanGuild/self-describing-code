@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant emit as emit()
+    participant sanitize as sanitize
+    participant participant as participant
+    participant step as step
+    emit-->>sanitize: sanitize(&self.me)
+    emit-->>sanitize: sanitize(to)
+    alt from == to_id
+    emit-->>participant: self.process .participant(to_id.clone(), self.me.clone(), Kind::from(...
+    else else
+    emit-->>participant: self.process .participant(to_id.clone(), to.to_owned(), Kind::from(ki...
+    end
+    emit-->>step: self.process.step(Step { from, to: to_id, label, kind: step_kind, obs...

@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant extract as extract()
+    participant Document__new as Document::new
+    participant Vec__new as Vec::new
+    participant discover_crates as discover_crates
+    participant Node__new as Node::new
+    participant merge as merge
+    participant extract_file as extract_file
+    participant resolve_calls as resolve_calls
+    participant Ok as Ok
+    extract-->>Document__new: Document::new('robby-extract')
+    extract-->>Vec__new: Vec::new()
+    extract-->>discover_crates: discover_crates(root)
+    extract-->>extract: ? (propagate)
+    loop &crates
+    extract-->>Node__new: Node::new( NodeId::symbol('rust', &krate.name), kind::code::CRATE, kr...
+    extract-->>extract: crate_node.provenance = Provenance::new(Source::Extractor)
+    extract-->>merge: doc.merge(crate_node)
+    loop &krate.files
+    extract-->>extract_file: extract_file(&mut doc, krate, file, &mut pending)
+    extract-->>extract: ? (propagate)
+    end
+    end
+    extract-->>resolve_calls: resolve_calls(&mut doc, pending)
+    extract-->>Ok: Ok(doc)

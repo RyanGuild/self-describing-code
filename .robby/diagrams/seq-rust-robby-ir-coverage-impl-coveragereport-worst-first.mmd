@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant worst_first as worst_first()
+    participant collect as collect
+    participant sort_by as sort_by
+    worst_first-->>collect: self.files.iter().collect()
+    worst_first-->>sort_by: files.sort_by(|a, b| { a.code_ratio() .partial_cmp(&b.code_ratio()) ....
+    worst_first-->>worst_first: files

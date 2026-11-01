@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant watched_files as watched_files()
+    participant collect as collect
+    watched_files-->>collect: loaded .sources .keys() .map(PathBuf::from) .collect::<Vec<_>>()

@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    participant normalize as normalize()
+    participant Vec__new as Vec::new
+    participant pop as pop
+    participant push as push
+    participant join as join
+    normalize-->>Vec__new: Vec::new()
+    loop path.components()
+    alt match component
+    normalize-->>pop: parts.pop()
+    else Component::Normal(part)
+    normalize-->>push: parts.push(part.to_string_lossy().to_string())
+    end
+    end
+    normalize-->>join: parts.join('/')

@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant stable_id as stable_id()
+    stable_id-->>stable_id: 0xcbf2_9ce4_8422_2325
+    loop input.as_bytes()
+    stable_id-->>stable_id: hash ^= u64::from(*byte)
+    stable_id-->>stable_id: hash = hash.wrapping_mul(0x0000_0100_0000_01b3)
+    end
+    stable_id-->>stable_id: format!('n_{hash:016x}')

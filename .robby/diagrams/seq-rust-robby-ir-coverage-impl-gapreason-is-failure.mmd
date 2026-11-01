@@ -1,0 +1,4 @@
+sequenceDiagram
+    autonumber
+    participant is_failure as is_failure()
+    is_failure-->>is_failure: matches!(self, GapReason::Unknown { .. })

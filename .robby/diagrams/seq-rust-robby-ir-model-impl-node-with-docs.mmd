@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant with_docs as with_docs()
+    with_docs-->>with_docs: self.docs = Some(docs.into())
+    with_docs-->>with_docs: self
