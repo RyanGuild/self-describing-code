@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "generator": "robby-fixture-m0",
+  "nodes": {
+    "rust://hello": {
+      "id": "rust://hello",
+      "kind": "code.module",
+      "name": "hello",
+      "fqn": "hello",
+      "lang": "rust",
+      "provenance": { "source": "hand", "confidence": 1.0 },
+      "children": ["rust://hello::load", "rust://hello::load_len"]
+    },
+    "rust://hello::load": {
+      "id": "rust://hello::load",
+      "kind": "code.function",
+      "name": "load",
+      "fqn": "hello::load",
+      "lang": "rust",
+      "span": {
+        "file": "fixtures/m0/hello.rs",
+        "start": { "line": 4, "column": 1, "byte": 90 },
+        "end": { "line": 10, "column": 2, "byte": 264 }
+      },
+      "signature": "fn load(path: &str) -> Result<String, Error>",
+      "docs": "Loads a config file, failing on empty input.",
+      "provenance": { "source": "hand", "confidence": 1.0 },
+      "parent": "rust://hello",
+      "process": {
+        "participants": [
+          { "id": "caller", "label": "load", "kind": "code.function" },
+          { "id": "fs", "label": "std::fs", "kind": "code.module" }
+        ],
+        "steps": [
+          {
+            "from": "caller",
+            "to": "fs",
+            "label": "read_to_string(path)",
+            "kind": "call",
+            "observed": true
+          },
+          {
+            "from": "caller",
+            "to": "caller",
+            "label": "is_empty()",
+            "kind": "decision",
+            "observed": true,
+            "blocks": [{ "kind": "alt", "label": "raw.is_empty()" }]
+          },
+          {
+            "from": "caller",
+            "to": "caller",
+            "label": "Err(Error::Empty)",
+            "kind": "return",
+            "observed": false,
+            "blocks": [{ "kind": "alt", "label": "raw.is_empty()" }]
+          },
+          {
+            "from": "caller",
+            "to": "caller",
+            "label": "Ok(raw)",
+            "kind": "return",
+            "observed": true
+          }
+        ]
+      }
+    },
+    "rust://hello::load_len": {
+      "id": "rust://hello::load_len",
+      "kind": "code.function",
+      "name": "load_len",
+      "fqn": "hello::load_len",
+      "lang": "rust",
+      "span": {
+        "file": "fixtures/m0/hello.rs",
+        "start": { "line": 13, "column": 1, "byte": 309 },
+        "end": { "line": 16, "column": 2, "byte": 409 }
+      },
+      "signature": "fn load_len(path: &str) -> Result<usize, Error>",
+      "docs": "Loads a config and reports its length.",
+      "provenance": { "source": "hand", "confidence": 1.0 },
+      "parent": "rust://hello",
+      "edges": [
+        { "to": "rust://hello::load", "kind": "calls", "confidence": 1.0, "resolved": true }
+      ],
+      "process": {
+        "participants": [
+          { "id": "caller", "label": "load_len", "kind": "code.function" },
+          { "id": "load", "label": "load", "kind": "code.function" }
+        ],
+        "steps": [
+          {
+            "from": "caller",
+            "to": "load",
+            "label": "load(path)",
+            "kind": "call",
+            "observed": true
+          },
+          {
+            "from": "caller",
+            "to": "caller",
+            "label": "raw.len()",
+            "kind": "call",
+            "observed": true
+          }
+        ]
+      }
+    }
+  },
+  "roots": ["rust://hello"]
+}

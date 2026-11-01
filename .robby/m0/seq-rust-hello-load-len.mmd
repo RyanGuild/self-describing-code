@@ -1,0 +1,6 @@
+sequenceDiagram
+    autonumber
+    participant caller as load_len
+    participant load as load
+    caller->>load: load(path)
+    caller->>caller: raw.len()

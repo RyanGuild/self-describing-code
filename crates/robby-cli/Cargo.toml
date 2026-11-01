@@ -1,0 +1,18 @@
+[package]
+name = "robby-cli"
+description = "The robby command: schema, check, render."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "robby"
+path = "src/main.rs"
+
+[dependencies]
+robby-ir.workspace = true
+robby-render.workspace = true
+clap.workspace = true
+anyhow.workspace = true
+serde_json.workspace = true

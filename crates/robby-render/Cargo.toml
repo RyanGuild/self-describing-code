@@ -1,0 +1,12 @@
+[package]
+name = "robby-render"
+description = "Deterministic Mermaid views over Robby IR. Never stores markup."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+robby-ir.workspace = true
+serde.workspace = true
+serde_json.workspace = true

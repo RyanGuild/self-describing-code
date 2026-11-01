@@ -1,0 +1,441 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Document",
+  "description": "The whole graph for one workspace snapshot.",
+  "type": "object",
+  "properties": {
+    "generator": {
+      "description": "Tool name and version that produced this document.",
+      "type": "string"
+    },
+    "nodes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/Node"
+      }
+    },
+    "roots": {
+      "description": "Node ids with no parent.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NodeId"
+      }
+    },
+    "schema_version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "schema_version",
+    "generator",
+    "nodes",
+    "roots"
+  ],
+  "$defs": {
+    "Block": {
+      "description": "A control-flow frame enclosing a step.\n\nFrames form a stack per step. The renderer diffs consecutive stacks and\nemits `alt` / `else` / `opt` / `loop` / `end` accordingly, which keeps the\nIR flat and diff-friendly while still expressing nesting.",
+      "type": "object",
+      "properties": {
+        "branch": {
+          "description": "For `alt`: which branch this step belongs to. Rendered as `else`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "$ref": "#/$defs/BlockKind"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "label"
+      ]
+    },
+    "BlockKind": {
+      "type": "string",
+      "enum": [
+        "alt",
+        "opt",
+        "loop",
+        "par",
+        "break"
+      ]
+    },
+    "Edge": {
+      "description": "A directed relationship between nodes.",
+      "type": "object",
+      "properties": {
+        "confidence": {
+          "type": "number",
+          "format": "float",
+          "default": 0.0
+        },
+        "kind": {
+          "$ref": "#/$defs/EdgeKind"
+        },
+        "resolved": {
+          "description": "`false` when the target could not be resolved to a node in this graph.\n\nUnresolved edges are kept, never dropped. Losing edges silently is how\na map stops being trustworthy.",
+          "type": "boolean",
+          "default": true
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "to": {
+          "$ref": "#/$defs/NodeId"
+        }
+      },
+      "required": [
+        "to",
+        "kind"
+      ]
+    },
+    "EdgeKind": {
+      "type": "string",
+      "enum": [
+        "contains",
+        "calls",
+        "uses",
+        "imports",
+        "implements",
+        "extends",
+        "returns",
+        "field",
+        "references"
+      ]
+    },
+    "Kind": {
+      "description": "A namespaced, open-ended kind tag.",
+      "type": "string"
+    },
+    "Lang": {
+      "type": "string",
+      "enum": [
+        "rust",
+        "type_script",
+        "unknown"
+      ]
+    },
+    "Node": {
+      "description": "A single described thing: a crate, a function, a statement, an observation.",
+      "type": "object",
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NodeId"
+          }
+        },
+        "docs": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Edge"
+          }
+        },
+        "fqn": {
+          "description": "Fully-qualified, language-native path where one exists.",
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/NodeId"
+        },
+        "kind": {
+          "$ref": "#/$defs/Kind"
+        },
+        "lang": {
+          "$ref": "#/$defs/Lang"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NodeId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "process": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Process"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "signature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "fqn",
+        "lang",
+        "provenance"
+      ]
+    },
+    "NodeId": {
+      "description": "A stable, content-addressed node identifier.\n\nSymbols use `lang://fqn`, e.g. `rust://robby_ir::model::Node`. Statements\nuse `parent#ordinal`. Ordinal-based ids are stable within a run but shift\nwhen earlier siblings change; that is documented and accepted, because\nbyte-offset ids would shift on every edit above them instead.",
+      "type": "string"
+    },
+    "Participant": {
+      "description": "One lifeline in a sequence diagram.\n\nToday a participant is a module, scope, or type. The field set is\ndeliberately actor-neutral so that `agent.*` participants can be added\nlater without touching the renderer.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Local identifier, referenced by [`Step::from`] and [`Step::to`].",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/Kind"
+        },
+        "label": {
+          "description": "Human-facing label, e.g. `io::load` or `planner`.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "kind"
+      ]
+    },
+    "Position": {
+      "description": "A single point in a source file.",
+      "type": "object",
+      "properties": {
+        "byte": {
+          "description": "0-based byte offset into the file.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "column": {
+          "description": "1-based column, counted in characters.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "line": {
+          "description": "1-based line number.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "line",
+        "column",
+        "byte"
+      ]
+    },
+    "Process": {
+      "description": "The process a node performs, or the process a trace recorded.",
+      "type": "object",
+      "properties": {
+        "participants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Participant"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Step"
+          }
+        }
+      },
+      "required": [
+        "participants",
+        "steps"
+      ]
+    },
+    "Provenance": {
+      "description": "Where a fact came from and how much to trust it.",
+      "type": "object",
+      "properties": {
+        "confidence": {
+          "description": "`0.0..=1.0`. Static resolution that could not disambiguate a path\nrecords its uncertainty here rather than dropping the edge.",
+          "type": "number",
+          "format": "float"
+        },
+        "observed_at": {
+          "description": "Unix milliseconds. `None` means the fact is timeless (static analysis).",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "source",
+        "confidence"
+      ]
+    },
+    "Source": {
+      "description": "Which producer contributed a fact.",
+      "oneOf": [
+        {
+          "description": "Parsed from source without annotations.",
+          "type": "string",
+          "const": "extractor"
+        },
+        {
+          "description": "Contributed by an explicit macro annotation.",
+          "type": "string",
+          "const": "macro"
+        },
+        {
+          "description": "Recorded while the code ran.",
+          "type": "string",
+          "const": "trace"
+        },
+        {
+          "description": "Emitted by an agent describing its own process.",
+          "type": "string",
+          "const": "agent"
+        },
+        {
+          "description": "Authored by hand (fixtures, bootstrap data).",
+          "type": "string",
+          "const": "hand"
+        }
+      ]
+    },
+    "Span": {
+      "description": "A half-open byte range within one file.",
+      "type": "object",
+      "properties": {
+        "end": {
+          "$ref": "#/$defs/Position"
+        },
+        "file": {
+          "description": "Repository-relative path, always with forward slashes.",
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/Position"
+        }
+      },
+      "required": [
+        "file",
+        "start",
+        "end"
+      ]
+    },
+    "Step": {
+      "description": "A single ordered interaction.",
+      "type": "object",
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          }
+        },
+        "from": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/StepKind"
+        },
+        "label": {
+          "type": "string"
+        },
+        "observed": {
+          "description": "`true` when a runtime trace observed this step.\n\n`false` means \"possible per static analysis\". The renderer draws\nobserved steps solid and possible steps dashed, which is how the\nstatic/runtime merge is expressed visually.",
+          "type": "boolean"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Span"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "to": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "label",
+        "kind",
+        "observed"
+      ]
+    },
+    "StepKind": {
+      "type": "string",
+      "enum": [
+        "call",
+        "return",
+        "signal",
+        "decision",
+        "note"
+      ]
+    }
+  }
+}

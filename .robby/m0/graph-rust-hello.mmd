@@ -1,0 +1,7 @@
+flowchart TD
+    subgraph n_87d1fc3c187dce1b["hello [module]"]
+        direction TB
+        n_a5e53099441b9ccb["fn load(path: &str) -> Result<String, Error> [function]"]
+        n_aeb335c2ebcf09b3["fn load_len(path: &str) -> Result<usize, Error> [function]"]
+    end
+    n_aeb335c2ebcf09b3 -->|calls| n_a5e53099441b9ccb

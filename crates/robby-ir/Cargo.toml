@@ -1,0 +1,13 @@
+[package]
+name = "robby-ir"
+description = "Robby's intermediate representation: the contract between every producer and every view."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+schemars.workspace = true
+thiserror.workspace = true
