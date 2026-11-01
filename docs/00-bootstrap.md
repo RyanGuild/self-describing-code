@@ -103,7 +103,58 @@ malformed".
 
 ## Step 5 — One command
 
-`scripts/self-model.sh` runs check → render → report. The IR is still
-hand-authored; that is deliberate while the schema is moving. The extractor in
-M1 replaces the *input*, not the pipeline.
+The first version of this step was a shell script, `scripts/self-model.sh`. That
+was a mistake, and a specific one: **the script was pipeline code that no map
+covered.** A repository whose whole premise is "any code written must be
+represented" cannot contain an unrepresented second build path sitting next to
+the real one.
+
+So generation moved into `build.rs`:
+
+```
+cargo build -p robby-cli
+  → build.rs loads the IR
+  → enforces the coverage invariant
+  → writes docs/robby-self-model.md
+```
+
+If coverage fails, the build fails. Robby cannot be compiled from a codebase
+that is invisible to its own map.
+
+### The bootstrap problem
+
+`build.rs` cannot regenerate the artifact when the generation code is what is
+broken. That is a genuine deadlock, not a hypothetical.
+
+The escape hatch is `crates/robby-cli/examples/self-model.rs`. It calls the same
+`robby_render::pipeline` functions, writes the same files, and reports the same
+verdict. Being a Rust example rather than a shell script is the point: it
+compiles with the workspace, it is type-checked, and it can be represented in
+the map.
+
+| Trigger | Role |
+|---|---|
+| `build.rs` | default; artifact can never drift |
+| `examples/self-model.rs` | escape hatch when the build is broken |
+| `robby-cli` subcommands | inspection and CI |
+
+All three call one pipeline. There is no shell glue anywhere in the repo.
+
+### Verification
+
+```
+cargo build -p robby-cli                         → docs/robby-self-model.md written
+ROBBY_IR=/tmp/broken.ir.json cargo build -p robby-cli
+  robby: unclaimed code at fixtures/m0/hello.rs:14:18  "d(path)?; Ok(raw.len()) }"
+  robby: coverage invariant violated — 245 bytes claimed, 30 unclaimed
+  exit 101
+```
+
+### Known gap
+
+`build.rs` and the example are themselves code, and the map does not yet cover
+them — the IR is still hand-authored for a fixture. That is exactly what M1
+fixes: once `robby-extract` walks the workspace, the tool's own build script
+appears in its own map. Until then this is a documented hole, not a silent one.
+
 

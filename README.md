@@ -19,6 +19,8 @@ what collapses, clusters, and drills down. Representation never does.
 | `robby-ir` — schema, model, coverage gate | done, 12 tests |
 | `robby-render` — Mermaid + Markdown views | done, 13 tests |
 | `robby-cli` — `schema`, `check`, `render`, `report` | done |
+| `build.rs` — generates the artifact, fails on uncovered code | done |
+| `examples/self-model.rs` — bootstrap escape hatch | done |
 | hand-authored fixture | done |
 | `robby-extract` — `syn` walk | next |
 | `robby-resolve` — name resolution | next |
@@ -28,12 +30,27 @@ what collapses, clusters, and drills down. Representation never does.
 ## Run it
 
 ```sh
-./scripts/self-model.sh
+cargo build -p robby-cli
 ```
 
-That checks the coverage invariant, writes the `.mmd` diagrams to `.robby/m0`,
-and regenerates `docs/robby-self-model.md` — a single self-contained file with
-each segment's source, its sequence diagram, and its provenance.
+`build.rs` loads the IR, enforces the coverage invariant, and writes
+`docs/robby-self-model.md`. If any byte of source is unclaimed, **the build
+fails** — Robby cannot be compiled from a codebase that is invisible to its own
+map.
+
+When the build itself is what is broken, the example is the escape hatch:
+
+```sh
+cargo run -p robby-cli --example self-model
+cargo run -p robby-cli --example self-model -- --stdout
+```
+
+It calls the same pipeline. It is a Rust example rather than a shell script on
+purpose: an example is compiled, type-checked, and can be represented in the
+map. A shell script beside the build would be a second pipeline that the
+self-model cannot see.
+
+Individual subcommands:
 
 ```sh
 cargo run -p robby-cli -- check  --ir fixtures/m0/hello.ir.json

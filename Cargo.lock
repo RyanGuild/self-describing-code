@@ -203,6 +203,7 @@ dependencies = [
 name = "robby-render"
 version = "0.0.0"
 dependencies = [
+ "anyhow",
  "robby-ir",
  "serde",
  "serde_json",

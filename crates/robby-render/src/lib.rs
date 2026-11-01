@@ -6,6 +6,7 @@
 //! diagrams are committed and diffed in CI.
 
 pub mod markdown;
+pub mod pipeline;
 
 use std::fmt::Write as _;
 

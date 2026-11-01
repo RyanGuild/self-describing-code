@@ -10,3 +10,4 @@ rust-version.workspace = true
 robby-ir.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+anyhow.workspace = true
