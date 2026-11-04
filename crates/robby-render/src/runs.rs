@@ -642,10 +642,12 @@ mod tests {
             .unwrap()
             .filter_map(Result::ok)
             .filter(|e| {
-                e.path()
-                    .file_name()
-                    .and_then(|n| n.to_str())
-                    .is_some_and(|n| n.starts_with("review-") && n.ends_with(".json"))
+                let path = e.path();
+                let name = path.file_name().and_then(|n| n.to_str());
+                name.is_some_and(|n| n.starts_with("review-"))
+                    && path
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("json"))
             })
             .count();
         assert_eq!(on_disk, n);
