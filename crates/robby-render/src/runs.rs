@@ -627,9 +627,9 @@ mod tests {
             assert_eq!(d.source_recipe, recipes::REVIEW_VIEW);
             assert_eq!(d.run_id, allowed.run_id);
             assert_eq!(d.subject, "sid-c");
-            assert!(!d.metric.is_empty());
-            assert!(!d.test_id.is_empty());
-            assert!(!d.score.is_empty());
+            assert_ne!(d.metric, "");
+            assert_ne!(d.test_id, "");
+            assert_ne!(d.score, "");
         }
         assert_eq!(
             allowed
