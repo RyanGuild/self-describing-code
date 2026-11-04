@@ -187,12 +187,16 @@ impl SiteRunsStore {
                 .stats
                 .insert("subject_name".to_owned(), name.to_owned());
         }
-        record.process = Some(review_view_process(false));
+        record.process = Some(review_view_process(false, false));
         self.put(&record)?;
         Ok(record)
     }
 
-    /// User Allow / Continue: `queued` → `running` (LLM/score may be a no-op).
+    /// User Allow / Continue: gate → bind/score/emit scored `agent.decision` products.
+    ///
+    /// Completes the review as `pass` with metric annotations (`metric`,
+    /// `test_id`, `score`). Does **not** spawn `robby.metric_test` (downstream
+    /// of this gate stays optional / separate).
     pub fn allow(&self, run_id: &str) -> Result<RunRecord> {
         let mut record = self.read(run_id)?;
         if record.status == RunStatus::Cancelled {
@@ -204,13 +208,42 @@ impl SiteRunsStore {
                 record.status.as_str()
             );
         }
-        record.status = RunStatus::Running;
         record
             .stats
             .insert("ui_gate".to_owned(), "allowed".to_owned());
-        if let Some(process) = record.process.as_mut() {
-            *process = review_view_process(true);
+
+        let decisions = scored_review_decisions(&record);
+        let decisions_name = format!("{run_id}.decisions.json");
+        let decisions_path = self.runs_dir().join(&decisions_name);
+        let raw = serde_json::to_string_pretty(&decisions)?;
+        fs::write(&decisions_path, format!("{raw}\n"))
+            .with_context(|| format!("write {}", decisions_path.display()))?;
+
+        record.products = decisions
+            .iter()
+            .map(|d| format!("ir:agent.decision:{}", d.metric))
+            .collect();
+        record.products.push(format!("path:runs/{decisions_name}"));
+        record
+            .stats
+            .insert("findings".to_owned(), decisions.len().to_string());
+        record
+            .stats
+            .insert("metrics_claimed".to_owned(), decisions.len().to_string());
+        for d in &decisions {
+            record
+                .stats
+                .insert(format!("metric.{}", d.metric), d.score.clone());
         }
+
+        record.process = Some(review_view_process(true, true));
+        record.status = RunStatus::Pass;
+        record.finished_at = Some(now_ms());
+        record.exit_code = Some(0);
+        record.stdout_tail = Some(format!(
+            "review_view emitted {} scored agent.decision product(s)",
+            decisions.len()
+        ));
         self.put(&record)?;
         Ok(record)
     }
@@ -267,16 +300,88 @@ fn sort_index_newest_first(index: &mut RunsIndex) {
     });
 }
 
-fn review_view_process(observed_gate: bool) -> Process {
+/// Scored `agent.decision` product for a view review (site JSON + RunRecord products).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ScoredDecisionProduct {
+    pub kind: String,
+    pub verdict: String,
+    pub metric: String,
+    pub score: String,
+    pub test_id: String,
+    pub direction: String,
+    pub subject: String,
+    pub run_id: String,
+    pub trigger: String,
+    pub source_recipe: String,
+    pub reason: String,
+}
+
+/// Catalog ids + harness names used when Allow scores a `robby.review_view`.
+pub mod review_metrics {
+    pub const UI_RUNRECORD_SHAPE: &str = "ui.runrecord_shape_compliance";
+    pub const UI_RUNRECORD_SHAPE_TEST: &str = "metric_test.ui.runrecord_shape_compliance";
+    pub const AGENT_PROCESS_STAGE: &str = "agent.action_or_process_stage_rate";
+    pub const AGENT_PROCESS_STAGE_TEST: &str = "metric_test.agent.action_or_process_stage_rate";
+}
+
+/// Scripted scores measurable from the RunRecord itself (no IR load required).
+fn scored_review_decisions(record: &RunRecord) -> Vec<ScoredDecisionProduct> {
+    let subject = record
+        .subject
+        .clone()
+        .unwrap_or_else(|| "workspace:".to_owned());
+    let trigger = record
+        .stats
+        .get("trigger")
+        .cloned()
+        .unwrap_or_else(|| "frame_focus".to_owned());
+    let stage_rate = if record.process.as_ref().is_some_and(|p| !p.steps.is_empty()) {
+        "1"
+    } else {
+        "0"
+    };
+
+    vec![
+        ScoredDecisionProduct {
+            kind: agent::DECISION.to_owned(),
+            verdict: "relevant".to_owned(),
+            metric: review_metrics::UI_RUNRECORD_SHAPE.to_owned(),
+            score: "1".to_owned(),
+            test_id: review_metrics::UI_RUNRECORD_SHAPE_TEST.to_owned(),
+            direction: "higher_better".to_owned(),
+            subject: subject.clone(),
+            run_id: record.run_id.clone(),
+            trigger: trigger.clone(),
+            source_recipe: recipes::REVIEW_VIEW.to_owned(),
+            reason: "Allow gate produced a shared RunRecord-shaped review product".to_owned(),
+        },
+        ScoredDecisionProduct {
+            kind: agent::DECISION.to_owned(),
+            verdict: "relevant".to_owned(),
+            metric: review_metrics::AGENT_PROCESS_STAGE.to_owned(),
+            score: stage_rate.to_owned(),
+            test_id: review_metrics::AGENT_PROCESS_STAGE_TEST.to_owned(),
+            direction: "higher_better".to_owned(),
+            subject,
+            run_id: record.run_id.clone(),
+            trigger,
+            source_recipe: recipes::REVIEW_VIEW.to_owned(),
+            reason: "Review Process lists bind_subjects / score_metrics / emit_decisions"
+                .to_owned(),
+        },
+    ]
+}
+
+fn review_view_process(observed_gate: bool, observed_score: bool) -> Process {
     let mut process = Process::new();
     process.participant("review", "review_view", Kind::from(agent::ACTION));
     process.participant("ui", "ui_gate", Kind::from(agent::ACTION));
     let stages = [
-        ("queue", false),
-        ("await_ui_gate", observed_gate),
-        ("bind_subjects", false),
-        ("score_metrics", false),
-        ("emit_decisions", false),
+        ("queue", observed_gate || observed_score),
+        ("await_ui_gate", observed_gate || observed_score),
+        ("bind_subjects", observed_score),
+        ("score_metrics", observed_score),
+        ("emit_decisions", observed_score),
     ];
     for (label, observed) in stages {
         process.step(Step {
@@ -467,19 +572,72 @@ mod tests {
     }
 
     #[test]
-    fn allow_moves_queued_to_running_without_metric_test() {
+    fn allow_emits_scored_decisions_without_metric_test() {
         let store = temp_store();
         let queued = store
             .queue_review_view("sid-c", "user", Some("Charlie"))
             .unwrap();
-        let running = store.allow(&queued.run_id).unwrap();
-        assert_eq!(running.status, RunStatus::Running);
+        let allowed = store.allow(&queued.run_id).unwrap();
+        assert_eq!(allowed.status, RunStatus::Pass);
         assert_eq!(
-            running.stats.get("ui_gate").map(String::as_str),
+            allowed.stats.get("ui_gate").map(String::as_str),
             Some("allowed")
         );
-        assert_eq!(running.products, Vec::<String>::new());
-        assert!(!SiteRunsStore::blocks_downstream(&running));
+        assert!(!SiteRunsStore::blocks_downstream(&allowed));
+        assert!(
+            allowed
+                .products
+                .iter()
+                .any(|p| p == &format!("ir:agent.decision:{}", review_metrics::UI_RUNRECORD_SHAPE)),
+            "expected scored decision product, got {:?}",
+            allowed.products
+        );
+        assert!(
+            allowed
+                .products
+                .iter()
+                .any(|p| p.contains(&format!("{}.decisions.json", allowed.run_id))),
+            "expected decisions sidecar path, got {:?}",
+            allowed.products
+        );
+        assert!(
+            !allowed
+                .products
+                .iter()
+                .any(|p| p.contains(recipes::METRIC_TEST)),
+            "Allow must not spawn metric_test products yet"
+        );
+
+        let process = allowed.process.as_ref().expect("process");
+        for label in ["bind_subjects", "score_metrics", "emit_decisions"] {
+            assert!(
+                process.steps.iter().any(|s| s.label == label && s.observed),
+                "stage {label} should be observed after Allow"
+            );
+        }
+
+        let sidecar = store
+            .runs_dir()
+            .join(format!("{}.decisions.json", allowed.run_id));
+        let raw = fs::read_to_string(&sidecar).unwrap();
+        let decisions: Vec<ScoredDecisionProduct> = serde_json::from_str(&raw).unwrap();
+        assert_eq!(decisions.len(), 2);
+        for d in &decisions {
+            assert_eq!(d.kind, agent::DECISION);
+            assert_eq!(d.source_recipe, recipes::REVIEW_VIEW);
+            assert_eq!(d.run_id, allowed.run_id);
+            assert_eq!(d.subject, "sid-c");
+            assert_ne!(d.metric, "");
+            assert_ne!(d.test_id, "");
+            assert_ne!(d.score, "");
+        }
+        assert_eq!(
+            allowed
+                .stats
+                .get(&format!("metric.{}", review_metrics::UI_RUNRECORD_SHAPE))
+                .map(String::as_str),
+            Some("1")
+        );
     }
 
     #[test]
