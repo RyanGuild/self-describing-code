@@ -17,6 +17,7 @@ import {
   type RunIndexEntry,
   type RunRecord,
   type RunsIndex,
+  runFileStem,
 } from "./src/runRecord";
 
 function runsDir(publicDir: string): string {
@@ -28,7 +29,7 @@ function indexPath(publicDir: string): string {
 }
 
 function recordPath(publicDir: string, runId: string): string {
-  return path.join(runsDir(publicDir), `${runId}.json`);
+  return path.join(runsDir(publicDir), `${runFileStem(runId)}.json`);
 }
 
 function ensureLayout(publicDir: string): void {

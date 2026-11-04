@@ -7,7 +7,7 @@ use std::fmt::Write as _;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use anyhow::{Result, bail};
+use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand, ValueEnum};
 use robby_ir::{Document, Node, Severity};
 use robby_render::pipeline;
@@ -131,6 +131,24 @@ enum Command {
         #[arg(long, default_value_t = 750)]
         watch_interval_ms: u64,
     },
+    /// Ingest foreign agent sessions into site `runs/` (same RunRecord shape).
+    Ingest {
+        #[command(subcommand)]
+        source: IngestSource,
+    },
+}
+
+#[derive(Subcommand)]
+enum IngestSource {
+    /// Mirror Cursor cloud / Project workers from a JSON dump (`list-cloud-agents`).
+    Cursor {
+        /// Path to agents JSON (`{ "agents": [...] }` or a bare array). `-` = stdin.
+        #[arg(long)]
+        from: PathBuf,
+        /// Site public directory that already holds (or will hold) `runs/`.
+        #[arg(long, default_value = "apps/site/public")]
+        out: PathBuf,
+    },
 }
 
 #[derive(Clone, Copy, Debug, ValueEnum)]
@@ -231,7 +249,37 @@ fn run() -> Result<ExitCode> {
             watch,
             watch_interval_ms,
         } => web(&ir, &source_root, &out, watch, watch_interval_ms),
+        Command::Ingest { source } => match source {
+            IngestSource::Cursor { from, out } => ingest_cursor(&from, &out),
+        },
     }
+}
+
+fn ingest_cursor(from: &std::path::Path, out: &std::path::Path) -> Result<ExitCode> {
+    let json = if from.as_os_str() == "-" {
+        use std::io::Read;
+        let mut buf = String::new();
+        std::io::stdin().read_to_string(&mut buf)?;
+        buf
+    } else {
+        std::fs::read_to_string(from)
+            .with_context(|| format!("read cursor ingest file {}", from.display()))?
+    };
+    let records = robby_render::ingest_cursor_json(out, &json)?;
+    println!(
+        "ingested {} cursor.cloud run(s) into {}/runs/",
+        records.len(),
+        out.display()
+    );
+    for record in &records {
+        println!(
+            "  {}  {}  {}",
+            record.status.as_str(),
+            record.run_id,
+            record.recipe.as_str()
+        );
+    }
+    Ok(ExitCode::SUCCESS)
 }
 
 fn web(

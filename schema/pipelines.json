@@ -45,6 +45,35 @@
       "allowlist": "test"
     },
     {
+      "id": "cursor.cloud",
+      "label": "Cursor cloud agent",
+      "allowlist": "cursor"
+    },
+    {
+      "id": "cursor.local",
+      "label": "Cursor local agent",
+      "allowlist": "cursor"
+    },
+    {
+      "id": "opencode.session",
+      "label": "OpenCode session",
+      "allowlist": "opencode"
+    },
+    {
+      "id": "claude.code",
+      "label": "Claude Code",
+      "allowlist": "claude"
+    },
+    {
+      "id": "codex.session",
+      "label": "Codex session",
+      "allowlist": "codex"
+    },
+    {
+      "id": "external.generic",
+      "label": "External agent"
+    },
+    {
       "id": "ci.rust",
       "label": "CI rust job",
       "allowlist": "github-actions"

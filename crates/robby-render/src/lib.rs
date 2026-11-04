@@ -7,6 +7,7 @@
 //! Running any path twice on the same document must produce byte-identical
 //! output: generated diagrams and pages are committed and diffed in CI.
 
+pub mod ingest;
 pub mod markdown;
 pub mod pipeline;
 pub mod render;
@@ -18,12 +19,13 @@ pub mod util;
 pub mod view;
 pub mod web;
 
+pub use ingest::{CursorAgentStub, CursorEvent, ingest_cursor_agents, ingest_cursor_json};
 pub use render::{MarkdownRenderer, MermaidRenderer, Renderer, ShowOptions, TuiRenderer};
 pub use report::{Report, Section};
 pub use robby_ir::RunRecord;
 pub use runs::{
-    RunIndexEntry, RunsIndex, SiteRunsStore, ensure_runs_layout, synthetic_extract_run,
-    web_build_run, write_runs, write_site_runs,
+    RunIndexEntry, RunsIndex, SiteRunsStore, ensure_runs_layout, run_file_stem,
+    synthetic_extract_run, web_build_run, write_runs, write_site_runs,
 };
 pub use view::{
     CouplingGraph, DependencyViews, LinkGraph, NodeViews, PackageStructure, ProcessView, Scene,
