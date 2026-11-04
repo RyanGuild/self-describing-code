@@ -6,13 +6,16 @@
  * Try Live is optional.
  */
 
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
 import type { Connect, Plugin, ViteDevServer } from "vite";
 
 import {
+  blocksDownstream,
   isTerminal,
+  RECIPE_METRIC_TEST,
   RECIPE_REVIEW_VIEW,
   REVIEW_METRIC_AGENT_PROCESS_STAGE,
   REVIEW_METRIC_AGENT_PROCESS_STAGE_TEST,
@@ -234,6 +237,195 @@ function queueReviewView(publicDir: string, body: QueueBody): RunRecord {
   return record;
 }
 
+function repoRootFromPublic(publicDir: string): string {
+  // apps/site/public → repo root
+  return path.resolve(publicDir, "..", "..", "..");
+}
+
+function defaultIrPath(repoRoot: string): string {
+  const fromEnv = process.env.ROBBY_IR;
+  if (fromEnv && fs.existsSync(fromEnv)) {
+    return fromEnv;
+  }
+  const candidate = path.join(repoRoot, ".robby", "robby.ir.json");
+  return candidate;
+}
+
+function findRobbyBin(repoRoot: string): string | null {
+  const fromEnv = process.env.ROBBY_BIN;
+  if (fromEnv && fs.existsSync(fromEnv)) {
+    return fromEnv;
+  }
+  for (const rel of ["target/debug/robby", "target/release/robby"]) {
+    const p = path.join(repoRoot, rel);
+    if (fs.existsSync(p)) {
+      return p;
+    }
+  }
+  return null;
+}
+
+/** Prefer Rust CLI so metric computers + RunRecord stay one path. */
+function spawnMetricTestViaCli(
+  publicDir: string,
+  reviewRunId: string,
+): { ok: boolean; detail: string } {
+  const repoRoot = repoRootFromPublic(publicDir);
+  const ir = defaultIrPath(repoRoot);
+  if (!fs.existsSync(ir)) {
+    return { ok: false, detail: `IR not found at ${ir}` };
+  }
+  const bin = findRobbyBin(repoRoot);
+  const args = [
+    "metric-test",
+    "--ir",
+    ir,
+    "--source-root",
+    repoRoot,
+    "--runs-out",
+    publicDir,
+    "--allow-run",
+    reviewRunId,
+    "--metric",
+    "doc.coverage_complete",
+    "--metric",
+    "edge.resolve_rate",
+  ];
+  const result = bin
+    ? spawnSync(bin, args, { cwd: repoRoot, encoding: "utf8", timeout: 120_000 })
+    : spawnSync("cargo", ["run", "-q", "-p", "robby-cli", "--", ...args], {
+        cwd: repoRoot,
+        encoding: "utf8",
+        timeout: 300_000,
+      });
+  if (result.error) {
+    return { ok: false, detail: result.error.message };
+  }
+  // metric-test may exit 1 on fail status; still wrote runs — treat as ok spawn.
+  if (result.status !== 0 && result.status !== 1) {
+    const err = (result.stderr || result.stdout || `exit ${result.status}`).trim();
+    return { ok: false, detail: err.slice(0, 500) };
+  }
+  return { ok: true, detail: bin ? bin : "cargo run -p robby-cli" };
+}
+
+interface IrNode {
+  id?: string;
+  edges?: { resolved?: boolean }[];
+  children?: string[];
+}
+
+interface IrDocument {
+  nodes?: Record<string, IrNode>;
+  roots?: string[];
+}
+
+function edgeResolveRateFromIr(
+  doc: IrDocument,
+  subject: string | undefined,
+): { value: number; edges: number; resolved: number; pass: boolean } {
+  const nodes = doc.nodes ?? {};
+  let scope: Set<string> | null = null;
+  if (subject && nodes[subject]) {
+    scope = new Set<string>();
+    const stack = [subject];
+    let id = stack.pop();
+    while (id !== undefined) {
+      if (!scope.has(id)) {
+        scope.add(id);
+        for (const child of nodes[id]?.children ?? []) {
+          stack.push(child);
+        }
+      }
+      id = stack.pop();
+    }
+  }
+  let total = 0;
+  let resolved = 0;
+  for (const [id, node] of Object.entries(nodes)) {
+    if (scope && !scope.has(id)) {
+      continue;
+    }
+    for (const edge of node.edges ?? []) {
+      total += 1;
+      if (edge.resolved !== false) {
+        resolved += 1;
+      }
+    }
+  }
+  const value = total === 0 ? 1 : resolved / total;
+  return {
+    value,
+    edges: total,
+    resolved,
+    pass: total === 0 || resolved === total,
+  };
+}
+
+function spawnMetricTestLocalFallback(publicDir: string, review: RunRecord): RunRecord {
+  const repoRoot = repoRootFromPublic(publicDir);
+  const irPath = defaultIrPath(repoRoot);
+  const started = nowMs();
+  const metricId = `metric-${started}`;
+  const stats: Record<string, string> = {
+    parent_run_id: review.run_id,
+    metrics_tested: "0",
+  };
+  const products: string[] = [`run:${review.run_id}`];
+  let status: RunRecord["status"] = "error";
+  let exitCode = 1;
+  let stdout = "metric_test fallback: no IR";
+
+  if (fs.existsSync(irPath)) {
+    try {
+      const doc = JSON.parse(fs.readFileSync(irPath, "utf8")) as IrDocument;
+      const rate = edgeResolveRateFromIr(doc, review.subject);
+      stats.metric = "edge.resolve_rate";
+      stats.score = String(rate.value);
+      stats.test_id = "harness.edge.resolve_rate";
+      stats.pass = rate.pass ? "true" : "false";
+      stats.edges = String(rate.edges);
+      stats.resolved = String(rate.resolved);
+      stats.metrics_tested = "1";
+      stats.fallback = "vite-ts";
+      products.push(`metric:edge.resolve_rate:${rate.value}`);
+      status = rate.pass ? "pass" : "fail";
+      exitCode = rate.pass ? 0 : 1;
+      stdout = `edge.resolve_rate=${rate.value} (${rate.pass ? "pass" : "fail"}); doc.coverage_complete deferred (use robby metric-test)`;
+    } catch (err) {
+      stdout = `metric_test fallback parse error: ${err instanceof Error ? err.message : String(err)}`;
+    }
+  }
+
+  const metricRun: RunRecord = {
+    run_id: metricId,
+    recipe: RECIPE_METRIC_TEST,
+    status,
+    started_at: started,
+    finished_at: nowMs(),
+    exit_code: exitCode,
+    stdout_tail: stdout,
+    stats,
+    products,
+    process: {
+      participants: [
+        { id: "metric", label: "metric_test", kind: "agent.action" },
+        { id: "ir", label: "Document", kind: "agent.observation" },
+      ],
+      steps: [
+        { from: "metric", to: "ir", label: "load_ir", kind: "call", observed: true },
+        { from: "metric", to: "ir", label: "compute", kind: "call", observed: true },
+        { from: "metric", to: "ir", label: "write_run", kind: "call", observed: true },
+      ],
+    },
+  };
+  if (review.subject !== undefined) {
+    metricRun.subject = review.subject;
+  }
+  putRecord(publicDir, metricRun);
+  return metricRun;
+}
+
 function allowRun(publicDir: string, runId: string): RunRecord {
   const record = readRecord(publicDir, runId);
   if (record.status === "cancelled") {
@@ -242,9 +434,17 @@ function allowRun(publicDir: string, runId: string): RunRecord {
   if (isTerminal(record.status)) {
     throw new Error(`run ${runId} is already terminal (${record.status})`);
   }
+  // Prefer Rust `robby metric-test --allow-run` (scored allow + metric_test computers).
+  const viaCli = spawnMetricTestViaCli(publicDir, runId);
+  if (viaCli.ok) {
+    return readRecord(publicDir, runId);
+  }
+
+  // Fallback: emit scored agent.decision products (#11), then spawn metric_test locally (#15).
   const stats: Record<string, string> = {
     ...(record.stats ?? {}),
     ui_gate: "allowed",
+    metric_test_cli: viaCli.detail,
   };
   const decisions = scoredReviewDecisions(record);
   const decisionsName = `${runId}.decisions.json`;
@@ -264,12 +464,45 @@ function allowRun(publicDir: string, runId: string): RunRecord {
   record.stats = stats;
   record.products = products;
   record.process = reviewProcess(true, true);
-  record.status = "pass";
-  record.finished_at = nowMs();
-  record.exit_code = 0;
-  record.stdout_tail = `review_view emitted ${decisions.length} scored agent.decision product(s)`;
+  record.status = "running";
+  record.stdout_tail = `review_view emitted ${decisions.length} scored agent.decision product(s); spawning metric_test`;
   putRecord(publicDir, record);
-  return record;
+
+  const allowed = readRecord(publicDir, runId);
+  if (blocksDownstream(allowed)) {
+    return allowed;
+  }
+  const metricRun = spawnMetricTestLocalFallback(publicDir, allowed);
+  allowed.products = [
+    ...(allowed.products ?? []),
+    `run:${metricRun.run_id}`,
+    `recipe:${RECIPE_METRIC_TEST}`,
+    ...(metricRun.products ?? []).filter((p) => p.startsWith("metric:")),
+  ];
+  allowed.stats = {
+    ...(allowed.stats ?? {}),
+    metric_test_run_id: metricRun.run_id,
+  };
+  if (allowed.process) {
+    allowed.process = {
+      ...allowed.process,
+      steps: allowed.process.steps.map((s) =>
+        ["bind_subjects", "score_metrics", "emit_decisions"].includes(s.label)
+          ? { ...s, observed: true }
+          : s,
+      ),
+    };
+  }
+  allowed.status =
+    metricRun.status === "pass" ? "pass" : metricRun.status === "error" ? "error" : "fail";
+  if (metricRun.finished_at !== undefined) {
+    allowed.finished_at = metricRun.finished_at;
+  }
+  if (metricRun.exit_code !== undefined) {
+    allowed.exit_code = metricRun.exit_code;
+  }
+  putRecord(publicDir, allowed);
+  return allowed;
 }
 
 function cancelRun(publicDir: string, runId: string): RunRecord {

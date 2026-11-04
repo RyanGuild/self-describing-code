@@ -190,6 +190,32 @@ enum Command {
         #[arg(long, default_value = "apps/site/public")]
         out: PathBuf,
     },
+    /// Run empirical IR metric harnesses; write a `robby.metric_test` RunRecord.
+    MetricTest {
+        #[arg(long, default_value = ".robby/robby.ir.json")]
+        ir: PathBuf,
+        /// Root used to resolve repository-relative source paths.
+        #[arg(long, default_value = ".")]
+        source_root: PathBuf,
+        /// Catalog metric id (repeatable). Defaults: doc.coverage_complete + edge.resolve_rate.
+        #[arg(long = "metric")]
+        metrics: Vec<String>,
+        /// Optional subject node id / fqn (scopes edge.resolve_rate).
+        #[arg(long)]
+        subject: Option<String>,
+        /// Site `public/` (or any out dir) for `runs/<id>.json`.
+        #[arg(long, default_value = "apps/site/public")]
+        runs_out: PathBuf,
+        /// Parent review run_id (Allow path / coordination via shared RunRecord).
+        #[arg(long)]
+        parent_run: Option<String>,
+        /// Allow a queued `robby.review_view` then spawn metric_test products.
+        #[arg(long)]
+        allow_run: Option<String>,
+        /// Print the RunRecord JSON to stdout as well as writing runs/.
+        #[arg(long)]
+        json: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -335,6 +361,25 @@ fn run() -> Result<ExitCode> {
             queue,
             out,
         } => sample_opportunities_cmd(&ir, seed, n, json, queue, &out),
+        Command::MetricTest {
+            ir,
+            source_root,
+            metrics,
+            subject,
+            runs_out,
+            parent_run,
+            allow_run,
+            json,
+        } => metric_test(
+            &ir,
+            &source_root,
+            metrics,
+            subject.as_deref(),
+            &runs_out,
+            parent_run.as_deref(),
+            allow_run.as_deref(),
+            json,
+        ),
     }
 }
 
@@ -410,6 +455,107 @@ fn sample_opportunities_cmd(
     Ok(ExitCode::SUCCESS)
 }
 
+#[allow(clippy::too_many_arguments)]
+fn metric_test(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    metrics: Vec<String>,
+    subject: Option<&str>,
+    runs_out: &std::path::Path,
+    parent_run: Option<&str>,
+    allow_run: Option<&str>,
+    json: bool,
+) -> Result<ExitCode> {
+    let loaded = pipeline::load(ir, source_root)?;
+    let metric_ids = if metrics.is_empty() {
+        vec![
+            robby_ir::metrics::ids::DOC_COVERAGE_COMPLETE.to_owned(),
+            robby_ir::metrics::ids::EDGE_RESOLVE_RATE.to_owned(),
+        ]
+    } else {
+        metrics
+    };
+
+    let store = robby_render::SiteRunsStore::new(runs_out);
+    store.ensure_layout()?;
+
+    if let Some(review_id) = allow_run {
+        let (review, metric_run) = robby_render::allow_and_spawn_metric_test(
+            &store,
+            review_id,
+            &loaded.document,
+            &loaded.coverage,
+            &metric_ids,
+        )?;
+        print_metric_result(&metric_run, json);
+        println!(
+            "allowed review {} → metric_test {} ({})",
+            review.run_id,
+            metric_run.run_id,
+            metric_run.status.as_str()
+        );
+        return Ok(exit_for_status(metric_run.status));
+    }
+
+    let req = robby_render::MetricTestRequest {
+        metrics: metric_ids,
+        subject: subject.map(str::to_owned),
+        parent_run_id: parent_run.map(str::to_owned),
+        sample_seed: None,
+        sample_n: None,
+    };
+    let record =
+        robby_render::write_metric_test_run(runs_out, &loaded.document, &loaded.coverage, &req)?;
+    print_metric_result(&record, json);
+
+    if let Some(parent_id) = parent_run
+        && let Ok(mut parent) = store.read(parent_id)
+        && !robby_render::SiteRunsStore::blocks_downstream(&parent)
+    {
+        let product = format!("run:{}", record.run_id);
+        if !parent.products.contains(&product) {
+            parent.products.push(product);
+            parent
+                .products
+                .push(format!("recipe:{}", robby_ir::run::recipes::METRIC_TEST));
+            parent
+                .stats
+                .insert("metric_test_run_id".to_owned(), record.run_id.clone());
+            store.put(&parent)?;
+        }
+    }
+
+    Ok(exit_for_status(record.status))
+}
+
+fn print_metric_result(record: &robby_ir::RunRecord, json: bool) {
+    if json {
+        match serde_json::to_string_pretty(record) {
+            Ok(raw) => println!("{raw}"),
+            Err(err) => eprintln!("serialize run: {err}"),
+        }
+    } else {
+        println!(
+            "{} {} · {} · exit {:?}",
+            record.recipe,
+            record.status.as_str(),
+            record.run_id,
+            record.exit_code
+        );
+        if let Some(tail) = &record.stdout_tail {
+            println!("{tail}");
+        }
+        println!("wrote runs/{}.json", record.run_id);
+    }
+}
+
+fn exit_for_status(status: robby_ir::RunStatus) -> ExitCode {
+    if status.is_success() {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
+    }
+}
 fn web(
     ir: &std::path::Path,
     source_root: &std::path::Path,

@@ -733,7 +733,7 @@ function renderRunDetail(detail: RunRecord): void {
       const allow = document.createElement("button");
       allow.type = "button";
       allow.textContent = "Allow / Continue";
-      allow.title = "Bind subject, score metrics, emit agent.decision products";
+      allow.title = "Score decisions and spawn robby.metric_test";
       allow.addEventListener("click", () => {
         void postRunAction(detail.run_id, "allow");
       });
