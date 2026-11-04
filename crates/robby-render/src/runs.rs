@@ -113,8 +113,7 @@ impl RunsIndex {
 fn now_ms() -> u64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_millis() as u64)
-        .unwrap_or(0)
+        .map_or(0, |d| d.as_millis() as u64)
 }
 
 fn stage_process(stages: &[&str]) -> RunProcess {
@@ -211,7 +210,7 @@ pub fn write_runs(out: &Path, records: &[RunRecord]) -> Result<()> {
         index.runs.push(record.index_entry());
     }
     // Newest finished_at first for the list.
-    index.runs.sort_by(|a, b| b.finished_at.cmp(&a.finished_at));
+    index.runs.sort_by_key(|a| std::cmp::Reverse(a.finished_at));
     fs::write(runs_dir.join("index.json"), index.to_json())?;
     Ok(())
 }

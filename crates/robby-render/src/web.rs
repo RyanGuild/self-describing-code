@@ -167,8 +167,7 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
     // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
     let rebuilt_at = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_millis() as u64)
-        .unwrap_or(0);
+        .map_or(0, |d| d.as_millis() as u64);
     let build = serde_json::json!({
         "rebuilt_at": rebuilt_at,
         "frames": count,
