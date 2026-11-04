@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:269`](../../../../../apps/site/src/viewer.ts#L269) |
+| location | [`apps/site/src/viewer.ts:521`](../../../../../apps/site/src/viewer.ts#L521) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -31,6 +31,7 @@ sequenceDiagram
 
 - calls ← [`robby__site/src/viewer/ancestors`](ancestors.md)
 - calls ← [`robby__site/src/viewer/cameraForFocus`](cameraforfocus.md)
+- calls ← [`robby__site/src/viewer/frameSafeParent`](framesafeparent.md)
 - calls ← [`robby__site/src/viewer/loadDetail`](loaddetail.md)
 - calls ← [`robby__site/src/viewer/makeFrameEl`](makeframeel.md)
 - calls ← [`robby__site/src/viewer/placeAllFrames`](placeallframes.md)

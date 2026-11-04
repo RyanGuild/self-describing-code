@@ -1,11 +1,18 @@
 sequenceDiagram
     autonumber
     participant setOrgMode as setOrgMode()
+    participant prefetchRuns as prefetchRuns
+    participant syncOrgChrome as syncOrgChrome
+    participant showRunsPanel as showRunsPanel
     participant get as get
     participant prefetchEntrypoints as prefetchEntrypoints
-    participant toggle as toggle
     participant applyScene as applyScene
     alt if
+    return-->>caller: 
+    self-->>prefetchRuns: 
+    self-->>await: 
+    self-->>syncOrgChrome: 
+    self-->>showRunsPanel: 
     return-->>caller: 
     end
     self-->>get: 
@@ -17,6 +24,5 @@ sequenceDiagram
     return-->>caller: 
     end
     end
-    self-->>toggle: 
-    self-->>toggle: 
+    self-->>syncOrgChrome: 
     self-->>applyScene: 

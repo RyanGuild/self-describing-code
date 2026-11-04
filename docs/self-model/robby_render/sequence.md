@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn sequence(process: &Process) -> String` |
-| location | [`crates/robby-render/src/lib.rs:32`](../../../crates/robby-render/src/lib.rs#L32) |
+| location | [`crates/robby-render/src/lib.rs:34`](../../../crates/robby-render/src/lib.rs#L34) |
 | provenance | extractor · confidence 1.00 |
 
 > Render a process as a Mermaid `sequenceDiagram`.

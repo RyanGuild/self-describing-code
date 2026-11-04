@@ -275,7 +275,7 @@ pub fn write_site(
     // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
     let rebuilt_at = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_millis())
+        .map(|d| d.as_millis() as u64)
         .unwrap_or(0);
     let build = serde_json::json!({
         "rebuilt_at": rebuilt_at,
@@ -285,6 +285,9 @@ pub fn write_site(
         "generator": doc.generator,
     });
     fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+
+    // Completed pipeline history for Runs mode (synthetic extract + this web build).
+    crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
 
     Ok(count)
 }

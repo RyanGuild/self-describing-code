@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant selectRun as selectRun()
+    participant renderRunsList as renderRunsList
+    participant get as get
+    participant fetchJson as fetchJson
+    participant set as set
+    participant error as error
+    participant renderRunDetail as renderRunDetail
+    self-->>renderRunsList: 
+    self-->>get: 
+    alt if
+    self-->>fetchJson: 
+    self-->>await: 
+    self-->>set: 
+    alt catch
+    self-->>error: 
+    return-->>caller: 
+    end
+    end
+    self-->>renderRunDetail: 

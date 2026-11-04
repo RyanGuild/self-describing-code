@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.module` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 21 |
+| nodes | 22 |
 
 ## Package diagram
 
@@ -39,11 +39,14 @@ flowchart TB
         n_eff1ef85ab0370f2["sibling_world_rects_do_not_collapse_onto_each_other"]
         n_707a7b55bf4d7e1f["tempfile_dir"]
         n_cc261f5078ecd444["unresolved_portal_has_no_zoom_target"]
+        n_6f6c7d107c7d9cf0["write_site_emits_run_records"]
         n_a7f44ae87911cf31["write_site_emits_scene_and_frames"]
     end
     n_0572a55b97877ef3 --> n_5d64ffe3865383a1
     n_0ccee746718d0bcc --> n_5d18d5212c5cf3a9
     n_6c39fec40a174770 --> n_5d64ffe3865383a1
+    n_6f6c7d107c7d9cf0 --> n_5d64ffe3865383a1
+    n_6f6c7d107c7d9cf0 --> n_707a7b55bf4d7e1f
     n_7f6f7186631adb12 --> n_5d18d5212c5cf3a9
     n_8a5da80d612a110c --> n_5d18d5212c5cf3a9
     n_9ca9be67b573c9bf --> n_5d64ffe3865383a1
@@ -60,7 +63,7 @@ flowchart TB
 
 | | test_web | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **test_web** | · | 46 | 56 |
+| **test_web** | · | 46 | 59 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
@@ -124,11 +127,12 @@ flowchart TB
 - calls → [`robby_render`](../index.md) — stable_id
 - calls → [`robby_render::pipeline`](../pipeline/index.md) — from_document
 - calls → [`robby_render::report`](../report/index.md) — new, push
+- calls → [`robby_render::runs`](../runs/index.md) — to_json
 - calls → [`robby_render::test_render`](../test_render/index.md) — step
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::scene`](../view/scene/index.md) — contains, from_entrypoints
 - calls → [`robby_render::view::select`](../view/select/index.md) — collect
-- calls → [`robby_render::web`](../web/index.md) — from_node, from_node_in_doc, to_json, write_site
+- calls → [`robby_render::web`](../web/index.md) — from_node, from_node_in_doc, write_site
 
 ## Items
 
@@ -144,11 +148,12 @@ flowchart TB
 | [`leaf_payload_includes_source_and_process`](leaf-payload-includes-source-and-process.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:239:1` |
 | [`unresolved_portal_has_no_zoom_target`](unresolved-portal-has-no-zoom-target.md) | `code.function` | 10 | `crates/robby-render/tests/web.rs:254:1` |
 | [`write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md) | `code.function` | 20 | `crates/robby-render/tests/web.rs:271:1` |
-| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:292:1` |
-| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:304:1` |
-| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:323:1` |
-| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:380:1` |
-| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:388:1` |
+| [`write_site_emits_run_records`](write-site-emits-run-records.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:292:1` |
+| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:323:1` |
+| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:335:1` |
+| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:354:1` |
+| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:411:1` |
+| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:419:1` |
 
 ## Imports
 

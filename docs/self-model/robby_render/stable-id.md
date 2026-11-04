@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn stable_id(input: &str) -> String` |
-| location | [`crates/robby-render/src/lib.rs:97`](../../../crates/robby-render/src/lib.rs#L97) |
+| location | [`crates/robby-render/src/lib.rs:99`](../../../crates/robby-render/src/lib.rs#L99) |
 | provenance | extractor · confidence 1.00 |
 
 > Stable Mermaid/layout id.

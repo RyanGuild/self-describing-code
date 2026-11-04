@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn dependency_report(doc: &Document, root: &NodeId) -> String` |
-| location | [`crates/robby-render/src/lib.rs:69`](../../../crates/robby-render/src/lib.rs#L69) |
+| location | [`crates/robby-render/src/lib.rs:71`](../../../crates/robby-render/src/lib.rs#L71) |
 | provenance | extractor · confidence 1.00 |
 
 > All three dependency formalisms for a root, as a Markdown report fragment.

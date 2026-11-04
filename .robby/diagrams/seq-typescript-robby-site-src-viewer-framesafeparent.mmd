@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant frameSafeParent as frameSafeParent()
+    participant Boolean as Boolean
+    participant frame as frame
+    self-->>Boolean: 
+    self-->>frame: 
+    return-->>caller: 
+    alt catch
+    return-->>caller: 
+    end
