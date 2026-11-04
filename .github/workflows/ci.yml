@@ -33,9 +33,10 @@ jobs:
         # build.rs regenerates .robby/ and docs/self-model/ locally; they are gitignored.
         run: cargo test --workspace -- --skip no_page_is_a_wall_of_text
       # recipe: ci.artifacts — generated paths stay untracked; working tree clean
+      # Allow tracked placeholder .gitkeep under public/runs/ (from #5).
       - name: "ci.artifacts"
         run: |
-          tracked="$(git ls-files .robby docs/self-model apps/site/public/scene.json apps/site/public/scene-entrypoints.json apps/site/public/build.json apps/site/public/pipelines.json apps/site/public/frames apps/site/public/runs)"
+          tracked="$(git ls-files .robby docs/self-model apps/site/public/scene.json apps/site/public/scene-entrypoints.json apps/site/public/build.json apps/site/public/pipelines.json apps/site/public/frames apps/site/public/runs | grep -v '/\.gitkeep$' || true)"
           if [ -n "$tracked" ]; then
             echo "generated paths must not be tracked:" >&2
             echo "$tracked" >&2
