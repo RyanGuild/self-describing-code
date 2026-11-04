@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant is_bare_specifier as is_bare_specifier()
-    participant is_empty as is_empty
-    participant starts_with as starts_with
-    is_bare_specifier-->>is_empty: spec.is_empty()
-    is_bare_specifier-->>starts_with: spec.starts_with('./')
-    is_bare_specifier-->>starts_with: spec.starts_with('../')
-    is_bare_specifier-->>starts_with: spec.starts_with('/')

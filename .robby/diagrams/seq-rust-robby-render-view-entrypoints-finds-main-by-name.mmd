@@ -1,8 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant finds_main_by_name as finds_main_by_name()
-    participant doc_with_main_chain as doc_with_main_chain
-    participant find_entrypoints as find_entrypoints
-    finds_main_by_name-->>doc_with_main_chain: doc_with_main_chain()
-    finds_main_by_name-->>find_entrypoints: find_entrypoints(&doc)
-    finds_main_by_name-->>finds_main_by_name: assert_eq!(entries, vec![NodeId::symbol('rust', 'demo::main')])

@@ -1,6 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant show as show()
-    participant TuiRenderer__new as TuiRenderer::new
-    show-->>TuiRenderer__new: TuiRenderer::new(opts.width)
-    show-->>show: TuiRenderer::new(opts.width).show(doc, node, sources, opts)

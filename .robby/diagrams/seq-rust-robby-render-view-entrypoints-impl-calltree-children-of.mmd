@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant children_of as children_of()
-    participant get as get
-    participant map_or as map_or
-    children_of-->>get: self.children.get(id)
-    children_of-->>map_or: self.children.get(id).map_or(&[], std::vec::Vec::as_slice)

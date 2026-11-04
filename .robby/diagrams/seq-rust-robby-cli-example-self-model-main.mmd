@@ -1,8 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant main as main()
-    participant run as run
-    main-->>run: run()
-    alt match run()
-    main-->>main: eprintln!('error: {err: }')
-    end

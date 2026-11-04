@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant names_match_serde as names_match_serde()
-    names_match_serde-->>names_match_serde: assert_eq!(wire(Verdict::Relevant), Verdict::Relevant.as_str())
-    names_match_serde-->>names_match_serde: assert_eq!(wire(Verdict::Noise), Verdict::Noise.as_str())
-    names_match_serde-->>names_match_serde: assert_eq!( wire(NoteKind::UsageExample), NoteKind::UsageExample.as_s...
-    names_match_serde-->>names_match_serde: assert_eq!( wire(NoteKind::ImplementationNote), NoteKind::Implementat...
-    names_match_serde-->>names_match_serde: assert_eq!(Verdict::parse('relevant'), Some(Verdict::Relevant))
-    names_match_serde-->>names_match_serde: assert_eq!(NoteKind::parse('nope'), None)

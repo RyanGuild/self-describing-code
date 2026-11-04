@@ -1,6 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant emit_modules as emit_modules()
-    participant collect as collect
-    emit_modules-->>collect: node .children .iter() .filter_map(|id| doc.get(id)) .filter(|child| ...
-    emit_modules-->>emit_modules: ContainerNode { id: node.id.clone(), stable_id: stable_id(node.id.as_...

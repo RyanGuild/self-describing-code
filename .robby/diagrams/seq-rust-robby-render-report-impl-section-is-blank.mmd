@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant is_blank as is_blank()
-    participant trim as trim
-    participant is_empty as is_empty
-    is_blank-->>trim: self.body.trim()
-    is_blank-->>is_empty: self.body.trim().is_empty()
