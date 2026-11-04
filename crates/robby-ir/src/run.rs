@@ -162,7 +162,7 @@ impl RunRecord {
     }
 }
 
-/// Well-known recipe ids (first set).
+/// Well-known recipe ids (first set + CI gates).
 pub mod recipes {
     pub const EXTRACT: &str = "robby.extract";
     pub const CHECK: &str = "robby.check";
@@ -176,6 +176,113 @@ pub mod recipes {
     pub const REVIEW_DOC: &str = "robby.review_doc";
     /// Empirical gate spawned only after an allowed review.
     pub const METRIC_TEST: &str = "robby.metric_test";
+
+    /// Parent / umbrella for the GitHub Actions `rust` job.
+    pub const CI_RUST: &str = "ci.rust";
+    pub const CI_FMT: &str = "ci.fmt";
+    pub const CI_CLIPPY: &str = "ci.clippy";
+    pub const CI_TEST: &str = "ci.test";
+    /// Generated paths stay untracked; working tree clean after CI.
+    pub const CI_ARTIFACTS: &str = "ci.artifacts";
+    /// Site biome + `tsc --noEmit` (`npm run check`).
+    pub const CI_SITE: &str = "ci.site";
+}
+
+/// First-party recipe catalog (pipelines.json / `agent.pipeline` ids).
+///
+/// CI recipes map 1:1 to steps in `.github/workflows/ci.yml` so Actions runs
+/// can later be absorbed as [`RunRecord`]s with the same `recipe` strings.
+pub fn builtin_recipes() -> Vec<Recipe> {
+    vec![
+        Recipe {
+            id: RecipeId::from(recipes::EXTRACT),
+            label: "Extract IR".into(),
+            allowlist: Some("local".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CHECK),
+            label: "Check IR".into(),
+            allowlist: Some("local".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::WEB),
+            label: "Write site".into(),
+            allowlist: Some("local".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::ENRICH_COMMENTS),
+            label: "Enrich comments".into(),
+            allowlist: Some("openrouter".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CARGO_TEST),
+            label: "Cargo test (subject)".into(),
+            allowlist: Some("test".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::TRACE),
+            label: "Trace (planned)".into(),
+            allowlist: None,
+        },
+        Recipe {
+            id: RecipeId::from(recipes::REVIEW_VIEW),
+            label: "Review view".into(),
+            allowlist: Some("local".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::REVIEW_DOC),
+            label: "Review doc".into(),
+            allowlist: Some("local".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::METRIC_TEST),
+            label: "Metric test".into(),
+            allowlist: Some("test".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CI_RUST),
+            label: "CI rust job".into(),
+            allowlist: Some("github-actions".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CI_FMT),
+            label: "CI rustfmt".into(),
+            allowlist: Some("github-actions".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CI_CLIPPY),
+            label: "CI clippy".into(),
+            allowlist: Some("github-actions".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CI_TEST),
+            label: "CI cargo test".into(),
+            allowlist: Some("github-actions".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CI_ARTIFACTS),
+            label: "CI no tracked generated artifacts".into(),
+            allowlist: Some("github-actions".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CI_SITE),
+            label: "CI site check".into(),
+            allowlist: Some("github-actions".into()),
+        },
+    ]
+}
+
+/// Pretty-printed pipelines catalog JSON (`{ "recipes": [ … ] }`).
+pub fn pipelines_json() -> String {
+    #[derive(Serialize)]
+    struct Catalog<'a> {
+        recipes: &'a [Recipe],
+    }
+    let catalog = builtin_recipes();
+    let mut out = serde_json::to_string_pretty(&Catalog { recipes: &catalog })
+        .expect("pipelines catalog serializes");
+    out.push('\n');
+    out
 }
 
 /// Lookup over a recipe catalog (pipelines.json, in-memory, …).
@@ -224,5 +331,38 @@ mod tests {
         assert_eq!(json["recipe"], recipes::EXTRACT);
         assert_eq!(json["status"], "pass");
         assert_eq!(json["subject"], "rust://robby_ir");
+    }
+
+    #[test]
+    fn builtin_catalog_includes_ci_recipes() {
+        let catalog = builtin_recipes();
+        for id in [
+            recipes::CI_FMT,
+            recipes::CI_CLIPPY,
+            recipes::CI_TEST,
+            recipes::CI_ARTIFACTS,
+            recipes::CI_SITE,
+            recipes::CI_RUST,
+        ] {
+            assert!(
+                catalog.get(&RecipeId::from(id)).is_some(),
+                "missing recipe {id}"
+            );
+        }
+        let json: serde_json::Value = serde_json::from_str(&pipelines_json()).unwrap();
+        assert!(json["recipes"].as_array().unwrap().len() >= 6);
+    }
+
+    #[test]
+    fn schema_pipelines_json_matches_builtin() {
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../schema/pipelines.json");
+        let on_disk = std::fs::read_to_string(&path).expect("schema/pipelines.json");
+        let expected: serde_json::Value = serde_json::from_str(&pipelines_json()).unwrap();
+        let actual: serde_json::Value = serde_json::from_str(&on_disk).unwrap();
+        assert_eq!(
+            actual, expected,
+            "schema/pipelines.json out of sync with builtin_recipes(); refresh from pipelines_json()"
+        );
     }
 }

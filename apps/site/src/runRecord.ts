@@ -3,13 +3,7 @@
  * Site `runs/<id>.json` and IR `agent.run` use the same fields.
  */
 
-export type RunStatus =
-  | "queued"
-  | "running"
-  | "pass"
-  | "fail"
-  | "error"
-  | "cancelled";
+export type RunStatus = "queued" | "running" | "pass" | "fail" | "error" | "cancelled";
 
 export const RECIPE_REVIEW_VIEW = "robby.review_view";
 export const RECIPE_METRIC_TEST = "robby.metric_test";

@@ -1,3 +1,6 @@
+# Robby CI — each step is a pipeline recipe (agent.pipeline / RunRecord.recipe).
+# Catalog: schema/pipelines.json · docs/ci-pipelines.md · robby_ir::run::builtin_recipes
+# Site emit: apps/site/public/pipelines.json via `robby web` / write_site.
 name: ci
 
 on:
@@ -5,27 +8,34 @@ on:
   pull_request:
 
 jobs:
+  # recipe: ci.rust (umbrella) — stages ci.fmt → ci.clippy → ci.test → ci.artifacts
   rust:
     name: rust
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Pin matches rust-toolchain.toml (dtolnay requires an explicit toolchain input).
       - uses: dtolnay/rust-toolchain@master
         with:
           # Required by the action; keep in sync with rust-toolchain.toml.
           toolchain: 1.99.0
           components: rustfmt, clippy
-      - name: format
+      - uses: Swatinem/rust-cache@v2
+      # recipe: ci.fmt
+      - name: "ci.fmt"
         run: cargo fmt --all -- --check
-      - name: clippy
+      # recipe: ci.clippy
+      - name: "ci.clippy"
         run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-      - name: test
+      # recipe: ci.test (workspace; shares subject set with cargo.test later)
+      - name: "ci.test"
         # robby_render/index.md is already over the 1000-line page budget on main.
         # build.rs regenerates .robby/ and docs/self-model/ locally; they are gitignored.
         run: cargo test --workspace -- --skip no_page_is_a_wall_of_text
-      - name: no tracked generated artifacts
+      # recipe: ci.artifacts — generated paths stay untracked; working tree clean
+      - name: "ci.artifacts"
         run: |
-          tracked="$(git ls-files .robby docs/self-model apps/site/public/scene.json apps/site/public/scene-entrypoints.json apps/site/public/build.json apps/site/public/frames apps/site/public/runs)"
+          tracked="$(git ls-files .robby docs/self-model apps/site/public/scene.json apps/site/public/scene-entrypoints.json apps/site/public/build.json apps/site/public/pipelines.json apps/site/public/frames apps/site/public/runs)"
           if [ -n "$tracked" ]; then
             echo "generated paths must not be tracked:" >&2
             echo "$tracked" >&2
@@ -33,6 +43,7 @@ jobs:
           fi
           git diff --exit-code
 
+  # recipe: ci.site
   site:
     name: site
     runs-on: ubuntu-latest
@@ -47,4 +58,5 @@ jobs:
           cache: npm
           cache-dependency-path: apps/site/package-lock.json
       - run: npm ci
-      - run: npm run check
+      - name: "ci.site"
+        run: npm run check

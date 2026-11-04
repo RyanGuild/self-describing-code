@@ -168,9 +168,12 @@ impl SiteRunsStore {
         }
 
         let run_id = mint_run_id("review");
-        let mut record =
-            RunRecord::new(run_id, RecipeId::from(recipes::REVIEW_VIEW), RunStatus::Queued)
-                .with_subject(subject.to_owned());
+        let mut record = RunRecord::new(
+            run_id,
+            RecipeId::from(recipes::REVIEW_VIEW),
+            RunStatus::Queued,
+        )
+        .with_subject(subject.to_owned());
         record.started_at = Some(now_ms());
         record
             .stats
@@ -248,8 +251,7 @@ impl SiteRunsStore {
 fn now_ms() -> i64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis() as i64)
-        .unwrap_or(0)
+        .map_or(0, |d| d.as_millis() as i64)
 }
 
 fn mint_run_id(prefix: &str) -> String {
@@ -445,12 +447,14 @@ mod tests {
             .unwrap();
         let cancelled = store.cancel(&queued.run_id).unwrap();
         assert_eq!(cancelled.status, RunStatus::Cancelled);
-        assert!(cancelled.products.is_empty());
+        assert_eq!(cancelled.products, Vec::<String>::new());
         assert!(SiteRunsStore::blocks_downstream(&cancelled));
-        assert!(!cancelled
-            .products
-            .iter()
-            .any(|p| p.contains(recipes::METRIC_TEST)));
+        assert!(
+            !cancelled
+                .products
+                .iter()
+                .any(|p| p.contains(recipes::METRIC_TEST))
+        );
     }
 
     #[test]
@@ -465,7 +469,7 @@ mod tests {
             running.stats.get("ui_gate").map(String::as_str),
             Some("allowed")
         );
-        assert!(running.products.is_empty());
+        assert_eq!(running.products, Vec::<String>::new());
         assert!(!SiteRunsStore::blocks_downstream(&running));
     }
 

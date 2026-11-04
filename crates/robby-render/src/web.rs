@@ -183,5 +183,8 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
     // Completed pipeline history for Runs mode (synthetic extract + this web build).
     crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
 
+    // Recipe catalog for Runs / pipeline HUD (same shape as schema/pipelines.json).
+    fs::write(out.join("pipelines.json"), robby_ir::pipelines_json())?;
+
     Ok(count)
 }
