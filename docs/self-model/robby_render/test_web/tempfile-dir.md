@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn tempfile_dir() -> std::path::PathBuf` |
-| location | [`crates/robby-render/tests/web.rs:393`](../../../../crates/robby-render/tests/web.rs#L393) |
+| location | [`crates/robby-render/tests/web.rs:430`](../../../../crates/robby-render/tests/web.rs#L430) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -42,5 +42,6 @@ sequenceDiagram
 
 ## Referenced by
 
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](write-site-emits-run-records.md)
 - calls ← [`robby_render::test_web::write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md)
 

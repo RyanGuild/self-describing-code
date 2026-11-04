@@ -26,7 +26,7 @@ impl SourceSlice {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 
 ## Referenced by
 
@@ -79,6 +79,6 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 

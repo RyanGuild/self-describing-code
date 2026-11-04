@@ -51,14 +51,14 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::util::text`](../../util/text.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::util`](../../util/index.md) — text
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::select`](../select/index.md) — collect

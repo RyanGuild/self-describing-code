@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/process.rs:187`](../../../../../crates/robby-ir/src/process.rs#L187) |
+| declared at | [`crates/robby-ir/src/process.rs:168`](../../../../../crates/robby-ir/src/process.rs#L168) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 4 |
 
@@ -32,8 +32,8 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`wire`](wire.md) | `code.function` | 5 | `crates/robby-ir/src/process.rs:191:5` |
-| [`names_match_serde`](names-match-serde.md) | `code.function` | 2 | `crates/robby-ir/src/process.rs:199:5` |
+| [`wire`](wire.md) | `code.function` | 5 | `crates/robby-ir/src/process.rs:172:5` |
+| [`names_match_serde`](names-match-serde.md) | `code.function` | 2 | `crates/robby-ir/src/process.rs:180:5` |
 
 ## Imports
 

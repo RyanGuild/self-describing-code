@@ -137,7 +137,7 @@ sequenceDiagram
 - calls → [`robby_ir::process::impl Default for Process::default`](../../robby_ir/process/index.md)
 - calls → [`robby_ir::coverage::impl TriviaMode::from_path`](../../robby_ir/coverage/index.md)
 - calls → [`robby_extract::rust::impl LineIndex::new`](../rust/index.md)
-- calls → [`robby_ir::vocab::impl Verdict::parse`](../../robby_ir/vocab/index.md)
+- calls → [`robby_ir::run::impl RunStatus::parse`](../../robby_ir/run/index.md)
 - calls → [`robby_extract::typescript::module_fqn`](module-fqn.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Node::with_lang`](../../robby_ir/model/index.md)
@@ -156,7 +156,7 @@ sequenceDiagram
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — from_path
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — declare_file, merge, symbol, with_lang
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — default
-- calls → [`robby_ir::vocab`](../../robby_ir/vocab/index.md) — parse
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — parse
 
 ## Referenced by
 

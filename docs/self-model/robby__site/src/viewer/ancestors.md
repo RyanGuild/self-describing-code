@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:187`](../../../../../apps/site/src/viewer.ts#L187) |
+| location | [`apps/site/src/viewer.ts:544`](../../../../../apps/site/src/viewer.ts#L544) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function ancestors(id: string) {
+function ancestors(id: string): string[] {
   const path: string[] = [];
   let cur: string | null = id;
   while (cur) {

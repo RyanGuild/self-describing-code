@@ -78,14 +78,14 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::view::comments::impl CommentsView::is_empty`](index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](index.md) — is_empty
 - calls → [`robby_render::view::scene`](../scene/index.md) — new

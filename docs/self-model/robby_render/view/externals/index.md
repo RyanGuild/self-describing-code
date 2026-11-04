@@ -62,7 +62,8 @@ flowchart TB
 | **robby_render** | | | · |
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::links`](../links/index.md) — is_module_kind
 - calls → [`robby_render::view::scene`](../scene/index.md) — new

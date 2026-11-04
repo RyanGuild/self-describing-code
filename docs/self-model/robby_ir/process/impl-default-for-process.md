@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/process.rs:181`](../../../../crates/robby-ir/src/process.rs#L181) |
+| location | [`crates/robby-ir/src/process.rs:162`](../../../../crates/robby-ir/src/process.rs#L162) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -32,7 +32,7 @@ impl Default for Process {
 |---|---|
 | kind | `code.method` |
 | signature | `fn default(0)` |
-| location | [`crates/robby-ir/src/process.rs:182`](../../../../crates/robby-ir/src/process.rs#L182) |
+| location | [`crates/robby-ir/src/process.rs:163`](../../../../crates/robby-ir/src/process.rs#L163) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

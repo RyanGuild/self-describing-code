@@ -83,7 +83,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_ir::span::impl Span::is_empty`](../../robby_ir/span/index.md)
 - calls → [`robby_extract::typescript::oxc_span`](oxc-span.md)
 - calls → [`robby_extract::typescript::item_node`](item-node.md)
@@ -93,7 +93,8 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_extract::typescript`](index.md) — item_node, oxc_span
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, merge
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, merge
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 
 ## Referenced by

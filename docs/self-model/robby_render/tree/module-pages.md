@@ -108,16 +108,16 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::tree::item_children`](item-children.md)
 - calls → [`robby_render::tree::item_slugs`](item-slugs.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::module_pages`](module-pages.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::item_page`](item-page.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new, push
 - calls → [`robby_render::tree`](index.md) — 6 items
 

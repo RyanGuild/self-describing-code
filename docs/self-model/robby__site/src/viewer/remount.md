@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:262`](../../../../../apps/site/src/viewer.ts#L262) |
+| location | [`apps/site/src/viewer.ts:623`](../../../../../apps/site/src/viewer.ts#L623) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function remount() {
+function remount(): void {
   worldEl.innerHTML = "";
   const focus = frame(focusId);
   const focusEl = makeFrameEl(focusId, true, false);
@@ -81,4 +81,5 @@ sequenceDiagram
 
 - calls ← [`robby__site/src/viewer/applyScene`](applyscene.md)
 - calls ← [`robby__site/src/viewer/flyTo`](flyto.md)
+- calls ← [`robby__site/src/viewer/reloadFromDisk`](reloadfromdisk.md)
 

@@ -109,12 +109,12 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::hierarchy::is_compact`](is-compact.md)
 - calls → [`robby_render::view::hierarchy::build`](build.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::hierarchy::is_compact`](is-compact.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../../robby_ir/kind/index.md)
@@ -126,7 +126,7 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::hierarchy`](index.md) — is_compact, kind_tag

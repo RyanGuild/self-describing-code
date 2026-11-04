@@ -72,7 +72,7 @@ flowchart TB
 
 - calls → [`robby_cli`](../index.md) — extract
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — failures
-- calls → [`robby_ir::vocab`](../../robby_ir/vocab/index.md) — parse
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — parse
 - calls → [`robby_render::pipeline`](../../robby_render/pipeline/index.md) — 6 items
 
 ## Items

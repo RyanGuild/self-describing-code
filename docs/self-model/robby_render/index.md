@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 784 |
+| nodes | 845 |
 
 ## Package diagram
 
@@ -23,6 +23,11 @@ flowchart TB
             n_eeb2a2cd375a2e2c["tui"]
         end
         n_05b9b679aaf35ec8["report"]
+        subgraph n_e8287ccc46e48d80["runs"]
+            direction TB
+            n_70782edfe2674f1a["recipe"]
+            n_325fbe3c526a7366["status"]
+        end
         n_94a590d1410dd3da["test_markdown"]
         n_092b7abcfcf260db["test_render"]
         n_2790416a72a81c1b["test_tree"]
@@ -95,6 +100,7 @@ flowchart TB
     n_310d14cf579135a7 --> n_534805da25f902cb
     n_310d14cf579135a7 --> n_77294f3b6f21b79c
     n_310d14cf579135a7 --> n_9c636b098ca4450e
+    n_310d14cf579135a7 --> n_e8287ccc46e48d80
     n_310d14cf579135a7 --> n_f006da06b5256ba9
     n_3d4b89e4d03574c3 --> n_05b9b679aaf35ec8
     n_3d4b89e4d03574c3 --> n_23dac307afb8bcf6
@@ -112,6 +118,7 @@ flowchart TB
     n_458e2543a821af84 -.-> n_77294f3b6f21b79c
     n_458e2543a821af84 -.-> n_9c636b098ca4450e
     n_458e2543a821af84 -.-> n_d98da197ad772974
+    n_458e2543a821af84 -.-> n_e8287ccc46e48d80
     n_458e2543a821af84 -.-> n_f006da06b5256ba9
     n_4fd64543ae69ff04 -.-> n_05b9b679aaf35ec8
     n_4fd64543ae69ff04 -.-> n_092b7abcfcf260db
@@ -213,6 +220,9 @@ flowchart TB
     n_d98da197ad772974 --> n_356bf2c23da68961
     n_d98da197ad772974 -.-> n_534805da25f902cb
     n_d98da197ad772974 -.-> n_f006da06b5256ba9
+    n_e8287ccc46e48d80 -.-> n_05b9b679aaf35ec8
+    n_e8287ccc46e48d80 --> n_356bf2c23da68961
+    n_e8287ccc46e48d80 -.-> n_534805da25f902cb
     n_eeb2a2cd375a2e2c -.-> n_05b9b679aaf35ec8
     n_eeb2a2cd375a2e2c -.-> n_1b88225e3fbd26cd
     n_eeb2a2cd375a2e2c -.-> n_2bf7728895532b9d
@@ -346,6 +356,17 @@ flowchart TB
             n_d351f6940188701a["to_terminal"]
             n_7222783df6ca47e4["untitled"]
         end
+        subgraph n_e8287ccc46e48d80["runs"]
+            direction TB
+            n_dafaa8eee79faa55["index_entry"]
+            n_378b7b66344fe575["now_ms"]
+            n_c5eec2c82678736c["stage_process"]
+            n_085eeddf8aac993b["synthetic_extract_run"]
+            n_a950c615eaf4173a["to_json"]
+            n_76c6f3973db3a497["web_build_run"]
+            n_69973025ad7cae5e["write_runs"]
+            n_6cb3d192ef1a30aa["write_site_runs"]
+        end
         subgraph n_94a590d1410dd3da["test_markdown"]
             direction TB
             n_5cc8cf51165d164e["fences_are_balanced"]
@@ -397,6 +418,7 @@ flowchart TB
             n_eff1ef85ab0370f2["sibling_world_rects_do_not_collapse_onto_each_other"]
             n_707a7b55bf4d7e1f["tempfile_dir"]
             n_cc261f5078ecd444["unresolved_portal_has_no_zoom_target"]
+            n_6f6c7d107c7d9cf0["write_site_emits_run_records"]
             n_a7f44ae87911cf31["write_site_emits_scene_and_frames"]
         end
         subgraph n_d59428013b05fa6e["tree"]
@@ -634,13 +656,16 @@ flowchart TB
     n_035881844fb12b4b --> n_213e965c602f499e
     n_035881844fb12b4b -->|"4"| n_4d3c3f485a9610d6
     n_035881844fb12b4b --> n_632a84e110a5dc84
+    n_035881844fb12b4b --> n_6cb3d192ef1a30aa
     n_035881844fb12b4b --> n_a226e41874f80197
     n_035881844fb12b4b --> n_ff7778a79352f45c
-    n_0572a55b97877ef3 -->|"2"| n_4d3c3f485a9610d6
     n_0572a55b97877ef3 --> n_5d64ffe3865383a1
     n_0572a55b97877ef3 -->|"2"| n_632a84e110a5dc84
+    n_0572a55b97877ef3 -->|"2"| n_a950c615eaf4173a
     n_05d26057b5ff7308 --> n_5d9930b67863fdc3
     n_06683849abba9bbb --> n_5d9930b67863fdc3
+    n_085eeddf8aac993b --> n_11e080982eb2281e
+    n_085eeddf8aac993b --> n_c5eec2c82678736c
     n_0877d202cb3d1db5 --> n_34052eece36e7f4e
     n_0877d202cb3d1db5 --> n_465730a4067bc4e4
     n_0877d202cb3d1db5 --> n_5d9930b67863fdc3
@@ -878,14 +903,29 @@ flowchart TB
     n_6892848a318479b5 --> n_d9177e73eb024a06
     n_6892848a318479b5 --> n_ef17956e251a25c9
     n_68970d6d58680b18 --> n_0b2e754c404da854
+    n_69973025ad7cae5e --> n_11e080982eb2281e
+    n_69973025ad7cae5e --> n_465730a4067bc4e4
+    n_69973025ad7cae5e -->|"2"| n_a950c615eaf4173a
+    n_69973025ad7cae5e --> n_dafaa8eee79faa55
     n_6b907e7f03293147 --> n_ff7778a79352f45c
     n_6c39fec40a174770 --> n_5d64ffe3865383a1
     n_6c39fec40a174770 --> n_632a84e110a5dc84
+    n_6cb3d192ef1a30aa --> n_085eeddf8aac993b
+    n_6cb3d192ef1a30aa --> n_378b7b66344fe575
+    n_6cb3d192ef1a30aa --> n_69973025ad7cae5e
+    n_6cb3d192ef1a30aa --> n_76c6f3973db3a497
+    n_6f6c7d107c7d9cf0 --> n_035881844fb12b4b
+    n_6f6c7d107c7d9cf0 --> n_5d64ffe3865383a1
+    n_6f6c7d107c7d9cf0 --> n_707a7b55bf4d7e1f
+    n_6f6c7d107c7d9cf0 --> n_bb9971de7b6aa277
+    n_6f6c7d107c7d9cf0 --> n_ff7778a79352f45c
     n_737bc7514c5fccaa --> n_ff7778a79352f45c
     n_742a0cec2e78e8fe --> n_a9d8540e2150b923
     n_742a0cec2e78e8fe --> n_ff7778a79352f45c
     n_74c96613b6250856 --> n_3c079b97f8351ae3
     n_74c96613b6250856 -->|"2"| n_d1bec2e55ee10959
+    n_76c6f3973db3a497 --> n_11e080982eb2281e
+    n_76c6f3973db3a497 --> n_c5eec2c82678736c
     n_79bed59b1a79eb84 --> n_465730a4067bc4e4
     n_79bed59b1a79eb84 -->|"2"| n_f2c21d1aff51beb3
     n_7a167edd9760d943 -->|"5"| n_11e080982eb2281e
@@ -907,9 +947,9 @@ flowchart TB
     n_85e74789245bccf1 --> n_016efff8aa636e20
     n_85e74789245bccf1 --> n_d55652e93431fabb
     n_87904cdb73eb4bef -.->|"1 circular"| n_213e965c602f499e
-    n_8a5da80d612a110c -->|"2"| n_4d3c3f485a9610d6
     n_8a5da80d612a110c --> n_5d18d5212c5cf3a9
     n_8a5da80d612a110c -->|"2"| n_a226e41874f80197
+    n_8a5da80d612a110c -->|"2"| n_a950c615eaf4173a
     n_8bacd3e44796f7f0 --> n_5bcd75ca374195e2
     n_8bacd3e44796f7f0 --> n_5f68a6ec137f4048
     n_8cf48f47344fc0c8 -->|"7"| n_11e080982eb2281e
@@ -1125,6 +1165,9 @@ flowchart TB
     n_c548f4f208a3b71a --> n_ebf19a6a762f1087
     n_c5a1b546da6c093c --> n_5e81b400a2b82436
     n_c5a1b546da6c093c --> n_ff7778a79352f45c
+    n_c5eec2c82678736c --> n_11e080982eb2281e
+    n_c5eec2c82678736c --> n_465730a4067bc4e4
+    n_c5eec2c82678736c --> n_bb9971de7b6aa277
     n_c6de9edc70837acd --> n_43e14e4cbda3060d
     n_c6de9edc70837acd --> n_97d55db8002e6d30
     n_c6de9edc70837acd -.->|"1 circular"| n_bb9971de7b6aa277
@@ -1303,48 +1346,51 @@ flowchart TB
 
 ## Dependency matrix
 
-| | test_tree | test_web | sibling | tui | execution | deps | externals | process | markdown | test_markdown | entrypoints | view | tree | hierarchy | types | report | test_render | mermaid | util | comments | web | select | markdown | pipeline | robby_render | robby_cli | tests | tests | links | tui | scene | source | render | robby_ir |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **test_tree** | · | | | 1⇄ | | | | | | | | | | | | 9⇄ | | | | | | 2⇄ | | | | 1 | | | | | 1⇄ | | | 3 |
-| **test_web** | | · | | | | | | | | | | | | | | 28 | 1 | | | 1 | 7 | 4 | | 7 | 4 | | | | | | 4 | | | 43 |
-| **sibling** | | | · | | | | | | | | | | | | | 1 | | | 5 | 4 | | 4 | | | 4 | | | | | | 2 | | | 2 |
-| **tui** | | | | · | | 1⇄ | | 1⇄ | | | | | | | | 4⇄ | 1⇄ | | | | 1⇄ | 1⇄ | | | | | | | | 3⇄ | | | 2 | |
-| **execution** | | | | | · | | | | | | | | | | | 2⇄ | 2⇄ | | 2⇄ | 3⇄ | | 1⇄ | | | | | 1 | | 5⇄ | | 11⇄ | | | 20 |
-| **deps** | | | | | | · | | | | | 1⇄ | | | | | 3⇄ | | | 6⇄ | 16⇄ | | 32⇄ | | | 17⇄ | | | | | | 55⇄ | | | 25 |
-| **externals** | | | | | | | · | | | | | | | | | | | | | 3 | | 2 | | | | | | | 1 | | 1 | | | 6 |
-| **process** | | | | | | | | · | | | | | | | | 5⇄ | | | | 1⇄ | | 1⇄ | | | | | | | | | 2⇄ | | | |
-| **markdown** | | | | | | | | | · | | | | | | | 7 | | 1 | | 3 | | 2 | | | | | | | 3 | 1 | | | | 2 |
-| **test_markdown** | | | | | | | | | | · | | | | | | 7 | 1 | | | | | | 5 | | | | | | | | | | | 12 |
-| **entrypoints** | | | | | | | | | | | · | | | | | 6⇄ | | | | 4⇄ | | 1⇄ | | | | | | 2 | 1⇄ | | 17⇄ | | | 23 |
-| **view** | | | | | | | | | | | | · | | | | | | | | | | | | | | | | | | | | | | |
-| **tree** | | | | | | | | | | | | | · | | | 47 | 1 | | | 8 | | 10 | 1 | | 3 | | | | 14 | | | | 4 | 31 |
-| **hierarchy** | | | | | | | | | | | | | | · | | 2 | | | | 3 | | | | | | | | | | | 3 | | | 4 |
-| **types** | | | | | | | | | | | | | | | · | 10⇄ | | | 14⇄ | 7⇄ | | 5⇄ | | | | | | | | | 5⇄ | | | 11 |
-| **report** | | | | | | | | | | | | | | | | · | | | | | | | | | | | | | 3⇄ | 1⇄ | | | | |
-| **test_render** | | | | | | 2⇄ | | | | | | | | | | 40⇄ | · | | | | | 2⇄ | 1⇄ | | 11⇄ | | | | | | | | 2 | 92 |
-| **mermaid** | | | | | | 2⇄ | | | | | | | | | | 7⇄ | | · | | 6⇄ | | 3⇄ | | | | | | | 9⇄ | 12⇄ | | | | 10 |
-| **util** | | | | | | | | | | | | | | | | 5⇄ | | | · | 2⇄ | | 1⇄ | | | | | | | 1⇄ | | | | | 2 |
-| **comments** | | | | | | | | | | | | | | | | 5⇄ | | | | · | | 1⇄ | | | | | | | | | 7⇄ | | | 15 |
-| **web** | | | | | 1⇄ | | | 2⇄ | | | | | | | | 1⇄ | 2⇄ | | | 6⇄ | · | | | 1⇄ | 2⇄ | | | | 1⇄ | | 1⇄ | | | 4 |
-| **select** | | | | | | 4⇄ | | | | | | | | | 1⇄ | | | | | 5⇄ | | · | | | | | | | 8⇄ | | | 2 | | 3 |
-| **markdown** | | | | | | | | | | | | | | | | 16⇄ | 1⇄ | | | 1⇄ | | 4⇄ | · | | 2⇄ | | | | 4⇄ | | | | 4 | 11 |
-| **pipeline** | | | | 1⇄ | | | | | | | | | | | | 4⇄ | | | | | | 2⇄ | | · | 3⇄ | | | | 3⇄ | | | | | 6 |
-| **robby_render** | 1⇄ | | | | | 4⇄ | | 1⇄ | | | | | | | 1⇄ | 10⇄ | 1⇄ | | | | | 1⇄ | | | · | | | | 5⇄ | | | | 6 | 3 |
-| **robby_cli** | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | | | |
-| **tests** | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | | |
-| **tests** | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | |
-| **links** | | | | | | | | | | | | | | | | | | | 4⇄ | | | 5⇄ | | | | | | | · | | 7⇄ | | | 9 |
-| **tui** | | | | | | 3⇄ | | | | | | | | | | 13⇄ | | 1⇄ | | 18⇄ | | 4⇄ | | | | | | | 9⇄ | · | | | 1 | 9 |
-| **scene** | | | | | | 1⇄ | | | | | 1⇄ | | | | | 11⇄ | | | 6⇄ | 30⇄ | | 10⇄ | | | 8⇄ | | | | 2⇄ | | · | | | 15 |
-| **source** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | 2 |
-| **render** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | |
-| **robby_ir** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · |
+| | test_tree | test_web | status | sibling | tui | execution | deps | externals | process | markdown | recipe | test_markdown | entrypoints | view | tree | hierarchy | types | report | test_render | mermaid | util | comments | web | select | markdown | pipeline | robby_render | robby_cli | tests | tests | links | runs | tui | scene | source | render | robby_ir |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **test_tree** | · | | | | 1⇄ | | | | | | | | | | | | | 9⇄ | | | | | | 2⇄ | | | | 1 | | | | | | 1⇄ | | | 3 |
+| **test_web** | | · | | | | | | | | | | | | | | | | 28 | 1 | | | 2 | 4 | 5 | | 7 | 4 | | | | | 4 | | 4 | | | 43 |
+| **status** | | | · | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| **sibling** | | | | · | | | | | | | | | | | | | | 1 | | | 5 | 4 | | 4 | | | 4 | | | | | | | 2 | | | 2 |
+| **tui** | | | | | · | | 1⇄ | | 1⇄ | | | | | | | | | 4⇄ | 1⇄ | | | | 1⇄ | 1⇄ | | | | | | | | | 3⇄ | | | 2 | |
+| **execution** | | | | | | · | | | | | | | | | | | | 2⇄ | 2⇄ | | 2⇄ | 3⇄ | | 1⇄ | | | | | 1 | | 5⇄ | | | 11⇄ | | | 20 |
+| **deps** | | | | | | | · | | | | | | 1⇄ | | | | | 3⇄ | | | 6⇄ | 16⇄ | | 32⇄ | | | 17⇄ | | | | | | | 55⇄ | | | 25 |
+| **externals** | | | | | | | | · | | | | | | | | | | | | | | 3 | | 2 | | | | | | | 1 | | | 1 | | | 6 |
+| **process** | | | | | | | | | · | | | | | | | | | 5⇄ | | | | 1⇄ | | 1⇄ | | | | | | | | | | 2⇄ | | | |
+| **markdown** | | | | | | | | | | · | | | | | | | | 7 | | 1 | | 3 | | 2 | | | | | | | 3 | | 1 | | | | 2 |
+| **recipe** | | | | | | | | | | | · | | | | | | | | | | | | | | | | | | | | | | | | | | |
+| **test_markdown** | | | | | | | | | | | | · | | | | | | 7 | 1 | | | | | | 5 | | | | | | | | | | | | 12 |
+| **entrypoints** | | | | | | | | | | | | | · | | | | | 6⇄ | | | | 4⇄ | | 1⇄ | | | | | | 2 | 1⇄ | | | 17⇄ | | | 23 |
+| **view** | | | | | | | | | | | | | | · | | | | | | | | | | | | | | | | | | | | | | | |
+| **tree** | | | | | | | | | | | | | | | · | | | 47 | 1 | | | 8 | | 10 | 1 | | 3 | | | | 14 | | | | | 4 | 31 |
+| **hierarchy** | | | | | | | | | | | | | | | | · | | 2 | | | | 3 | | | | | | | | | | | | 3 | | | 4 |
+| **types** | | | | | | | | | | | | | | | | | · | 10⇄ | | | 14⇄ | 7⇄ | | 5⇄ | | | | | | | | | | 5⇄ | | | 11 |
+| **report** | | | | | | | | | | | | | | | | | | · | | | | | | | | | | | | | 3⇄ | | 1⇄ | | | | |
+| **test_render** | | | | | | | 2⇄ | | | | | | | | | | | 40⇄ | · | | | | | 2⇄ | 1⇄ | | 11⇄ | | | | | | | | | 2 | 92 |
+| **mermaid** | | | | | | | 2⇄ | | | | | | | | | | | 7⇄ | | · | | 6⇄ | | 3⇄ | | | | | | | 9⇄ | | 12⇄ | | | | 10 |
+| **util** | | | | | | | | | | | | | | | | | | 5⇄ | | | · | 2⇄ | | 1⇄ | | | | | | | 1⇄ | | | | | | 2 |
+| **comments** | | | | | | | | | | | | | | | | | | 5⇄ | | | | · | | 1⇄ | | | | | | | | | | 7⇄ | | | 15 |
+| **web** | | | | | | 1⇄ | | | 2⇄ | | | | | | | | | 1⇄ | 2⇄ | | | 6⇄ | · | | | 1⇄ | 2⇄ | | | | 1⇄ | 1⇄ | | 1⇄ | | | 4 |
+| **select** | | | | | | | 4⇄ | | | | | | | | | | 1⇄ | | | | | 5⇄ | | · | | | | | | | 8⇄ | | | | 2 | | 3 |
+| **markdown** | | | | | | | | | | | | | | | | | | 16⇄ | 1⇄ | | | 1⇄ | | 4⇄ | · | | 2⇄ | | | | 4⇄ | | | | | 4 | 11 |
+| **pipeline** | | | | | 1⇄ | | | | | | | | | | | | | 4⇄ | | | | | | 2⇄ | | · | 3⇄ | | | | 3⇄ | | | | | | 6 |
+| **robby_render** | 1⇄ | | | | | | 4⇄ | | 1⇄ | | | | | | | | 1⇄ | 10⇄ | 1⇄ | | | | | 1⇄ | | | · | | | | 5⇄ | | | | | 6 | 3 |
+| **robby_cli** | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | | | | |
+| **tests** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | | | |
+| **tests** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | | |
+| **links** | | | | | | | | | | | | | | | | | | | | | 4⇄ | | | 5⇄ | | | | | | | · | | | 7⇄ | | | 9 |
+| **runs** | | | | | | | | | | | | | | | | | | 6⇄ | | | | | | 1⇄ | | | | | | | | · | | | | | 8 |
+| **tui** | | | | | | | 3⇄ | | | | | | | | | | | 13⇄ | | 1⇄ | | 18⇄ | | 4⇄ | | | | | | | 9⇄ | | · | | | 1 | 9 |
+| **scene** | | | | | | | 1⇄ | | | | | | 1⇄ | | | | | 11⇄ | | | 6⇄ | 30⇄ | | 10⇄ | | | 8⇄ | | | | 2⇄ | | | · | | | 15 |
+| **source** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | 2 |
+| **render** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · | |
+| **robby_ir** | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | · |
 
-Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments ↔ web ↔ tui ↔ select ↔ execution ↔ deps ↔ markdown ↔ process ↔ pipeline ↔ robby_render ↔ entrypoints ↔ links ↔ tui ↔ scene ↔ types
+Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments ↔ web ↔ tui ↔ select ↔ execution ↔ deps ↔ markdown ↔ process ↔ pipeline ↔ robby_render ↔ entrypoints ↔ links ↔ runs ↔ tui ↔ scene ↔ types
 
 ## Comments
 
-- `crates/robby-render/src/lib.rs:102:1` (docs, `robby_render::all_sequences`): "Every process in the document as Mermaid, keyed by node id."
+- `crates/robby-render/src/lib.rs:104:1` (docs, `robby_render::all_sequences`): "Every process in the document as Mermaid, keyed by node id."
   ```
   /// Every process in the document as Mermaid, keyed by node id.
   pub fn all_sequences(doc: &Document) -> Vec<(NodeId, String)> {
@@ -1361,28 +1407,28 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       out
   }
   ```
-- `crates/robby-render/src/lib.rs:117:1` (docs, `robby_render::step_summary`): "Compact one-liner for a step."
+- `crates/robby-render/src/lib.rs:119:1` (docs, `robby_render::step_summary`): "Compact one-liner for a step."
   ```
   /// Compact one-liner for a step.
   pub fn step_summary(step: &Step) -> String {
       format!("{} {} -> {}", step.kind.as_str(), step.from, step.to)
   }
   ```
-- `crates/robby-render/src/lib.rs:32:1` (docs, `robby_render::sequence`): "Render a process as a Mermaid `sequenceDiagram`."
+- `crates/robby-render/src/lib.rs:34:1` (docs, `robby_render::sequence`): "Render a process as a Mermaid `sequenceDiagram`."
   ```
   /// Render a process as a Mermaid `sequenceDiagram`.
   pub fn sequence(process: &Process) -> String {
       MermaidRenderer.process(&ProcView::from_process(process))
   }
   ```
-- `crates/robby-render/src/lib.rs:37:1` (docs, `robby_render::flowchart`): "Legacy sibling inventory flowchart."
+- `crates/robby-render/src/lib.rs:39:1` (docs, `robby_render::flowchart`): "Legacy sibling inventory flowchart."
   ```
   /// Legacy sibling inventory flowchart.
   pub fn flowchart(doc: &Document, root: &NodeId) -> String {
       MermaidRenderer.sibling_graph(&SiblingGraph::from_root(doc, root))
   }
   ```
-- `crates/robby-render/src/lib.rs:42:1` (docs, `robby_render::class_diagram`): "UML class diagram for a module's types."
+- `crates/robby-render/src/lib.rs:44:1` (docs, `robby_render::class_diagram`): "UML class diagram for a module's types."
   ```
   /// UML class diagram for a module's types.
   pub fn class_diagram(doc: &Document, root: &NodeId) -> String {
@@ -1393,7 +1439,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       MermaidRenderer.types(&model)
   }
   ```
-- `crates/robby-render/src/lib.rs:51:1` (docs, `robby_render::dependencies`): "Nested package-structure digraph (Mermaid) for a module/crate root."
+- `crates/robby-render/src/lib.rs:53:1` (docs, `robby_render::dependencies`): "Nested package-structure digraph (Mermaid) for a module/crate root."
   ```
   /// Nested package-structure digraph (Mermaid) for a module/crate root.
   pub fn dependencies(doc: &Document, root: &NodeId) -> String {
@@ -1404,7 +1450,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       MermaidRenderer.package_deps(&graph)
   }
   ```
-- `crates/robby-render/src/lib.rs:60:1` (docs, `robby_render::coupling`): "Internal call-coupling digraph (Mermaid) for a module/crate root."
+- `crates/robby-render/src/lib.rs:62:1` (docs, `robby_render::coupling`): "Internal call-coupling digraph (Mermaid) for a module/crate root."
   ```
   /// Internal call-coupling digraph (Mermaid) for a module/crate root.
   pub fn coupling(doc: &Document, root: &NodeId) -> String {
@@ -1415,7 +1461,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       MermaidRenderer.coupling_deps(&graph)
   }
   ```
-- `crates/robby-render/src/lib.rs:69:1` (docs, `robby_render::dependency_report`): "All three dependency formalisms for a root, as a Markdown report fragment."
+- `crates/robby-render/src/lib.rs:71:1` (docs, `robby_render::dependency_report`): "All three dependency formalisms for a root, as a Markdown report fragment."
   ```
   /// All three dependency formalisms for a root, as a Markdown report fragment.
   pub fn dependency_report(doc: &Document, root: &NodeId) -> String {
@@ -1431,7 +1477,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       report.to_markdown()
   }
   ```
-- `crates/robby-render/src/lib.rs:83:1` (docs, `robby_render::workspace_dependencies`): "Workspace-wide dependency formalisms (crates)."
+- `crates/robby-render/src/lib.rs:85:1` (docs, `robby_render::workspace_dependencies`): "Workspace-wide dependency formalisms (crates)."
   ```
   /// Workspace-wide dependency formalisms (crates).
   pub fn workspace_dependencies(doc: &Document) -> String {
@@ -1447,7 +1493,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       report.to_markdown()
   }
   ```
-- `crates/robby-render/src/lib.rs:97:1` (docs, `robby_render::stable_id`): "Stable Mermaid/layout id."
+- `crates/robby-render/src/lib.rs:99:1` (docs, `robby_render::stable_id`): "Stable Mermaid/layout id."
   ```
   /// Stable Mermaid/layout id.
   pub fn stable_id(input: &str) -> String {
@@ -1566,7 +1612,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       stable_id(id.as_str())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:105:1` (docs, `robby_render::pipeline::render_files`): "Write one `.mmd` file per process and per root graph."
+- `crates/robby-render/src/pipeline.rs:110:1` (docs, `robby_render::pipeline::render_files`): "Write one `.mmd` file per process and per root graph."
   ```
   /// Write one `.mmd` file per process and per root graph.
   pub fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize> {
@@ -1589,7 +1635,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(count)
   }
   ```
-- `crates/robby-render/src/pipeline.rs:126:1` (docs, `robby_render::pipeline::write_document`): "Write the IR document itself as a committed artifact."
+- `crates/robby-render/src/pipeline.rs:131:1` (docs, `robby_render::pipeline::write_document`): "Write the IR document itself as a committed artifact."
   ```
   /// Write the IR document itself as a committed artifact.
   pub fn write_document(doc: &Document, out: &Path) -> Result<()> {
@@ -1600,7 +1646,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:135:1` (docs, `robby_render::pipeline::write_report`): "Render the self-model as a linked tree of Markdown pages. Returns the number of pages written. Stale pages are removed …"
+- `crates/robby-render/src/pipeline.rs:140:1` (docs, `robby_render::pipeline::write_report`): "Render the self-model as a linked tree of Markdown pages. Returns the number of pages written. Stale pages are removed …"
   ```
   /// Render the self-model as a linked tree of Markdown pages.
   ///
@@ -1634,19 +1680,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(pages.len())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:15:1` (docs, `robby_render::pipeline::Loaded`): "A document plus everything derived from it."
-  ```
-  /// A document plus everything derived from it.
-  pub struct Loaded {
-      pub document: Document,
-      pub sources: BTreeMap<String, String>,
-      pub coverage: CoverageReport,
-      pub diagnostics: Vec<Diagnostic>,
-      /// Workspace root the source paths are relative to.
-      pub root: PathBuf,
-  }
-  ```
-- `crates/robby-render/src/pipeline.rs:167:1` (docs, `robby_render::pipeline::remove_markdown`): "Delete generated Markdown so removed modules do not linger."
+- `crates/robby-render/src/pipeline.rs:172:1` (docs, `robby_render::pipeline::remove_markdown`): "Delete generated Markdown so removed modules do not linger."
   ```
   /// Delete generated Markdown so removed modules do not linger.
   fn remove_markdown(dir: &Path) -> std::io::Result<()> {
@@ -1666,25 +1700,40 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:185:1` (docs, `robby_render::pipeline::watched_files`): "Files whose change must invalidate a cached build."
+- `crates/robby-render/src/pipeline.rs:17:1` (docs, `robby_render::pipeline::Loaded`): "A document plus everything derived from it. This is the checked snapshot between extract and render: coverage and struc…"
+  ```
+  /// A document plus everything derived from it.
+  ///
+  /// This is the checked snapshot between extract and render: coverage and
+  /// structural diagnostics are always computed here so write paths share one gate.
+  pub struct Loaded {
+      pub document: Document,
+      pub sources: BTreeMap<String, String>,
+      pub coverage: CoverageReport,
+      pub diagnostics: Vec<Diagnostic>,
+      /// Workspace root the source paths are relative to.
+      pub root: PathBuf,
+  }
+  ```
+- `crates/robby-render/src/pipeline.rs:190:1` (docs, `robby_render::pipeline::watched_files`): "Files whose change must invalidate a cached build."
   ```
   /// Files whose change must invalidate a cached build.
   pub fn watched_files(loaded: &Loaded) -> Vec<PathBuf> {
       loaded.sources.keys().map(PathBuf::from).collect::<Vec<_>>()
   }
   ```
-- `crates/robby-render/src/pipeline.rs:26:5` (docs, `robby_render::pipeline::impl Loaded::is_ok`): "True when the coverage gate passes and there are no error diagnostics."
+- `crates/robby-render/src/pipeline.rs:31:5` (docs, `robby_render::pipeline::impl Loaded::is_ok`): "True when the coverage gate passes and there are no error diagnostics."
   ```
   /// True when the coverage gate passes and there are no error diagnostics.
       pub fn is_ok(&self) -> bool {
-          self.coverage.is_complete()
+          CoverageGate::passes(&self.coverage)
               && !self
                   .diagnostics
                   .iter()
                   .any(|d| d.severity == Severity::Error)
       }
   ```
-- `crates/robby-render/src/pipeline.rs:35:5` (docs, `robby_render::pipeline::impl Loaded::summary`): "One-line summary for build output and CI logs."
+- `crates/robby-render/src/pipeline.rs:40:5` (docs, `robby_render::pipeline::impl Loaded::summary`): "One-line summary for build output and CI logs."
   ```
   /// One-line summary for build output and CI logs.
       pub fn summary(&self) -> String {
@@ -1702,7 +1751,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           )
       }
   ```
-- `crates/robby-render/src/pipeline.rs:52:1` (docs, `robby_render::pipeline::load_document`): "Read and parse an IR document."
+- `crates/robby-render/src/pipeline.rs:57:1` (docs, `robby_render::pipeline::load_document`): "Read and parse an IR document."
   ```
   /// Read and parse an IR document.
   pub fn load_document(path: &Path) -> Result<Document> {
@@ -1710,7 +1759,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(serde_json::from_str(&text)?)
   }
   ```
-- `crates/robby-render/src/pipeline.rs:58:1` (docs, `robby_render::pipeline::load_sources`): "Read every source file the document references. A missing file is not an error here: the coverage report will show it a…"
+- `crates/robby-render/src/pipeline.rs:63:1` (docs, `robby_render::pipeline::load_sources`): "Read every source file the document references. A missing file is not an error here: the coverage report will show it a…"
   ```
   /// Read every source file the document references.
   ///
@@ -1736,7 +1785,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       sources
   }
   ```
-- `crates/robby-render/src/pipeline.rs:82:1` (docs, `robby_render::pipeline::load`): "Load a document and everything derived from it."
+- `crates/robby-render/src/pipeline.rs:87:1` (docs, `robby_render::pipeline::load`): "Load a document and everything derived from it."
   ```
   /// Load a document and everything derived from it.
   pub fn load(ir: &Path, root: &Path) -> Result<Loaded> {
@@ -1744,7 +1793,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(from_document(document, root))
   }
   ```
-- `crates/robby-render/src/pipeline.rs:88:1` (docs, `robby_render::pipeline::from_document`): "Compute everything derived from an in-memory document."
+- `crates/robby-render/src/pipeline.rs:93:1` (docs, `robby_render::pipeline::from_document`): "Compute everything derived from an in-memory document."
   ```
   /// Compute everything derived from an in-memory document.
   pub fn from_document(mut document: Document, root: &Path) -> Loaded {
@@ -2064,6 +2113,147 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
   pub struct Section {
       pub title: Option<String>,
       pub body: String,
+  }
+  ```
+- `crates/robby-render/src/runs.rs:143:1` (docs, `robby_render::runs::synthetic_extract_run`): "Synthetic completed extract from the loaded Document (retrospective history)."
+  ```
+  /// Synthetic completed extract from the loaded Document (retrospective history).
+  pub fn synthetic_extract_run(doc: &Document, finished_at: u64) -> RunRecord {
+      let started_at = finished_at.saturating_sub(5_000);
+      let mut stats = serde_json::Map::new();
+      stats.insert("nodes".into(), serde_json::json!(doc.nodes.len()));
+      stats.insert("files".into(), serde_json::json!(doc.files.len()));
+      stats.insert("roots".into(), serde_json::json!(doc.roots.len()));
+      stats.insert("generator".into(), serde_json::json!(doc.generator));
+      stats.insert("synthetic".into(), serde_json::json!(true));
+  
+      RunRecord {
+          run_id: "synthetic-extract".to_owned(),
+          recipe: recipe::EXTRACT.to_owned(),
+          subject: "workspace:".to_owned(),
+          status: status::PASS.to_owned(),
+          started_at,
+          finished_at,
+          exit_code: Some(0),
+          stdout_tail: Some(format!(
+              "synthetic robby.extract from {} · {} nodes · {} files",
+              doc.generator,
+              doc.nodes.len(),
+              doc.files.len()
+          )),
+          stats,
+          products: vec!["path:.robby/robby.ir.json".to_owned()],
+          process: Some(stage_process(&[
+              "extract",
+              "validate",
+              "write_document",
+          ])),
+      }
+  }
+  ```
+- `crates/robby-render/src/runs.rs:177:1` (docs, `robby_render::runs::web_build_run`): "Completed `robby.web` run for this site write."
+  ```
+  /// Completed `robby.web` run for this site write.
+  pub fn web_build_run(doc: &Document, frames: usize, finished_at: u64) -> RunRecord {
+      let started_at = finished_at.saturating_sub(500);
+      let mut stats = serde_json::Map::new();
+      stats.insert("frames".into(), serde_json::json!(frames));
+      stats.insert("nodes".into(), serde_json::json!(doc.nodes.len()));
+      stats.insert("files".into(), serde_json::json!(doc.files.len()));
+  
+      RunRecord {
+          run_id: "latest-web".to_owned(),
+          recipe: recipe::WEB.to_owned(),
+          subject: "workspace:".to_owned(),
+          status: status::PASS.to_owned(),
+          started_at,
+          finished_at,
+          exit_code: Some(0),
+          stdout_tail: Some(format!("wrote {frames} frame(s) to site public/")),
+          stats,
+          products: vec![
+              "path:apps/site/public/scene.json".to_owned(),
+              "path:apps/site/public/build.json".to_owned(),
+              "path:apps/site/public/runs/index.json".to_owned(),
+          ],
+          process: Some(stage_process(&["load_ir", "scene", "frames", "runs"])),
+      }
+  }
+  ```
+- `crates/robby-render/src/runs.rs:204:1` (docs, `robby_render::runs::write_runs`): "Write `runs/<id>.json` + `runs/index.json` (newest first)."
+  ```
+  /// Write `runs/<id>.json` + `runs/index.json` (newest first).
+  pub fn write_runs(out: &Path, records: &[RunRecord]) -> Result<()> {
+      let runs_dir = out.join("runs");
+      fs::create_dir_all(&runs_dir)?;
+  
+      let mut index = RunsIndex { runs: Vec::new() };
+      for record in records {
+          fs::write(
+              runs_dir.join(format!("{}.json", record.run_id)),
+              record.to_json(),
+          )?;
+          index.runs.push(record.index_entry());
+      }
+      // Newest finished_at first for the list.
+      index.runs.sort_by(|a, b| b.finished_at.cmp(&a.finished_at));
+      fs::write(runs_dir.join("index.json"), index.to_json())?;
+      Ok(())
+  }
+  ```
+- `crates/robby-render/src/runs.rs:223:1` (docs, `robby_render::runs::write_site_runs`): "Emit extract + web RunRecords under `out/runs` for a site rebuild."
+  ```
+  /// Emit extract + web RunRecords under `out/runs` for a site rebuild.
+  pub fn write_site_runs(doc: &Document, out: &Path, frames: usize, rebuilt_at: u64) -> Result<()> {
+      let finished = if rebuilt_at == 0 { now_ms() } else { rebuilt_at };
+      let extract = synthetic_extract_run(doc, finished.saturating_sub(1_000));
+      let web = web_build_run(doc, frames, finished);
+      write_runs(out, &[extract, web])
+  }
+  ```
+- `crates/robby-render/src/runs.rs:31:1` (docs, `robby_render::runs::RunRecord`): "One invocation — IR `agent.run` payload and/or `runs/<id>.json`."
+  ```
+  /// One invocation — IR `agent.run` payload and/or `runs/<id>.json`.
+  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+  pub struct RunRecord {
+      pub run_id: String,
+      pub recipe: String,
+      pub subject: String,
+      pub status: String,
+      pub started_at: u64,
+      pub finished_at: u64,
+      #[serde(skip_serializing_if = "Option::is_none")]
+      pub exit_code: Option<i32>,
+      #[serde(skip_serializing_if = "Option::is_none")]
+      pub stdout_tail: Option<String>,
+      #[serde(default, skip_serializing_if = "serde_json::Map::is_empty")]
+      pub stats: serde_json::Map<String, serde_json::Value>,
+      #[serde(default, skip_serializing_if = "Vec::is_empty")]
+      pub products: Vec<String>,
+      #[serde(skip_serializing_if = "Option::is_none")]
+      pub process: Option<RunProcess>,
+  }
+  ```
+- `crates/robby-render/src/runs.rs:52:1` (docs, `robby_render::runs::RunProcess`): "Coarse stage timeline for the invocation itself (not the subject body)."
+  ```
+  /// Coarse stage timeline for the invocation itself (not the subject body).
+  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+  pub struct RunProcess {
+      pub participants: Vec<RunParticipant>,
+      pub steps: Vec<RunStep>,
+  }
+  ```
+- `crates/robby-render/src/runs.rs:74:1` (docs, `robby_render::runs::RunIndexEntry`): "Compact row for `runs/index.json` (viewer list)."
+  ```
+  /// Compact row for `runs/index.json` (viewer list).
+  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+  pub struct RunIndexEntry {
+      pub run_id: String,
+      pub recipe: String,
+      pub subject: String,
+      pub status: String,
+      pub started_at: u64,
+      pub finished_at: u64,
   }
   ```
 - `crates/robby-render/src/tree.rs:104:1` (docs, `robby_render::tree::item_children`): "Direct, non-module, non-trivial children of a module, in source order."
@@ -3478,6 +3668,23 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           }
       }
   
+      // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
+      let rebuilt_at = std::time::SystemTime::now()
+          .duration_since(std::time::UNIX_EPOCH)
+          .map(|d| d.as_millis() as u64)
+          .unwrap_or(0);
+      let build = serde_json::json!({
+          "rebuilt_at": rebuilt_at,
+          "frames": count,
+          "nodes": doc.nodes.len(),
+          "files": doc.files.len(),
+          "generator": doc.generator,
+      });
+      fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+  
+      // Completed pipeline history for Runs mode (synthetic extract + this web build).
+      crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
+  
       Ok(count)
   }
   ```
@@ -3614,11 +3821,12 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 
 - calls → [`robby_cli`](../robby_cli/index.md) — extract
 - calls → [`robby_ir::codepath`](../robby_ir/codepath/index.md) — find_entrypoints, from_entry
+- calls → [`robby_ir::contract`](../robby_ir/contract/index.md) — passes
 - calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — 5 items
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../robby_ir/model/index.md) — 7 items
+- calls → [`robby_ir::model`](../robby_ir/model/index.md) — 6 items
 - calls → [`robby_ir::process`](../robby_ir/process/index.md) — participant
-- calls → [`robby_ir::vocab`](../robby_ir/vocab/index.md) — parse
+- calls → [`robby_ir::run`](../robby_ir/run/index.md) — get, parse
 
 ## Referenced by
 
@@ -3636,8 +3844,8 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - calls ← [`robby_cli::resolve`](../robby_cli/resolve.md)
 - calls ← [`robby_cli::run`](../robby_cli/run.md)
 - calls ← [`robby_cli::show`](../robby_cli/show.md)
-- calls ← [`robby_cli::web`](../robby_cli/web.md)
 - calls ← [`robby_cli::workspace`](../robby_cli/workspace.md)
+- calls ← [`robby_cli::write_web`](../robby_cli/write-web.md)
 - calls ← [`robby_extract::rust::collect_rs`](../robby_extract/rust/collect-rs.md)
 - calls ← [`robby_extract::rust::discover_crates`](../robby_extract/rust/discover-crates.md)
 - calls ← [`robby_extract::rust::docs_of`](../robby_extract/rust/docs-of.md)
@@ -3672,6 +3880,8 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - calls ← [`robby_ir::codepath::find_entrypoints`](../robby_ir/codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../robby_ir/codepath/index.md)
 - calls ← [`robby_ir::codepath::sample_doc`](../robby_ir/codepath/tests/sample-doc.md)
+- calls ← [`robby_ir::contract::impl Absorb for Process::absorb`](../robby_ir/contract/index.md)
+- calls ← [`robby_ir::contract::impl CoverageGate for CoverageReport::failing_gaps`](../robby_ir/contract/index.md)
 - calls ← [`robby_ir::coverage::all_spans`](../robby_ir/coverage/all-spans.md)
 - calls ← [`robby_ir::coverage::document_coverage`](../robby_ir/coverage/document-coverage.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../robby_ir/coverage/file-coverage.md)
@@ -3684,7 +3894,6 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - calls ← [`robby_ir::model::impl Document::record_child`](../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::walk`](../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::validate`](../robby_ir/model/validate.md)
-- calls ← [`robby_ir::process::impl Process::absorb`](../robby_ir/process/index.md)
 - calls ← [`robby_ir::process::impl Process::participant`](../robby_ir/process/index.md)
 - calls ← [`robby_ir::process::impl Process::step`](../robby_ir/process/index.md)
 - calls ← [`robby_ir::test_coverage::report_orders_worst_files_first`](../robby_ir/test_coverage/report-orders-worst-files-first.md)
@@ -3695,6 +3904,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - [`pipeline`](pipeline/index.md) — 25 nodes
 - [`render`](render/index.md) — 72 nodes
 - [`report`](report/index.md) — 19 nodes
+- [`runs`](runs/index.md) — 59 nodes
 - [`tree`](tree/index.md) — 42 nodes
 - [`tui`](tui/index.md) — 11 nodes
 - [`util`](util/index.md) — 12 nodes
@@ -3712,28 +3922,29 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - [`test_markdown`](test_markdown/index.md) — 12 nodes
 - [`test_render`](test_render/index.md) — 18 nodes
 - [`test_tree`](test_tree/index.md) — 13 nodes
-- [`test_web`](test_web/index.md) — 21 nodes
+- [`test_web`](test_web/index.md) — 22 nodes
 
 ## Items
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`sequence`](sequence.md) | `code.function` | 2 | `crates/robby-render/src/lib.rs:32:1` |
-| [`flowchart`](flowchart.md) | `code.function` | 2 | `crates/robby-render/src/lib.rs:37:1` |
-| [`class_diagram`](class-diagram.md) | `code.function` | 5 | `crates/robby-render/src/lib.rs:42:1` |
-| [`dependencies`](dependencies.md) | `code.function` | 5 | `crates/robby-render/src/lib.rs:51:1` |
-| [`coupling`](coupling.md) | `code.function` | 5 | `crates/robby-render/src/lib.rs:60:1` |
-| [`dependency_report`](dependency-report.md) | `code.function` | 9 | `crates/robby-render/src/lib.rs:69:1` |
-| [`workspace_dependencies`](workspace-dependencies.md) | `code.function` | 9 | `crates/robby-render/src/lib.rs:83:1` |
-| [`stable_id`](stable-id.md) | `code.function` | 1 | `crates/robby-render/src/lib.rs:97:1` |
-| [`all_sequences`](all-sequences.md) | `code.function` | 9 | `crates/robby-render/src/lib.rs:102:1` |
-| [`step_summary`](step-summary.md) | `code.function` | 1 | `crates/robby-render/src/lib.rs:117:1` |
+| [`sequence`](sequence.md) | `code.function` | 2 | `crates/robby-render/src/lib.rs:34:1` |
+| [`flowchart`](flowchart.md) | `code.function` | 2 | `crates/robby-render/src/lib.rs:39:1` |
+| [`class_diagram`](class-diagram.md) | `code.function` | 5 | `crates/robby-render/src/lib.rs:44:1` |
+| [`dependencies`](dependencies.md) | `code.function` | 5 | `crates/robby-render/src/lib.rs:53:1` |
+| [`coupling`](coupling.md) | `code.function` | 5 | `crates/robby-render/src/lib.rs:62:1` |
+| [`dependency_report`](dependency-report.md) | `code.function` | 9 | `crates/robby-render/src/lib.rs:71:1` |
+| [`workspace_dependencies`](workspace-dependencies.md) | `code.function` | 9 | `crates/robby-render/src/lib.rs:85:1` |
+| [`stable_id`](stable-id.md) | `code.function` | 1 | `crates/robby-render/src/lib.rs:99:1` |
+| [`all_sequences`](all-sequences.md) | `code.function` | 9 | `crates/robby-render/src/lib.rs:104:1` |
+| [`step_summary`](step-summary.md) | `code.function` | 1 | `crates/robby-render/src/lib.rs:119:1` |
 
 ## Imports
 
 - `pub use render::{MarkdownRenderer, MermaidRenderer, Renderer, ShowOptions, TuiRenderer};`
 - `pub use report::{Report, Section};`
 - `pub use view::{`
+- `pub use runs::{RunIndexEntry, RunRecord, RunsIndex, write_runs, write_site_runs};`
 - `pub use web::{FrameDetail, write_site};`
 - [`use robby_ir::{Document, NodeId, Process, Step};`](../robby_ir/index.md)
 - `use view::ProcessView as ProcView;`

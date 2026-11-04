@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn frame_detail_includes_execution_mermaid_for_call_path()` |
-| location | [`crates/robby-render/tests/web.rs:303`](../../../../crates/robby-render/tests/web.rs#L303) |
+| location | [`crates/robby-render/tests/web.rs:340`](../../../../crates/robby-render/tests/web.rs#L340) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -65,12 +65,13 @@ sequenceDiagram
 - calls → [`robby_render::test_web::entrypoints_demo_doc`](entrypoints-demo-doc.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::web::impl FrameDetail::from_node_in_doc`](../web/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — symbol
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new
 - calls → [`robby_render::test_web`](index.md) — entrypoints_demo_doc
 - calls → [`robby_render::web`](../web/index.md) — from_node_in_doc

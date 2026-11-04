@@ -137,7 +137,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Node::with_lang`](../../robby_ir/model/index.md)
@@ -157,7 +157,8 @@ sequenceDiagram
 
 - calls → [`robby_agent::enrich::tests`](tests/index.md) — new
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 5 items
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, merge, symbol, with_lang
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 
 ## Referenced by

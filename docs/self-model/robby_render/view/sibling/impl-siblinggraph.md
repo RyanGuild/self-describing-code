@@ -87,7 +87,7 @@ impl SiblingGraph {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — edge_label, is_structural, short_kind, text
@@ -253,8 +253,8 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::is_structural`](../../util/is-structural.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)

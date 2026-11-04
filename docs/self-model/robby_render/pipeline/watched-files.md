@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn watched_files(loaded: &Loaded) -> Vec<PathBuf>` |
-| location | [`crates/robby-render/src/pipeline.rs:185`](../../../../crates/robby-render/src/pipeline.rs#L185) |
+| location | [`crates/robby-render/src/pipeline.rs:190`](../../../../crates/robby-render/src/pipeline.rs#L190) |
 | provenance | extractor · confidence 1.00 |
 
 > Files whose change must invalidate a cached build.

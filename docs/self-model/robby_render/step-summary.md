@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn step_summary(step: &Step) -> String` |
-| location | [`crates/robby-render/src/lib.rs:117`](../../../crates/robby-render/src/lib.rs#L117) |
+| location | [`crates/robby-render/src/lib.rs:119`](../../../crates/robby-render/src/lib.rs#L119) |
 | provenance | extractor · confidence 1.00 |
 
 > Compact one-liner for a step.

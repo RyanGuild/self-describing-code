@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize>` |
-| location | [`crates/robby-render/src/pipeline.rs:105`](../../../../crates/robby-render/src/pipeline.rs#L105) |
+| location | [`crates/robby-render/src/pipeline.rs:110`](../../../../crates/robby-render/src/pipeline.rs#L110) |
 | provenance | extractor · confidence 1.00 |
 
 > Write one `.mmd` file per process and per root graph.

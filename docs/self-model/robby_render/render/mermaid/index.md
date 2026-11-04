@@ -158,7 +158,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::render::tui`](../tui/index.md) — new
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](../../view/comments/index.md) — as_str

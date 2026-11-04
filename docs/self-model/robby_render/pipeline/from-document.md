@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn from_document(mut document: Document, root: &Path) -> Loaded` |
-| location | [`crates/robby-render/src/pipeline.rs:88`](../../../../crates/robby-render/src/pipeline.rs#L88) |
+| location | [`crates/robby-render/src/pipeline.rs:93`](../../../../crates/robby-render/src/pipeline.rs#L93) |
 | provenance | extractor · confidence 1.00 |
 
 > Compute everything derived from an in-memory document.

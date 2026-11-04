@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/lib.rs:23`](../../../../crates/robby-ir/src/lib.rs#L23) |
+| declared at | [`crates/robby-ir/src/lib.rs:25`](../../../../crates/robby-ir/src/lib.rs#L25) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 19 |
 

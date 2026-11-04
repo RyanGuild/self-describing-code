@@ -149,7 +149,8 @@ flowchart TB
 - calls → [`robby_agent::context`](../context/index.md) — collect_comment_contexts
 - calls → [`robby_agent::model`](../model/index.md) — decide, write_note
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 5 items
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, merge, symbol, with_lang
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 
 ## Referenced by

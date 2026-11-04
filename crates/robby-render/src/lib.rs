@@ -11,6 +11,7 @@ pub mod markdown;
 pub mod pipeline;
 pub mod render;
 pub mod report;
+pub mod runs;
 pub mod tree;
 pub mod tui;
 pub mod util;
@@ -23,6 +24,7 @@ pub use view::{
     CouplingGraph, DependencyViews, LinkGraph, NodeViews, PackageStructure, ProcessView, Scene,
     SelectOpts, SiblingGraph, TypeModel, collect, is_binary_module, main_process,
 };
+pub use runs::{RunIndexEntry, RunRecord, RunsIndex, write_runs, write_site_runs};
 pub use web::{FrameDetail, write_site};
 
 use robby_ir::{Document, NodeId, Process, Step};

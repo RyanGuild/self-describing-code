@@ -7,4 +7,7 @@ dist
 .biome
 *.svg.tmp
 apps/site/public/scene.json
+apps/site/public/scene-entrypoints.json
+apps/site/public/build.json
 apps/site/public/frames/
+apps/site/public/runs/

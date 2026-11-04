@@ -5,17 +5,15 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:251`](../../../../../apps/site/src/viewer.ts#L251) |
+| location | [`apps/site/src/viewer.ts:614`](../../../../../apps/site/src/viewer.ts#L614) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function placeAllFrames() {
+function placeAllFrames(): void {
   // Only top-level world cards (the focus). Children live in the body's grid.
   for (const el of worldEl.querySelectorAll<HTMLElement>(":scope > .frame-wrap")) {
     const id = el.dataset.id;
-    if (!id) {
-      continue;
-    }
+    if (!id) continue;
     placeFrame(el, frame(id), camera);
   }
 }

@@ -42,13 +42,13 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
 - calls → [`robby_ir::coverage::has_span_descendant`](has-span-descendant.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../model/index.md) — get
+- calls → [`robby_ir::run`](../run/index.md) — get
 
 ## Referenced by
 

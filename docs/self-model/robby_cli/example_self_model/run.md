@@ -121,7 +121,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::vocab::impl Verdict::parse`](../../robby_ir/vocab/index.md)
+- calls → [`robby_ir::run::impl RunStatus::parse`](../../robby_ir/run/index.md)
 - calls → [`robby_render::pipeline::load`](../../robby_render/pipeline/load.md)
 - calls → [`robby_cli::extract`](../extract.md)
 - calls → [`robby_render::pipeline::from_document`](../../robby_render/pipeline/from-document.md)
@@ -135,7 +135,7 @@ sequenceDiagram
 
 - calls → [`robby_cli`](../index.md) — extract
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — failures
-- calls → [`robby_ir::vocab`](../../robby_ir/vocab/index.md) — parse
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — parse
 - calls → [`robby_render::pipeline`](../../robby_render/pipeline/index.md) — 6 items
 
 ## Referenced by

@@ -29,12 +29,7 @@ impl Verdict {
 
 ## Referenced by
 
-- calls ← [`robby_cli::example_self_model::run`](../../robby_cli/example_self_model/run.md)
-- calls ← [`robby_cli::run`](../../robby_cli/run.md)
-- calls ← [`robby_extract::typescript::extract_file`](../../robby_extract/typescript/extract-file.md)
 - calls ← [`robby_ir::vocab::wire`](tests/wire.md)
-- calls ← [`robby_render::view::comments::enrichment_fields`](../../robby_render/view/comments/enrichment-fields.md)
-- calls ← [`robby_render::view::comments::parse_verdict`](../../robby_render/view/comments/parse-verdict.md)
 
 ### `as_str`
 

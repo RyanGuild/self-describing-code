@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant now_ms as now_ms()
+    participant std__time__SystemTime__now as std::time::SystemTime::now
+    participant duration_since as duration_since
+    participant as_millis as as_millis
+    participant map as map
+    participant unwrap_or as unwrap_or
+    now_ms-->>std__time__SystemTime__now: std::time::SystemTime::now()
+    now_ms-->>duration_since: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH)
+    now_ms-->>as_millis: d.as_millis()
+    now_ms-->>map: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH) ....
+    now_ms-->>unwrap_or: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH) ....

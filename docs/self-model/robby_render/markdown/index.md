@@ -162,7 +162,8 @@ flowchart TB
 
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — failures, is_complete, worst_first
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, subtree
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — subtree
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — sequence, stable_id
 - calls → [`robby_render::render`](../render/index.md) — comments, dependency_sections, externals, types
 - calls → [`robby_render::report`](../report/index.md) — 5 items

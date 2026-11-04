@@ -49,6 +49,7 @@ impl CoverageReport {
 - calls ← [`robby_cli::print_human`](../../robby_cli/print-human.md)
 - calls ← [`robby_extract::test_extract::the_workspace_is_fully_covered`](../../robby_extract/test_extract/the-workspace-is-fully-covered.md)
 - calls ← [`robby_extract::test_typescript::typescript_fixture_is_fully_covered`](../../robby_extract/test_typescript/typescript-fixture-is-fully-covered.md)
+- calls ← [`robby_ir::contract::impl CoverageGate for CoverageReport::failing_gaps`](../contract/index.md)
 - calls ← [`robby_ir::test_coverage::report_orders_worst_files_first`](../test_coverage/report-orders-worst-files-first.md)
 - calls ← [`robby_ir::test_coverage::unreferenced_files_appear_fully_uncovered`](../test_coverage/unreferenced-files-appear-fully-uncovered.md)
 - calls ← [`robby_render::markdown::coverage_section`](../../robby_render/markdown/coverage-section.md)

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn entrypoints_scene_roots_mains_and_nests_callees()` |
-| location | [`crates/robby-render/tests/web.rs:325`](../../../../crates/robby-render/tests/web.rs#L325) |
+| location | [`crates/robby-render/tests/web.rs:362`](../../../../crates/robby-render/tests/web.rs#L362) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -123,21 +123,21 @@ sequenceDiagram
 
 - calls → [`robby_render::test_web::entrypoints_demo_doc`](entrypoints-demo-doc.md)
 - calls → [`robby_render::view::scene::impl Scene::from_entrypoints`](../view/scene/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::stable_id`](../stable-id.md)
 - calls → [`robby_render::stable_id`](../stable-id.md)
 - calls → [`robby_render::stable_id`](../stable-id.md)
 - calls → [`robby_render::stable_id`](../stable-id.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../view/scene/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — stable_id
 - calls → [`robby_render::test_web`](index.md) — entrypoints_demo_doc
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str

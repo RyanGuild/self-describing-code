@@ -111,20 +111,20 @@ sequenceDiagram
 - calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::tree::is_compact`](is-compact.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::module_index_path`](module-index-path.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::tree::item_children`](item-children.md)
 - calls → [`robby_render::tree::item_slugs`](item-slugs.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::module_index_path`](module-index-path.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new
 - calls → [`robby_render::tree`](index.md) — 6 items
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str

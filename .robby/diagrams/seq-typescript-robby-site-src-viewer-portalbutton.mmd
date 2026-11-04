@@ -2,8 +2,10 @@ sequenceDiagram
     autonumber
     participant portalButton as portalButton()
     participant createElement as createElement
+    participant escapeHtml as escapeHtml
     participant addEventListener as addEventListener
     self-->>createElement: 
+    self-->>escapeHtml: 
     alt if
     self-->>addEventListener: 
     self-->>fn: 

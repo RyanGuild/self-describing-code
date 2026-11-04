@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn schema() -> schemars::Schema` |
-| location | [`crates/robby-ir/src/lib.rs:39`](../../../crates/robby-ir/src/lib.rs#L39) |
+| location | [`crates/robby-ir/src/lib.rs:43`](../../../crates/robby-ir/src/lib.rs#L43) |
 | provenance | extractor · confidence 1.00 |
 
 > The JSON Schema for [`Document`], derived from the Rust types.

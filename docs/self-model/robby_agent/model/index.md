@@ -122,7 +122,7 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 

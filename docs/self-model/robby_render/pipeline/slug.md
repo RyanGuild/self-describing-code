@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn slug(input: &str) -> String` |
-| location | [`crates/robby-render/src/pipeline.rs:190`](../../../../crates/robby-render/src/pipeline.rs#L190) |
+| location | [`crates/robby-render/src/pipeline.rs:195`](../../../../crates/robby-render/src/pipeline.rs#L195) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

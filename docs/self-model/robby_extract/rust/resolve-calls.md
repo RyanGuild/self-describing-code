@@ -111,8 +111,8 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_extract::rust::pick_call_target`](pick-call-target.md)
 - calls → [`robby_extract::rust::impl LineIndex::new`](index.md)
@@ -123,7 +123,7 @@ sequenceDiagram
 
 - calls → [`robby_extract::rust`](index.md) — new, pick_call_target
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 - calls → [`robby_render::view::scene`](../../robby_render/view/scene/index.md) — contains
 

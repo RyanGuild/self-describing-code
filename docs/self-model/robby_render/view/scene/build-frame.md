@@ -143,7 +143,7 @@ sequenceDiagram
 
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::is_structural`](../../util/is-structural.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::scene::is_scene_skipped`](is-scene-skipped.md)
@@ -162,7 +162,8 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — is_structural, short_kind

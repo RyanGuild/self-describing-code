@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant get as get()
+    participant iter as iter
+    participant find as find
+    get-->>iter: self.iter()
+    get-->>find: self.iter().find(|r| &r.id == id)

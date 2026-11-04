@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/lib.rs:19`](../../../../crates/robby-ir/src/lib.rs#L19) |
+| declared at | [`crates/robby-ir/src/lib.rs:20`](../../../../crates/robby-ir/src/lib.rs#L20) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 55 |
 
@@ -415,8 +415,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../kind/index.md) — as_str, new
-- calls → [`robby_ir::model`](../model/index.md) — get
 - calls → [`robby_ir::process`](../process/index.md) — default
+- calls → [`robby_ir::run`](../run/index.md) — get
 - calls → [`robby_ir::span`](../span/index.md) — at, byte_range
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
@@ -429,6 +429,8 @@ flowchart TB
 - calls ← [`robby_extract::test_extract::the_workspace_is_fully_covered`](../../robby_extract/test_extract/the-workspace-is-fully-covered.md)
 - calls ← [`robby_extract::test_typescript::typescript_fixture_is_fully_covered`](../../robby_extract/test_typescript/typescript-fixture-is-fully-covered.md)
 - calls ← [`robby_extract::typescript::extract_file`](../../robby_extract/typescript/extract-file.md)
+- calls ← [`robby_ir::contract::impl CoverageGate for CoverageReport::failing_gaps`](../contract/index.md)
+- calls ← [`robby_ir::contract::impl CoverageGate for CoverageReport::passes`](../contract/index.md)
 - calls ← [`robby_ir::test_coverage::attributes_are_classified`](../test_coverage/attributes-are-classified.md)
 - calls ← [`robby_ir::test_coverage::document_coverage_is_union_at_any_depth`](../test_coverage/document-coverage-is-union-at-any-depth.md)
 - calls ← [`robby_ir::test_coverage::empty_file_is_trivially_complete`](../test_coverage/empty-file-is-trivially-complete.md)
@@ -446,7 +448,6 @@ flowchart TB
 - calls ← [`robby_ir::test_coverage::whitespace_and_comments_are_classified_not_failed`](../test_coverage/whitespace-and-comments-are-classified-not-failed.md)
 - calls ← [`robby_render::markdown::coverage_section`](../../robby_render/markdown/coverage-section.md)
 - calls ← [`robby_render::pipeline::from_document`](../../robby_render/pipeline/from-document.md)
-- calls ← [`robby_render::pipeline::impl Loaded::is_ok`](../../robby_render/pipeline/index.md)
 - calls ← [`robby_render::pipeline::load_sources`](../../robby_render/pipeline/load-sources.md)
 
 ## Items

@@ -89,7 +89,7 @@ sequenceDiagram
 
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
@@ -101,7 +101,8 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains, new

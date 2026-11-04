@@ -105,12 +105,13 @@ sequenceDiagram
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — symbol
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — push
 - calls → [`robby_render::tree`](index.md) — is_module
 - calls → [`robby_render::view::links`](../view/links/index.md) — is_empty

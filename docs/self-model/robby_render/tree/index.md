@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-render/src/lib.rs:14`](../../../../crates/robby-render/src/lib.rs#L14) |
+| declared at | [`crates/robby-render/src/lib.rs:15`](../../../../crates/robby-render/src/lib.rs#L15) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 42 |
 
@@ -566,7 +566,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, subtree, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, subtree, symbol
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — sequence, stable_id, workspace_dependencies
 - calls → [`robby_render::markdown`](../markdown/index.md) — coverage_section
 - calls → [`robby_render::render`](../render/index.md) — comments, dependency_sections, externals, types

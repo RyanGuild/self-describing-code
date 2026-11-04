@@ -148,7 +148,7 @@ flowchart TB
 | | tests | openrouter | robby_agent | enrich | model | context | tests | robby_ir | robby_render |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | **tests** | · | | | | | | | | |
-| **openrouter** | | · | | | | | | 1 | 3 |
+| **openrouter** | | · | | | | | | 2 | 3 |
 | **robby_agent** | | | · | | | | | | |
 | **enrich** | | | | · | 2 | 1 | 17 | 30 | |
 | **model** | | | | | · | | | 12 | 1 |
@@ -330,7 +330,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — as_str
-- calls → [`robby_ir::model`](../robby_ir/model/index.md) — 5 items
+- calls → [`robby_ir::model`](../robby_ir/model/index.md) — insert, merge, symbol, with_lang
+- calls → [`robby_ir::run`](../robby_ir/run/index.md) — get, is_success
 - calls → [`robby_ir::span`](../robby_ir/span/index.md) — is_empty, location
 - calls → [`robby_render::report`](../robby_render/report/index.md) — push
 - calls → [`robby_render::util`](../robby_render/util/index.md) — text

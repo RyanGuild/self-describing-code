@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 397 |
+| nodes | 493 |
 
 ## Package diagram
 
@@ -17,6 +17,10 @@ flowchart TB
         subgraph n_c28bfd08cdfce4bf["codepath"]
             direction TB
             n_80d65b5ca6c1ad28["tests"]
+        end
+        subgraph n_6c585ca85c30235f["contract"]
+            direction TB
+            n_f7bcc3c389d98b48["tests"]
         end
         n_965af55f4081b03f["coverage"]
         subgraph n_611ba0cee1ac191f["kind"]
@@ -33,6 +37,11 @@ flowchart TB
             direction TB
             n_ff7a0f92d7ba8793["tests"]
         end
+        subgraph n_2296d5d51a43a6ae["run"]
+            direction TB
+            n_f31bf83055f6c119["recipes"]
+            n_8f0848a0981eec93["tests"]
+        end
         n_9053aa1513b08ea5["span"]
         n_46b0c6f667b1fb40["test_coverage"]
         subgraph n_3ab04153eeb89900["vocab"]
@@ -41,6 +50,7 @@ flowchart TB
         end
     end
     n_9c636b098ca4450e(["robby_render"])
+    n_46b0c6f667b1fb40 --> n_2296d5d51a43a6ae
     n_46b0c6f667b1fb40 --> n_48c15551e2e91996
     n_46b0c6f667b1fb40 --> n_611ba0cee1ac191f
     n_46b0c6f667b1fb40 --> n_965af55f4081b03f
@@ -48,11 +58,17 @@ flowchart TB
     n_48c15551e2e91996 --> n_611ba0cee1ac191f
     n_48c15551e2e91996 --> n_9c636b098ca4450e
     n_48c15551e2e91996 -.-> n_c28bfd08cdfce4bf
-    n_965af55f4081b03f --> n_48c15551e2e91996
-    n_965af55f4081b03f --> n_611ba0cee1ac191f
+    n_611ba0cee1ac191f -.-> n_6c585ca85c30235f
+    n_6c585ca85c30235f -.-> n_611ba0cee1ac191f
+    n_6c585ca85c30235f -.-> n_965af55f4081b03f
+    n_6c585ca85c30235f --> n_9c636b098ca4450e
+    n_6c585ca85c30235f --> n_f5e61214f719e7ae
+    n_965af55f4081b03f --> n_2296d5d51a43a6ae
+    n_965af55f4081b03f -.-> n_611ba0cee1ac191f
     n_965af55f4081b03f --> n_9053aa1513b08ea5
     n_965af55f4081b03f --> n_9c636b098ca4450e
     n_965af55f4081b03f --> n_f5e61214f719e7ae
+    n_c28bfd08cdfce4bf --> n_2296d5d51a43a6ae
     n_c28bfd08cdfce4bf -.-> n_48c15551e2e91996
     n_c28bfd08cdfce4bf --> n_611ba0cee1ac191f
     n_c28bfd08cdfce4bf --> n_80d65b5ca6c1ad28
@@ -74,6 +90,16 @@ flowchart TB
             n_b2cbb53c41a04542["from_entry"]
             n_9810aa25daf31a47["respects_max_depth"]
             n_e9bb0634e2177808["sample_doc"]
+        end
+        subgraph n_6c585ca85c30235f["contract"]
+            direction TB
+            n_6ec8959c3301846b["absorb"]
+            n_a58b00def736d38f["absorb_trait_marks_matching_steps_observed"]
+            n_e5263e8091cdf0c3["failing_gaps"]
+            n_d38e798b0619cf78["is_known_namespace"]
+            n_9ecd67c52b9b67d3["kind_namespace_helpers"]
+            n_0ad994605e60d7d2["namespace"]
+            n_ee75dc465096fea2["passes"]
         end
         subgraph n_965af55f4081b03f["coverage"]
             direction TB
@@ -133,10 +159,22 @@ flowchart TB
         end
         subgraph n_f5e61214f719e7ae["process"]
             direction TB
+            n_da37358bec483440["absorb"]
             n_e7a741a6cec5a5a8["as_str"]
             n_043f1293c7ad8c3c["default"]
             n_9aae883b9b569ac9["new"]
+            n_70fdf20b8489b406["participant"]
+            n_a066491f9867b007["step"]
             n_09b9bef2ec7f54ef["wire"]
+        end
+        subgraph n_2296d5d51a43a6ae["run"]
+            direction TB
+            n_7bd0352c5d026b38["get"]
+            n_c7b698f248a51fa9["get"]
+            n_c763d00117e8a343["new"]
+            n_ec9f734df51ab386["new"]
+            n_e4ef1ad66dca8028["run_record_serializes_recipe_string"]
+            n_9279e22dad59a8d7["with_subject"]
         end
         subgraph n_9053aa1513b08ea5["span"]
             direction TB
@@ -209,10 +247,10 @@ flowchart TB
     n_63a652301eb25a29 --> n_192ee09539008dbd
     n_6e5287b66b2ff142 --> n_192ee09539008dbd
     n_6e5287b66b2ff142 --> n_1a9a05bb45ea296c
-    n_6e5287b66b2ff142 --> n_80b75adcd8002383
     n_6e5287b66b2ff142 -->|"2"| n_8a5415d7daf6e60c
     n_6e5287b66b2ff142 -->|"5"| n_9ad7a7d7cfd84f45
     n_6e5287b66b2ff142 -->|"2"| n_ae0eeff51ed67edd
+    n_6e5287b66b2ff142 --> n_c7b698f248a51fa9
     n_7235be4ea824b149 --> n_514c7e46850aa6a4
     n_7235be4ea824b149 --> n_74e4ff10a7dfc268
     n_74e4ff10a7dfc268 --> n_313d8a1618b10871
@@ -233,17 +271,22 @@ flowchart TB
     n_9810aa25daf31a47 --> n_192ee09539008dbd
     n_9810aa25daf31a47 --> n_b2cbb53c41a04542
     n_9810aa25daf31a47 --> n_e9bb0634e2177808
-    n_99b47e2d08834c4c -->|"2"| n_80b75adcd8002383
+    n_99b47e2d08834c4c -->|"2"| n_c7b698f248a51fa9
+    n_9ecd67c52b9b67d3 -->|"2"| n_9ad7a7d7cfd84f45
     n_9f3013b2ce6a2db0 --> n_310844e14983c9bc
     n_9f3013b2ce6a2db0 --> n_b2cbb53c41a04542
     n_a3e20cf4c683a862 --> n_286e217fcb95c453
     n_a3e20cf4c683a862 -->|"2"| n_8a5415d7daf6e60c
     n_a3e20cf4c683a862 -->|"3"| n_d5fd1809d274d7a9
+    n_a58b00def736d38f --> n_6ec8959c3301846b
+    n_a58b00def736d38f -->|"4"| n_70fdf20b8489b406
+    n_a58b00def736d38f -->|"8"| n_9ad7a7d7cfd84f45
+    n_a58b00def736d38f -->|"2"| n_a066491f9867b007
     n_b1d0fe01f12e1e71 --> n_0cecd087dcb9ec1b
     n_b2cbb53c41a04542 -->|"4"| n_46a6d3ecefce14cd
-    n_b2cbb53c41a04542 -->|"5"| n_80b75adcd8002383
     n_b2cbb53c41a04542 -->|"2"| n_8a5415d7daf6e60c
     n_b2cbb53c41a04542 -->|"3"| n_9ad7a7d7cfd84f45
+    n_b2cbb53c41a04542 -->|"5"| n_c7b698f248a51fa9
     n_c3d3b0c6d7792dc9 --> n_74e4ff10a7dfc268
     n_c83f7c789f6b13f6 --> n_514c7e46850aa6a4
     n_c83f7c789f6b13f6 --> n_74e4ff10a7dfc268
@@ -264,16 +307,20 @@ flowchart TB
     n_e246ceacf9164349 --> n_ccd6dcdd0298397d
     n_e47c1c1aa0db0c40 --> n_74e4ff10a7dfc268
     n_e47c1c1aa0db0c40 --> n_9ad7a7d7cfd84f45
+    n_e4ef1ad66dca8028 --> n_9279e22dad59a8d7
+    n_e4ef1ad66dca8028 --> n_c763d00117e8a343
+    n_e5263e8091cdf0c3 --> n_298b37ed3e660088
     n_e5604f2828b34961 --> n_286e217fcb95c453
     n_e5604f2828b34961 --> n_80b75adcd8002383
     n_e5604f2828b34961 -->|"2"| n_8a5415d7daf6e60c
     n_e5604f2828b34961 -->|"3"| n_d5fd1809d274d7a9
     n_e5db91665baa2d8d -->|"2"| n_f96a2aa959c836db
+    n_e5fa024fa4386033 --> n_d38e798b0619cf78
     n_e68b2f1462104869 --> n_1539d79370dab438
     n_e68b2f1462104869 --> n_46a6d3ecefce14cd
     n_e68b2f1462104869 --> n_74e4ff10a7dfc268
-    n_e68b2f1462104869 --> n_80b75adcd8002383
     n_e68b2f1462104869 --> n_9ad7a7d7cfd84f45
+    n_e68b2f1462104869 --> n_c7b698f248a51fa9
     n_e9bb0634e2177808 -->|"5"| n_192ee09539008dbd
     n_e9bb0634e2177808 -->|"3"| n_8a5415d7daf6e60c
     n_e9bb0634e2177808 -->|"6"| n_9ad7a7d7cfd84f45
@@ -284,6 +331,7 @@ flowchart TB
     n_ea6373866a29c8d4 -->|"10"| n_e546d71fa4f69654
     n_ea6373866a29c8d4 --> n_e5fa024fa4386033
     n_ec2e46958b5dc892 --> n_d5fd1809d274d7a9
+    n_ee75dc465096fea2 --> n_fa28cd347d0d2d3f
     n_eee4ab9af74a2168 -->|"2"| n_8a5415d7daf6e60c
     n_eee4ab9af74a2168 -->|"4"| n_9ad7a7d7cfd84f45
     n_eee4ab9af74a2168 --> n_ae0eeff51ed67edd
@@ -303,27 +351,32 @@ flowchart TB
 
 ## Dependency matrix
 
-| | robby_ir | vocab | test_coverage | code | tests | runtime | codepath | agent | tests | tests | tests | coverage | model | span | process | kind | robby_render |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **robby_ir** | · | | | | | | | | | | | | | | | | |
-| **vocab** | | · | | | | | | | | | | | | | | | |
-| **test_coverage** | | | · | | | | | | | | | 19 | 16 | | | 24 | 1 |
-| **code** | | | | · | | | | | | | | | | | | | |
-| **tests** | | | | | · | | | | | | | | | | | | |
-| **runtime** | | | | | | · | | | | | | | | | | | |
-| **codepath** | | | | | | | · | | | | 2 | | 16⇄ | | | 16 | 7 |
-| **agent** | | | | | | | | · | | | | | | | | | |
-| **tests** | | | | | | | | | · | | | | | | | | |
-| **tests** | | | | | | | | | | · | | | | | | | |
-| **tests** | | | | | | | | | | | · | | | | | | |
-| **coverage** | | | | | | | | | | | | · | 3 | 2 | 1 | 7 | 10 |
-| **model** | | | | | | | 1⇄ | | | | | | · | | | 1 | 24 |
-| **span** | | | | | | | | | | | | | | · | | | |
-| **process** | | | | | | | | | | | | | | | · | | 4 |
-| **kind** | | | | | | | | | | | | | | | | · | |
-| **robby_render** | | | | | | | | | | | | | | | | | · |
+| | robby_ir | vocab | test_coverage | contract | code | tests | tests | runtime | codepath | agent | tests | recipes | tests | tests | model | kind | tests | coverage | run | span | process | robby_render |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **robby_ir** | · | | | | | | | | | | | | | | | | | | | | | |
+| **vocab** | | · | | | | | | | | | | | | | | | | | | | | |
+| **test_coverage** | | | · | | | | | | | | | | | | 15 | 24 | | 19 | 1 | | | 1 |
+| **contract** | | | | · | | | | | | | | | | | | 10⇄ | | 2⇄ | | | 6 | 3 |
+| **code** | | | | | · | | | | | | | | | | | | | | | | | |
+| **tests** | | | | | | · | | | | | | | | | | | | | | | | |
+| **tests** | | | | | | | · | | | | | | | | | | | | | | | |
+| **runtime** | | | | | | | | · | | | | | | | | | | | | | | |
+| **codepath** | | | | | | | | | · | | | | | | 11⇄ | 16 | 2 | | 5 | | | 7 |
+| **agent** | | | | | | | | | | · | | | | | | | | | | | | |
+| **tests** | | | | | | | | | | | · | | | | | | | | | | | |
+| **recipes** | | | | | | | | | | | | · | | | | | | | | | | |
+| **tests** | | | | | | | | | | | | | · | | | | | | | | | |
+| **tests** | | | | | | | | | | | | | | · | | | | | | | | |
+| **model** | | | | | | | | | 1⇄ | | | | | | · | 1 | | | | | | 24 |
+| **kind** | | | | 1⇄ | | | | | | | | | | | | · | | | | | | |
+| **tests** | | | | | | | | | | | | | | | | | · | | | | | |
+| **coverage** | | | | | | | | | | | | | | | | 7⇄ | | · | 3 | 2 | 1 | 10 |
+| **run** | | | | | | | | | | | | | | | | | | | · | | | |
+| **span** | | | | | | | | | | | | | | | | | | | | · | | |
+| **process** | | | | | | | | | | | | | | | | | | | | | · | 2 |
+| **robby_render** | | | | | | | | | | | | | | | | | | | | | | · |
 
-Cycles: model ↔ codepath
+Cycles: kind ↔ contract ↔ coverage; model ↔ codepath
 
 ## Comments
 
@@ -436,6 +489,50 @@ Cycles: model ↔ codepath
               max_depth,
           })
       }
+  ```
+- `crates/robby-ir/src/contract.rs:11:1` (docs, `robby_ir::contract::Absorb`): "Merge an observed value into a static (or earlier) one without dropping prior structure. For [`Process`], matching is b…"
+  ```
+  /// Merge an observed value into a static (or earlier) one without dropping prior
+  /// structure.
+  ///
+  /// For [`Process`], matching is by `(from, to, label)`: observed steps mark
+  /// matches; unmatched observed steps append; static-only steps stay dashed.
+  pub trait Absorb {
+      fn absorb(&mut self, observed: &Self);
+  }
+  ```
+- `crates/robby-ir/src/contract.rs:47:1` (docs, `robby_ir::contract::KindNamespace`): "Open-kind namespace queries. Unknown namespaces must still round-trip."
+  ```
+  /// Open-kind namespace queries. Unknown namespaces must still round-trip.
+  pub trait KindNamespace {
+      fn namespace(&self) -> &str;
+  
+      fn is_code(&self) -> bool {
+          self.namespace() == "code"
+      }
+  
+      fn is_runtime(&self) -> bool {
+          self.namespace() == "runtime"
+      }
+  
+      fn is_agent(&self) -> bool {
+          self.namespace() == "agent"
+      }
+  
+      /// `code` | `runtime` | `agent` — soft gap otherwise, never a hard error.
+      fn is_known_namespace(&self) -> bool {
+          matches!(self.namespace(), "code" | "runtime" | "agent")
+      }
+  }
+  ```
+- `crates/robby-ir/src/contract.rs:75:1` (docs, `robby_ir::contract::CoverageGate`): "Coverage completeness gate: unknown gaps fail; trivia does not."
+  ```
+  /// Coverage completeness gate: unknown gaps fail; trivia does not.
+  pub trait CoverageGate {
+      fn passes(&self) -> bool;
+  
+      fn failing_gaps(&self) -> Vec<(&FileCoverage, &Gap)>;
+  }
   ```
 - `crates/robby-ir/src/coverage.rs:103:5` (docs, `robby_ir::coverage::impl FileCoverage::trivia_bytes`): "Bytes classified as trivia rather than claimed by a node."
   ```
@@ -728,14 +825,15 @@ Cycles: model ↔ codepath
           }
       }
   ```
-- `crates/robby-ir/src/kind.rs:106:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
+- `crates/robby-ir/src/kind.rs:110:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
   ```
   /// True when `kind` is understood by the current version of the tool.
   ///
   /// Unknown kinds are never an error — they are rendered generically and
   /// reported as a soft gap, so an older viewer can still display a newer graph.
   pub fn is_known(kind: &Kind) -> bool {
-      matches!(kind.namespace(), "code" | "runtime" | "agent")
+      use crate::contract::KindNamespace;
+      kind.is_known_namespace()
   }
   ```
 - `crates/robby-ir/src/kind.rs:17:1` (docs, `robby_ir::kind::Kind`): "A namespaced, open-ended kind tag."
@@ -754,7 +852,7 @@ Cycles: model ↔ codepath
           self.0.split('.').next().unwrap_or(&self.0)
       }
   ```
-- `crates/robby-ir/src/lib.rs:39:1` (docs, `robby_ir::schema`): "The JSON Schema for [`Document`], derived from the Rust types. This is the single source of truth for the contract. Typ…"
+- `crates/robby-ir/src/lib.rs:43:1` (docs, `robby_ir::schema`): "The JSON Schema for [`Document`], derived from the Rust types. This is the single source of truth for the contract. Typ…"
   ```
   /// The JSON Schema for [`Document`], derived from the Rust types.
   ///
@@ -764,7 +862,7 @@ Cycles: model ↔ codepath
       schemars::schema_for!(Document)
   }
   ```
-- `crates/robby-ir/src/lib.rs:47:1` (docs, `robby_ir::schema_json`): "Pretty-printed JSON Schema."
+- `crates/robby-ir/src/lib.rs:51:1` (docs, `robby_ir::schema_json`): "Pretty-printed JSON Schema."
   ```
   /// Pretty-printed JSON Schema.
   pub fn schema_json() -> String {
@@ -1308,29 +1406,10 @@ Cycles: model ↔ codepath
       /// observed; steps known statically but never seen stay dashed. Observed
       /// steps not present statically are appended, because runtime is the
       /// ground truth for what actually happened.
+      ///
+      /// Canonical implementation: [`crate::contract::Absorb`].
       pub fn absorb(&mut self, observed: &Process) {
-          for p in &observed.participants {
-              if !self.participants.iter().any(|q| q.id == p.id) {
-                  self.participants.push(p.clone());
-              }
-          }
-  
-          let mut matched = vec![false; observed.steps.len()];
-          for step in &mut self.steps {
-              if let Some(idx) = observed
-                  .steps
-                  .iter()
-                  .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
-              {
-                  step.observed = true;
-                  matched[idx] = true;
-              }
-          }
-          for (idx, step) in observed.steps.iter().enumerate() {
-              if !matched[idx] {
-                  self.steps.push(step.clone());
-              }
-          }
+          <Self as crate::contract::Absorb>::absorb(self, observed);
       }
   ```
 - `crates/robby-ir/src/process.rs:18:1` (docs, `robby_ir::process::Participant`): "One lifeline in a sequence diagram. Today a participant is a module, scope, or type. The field set is deliberately acto…"
@@ -1410,6 +1489,96 @@ Cycles: model ↔ codepath
       pub span: Option<Span>,
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
       pub blocks: Vec<Block>,
+  }
+  ```
+- `crates/robby-ir/src/run.rs:108:1` (docs, `robby_ir::run::RunRecord`): "One invocation: past, live, or queued. Persist the same shape as an `agent.run` node payload and/or `runs/<run_id>.json…"
+  ```
+  /// One invocation: past, live, or queued.
+  ///
+  /// Persist the same shape as an `agent.run` node payload and/or
+  /// `runs/<run_id>.json`. Optional [`Process`] is the **run** stage timeline
+  /// (extract → check → write), not the subject function body.
+  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+  pub struct RunRecord {
+      pub run_id: String,
+      pub recipe: RecipeId,
+      /// Subject node id or stable id (tests).
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub subject: Option<String>,
+      pub status: RunStatus,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub started_at: Option<i64>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub finished_at: Option<i64>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub exit_code: Option<i32>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub stdout_tail: Option<String>,
+      #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+      pub stats: BTreeMap<String, String>,
+      #[serde(default, skip_serializing_if = "Vec::is_empty")]
+      pub products: Vec<String>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub process: Option<Process>,
+  }
+  ```
+- `crates/robby-ir/src/run.rs:13:1` (docs, `robby_ir::run::RecipeId`): "Stable recipe identifier, e.g. `robby.extract` or `cargo.test`."
+  ```
+  /// Stable recipe identifier, e.g. `robby.extract` or `cargo.test`.
+  #[derive(
+      Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+  )]
+  #[serde(transparent)]
+  pub struct RecipeId(String);
+  ```
+- `crates/robby-ir/src/run.rs:175:1` (docs, `robby_ir::run::RecipeCatalog`): "Lookup over a recipe catalog (pipelines.json, in-memory, …)."
+  ```
+  /// Lookup over a recipe catalog (pipelines.json, in-memory, …).
+  pub trait RecipeCatalog {
+      fn get(&self, id: &RecipeId) -> Option<&Recipe>;
+  }
+  ```
+- `crates/robby-ir/src/run.rs:48:1` (docs, `robby_ir::run::RunStatus`): "Shared status for tests, extract, enrich, and future trace runs."
+  ```
+  /// Shared status for tests, extract, enrich, and future trace runs.
+  #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+  #[serde(rename_all = "snake_case")]
+  pub enum RunStatus {
+      Queued,
+      Running,
+      Pass,
+      Fail,
+      Error,
+      Cancelled,
+  }
+  ```
+- `crates/robby-ir/src/run.rs:84:5` (docs, `robby_ir::run::impl RunStatus::is_success`): "Terminal success (gate / runner completed ok)."
+  ```
+  /// Terminal success (gate / runner completed ok).
+      pub fn is_success(self) -> bool {
+          matches!(self, Self::Pass)
+      }
+  ```
+- `crates/robby-ir/src/run.rs:89:5` (docs, `robby_ir::run::impl RunStatus::is_terminal`): "Terminal outcome (success or failure), not in-flight."
+  ```
+  /// Terminal outcome (success or failure), not in-flight.
+      pub fn is_terminal(self) -> bool {
+          matches!(
+              self,
+              Self::Pass | Self::Fail | Self::Error | Self::Cancelled
+          )
+      }
+  ```
+- `crates/robby-ir/src/run.rs:98:1` (docs, `robby_ir::run::Recipe`): "Catalog entry for an invokable procedure."
+  ```
+  /// Catalog entry for an invokable procedure.
+  #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+  pub struct Recipe {
+      pub id: RecipeId,
+      pub label: String,
+      /// Policy / allowlist key for local invoke (optional).
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub allowlist: Option<String>,
   }
   ```
 - `crates/robby-ir/src/span.rs:10:1` (docs, `robby_ir::span::Position`): "A single point in a source file."
@@ -1501,6 +1670,7 @@ Cycles: model ↔ codepath
 - calls ← [`robby_agent::enrich::relevant_writes_note_and_highlights`](../robby_agent/enrich/tests/relevant-writes-note-and-highlights.md)
 - calls ← [`robby_agent::model::parse_decision`](../robby_agent/model/parse-decision.md)
 - calls ← [`robby_agent::model::parse_note`](../robby_agent/model/parse-note.md)
+- calls ← [`robby_agent::openrouter::impl ChatClient for OpenRouterClient::chat`](../robby_agent/openrouter/index.md)
 - calls ← [`robby_agent::openrouter::impl OpenRouterClient::from_env`](../robby_agent/openrouter/index.md)
 - calls ← [`robby_cli::build::main`](../robby_cli/build/main.md)
 - calls ← [`robby_cli::default_ir`](../robby_cli/default-ir.md)
@@ -1584,6 +1754,8 @@ Cycles: model ↔ codepath
 - calls ← [`robby_render::render::tui::ascii_package_structure`](../robby_render/render/tui/ascii-package-structure.md)
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::process`](../robby_render/render/tui/index.md)
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::sibling_graph`](../robby_render/render/tui/index.md)
+- calls ← [`robby_render::runs::synthetic_extract_run`](../robby_render/runs/synthetic-extract-run.md)
+- calls ← [`robby_render::runs::web_build_run`](../robby_render/runs/web-build-run.md)
 - calls ← [`robby_render::test_markdown::fixture`](../robby_render/test_markdown/fixture.md)
 - calls ← [`robby_render::test_markdown::unused_participant_import_is_referenced`](../robby_render/test_markdown/unused-participant-import-is-referenced.md)
 - calls ← [`robby_render::test_render::class_diagram_marks_traits_as_interfaces`](../robby_render/test_render/class-diagram-marks-traits-as-interfaces.md)
@@ -1680,10 +1852,12 @@ Cycles: model ↔ codepath
 ## Modules
 
 - [`codepath`](codepath/index.md) — 28 nodes
+- [`contract`](contract/index.md) — 28 nodes
 - [`coverage`](coverage/index.md) — 55 nodes
-- [`kind`](kind/index.md) — 54 nodes
+- [`kind`](kind/index.md) — 56 nodes
 - [`model`](model/index.md) — 132 nodes
 - [`process`](process/index.md) — 51 nodes
+- [`run`](run/index.md) — 64 nodes
 - [`span`](span/index.md) — 19 nodes
 - [`vocab`](vocab/index.md) — 23 nodes
 - [`test_coverage`](test_coverage/index.md) — 25 nodes
@@ -1692,16 +1866,18 @@ Cycles: model ↔ codepath
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`schema`](schema.md) | `code.function` | 1 | `crates/robby-ir/src/lib.rs:39:1` |
-| [`schema_json`](schema-json.md) | `code.function` | 3 | `crates/robby-ir/src/lib.rs:47:1` |
+| [`schema`](schema.md) | `code.function` | 1 | `crates/robby-ir/src/lib.rs:43:1` |
+| [`schema_json`](schema-json.md) | `code.function` | 3 | `crates/robby-ir/src/lib.rs:51:1` |
 
 ## Imports
 
 - `pub use codepath::{CodePath, CodePathEdge, DEFAULT_MAX_DEPTH, build_code_paths, find_entrypoints};`
+- `pub use contract::{Absorb, CoverageGate, KindNamespace};`
 - `pub use coverage::{`
 - `pub use kind::Kind;`
 - `pub use model::{`
 - `pub use process::{Block, BlockKind, Participant, Process, Step, StepKind};`
+- `pub use run::{Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus};`
 - `pub use span::{Position, Span};`
 - `pub use vocab::{Highlight, NoteKind, Verdict};`
 

@@ -96,13 +96,14 @@ sequenceDiagram
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
 - calls → [`robby_render::util::edge_label`](../../util/edge-label.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::util`](../../util/index.md) — edge_label
 - calls → [`robby_render::view::links`](index.md) — subtree_ids
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains, new

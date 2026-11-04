@@ -5,13 +5,13 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:213`](../../../../../apps/site/src/viewer.ts#L213) |
+| location | [`apps/site/src/viewer.ts:577`](../../../../../apps/site/src/viewer.ts#L577) |
 | provenance | extractor · confidence 1.00 |
 
 > * Absolute screen rect for a frame from its world coordinates + camera.
 
 ```rust
-function screenRectFromWorld(f: SceneFrame, cam: Camera) {
+function screenRectFromWorld(f: SceneFrame, cam: Camera): ScreenRect {
   return {
     x: cam.tx + f.world.x * cam.scale,
     y: cam.ty + f.world.y * cam.scale,

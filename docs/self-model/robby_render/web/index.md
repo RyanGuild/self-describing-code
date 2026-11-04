@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-render/src/lib.rs:18`](../../../../crates/robby-render/src/lib.rs#L18) |
+| declared at | [`crates/robby-render/src/lib.rs:19`](../../../../crates/robby-render/src/lib.rs#L19) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 31 |
 
@@ -68,7 +68,7 @@ flowchart TB
 
 | | web | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **web** | · | 4 | 17 |
+| **web** | · | 4 | 18 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
@@ -122,6 +122,23 @@ flowchart TB
               count += 1;
           }
       }
+  
+      // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
+      let rebuilt_at = std::time::SystemTime::now()
+          .duration_since(std::time::UNIX_EPOCH)
+          .map(|d| d.as_millis() as u64)
+          .unwrap_or(0);
+      let build = serde_json::json!({
+          "rebuilt_at": rebuilt_at,
+          "frames": count,
+          "nodes": doc.nodes.len(),
+          "files": doc.files.len(),
+          "generator": doc.generator,
+      });
+      fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+  
+      // Completed pipeline history for Runs mode (synthetic extract + this web build).
+      crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
   
       Ok(count)
   }
@@ -204,10 +221,12 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — stable_id
 - calls → [`robby_render::pipeline`](../pipeline/index.md) — from_document
 - calls → [`robby_render::report`](../report/index.md) — new
+- calls → [`robby_render::runs`](../runs/index.md) — write_site_runs
 - calls → [`robby_render::test_render`](../test_render/index.md) — process
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::execution`](../view/execution/index.md) — execution_process
@@ -217,11 +236,10 @@ flowchart TB
 
 ## Referenced by
 
-- calls ← [`robby_cli::web`](../../robby_cli/web.md)
-- calls ← [`robby_render::test_web::entrypoints_scene_json_is_deterministic`](../test_web/entrypoints-scene-json-is-deterministic.md)
+- calls ← [`robby_cli::write_web`](../../robby_cli/write-web.md)
 - calls ← [`robby_render::test_web::frame_detail_includes_execution_mermaid_for_call_path`](../test_web/frame-detail-includes-execution-mermaid-for-call-path.md)
 - calls ← [`robby_render::test_web::leaf_payload_includes_source_and_process`](../test_web/leaf-payload-includes-source-and-process.md)
-- calls ← [`robby_render::test_web::scene_json_is_byte_identical_across_runs`](../test_web/scene-json-is-byte-identical-across-runs.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](../test_web/write-site-emits-run-records.md)
 - calls ← [`robby_render::test_web::write_site_emits_scene_and_frames`](../test_web/write-site-emits-scene-and-frames.md)
 - calls ← [`robby_render::tui::tree`](../tui/tree.md)
 
@@ -231,7 +249,7 @@ flowchart TB
 |---|---|---:|---|
 | [`FrameDetail`](framedetail.md) | `code.struct` | — | `crates/robby-render/src/web.rs:21:1` |
 | [`impl FrameDetail`](impl-framedetail.md) | `code.impl` | — | `crates/robby-render/src/web.rs:48:1` |
-| [`write_site`](write-site.md) | `code.function` | 38 | `crates/robby-render/src/web.rs:120:1` |
+| [`write_site`](write-site.md) | `code.function` | 51 | `crates/robby-render/src/web.rs:120:1` |
 
 ## Imports
 

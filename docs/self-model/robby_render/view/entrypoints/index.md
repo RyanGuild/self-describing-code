@@ -140,7 +140,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::codepath`](../../../robby_ir/codepath/index.md) — find_entrypoints, from_entry
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, rebuild_code_paths, symbol
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, rebuild_code_paths, symbol
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::links`](../links/index.md) — is_empty

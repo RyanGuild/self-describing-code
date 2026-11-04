@@ -121,7 +121,8 @@ impl Scene {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::scene`](index.md) — 7 items
@@ -396,7 +397,7 @@ sequenceDiagram
 - calls → [`robby_render::view::scene::impl Rect::new`](index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](index.md)
 - calls → [`robby_render::view::scene::layout_grid`](layout-grid.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::scene::map_local_to_world`](map-local-to-world.md)
 - calls → [`robby_render::view::scene::build_call_frame`](build-call-frame.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
