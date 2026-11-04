@@ -7,16 +7,16 @@
  */
 
 import fs from "node:fs";
-import path from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import path from "node:path";
 import type { Connect, Plugin, ViteDevServer } from "vite";
 
 import {
+  isTerminal,
   RECIPE_REVIEW_VIEW,
   type RunIndexEntry,
   type RunRecord,
   type RunsIndex,
-  isTerminal,
 } from "./src/runRecord";
 
 function runsDir(publicDir: string): string {

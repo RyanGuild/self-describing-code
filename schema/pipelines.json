@@ -1,0 +1,78 @@
+{
+  "recipes": [
+    {
+      "id": "robby.extract",
+      "label": "Extract IR",
+      "allowlist": "local"
+    },
+    {
+      "id": "robby.check",
+      "label": "Check IR",
+      "allowlist": "local"
+    },
+    {
+      "id": "robby.web",
+      "label": "Write site",
+      "allowlist": "local"
+    },
+    {
+      "id": "robby.enrich_comments",
+      "label": "Enrich comments",
+      "allowlist": "openrouter"
+    },
+    {
+      "id": "cargo.test",
+      "label": "Cargo test (subject)",
+      "allowlist": "test"
+    },
+    {
+      "id": "robby.trace",
+      "label": "Trace (planned)"
+    },
+    {
+      "id": "robby.review_view",
+      "label": "Review view",
+      "allowlist": "local"
+    },
+    {
+      "id": "robby.review_doc",
+      "label": "Review doc",
+      "allowlist": "local"
+    },
+    {
+      "id": "robby.metric_test",
+      "label": "Metric test",
+      "allowlist": "test"
+    },
+    {
+      "id": "ci.rust",
+      "label": "CI rust job",
+      "allowlist": "github-actions"
+    },
+    {
+      "id": "ci.fmt",
+      "label": "CI rustfmt",
+      "allowlist": "github-actions"
+    },
+    {
+      "id": "ci.clippy",
+      "label": "CI clippy",
+      "allowlist": "github-actions"
+    },
+    {
+      "id": "ci.test",
+      "label": "CI cargo test",
+      "allowlist": "github-actions"
+    },
+    {
+      "id": "ci.artifacts",
+      "label": "CI no tracked generated artifacts",
+      "allowlist": "github-actions"
+    },
+    {
+      "id": "ci.site",
+      "label": "CI site check",
+      "allowlist": "github-actions"
+    }
+  ]
+}

@@ -281,6 +281,7 @@ fn write_site_emits_scene_and_frames() {
     assert!(count >= 2);
     assert!(dir.join("scene.json").is_file());
     assert!(dir.join("scene-entrypoints.json").is_file());
+    assert!(dir.join("pipelines.json").is_file());
     assert!(dir.join("frames").is_dir());
     let build_path = dir.join("build.json");
     assert!(build_path.is_file());
@@ -294,6 +295,17 @@ fn write_site_emits_scene_and_frames() {
     assert!(dir.join("runs/index.json").is_file());
     let index_raw = std::fs::read_to_string(dir.join("runs/index.json")).unwrap();
     assert!(index_raw.contains("\"runs\""));
+    let pipelines: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(dir.join("pipelines.json")).unwrap())
+            .unwrap();
+    assert!(
+        pipelines["recipes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|r| r["id"] == "ci.fmt"),
+        "pipelines.json should list CI recipes"
+    );
     // No JavaScript in the site data output.
     assert!(!dir.join("viewer.js").exists());
 }

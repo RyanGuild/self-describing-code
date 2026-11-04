@@ -36,7 +36,9 @@ pub use model::{
     Source, leaf_name, validate,
 };
 pub use process::{Block, BlockKind, Participant, Process, Step, StepKind};
-pub use run::{Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus};
+pub use run::{
+    Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus, builtin_recipes, pipelines_json,
+};
 pub use span::{Position, Span};
 pub use vocab::{Highlight, NoteKind, Verdict};
 
