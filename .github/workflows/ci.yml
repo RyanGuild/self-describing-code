@@ -25,7 +25,7 @@ jobs:
         run: cargo test --workspace -- --skip no_page_is_a_wall_of_text
       - name: no tracked generated artifacts
         run: |
-          tracked="$(git ls-files .robby docs/self-model apps/site/public/scene.json apps/site/public/scene-entrypoints.json apps/site/public/frames)"
+          tracked="$(git ls-files .robby docs/self-model apps/site/public/scene.json apps/site/public/scene-entrypoints.json apps/site/public/build.json apps/site/public/frames apps/site/public/runs)"
           if [ -n "$tracked" ]; then
             echo "generated paths must not be tracked:" >&2
             echo "$tracked" >&2
