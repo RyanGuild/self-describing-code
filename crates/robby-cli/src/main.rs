@@ -3,6 +3,7 @@
 //! Every subcommand delegates to [`robby_render::pipeline`], which is also what
 //! `build.rs` calls. There is one code path that produces artifacts.
 
+use std::ffi::OsStr;
 use std::fmt::Write as _;
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -113,6 +114,37 @@ enum Command {
         /// Max comments to process this run.
         #[arg(long)]
         limit: Option<usize>,
+    },
+    /// Review a Project markdown doc against IR metrics (`robby.review_doc`).
+    ///
+    /// Headless first slice: bind subjects, score catalog metrics, emit
+    /// `agent.decision` products + a `RunRecord` (no LLM).
+    ReviewDoc {
+        /// Markdown plan/report to review.
+        #[arg(long)]
+        doc: PathBuf,
+        #[arg(long)]
+        ir: PathBuf,
+        #[arg(long, default_value = ".")]
+        source_root: PathBuf,
+        /// Write enriched IR here (defaults to overwriting `--ir`).
+        #[arg(long)]
+        out: Option<PathBuf>,
+        /// Site/public (or any) directory for `runs/<id>.json` (optional).
+        #[arg(long)]
+        runs_out: Option<PathBuf>,
+        /// Override minted run id.
+        #[arg(long)]
+        run_id: Option<String>,
+        /// Metric id to claim (repeatable). Defaults to first-slice pair.
+        #[arg(long = "metric")]
+        metrics: Vec<String>,
+        /// Cap on IR subjects bound beside the doc path.
+        #[arg(long, default_value_t = 5)]
+        max_subjects: usize,
+        /// Directory for `.robby/reviews/<stem>.json` (default: repo `.robby/reviews`).
+        #[arg(long)]
+        reviews_out: Option<PathBuf>,
     },
     /// Write Prezi-style scene JSON for the TypeScript viewer in `apps/site`.
     Web {
@@ -242,6 +274,27 @@ fn run() -> Result<ExitCode> {
             note_model,
             limit,
         ),
+        Command::ReviewDoc {
+            doc,
+            ir,
+            source_root,
+            out,
+            runs_out,
+            run_id,
+            metrics,
+            max_subjects,
+            reviews_out,
+        } => review_doc_cmd(
+            &doc,
+            &ir,
+            &source_root,
+            out.as_deref(),
+            runs_out.as_deref(),
+            run_id,
+            metrics,
+            max_subjects,
+            reviews_out.as_deref(),
+        ),
         Command::Web {
             ir,
             source_root,
@@ -361,6 +414,110 @@ fn enrich_comments(
         stats.noted,
         out_path.display()
     );
+    Ok(ExitCode::SUCCESS)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn review_doc_cmd(
+    doc_path: &std::path::Path,
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    out: Option<&std::path::Path>,
+    runs_out: Option<&std::path::Path>,
+    run_id: Option<String>,
+    metrics: Vec<String>,
+    max_subjects: usize,
+    reviews_out: Option<&std::path::Path>,
+) -> Result<ExitCode> {
+    let mut loaded = pipeline::load(ir, source_root)?;
+    let markdown = std::fs::read_to_string(doc_path)
+        .with_context(|| format!("read markdown {}", doc_path.display()))?;
+
+    let doc_display = doc_path
+        .strip_prefix(source_root)
+        .unwrap_or(doc_path)
+        .to_string_lossy()
+        .replace('\\', "/");
+
+    let opts = robby_agent::ReviewDocOpts {
+        doc_path: doc_display.clone(),
+        run_id,
+        metrics,
+        max_subjects,
+    };
+    let result = robby_agent::review_doc(&mut loaded.document, &markdown, &loaded.sources, &opts)?;
+
+    let out_path = out.unwrap_or(ir);
+    pipeline::write_document(&loaded.document, out_path)?;
+
+    let artifact_rel = robby_agent::review_artifact_relpath(&doc_display);
+    let artifact_path = match reviews_out {
+        Some(dir) => {
+            let stem = std::path::Path::new(&artifact_rel).file_name().map_or_else(
+                || std::ffi::OsString::from("review.json"),
+                OsStr::to_os_string,
+            );
+            dir.join(stem)
+        }
+        None => source_root.join(&artifact_rel),
+    };
+    if let Some(parent) = artifact_path.parent() {
+        std::fs::create_dir_all(parent)?;
+    }
+    let artifact = serde_json::json!({
+        "recipe": "robby.review_doc",
+        "run_id": result.record.run_id,
+        "doc": doc_display,
+        "subjects": result.subjects,
+        "stats": {
+            "findings": result.stats.findings,
+            "relevant": result.stats.relevant,
+            "metrics_claimed": result.stats.metrics_claimed,
+            "metrics_tested": result.stats.metrics_tested,
+            "subjects": result.stats.subjects,
+        },
+        "findings": result.findings.iter().map(|f| serde_json::json!({
+            "decision_id": f.decision_id.as_str(),
+            "metric": f.metric,
+            "score": f.score,
+            "subject": f.subject,
+            "verdict": f.verdict.as_str(),
+            "test_id": f.test_id,
+        })).collect::<Vec<_>>(),
+        "record": result.record,
+    });
+    std::fs::write(
+        &artifact_path,
+        format!("{}\n", serde_json::to_string_pretty(&artifact)?),
+    )?;
+
+    if let Some(runs_dir) = runs_out {
+        let store = robby_render::SiteRunsStore::new(runs_dir);
+        store.put(&result.record)?;
+    }
+
+    println!(
+        "robby.review_doc {}: {} finding(s), {} relevant, {} subject(s)",
+        result.record.run_id, result.stats.findings, result.stats.relevant, result.stats.subjects
+    );
+    println!("  ir → {}", out_path.display());
+    println!("  review → {}", artifact_path.display());
+    if let Some(runs_dir) = runs_out {
+        println!(
+            "  run → {}/runs/{}.json",
+            runs_dir.display(),
+            result.record.run_id
+        );
+    }
+    for finding in &result.findings {
+        println!(
+            "  {} {}={} ({})",
+            finding.verdict.as_str(),
+            finding.metric,
+            finding.score,
+            finding.test_id
+        );
+    }
     Ok(ExitCode::SUCCESS)
 }
 
