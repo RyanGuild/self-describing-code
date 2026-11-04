@@ -436,7 +436,7 @@ fn show(
     view: ViewKind,
     no_source: bool,
 ) -> Result<ExitCode> {
-    let ir = ir.map(PathBuf::from).unwrap_or_else(default_ir);
+    let ir = ir.map_or_else(default_ir, PathBuf::from);
     if !ir.exists() {
         bail!(
             "{} does not exist; run `cargo run -p robby-cli -- extract --out {}` first",
