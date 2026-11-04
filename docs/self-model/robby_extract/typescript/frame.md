@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn frame(kind: BlockKind, label: &str) -> Block` |
-| location | [`crates/robby-extract/src/typescript.rs:756`](../../../../crates/robby-extract/src/typescript.rs#L756) |
+| location | [`crates/robby-extract/src/typescript.rs:742`](../../../../crates/robby-extract/src/typescript.rs#L742) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

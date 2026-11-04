@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/view/source.rs:13`](../../../../../crates/robby-render/src/view/source.rs#L13) |
+| location | [`crates/robby-render/src/view/source.rs:14`](../../../../../crates/robby-render/src/view/source.rs#L14) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -26,7 +26,7 @@ impl SourceSlice {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 
 ## Referenced by
 
@@ -38,7 +38,7 @@ impl SourceSlice {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_node(2)` |
-| location | [`crates/robby-render/src/view/source.rs:14`](../../../../../crates/robby-render/src/view/source.rs#L14) |
+| location | [`crates/robby-render/src/view/source.rs:15`](../../../../../crates/robby-render/src/view/source.rs#L15) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -79,6 +79,6 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 

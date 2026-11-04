@@ -5,12 +5,12 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn label_of(ctx: &Ctx<'_>, span: Span) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:516`](../../../../crates/robby-extract/src/rust.rs#L516) |
+| signature | `fn label_of(ctx: &Ctx<'_>, span: &Span) -> String` |
+| location | [`crates/robby-extract/src/rust.rs:519`](../../../../crates/robby-extract/src/rust.rs#L519) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn label_of(ctx: &Ctx<'_>, span: Span) -> String {
+fn label_of(ctx: &Ctx<'_>, span: &Span) -> String {
     let raw = slice(ctx, span);
     let collapsed = raw.split_whitespace().collect::<Vec<_>>().join(" ");
     if collapsed.chars().count() > 72 {

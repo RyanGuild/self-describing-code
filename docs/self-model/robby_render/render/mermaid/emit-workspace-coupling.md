@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn emit_workspace_coupling(out: &mut String, node: &CouplingModule, depth: usize)` |
-| location | [`crates/robby-render/src/render/mermaid.rs:235`](../../../../../crates/robby-render/src/render/mermaid.rs#L235) |
+| location | [`crates/robby-render/src/render/mermaid.rs:231`](../../../../../crates/robby-render/src/render/mermaid.rs#L231) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

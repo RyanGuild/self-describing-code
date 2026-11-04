@@ -10,7 +10,7 @@
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-pub fn is_module_kind(kind_name: &str) -> bool {
+pub(super) fn is_module_kind(kind_name: &str) -> bool {
     matches!(
         kind_name,
         kind::code::MODULE | kind::code::CRATE | kind::code::PACKAGE

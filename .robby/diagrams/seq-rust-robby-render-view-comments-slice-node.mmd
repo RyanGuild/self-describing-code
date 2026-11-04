@@ -3,12 +3,10 @@ sequenceDiagram
     participant slice_node as slice_node()
     participant as_ref as as_ref
     participant get as get
-    participant to_owned as to_owned
     participant map as map
     slice_node-->>as_ref: node.span.as_ref()
     slice_node-->>slice_node: ? (propagate)
     slice_node-->>get: sources.get(&span.file)
     slice_node-->>slice_node: ? (propagate)
     slice_node-->>get: source .get(span.start.byte as usize..span.end.byte as usize)
-    slice_node-->>to_owned: s.to_owned()
-    slice_node-->>map: source .get(span.start.byte as usize..span.end.byte as usize) .map(|s...
+    slice_node-->>map: source .get(span.start.byte as usize..span.end.byte as usize) .map(st...

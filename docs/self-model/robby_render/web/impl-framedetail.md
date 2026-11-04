@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/web.rs:90`](../../../../crates/robby-render/src/web.rs#L90) |
+| location | [`crates/robby-render/src/web.rs:48`](../../../../crates/robby-render/src/web.rs#L48) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,7 +19,7 @@ impl FrameDetail {
             signature: None,
             docs: Some("Synthetic root: crates and packages of this map.".to_owned()),
             location: None,
-            provenance: "extractor",
+            provenance: Source::Extractor.as_str(),
             confidence: 1.0,
             process: None,
             process_mermaid: None,
@@ -42,20 +42,7 @@ impl FrameDetail {
             Some(p) => {
                 let view = ProcessView::from_process(p);
                 let mermaid = MermaidRenderer.process(&view);
-                let detail = ProcessDetail {
-                    participants: view
-                        .participants
-                        .into_iter()
-                        .map(|p| ParticipantDetail {
-                            id: p.id,
-                            label: p.label,
-                        })
-                        .collect(),
-                    events: view.events.into_iter().map(event_detail).collect(),
-                    step_count: view.step_count,
-                    observed_count: view.observed_count,
-                };
-                (Some(detail), Some(mermaid))
+                (Some(view), Some(mermaid))
             }
             None => (None, None),
         };
@@ -70,10 +57,7 @@ impl FrameDetail {
             Some(MermaidRenderer.process(&view))
         });
 
-        let source = SourceSlice::from_node(node, sources).map(|s| SourceDetail {
-            file: s.file,
-            text: s.text,
-        });
+        let source = SourceSlice::from_node(node, sources);
 
         Self {
             stable_id: stable_id(node.id.as_str()),
@@ -82,8 +66,8 @@ impl FrameDetail {
             kind: node.kind.as_str().to_owned(),
             signature: node.signature.clone(),
             docs: node.docs.clone(),
-            location: node.span.as_ref().map(|s| s.location()),
-            provenance: provenance_name(node.provenance.source),
+            location: node.span.as_ref().map(robby_ir::Span::location),
+            provenance: node.provenance.source.as_str(),
             confidence: node.provenance.confidence,
             process,
             process_mermaid,
@@ -100,15 +84,12 @@ impl FrameDetail {
 
 ## References
 
-- calls → [`robby_ir::span`](../../robby_ir/span/index.md) — location
 - calls → [`robby_render`](../index.md) — stable_id
 - calls → [`robby_render::test_render`](../test_render/index.md) — process
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::execution`](../view/execution/index.md) — execution_process
 - calls → [`robby_render::view::links`](../view/links/index.md) — is_empty
 - calls → [`robby_render::view::process`](../view/process/index.md) — from_process
-- calls → [`robby_render::view::select`](../view/select/index.md) — collect
-- calls → [`robby_render::web`](index.md) — provenance_name
 
 ## Referenced by
 
@@ -123,7 +104,7 @@ impl FrameDetail {
 |---|---|
 | kind | `code.method` |
 | signature | `fn for_workspace(0)` |
-| location | [`crates/robby-render/src/web.rs:91`](../../../../crates/robby-render/src/web.rs#L91) |
+| location | [`crates/robby-render/src/web.rs:49`](../../../../crates/robby-render/src/web.rs#L49) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -136,7 +117,7 @@ pub fn for_workspace() -> Self {
             signature: None,
             docs: Some("Synthetic root: crates and packages of this map.".to_owned()),
             location: None,
-            provenance: "extractor",
+            provenance: Source::Extractor.as_str(),
             confidence: 1.0,
             process: None,
             process_mermaid: None,
@@ -153,19 +134,22 @@ sequenceDiagram
     participant stable_id as stable_id
     participant to_owned as to_owned
     participant Some as Some
+    participant as_str as as_str
     for_workspace-->>stable_id: stable_id(WORKSPACE_ID)
     for_workspace-->>to_owned: WORKSPACE_ID.to_owned()
     for_workspace-->>to_owned: 'workspace'.to_owned()
     for_workspace-->>to_owned: 'code.workspace'.to_owned()
     for_workspace-->>to_owned: 'Synthetic root: crates and packages of this map.'.to_owned()
     for_workspace-->>Some: Some('Synthetic root: crates and packages of this map.'.to_owned())
+    for_workspace-->>as_str: Source::Extractor.as_str()
 ```
 
-6 steps · 0 observed · 6 possible only
+7 steps · 0 observed · 7 possible only
 
 **Edges**
 
 - calls → [`robby_render::stable_id`](../stable-id.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 
 ### `from_node`
 
@@ -173,7 +157,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_node(2)` |
-| location | [`crates/robby-render/src/web.rs:109`](../../../../crates/robby-render/src/web.rs#L109) |
+| location | [`crates/robby-render/src/web.rs:67`](../../../../crates/robby-render/src/web.rs#L67) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -202,7 +186,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_node_in_doc(3)` |
-| location | [`crates/robby-render/src/web.rs:113`](../../../../crates/robby-render/src/web.rs#L113) |
+| location | [`crates/robby-render/src/web.rs:71`](../../../../crates/robby-render/src/web.rs#L71) |
 | provenance | extractor · confidence 1.00 |
 
 > Like [`Self::from_node`], optionally using `doc` for path-level execution.
@@ -218,20 +202,7 @@ sequenceDiagram
             Some(p) => {
                 let view = ProcessView::from_process(p);
                 let mermaid = MermaidRenderer.process(&view);
-                let detail = ProcessDetail {
-                    participants: view
-                        .participants
-                        .into_iter()
-                        .map(|p| ParticipantDetail {
-                            id: p.id,
-                            label: p.label,
-                        })
-                        .collect(),
-                    events: view.events.into_iter().map(event_detail).collect(),
-                    step_count: view.step_count,
-                    observed_count: view.observed_count,
-                };
-                (Some(detail), Some(mermaid))
+                (Some(view), Some(mermaid))
             }
             None => (None, None),
         };
@@ -246,10 +217,7 @@ sequenceDiagram
             Some(MermaidRenderer.process(&view))
         });
 
-        let source = SourceSlice::from_node(node, sources).map(|s| SourceDetail {
-            file: s.file,
-            text: s.text,
-        });
+        let source = SourceSlice::from_node(node, sources);
 
         Self {
             stable_id: stable_id(node.id.as_str()),
@@ -258,8 +226,8 @@ sequenceDiagram
             kind: node.kind.as_str().to_owned(),
             signature: node.signature.clone(),
             docs: node.docs.clone(),
-            location: node.span.as_ref().map(|s| s.location()),
-            provenance: provenance_name(node.provenance.source),
+            location: node.span.as_ref().map(robby_ir::Span::location),
+            provenance: node.provenance.source.as_str(),
             confidence: node.provenance.confidence,
             process,
             process_mermaid,
@@ -276,9 +244,6 @@ sequenceDiagram
     participant as_ref as as_ref
     participant ProcessView__from_process as ProcessView::from_process
     participant process as process
-    participant into_iter as into_iter
-    participant map as map
-    participant collect as collect
     participant Some as Some
     participant execution_process as execution_process
     participant is_empty as is_empty
@@ -288,19 +253,12 @@ sequenceDiagram
     participant stable_id as stable_id
     participant to_owned as to_owned
     participant clone as clone
-    participant location as location
-    participant provenance_name as provenance_name
+    participant map as map
     from_node_in_doc-->>as_ref: node.process.as_ref()
     alt match node.process.as_ref()
     from_node_in_doc-->>ProcessView__from_process: ProcessView::from_process(p)
     from_node_in_doc-->>process: MermaidRenderer.process(&view)
-    from_node_in_doc-->>into_iter: view .participants .into_iter()
-    from_node_in_doc-->>map: view .participants .into_iter() .map(|p| ParticipantDetail { id: p.id...
-    from_node_in_doc-->>collect: view .participants .into_iter() .map(|p| ParticipantDetail { id: p.id...
-    from_node_in_doc-->>into_iter: view.events.into_iter()
-    from_node_in_doc-->>map: view.events.into_iter().map(event_detail)
-    from_node_in_doc-->>collect: view.events.into_iter().map(event_detail).collect()
-    from_node_in_doc-->>Some: Some(detail)
+    from_node_in_doc-->>Some: Some(view)
     from_node_in_doc-->>Some: Some(mermaid)
     end
     from_node_in_doc-->>execution_process: execution_process(d, &node.id)
@@ -314,7 +272,6 @@ sequenceDiagram
     from_node_in_doc-->>Some: Some(MermaidRenderer.process(&view))
     from_node_in_doc-->>and_then: doc.and_then(|d| { let exec = execution_process(d, &node.id)? // Pre...
     from_node_in_doc-->>SourceSlice__from_node: SourceSlice::from_node(node, sources)
-    from_node_in_doc-->>map: SourceSlice::from_node(node, sources).map(|s| SourceDetail { file: s....
     from_node_in_doc-->>as_str: node.id.as_str()
     from_node_in_doc-->>stable_id: stable_id(node.id.as_str())
     from_node_in_doc-->>as_str: node.id.as_str()
@@ -325,30 +282,26 @@ sequenceDiagram
     from_node_in_doc-->>clone: node.signature.clone()
     from_node_in_doc-->>clone: node.docs.clone()
     from_node_in_doc-->>as_ref: node.span.as_ref()
-    from_node_in_doc-->>location: s.location()
-    from_node_in_doc-->>map: node.span.as_ref().map(|s| s.location())
-    from_node_in_doc-->>provenance_name: provenance_name(node.provenance.source)
+    from_node_in_doc-->>map: node.span.as_ref().map(robby_ir::Span::location)
+    from_node_in_doc-->>as_str: node.provenance.source.as_str()
 ```
 
-34 steps · 0 observed · 34 possible only
+26 steps · 0 observed · 26 possible only
 
 **Edges**
 
 - calls → [`robby_render::view::process::impl ProcessView::from_process`](../view/process/index.md)
 - calls → [`robby_render::test_render::process`](../test_render/process.md)
-- calls → [`robby_render::view::select::collect`](../view/select/collect.md)
-- calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 - calls → [`robby_render::view::execution::execution_process`](../view/execution/execution-process.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::view::process::impl ProcessView::from_process`](../view/process/index.md)
 - calls → [`robby_render::test_render::process`](../test_render/process.md)
 - calls → [`robby_render::web::impl FrameDetail::from_node`](index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::stable_id`](../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
-- calls → [`robby_ir::span::impl Span::location`](../../robby_ir/span/index.md)
-- calls → [`robby_render::web::provenance_name`](provenance-name.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 
 ### `to_json`
 
@@ -356,7 +309,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn to_json(1)` |
-| location | [`crates/robby-render/src/web.rs:173`](../../../../crates/robby-render/src/web.rs#L173) |
+| location | [`crates/robby-render/src/web.rs:115`](../../../../crates/robby-render/src/web.rs#L115) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

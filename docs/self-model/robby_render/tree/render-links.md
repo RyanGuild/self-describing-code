@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn render_links(doc: &Document, links: &LinkGraph, page: &Path) -> String` |
-| location | [`crates/robby-render/src/tree.rs:564`](../../../../crates/robby-render/src/tree.rs#L564) |
+| location | [`crates/robby-render/src/tree.rs:562`](../../../../crates/robby-render/src/tree.rs#L562) |
 | provenance | extractor · confidence 1.00 |
 
 > Render a [`LinkGraph`] as markdown with resolved page paths.
@@ -132,17 +132,17 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::page_of_node`](page-of-node.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::page_of_node`](page-of-node.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new, push
 - calls → [`robby_render::tree`](index.md) — page_of_node
 - calls → [`robby_render::view::links`](../view/links/index.md) — is_empty

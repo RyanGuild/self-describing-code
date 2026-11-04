@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/codepath.rs:129`](../../../../../crates/robby-ir/src/codepath.rs#L129) |
+| declared at | [`crates/robby-ir/src/codepath.rs:131`](../../../../../crates/robby-ir/src/codepath.rs#L131) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 6 |
 
@@ -38,9 +38,9 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`sample_doc`](sample-doc.md) | `code.function` | 16 | `crates/robby-ir/src/codepath.rs:134:5` |
-| [`builds_path_from_main`](builds-path-from-main.md) | `code.function` | 9 | `crates/robby-ir/src/codepath.rs:162:5` |
-| [`respects_max_depth`](respects-max-depth.md) | `code.function` | 6 | `crates/robby-ir/src/codepath.rs:176:5` |
+| [`sample_doc`](sample-doc.md) | `code.function` | 16 | `crates/robby-ir/src/codepath.rs:136:5` |
+| [`builds_path_from_main`](builds-path-from-main.md) | `code.function` | 9 | `crates/robby-ir/src/codepath.rs:168:5` |
+| [`respects_max_depth`](respects-max-depth.md) | `code.function` | 6 | `crates/robby-ir/src/codepath.rs:182:5` |
 
 ## Imports
 

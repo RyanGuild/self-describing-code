@@ -194,11 +194,7 @@ impl Renderer for MermaidRenderer {
         out.push_str("    end\n");
         for edge in &view.edges {
             let arrow = if edge.resolved { "-->" } else { "-.->" };
-            let _ = writeln!(
-                out,
-                "    {} {arrow}|{}| {}",
-                edge.from, edge.label, edge.to
-            );
+            let _ = writeln!(out, "    {} {arrow}|{}| {}", edge.from, edge.label, edge.to);
         }
         out
     }
@@ -587,7 +583,7 @@ sequenceDiagram
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../../view/links/index.md)
 - calls → [`robby_render::render::mermaid::emit_workspace_coupling`](emit-workspace-coupling.md)
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](../tui/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::render::mermaid::emit_coupling_subgraph`](emit-coupling-subgraph.md)
 
@@ -762,11 +758,7 @@ fn sibling_graph(&self, view: &SiblingGraph) -> String {
         out.push_str("    end\n");
         for edge in &view.edges {
             let arrow = if edge.resolved { "-->" } else { "-.->" };
-            let _ = writeln!(
-                out,
-                "    {} {arrow}|{}| {}",
-                edge.from, edge.label, edge.to
-            );
+            let _ = writeln!(out, "    {} {arrow}|{}| {}", edge.from, edge.label, edge.to);
         }
         out
     }
@@ -786,7 +778,7 @@ sequenceDiagram
     end
     sibling_graph-->>push_str: out.push_str(' end\n')
     loop &view.edges
-    sibling_graph-->>sibling_graph: writeln!( out, ' {} {arrow}|{}| {}', edge.from, edge.label, edge.to )
+    sibling_graph-->>sibling_graph: writeln!(out, ' {} {arrow}|{}| {}', edge.from, edge.label, edge.to)
     end
 ```
 
@@ -802,7 +794,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn source(2)` |
-| location | [`crates/robby-render/src/render/mermaid.rs:211`](../../../../../crates/robby-render/src/render/mermaid.rs#L211) |
+| location | [`crates/robby-render/src/render/mermaid.rs:207`](../../../../../crates/robby-render/src/render/mermaid.rs#L207) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

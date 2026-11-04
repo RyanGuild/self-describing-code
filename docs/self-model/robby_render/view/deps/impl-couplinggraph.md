@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/view/deps.rs:203`](../../../../../crates/robby-render/src/view/deps.rs#L203) |
+| location | [`crates/robby-render/src/view/deps.rs:197`](../../../../../crates/robby-render/src/view/deps.rs#L197) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -20,8 +20,7 @@ impl CouplingGraph {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
         let package_scope: BTreeSet<NodeId> = packages.iter().map(|p| p.id.clone()).collect();
@@ -53,18 +52,22 @@ impl CouplingGraph {
 
                 let from_sid = stable_id(node.id.as_str());
                 let to_sid = stable_id(target.id.as_str());
-                participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn {
-                    id: node.id.clone(),
-                    stable_id: from_sid.clone(),
-                    name: node.name.clone(),
-                    parent_stable_id: stable_id(from_mod.id.as_str()),
-                });
-                participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn {
-                    id: target.id.clone(),
-                    stable_id: to_sid.clone(),
-                    name: target.name.clone(),
-                    parent_stable_id: stable_id(to_mod.id.as_str()),
-                });
+                participants
+                    .entry(from_sid.clone())
+                    .or_insert_with(|| CouplingFn {
+                        id: node.id.clone(),
+                        stable_id: from_sid.clone(),
+                        name: node.name.clone(),
+                        parent_stable_id: stable_id(from_mod.id.as_str()),
+                    });
+                participants
+                    .entry(to_sid.clone())
+                    .or_insert_with(|| CouplingFn {
+                        id: target.id.clone(),
+                        stable_id: to_sid.clone(),
+                        name: target.name.clone(),
+                        parent_stable_id: stable_id(to_mod.id.as_str()),
+                    });
                 if from_sid != to_sid {
                     *weights.entry((from_sid, to_sid)).or_default() += 1;
                 }
@@ -114,12 +117,7 @@ impl CouplingGraph {
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -259,10 +257,10 @@ impl CouplingGraph {
     }
 
     pub fn leaf_nodes(&self) -> &[CouplingFn] {
-        if !self.functions.is_empty() {
-            &self.functions
-        } else {
+        if self.functions.is_empty() {
             &self.module_nodes
+        } else {
+            &self.functions
         }
     }
 }
@@ -271,7 +269,8 @@ impl CouplingGraph {
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — is_container
@@ -300,7 +299,7 @@ impl CouplingGraph {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_root(2)` |
-| location | [`crates/robby-render/src/view/deps.rs:204`](../../../../../crates/robby-render/src/view/deps.rs#L204) |
+| location | [`crates/robby-render/src/view/deps.rs:198`](../../../../../crates/robby-render/src/view/deps.rs#L198) |
 | provenance | extractor · confidence 1.00 |
 
 > Function-level internal Calls under `root`.
@@ -316,8 +315,7 @@ impl CouplingGraph {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
         let package_scope: BTreeSet<NodeId> = packages.iter().map(|p| p.id.clone()).collect();
@@ -349,18 +347,22 @@ impl CouplingGraph {
 
                 let from_sid = stable_id(node.id.as_str());
                 let to_sid = stable_id(target.id.as_str());
-                participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn {
-                    id: node.id.clone(),
-                    stable_id: from_sid.clone(),
-                    name: node.name.clone(),
-                    parent_stable_id: stable_id(from_mod.id.as_str()),
-                });
-                participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn {
-                    id: target.id.clone(),
-                    stable_id: to_sid.clone(),
-                    name: target.name.clone(),
-                    parent_stable_id: stable_id(to_mod.id.as_str()),
-                });
+                participants
+                    .entry(from_sid.clone())
+                    .or_insert_with(|| CouplingFn {
+                        id: node.id.clone(),
+                        stable_id: from_sid.clone(),
+                        name: node.name.clone(),
+                        parent_stable_id: stable_id(from_mod.id.as_str()),
+                    });
+                participants
+                    .entry(to_sid.clone())
+                    .or_insert_with(|| CouplingFn {
+                        id: target.id.clone(),
+                        stable_id: to_sid.clone(),
+                        name: target.name.clone(),
+                        parent_stable_id: stable_id(to_mod.id.as_str()),
+                    });
                 if from_sid != to_sid {
                     *weights.entry((from_sid, to_sid)).or_default() += 1;
                 }
@@ -469,21 +471,21 @@ sequenceDiagram
     from_root-->>as_str: target.id.as_str()
     from_root-->>stable_id: stable_id(target.id.as_str())
     from_root-->>clone: from_sid.clone()
-    from_root-->>entry: participants.entry(from_sid.clone())
+    from_root-->>entry: participants .entry(from_sid.clone())
     from_root-->>clone: node.id.clone()
     from_root-->>clone: from_sid.clone()
     from_root-->>clone: node.name.clone()
     from_root-->>as_str: from_mod.id.as_str()
     from_root-->>stable_id: stable_id(from_mod.id.as_str())
-    from_root-->>or_insert_with: participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn { i...
+    from_root-->>or_insert_with: participants .entry(from_sid.clone()) .or_insert_with(|| CouplingFn {...
     from_root-->>clone: to_sid.clone()
-    from_root-->>entry: participants.entry(to_sid.clone())
+    from_root-->>entry: participants .entry(to_sid.clone())
     from_root-->>clone: target.id.clone()
     from_root-->>clone: to_sid.clone()
     from_root-->>clone: target.name.clone()
     from_root-->>as_str: to_mod.id.as_str()
     from_root-->>stable_id: stable_id(to_mod.id.as_str())
-    from_root-->>or_insert_with: participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn { id:...
+    from_root-->>or_insert_with: participants .entry(to_sid.clone()) .or_insert_with(|| CouplingFn { i...
     alt from_sid != to_sid
     from_root-->>entry: weights.entry((from_sid, to_sid))
     from_root-->>or_default: weights.entry((from_sid, to_sid)).or_default()
@@ -527,7 +529,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::is_container`](../../util/is-container.md)
 - calls → [`robby_render::view::deps::is_under_fqn`](is-under-fqn.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
@@ -536,22 +538,22 @@ sequenceDiagram
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::deps::is_callable`](is-callable.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::deps::is_callable`](is-callable.md)
 - calls → [`robby_render::view::deps::under_root_fqn`](under-root-fqn.md)
 - calls → [`robby_render::view::deps::owning_in_scope`](owning-in-scope.md)
 - calls → [`robby_render::view::deps::owning_in_scope`](owning-in-scope.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_render::view::deps::impl CouplingGraph::is_empty`](index.md)
 - calls → [`robby_render::view::deps::impl CouplingGraph::empty`](index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
@@ -566,7 +568,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn workspace(1)` |
-| location | [`crates/robby-render/src/view/deps.rs:303`](../../../../../crates/robby-render/src/view/deps.rs#L303) |
+| location | [`crates/robby-render/src/view/deps.rs:300`](../../../../../crates/robby-render/src/view/deps.rs#L300) |
 | provenance | extractor · confidence 1.00 |
 
 > Crates as subgraphs; direct modules as nodes; call-weighted module edges.
@@ -577,12 +579,7 @@ sequenceDiagram
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -744,9 +741,9 @@ sequenceDiagram
     participant into_values as into_values
     participant then as then
     workspace-->>values: doc .nodes .values()
-    workspace-->>workspace: matches!( node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
-    workspace-->>filter: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
-    workspace-->>collect: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
+    workspace-->>workspace: matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
+    workspace-->>filter: doc .nodes .values() .filter(|node| matches!(node.kind.as_str(), kind...
+    workspace-->>collect: doc .nodes .values() .filter(|node| matches!(node.kind.as_str(), kind...
     workspace-->>is_empty: crates.is_empty()
     alt crates.is_empty()
     workspace-->>Self__empty: Self::empty()
@@ -858,14 +855,14 @@ sequenceDiagram
 - calls → [`robby_render::view::deps::is_direct_package`](is-direct-package.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::deps::package_leaf`](package-leaf.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
@@ -873,13 +870,13 @@ sequenceDiagram
 - calls → [`robby_render::view::deps::owning_in_scope`](owning-in-scope.md)
 - calls → [`robby_render::view::deps::container_of`](container-of.md)
 - calls → [`robby_render::view::deps::lift_to_scope`](lift-to-scope.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
@@ -900,7 +897,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn empty(0)` |
-| location | [`crates/robby-render/src/view/deps.rs:433`](../../../../../crates/robby-render/src/view/deps.rs#L433) |
+| location | [`crates/robby-render/src/view/deps.rs:425`](../../../../../crates/robby-render/src/view/deps.rs#L425) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -956,7 +953,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-render/src/view/deps.rs:448`](../../../../../crates/robby-render/src/view/deps.rs#L448) |
+| location | [`crates/robby-render/src/view/deps.rs:440`](../../../../../crates/robby-render/src/view/deps.rs#L440) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -988,15 +985,15 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn leaf_nodes(1)` |
-| location | [`crates/robby-render/src/view/deps.rs:452`](../../../../../crates/robby-render/src/view/deps.rs#L452) |
+| location | [`crates/robby-render/src/view/deps.rs:444`](../../../../../crates/robby-render/src/view/deps.rs#L444) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 pub fn leaf_nodes(&self) -> &[CouplingFn] {
-        if !self.functions.is_empty() {
-            &self.functions
-        } else {
+        if self.functions.is_empty() {
             &self.module_nodes
+        } else {
+            &self.functions
         }
     }
 ```

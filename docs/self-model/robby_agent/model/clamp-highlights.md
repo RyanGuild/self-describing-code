@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn clamp_highlights(highlights: &mut Vec<Highlight>, len: u32)` |
-| location | [`crates/robby-agent/src/model.rs:252`](../../../../crates/robby-agent/src/model.rs#L252) |
+| location | [`crates/robby-agent/src/model.rs:200`](../../../../crates/robby-agent/src/model.rs#L200) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

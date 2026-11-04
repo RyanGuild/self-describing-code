@@ -113,7 +113,8 @@ impl TypeModel {
             }
         }
 
-        relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
+        relations
+            .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
         relations.dedup();
 
         Self { classes, relations }
@@ -127,7 +128,8 @@ impl TypeModel {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — class_id, is_type, strip_generics
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
@@ -253,7 +255,8 @@ pub fn from_module(doc: &Document, root: &NodeId) -> Self {
             }
         }
 
-        relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
+        relations
+            .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
         relations.dedup();
 
         Self { classes, relations }
@@ -366,7 +369,7 @@ sequenceDiagram
     end
     end
     from_module-->>cmp: (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind))
-    from_module-->>sort_by: relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from...
+    from_module-->>sort_by: relations .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.fro...
     from_module-->>dedup: relations.dedup()
 ```
 
@@ -374,12 +377,12 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::util::is_type`](../../util/is-type.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::util::strip_generics`](../../util/strip-generics.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
@@ -392,7 +395,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::view::types::parse_impl_target`](parse-impl-target.md)
 - calls → [`robby_render::util::strip_generics`](../../util/strip-generics.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::class_id`](../../util/class-id.md)
 - calls → [`robby_render::view::types::impl_methods`](impl-methods.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
@@ -403,7 +406,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::util::class_id`](../../util/class-id.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::class_id`](../../util/class-id.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::types::class_from_node`](class-from-node.md)
@@ -416,7 +419,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-render/src/view/types.rs:160`](../../../../../crates/robby-render/src/view/types.rs#L160) |
+| location | [`crates/robby-render/src/view/types.rs:161`](../../../../../crates/robby-render/src/view/types.rs#L161) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

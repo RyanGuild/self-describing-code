@@ -9,9 +9,15 @@
 | provenance | extractor · confidence 1.00 |
 
 > A document plus everything derived from it.
+> 
+> This is the checked snapshot between extract and render: coverage and
+> structural diagnostics are always computed here so write paths share one gate.
 
 ```rust
 /// A document plus everything derived from it.
+///
+/// This is the checked snapshot between extract and render: coverage and
+/// structural diagnostics are always computed here so write paths share one gate.
 pub struct Loaded {
     pub document: Document,
     pub sources: BTreeMap<String, String>,
@@ -24,9 +30,9 @@ pub struct Loaded {
 
 **Fields and variants**
 
-- `document` — `crates/robby-render/src/pipeline.rs:19:5`
-- `sources` — `crates/robby-render/src/pipeline.rs:20:5`
-- `coverage` — `crates/robby-render/src/pipeline.rs:21:5`
-- `diagnostics` — `crates/robby-render/src/pipeline.rs:22:5`
-- `root` — `crates/robby-render/src/pipeline.rs:23:5`
+- `document` — `crates/robby-render/src/pipeline.rs:22:5`
+- `sources` — `crates/robby-render/src/pipeline.rs:23:5`
+- `coverage` — `crates/robby-render/src/pipeline.rs:24:5`
+- `diagnostics` — `crates/robby-render/src/pipeline.rs:25:5`
+- `root` — `crates/robby-render/src/pipeline.rs:26:5`
 

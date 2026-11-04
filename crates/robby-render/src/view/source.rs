@@ -3,8 +3,9 @@
 use std::collections::BTreeMap;
 
 use robby_ir::Node;
+use serde::Serialize;
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SourceSlice {
     pub file: String,
     pub text: String,

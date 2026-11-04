@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:44`](../../../../crates/robby-ir/src/model.rs#L44) |
+| location | [`crates/robby-ir/src/model.rs:46`](../../../../crates/robby-ir/src/model.rs#L46) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,7 +22,7 @@ impl std::fmt::Display for NodeId {
 |---|---|
 | kind | `code.method` |
 | signature | `fn fmt(2)` |
-| location | [`crates/robby-ir/src/model.rs:45`](../../../../crates/robby-ir/src/model.rs#L45) |
+| location | [`crates/robby-ir/src/model.rs:47`](../../../../crates/robby-ir/src/model.rs#L47) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

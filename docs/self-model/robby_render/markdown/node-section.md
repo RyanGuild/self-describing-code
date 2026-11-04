@@ -38,7 +38,7 @@ fn node_section(
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     if !node.tags.is_empty() {
@@ -53,14 +53,13 @@ fn node_section(
         out.push('\n');
     }
 
-    if let Some(span) = &node.span {
-        if let Some(source) = sources.and_then(|s| s.get(&span.file)) {
-            if let Some(slice) = source.get(span.start.byte as usize..span.end.byte as usize) {
-                out.push_str("```rust\n");
-                out.push_str(slice.trim_end());
-                out.push_str("\n```\n\n");
-            }
-        }
+    if let Some(span) = &node.span
+        && let Some(source) = sources.and_then(|s| s.get(&span.file))
+        && let Some(slice) = source.get(span.start.byte as usize..span.end.byte as usize)
+    {
+        out.push_str("```rust\n");
+        out.push_str(slice.trim_end());
+        out.push_str("\n```\n\n");
     }
 
     if let Some(process) = &node.process {
@@ -82,12 +81,7 @@ fn node_section(
         let _ = writeln!(out, "**Edges**\n");
         for edge in &node.edges {
             let marker = if edge.resolved { "" } else { " (unresolved)" };
-            let _ = writeln!(
-                out,
-                "- {} → `{}`{marker}",
-                edge_name(edge.kind),
-                edge.to
-            );
+            let _ = writeln!(out, "- {} → `{}`{marker}", edge.kind.as_str(), edge.to);
         }
         out.push('\n');
     }
@@ -140,7 +134,7 @@ sequenceDiagram
     node_section-->>node_section: writeln!(out, '| location | `{}` |', span.location())
     node_section-->>node_section: writeln!( out, '| span | bytes {}..{} |', span.start.byte, span.end.b...
     end
-    node_section-->>node_section: writeln!( out, '| provenance | {} · confidence {:.2} |', source_name(...
+    node_section-->>node_section: writeln!( out, '| provenance | {} · confidence {:.2} |', node.provena...
     node_section-->>is_empty: node.tags.is_empty()
     alt !node.tags.is_empty()
     node_section-->>node_section: writeln!(out, '| tags | {} |', node.tags.join(', '))
@@ -153,18 +147,14 @@ sequenceDiagram
     end
     node_section-->>push: out.push('\n')
     end
-    alt let Some(span) = &node.span
     node_section-->>get: s.get(&span.file)
     node_section-->>and_then: sources.and_then(|s| s.get(&span.file))
-    alt let Some(source) = sources.and_then(|s| s.get(&span.file))
     node_section-->>get: source.get(span.start.byte as usize..span.end.byte as usize)
-    alt let Some(slice) = source.get(span.start.byte as usize..span.end.byte ...
+    alt let Some(span) = &node.span && let Some(source) = sources.and_then(|s...
     node_section-->>push_str: out.push_str('```rust\n')
     node_section-->>trim_end: slice.trim_end()
     node_section-->>push_str: out.push_str(slice.trim_end())
     node_section-->>push_str: out.push_str('\n```\n\n')
-    end
-    end
     end
     alt let Some(process) = &node.process
     node_section-->>push_str: out.push_str('```mermaid\n')
@@ -180,7 +170,7 @@ sequenceDiagram
     alt !node.edges.is_empty()
     node_section-->>node_section: writeln!(out, '**Edges**\n')
     loop &node.edges
-    node_section-->>node_section: writeln!( out, '- {} → `{}`{marker}', edge_name(edge.kind), edge.to )
+    node_section-->>node_section: writeln!(out, '- {} → `{}`{marker}', edge.kind.as_str(), edge.to)
     end
     node_section-->>push: out.push('\n')
     end
@@ -204,18 +194,18 @@ sequenceDiagram
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::sequence`](../sequence.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — sequence
 - calls → [`robby_render::markdown`](index.md) — heading_depth
 - calls → [`robby_render::report`](../report/index.md) — push

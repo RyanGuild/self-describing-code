@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn emits_comment_nodes_and_attaches_docs()` |
-| location | [`crates/robby-extract/tests/typescript.rs:119`](../../../../crates/robby-extract/tests/typescript.rs#L119) |
+| location | [`crates/robby-extract/tests/typescript.rs:116`](../../../../crates/robby-extract/tests/typescript.rs#L116) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -25,14 +25,20 @@ fn emits_comment_nodes_and_attaches_docs() {
     );
     assert!(
         comments.iter().any(|c| {
-            c.annotations.get("comment_kind").map(|s| s.as_str()) == Some("block")
+            c.annotations
+                .get("comment_kind")
+                .map(std::string::String::as_str)
+                == Some("block")
                 && c.docs.as_deref().is_some_and(|d| d.contains("drawable"))
         }),
         "missing JSDoc block: {comments:?}"
     );
     assert!(
         comments.iter().any(|c| {
-            c.annotations.get("comment_kind").map(|s| s.as_str()) == Some("line")
+            c.annotations
+                .get("comment_kind")
+                .map(std::string::String::as_str)
+                == Some("line")
                 && c.docs.as_deref().is_some_and(|d| d.contains("canvas"))
         }),
         "missing line comment: {comments:?}"
@@ -74,8 +80,8 @@ sequenceDiagram
     emits_comment_nodes_and_attaches_docs-->>filter: doc .nodes .values() .filter(|n| n.kind.as_str() == kind::code::COMMENT)
     emits_comment_nodes_and_attaches_docs-->>collect: doc .nodes .values() .filter(|n| n.kind.as_str() == kind::code::COMME...
     emits_comment_nodes_and_attaches_docs-->>emits_comment_nodes_and_attaches_docs: assert!( comments.len() >= 2, 'expected line + block comments, got {c...
-    emits_comment_nodes_and_attaches_docs-->>emits_comment_nodes_and_attaches_docs: assert!( comments.iter().any(|c| { c.annotations.get('comment_kind')....
-    emits_comment_nodes_and_attaches_docs-->>emits_comment_nodes_and_attaches_docs: assert!( comments.iter().any(|c| { c.annotations.get('comment_kind')....
+    emits_comment_nodes_and_attaches_docs-->>emits_comment_nodes_and_attaches_docs: assert!( comments.iter().any(|c| { c.annotations .get('comment_kind')...
+    emits_comment_nodes_and_attaches_docs-->>emits_comment_nodes_and_attaches_docs: assert!( comments.iter().any(|c| { c.annotations .get('comment_kind')...
     emits_comment_nodes_and_attaches_docs-->>values: doc .nodes .values()
     emits_comment_nodes_and_attaches_docs-->>as_str: n.kind.as_str()
     emits_comment_nodes_and_attaches_docs-->>find: doc .nodes .values() .find(|n| n.kind.as_str() == kind::code::INTERFA...

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn ensure_participant(process: &mut Process, name: &str)` |
-| location | [`crates/robby-extract/src/typescript.rs:991`](../../../../crates/robby-extract/src/typescript.rs#L991) |
+| location | [`crates/robby-extract/src/typescript.rs:984`](../../../../crates/robby-extract/src/typescript.rs#L984) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

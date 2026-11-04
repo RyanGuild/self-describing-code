@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/view/process.rs:42`](../../../../../crates/robby-render/src/view/process.rs#L42) |
+| location | [`crates/robby-render/src/view/process.rs:46`](../../../../../crates/robby-render/src/view/process.rs#L46) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -35,10 +35,7 @@ impl ProcessView {
                 && step.blocks.len() >= common
                 && step.blocks[common - 1].branch != stack[common - 1].branch
             {
-                let branch = step.blocks[common - 1]
-                    .branch
-                    .clone()
-                    .unwrap_or_default();
+                let branch = step.blocks[common - 1].branch.clone().unwrap_or_default();
                 events.push(ProcessEvent::Else { label: branch });
             }
 
@@ -46,13 +43,13 @@ impl ProcessView {
             while opened < step.blocks.len() {
                 let block = &step.blocks[opened];
                 events.push(ProcessEvent::Begin {
-                    keyword: keyword(block.kind),
+                    keyword: block.kind.as_str(),
                     label: block.label.clone(),
                 });
                 opened += 1;
             }
 
-            stack = step.blocks.clone();
+            stack.clone_from(&step.blocks);
 
             events.push(ProcessEvent::Interaction {
                 index: index + 1,
@@ -85,7 +82,7 @@ impl ProcessView {
 ## References
 
 - calls → [`robby_render::report`](../../report/index.md) — push
-- calls → [`robby_render::util`](../../util/index.md) — keyword
+- calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::process`](index.md) — common_prefix
 - calls → [`robby_render::view::scene`](../scene/index.md) — new
 - calls → [`robby_render::view::select`](../select/index.md) — collect
@@ -102,7 +99,7 @@ impl ProcessView {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_process(1)` |
-| location | [`crates/robby-render/src/view/process.rs:43`](../../../../../crates/robby-render/src/view/process.rs#L43) |
+| location | [`crates/robby-render/src/view/process.rs:47`](../../../../../crates/robby-render/src/view/process.rs#L47) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -131,10 +128,7 @@ pub fn from_process(process: &Process) -> Self {
                 && step.blocks.len() >= common
                 && step.blocks[common - 1].branch != stack[common - 1].branch
             {
-                let branch = step.blocks[common - 1]
-                    .branch
-                    .clone()
-                    .unwrap_or_default();
+                let branch = step.blocks[common - 1].branch.clone().unwrap_or_default();
                 events.push(ProcessEvent::Else { label: branch });
             }
 
@@ -142,13 +136,13 @@ pub fn from_process(process: &Process) -> Self {
             while opened < step.blocks.len() {
                 let block = &step.blocks[opened];
                 events.push(ProcessEvent::Begin {
-                    keyword: keyword(block.kind),
+                    keyword: block.kind.as_str(),
                     label: block.label.clone(),
                 });
                 opened += 1;
             }
 
-            stack = step.blocks.clone();
+            stack.clone_from(&step.blocks);
 
             events.push(ProcessEvent::Interaction {
                 index: index + 1,
@@ -189,7 +183,8 @@ sequenceDiagram
     participant len as len
     participant push as push
     participant unwrap_or_default as unwrap_or_default
-    participant keyword as keyword
+    participant as_str as as_str
+    participant clone_from as clone_from
     from_process-->>iter: process .participants .iter()
     from_process-->>clone: p.id.clone()
     from_process-->>clone: p.label.clone()
@@ -210,17 +205,17 @@ sequenceDiagram
     end
     from_process-->>len: step.blocks.len()
     alt common > 0 && step.blocks.len() >= common && step.blocks[common - 1]....
-    from_process-->>clone: step.blocks[common - 1] .branch .clone()
-    from_process-->>unwrap_or_default: step.blocks[common - 1] .branch .clone() .unwrap_or_default()
+    from_process-->>clone: step.blocks[common - 1].branch.clone()
+    from_process-->>unwrap_or_default: step.blocks[common - 1].branch.clone().unwrap_or_default()
     from_process-->>push: events.push(ProcessEvent::Else { label: branch })
     end
     from_process-->>len: step.blocks.len()
     loop opened < step.blocks.len()
-    from_process-->>keyword: keyword(block.kind)
+    from_process-->>as_str: block.kind.as_str()
     from_process-->>clone: block.label.clone()
-    from_process-->>push: events.push(ProcessEvent::Begin { keyword: keyword(block.kind), label...
+    from_process-->>push: events.push(ProcessEvent::Begin { keyword: block.kind.as_str(), label...
     end
-    from_process-->>clone: step.blocks.clone()
+    from_process-->>clone_from: stack.clone_from(&step.blocks)
     from_process-->>clone: step.from.clone()
     from_process-->>clone: step.to.clone()
     from_process-->>clone: step.label.clone()
@@ -243,7 +238,7 @@ sequenceDiagram
 - calls → [`robby_render::view::process::common_prefix`](common-prefix.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::util::keyword`](../../util/keyword.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
@@ -254,7 +249,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-render/src/view/process.rs:109`](../../../../../crates/robby-render/src/view/process.rs#L109) |
+| location | [`crates/robby-render/src/view/process.rs:110`](../../../../../crates/robby-render/src/view/process.rs#L110) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

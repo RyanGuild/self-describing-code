@@ -7,10 +7,10 @@ sequenceDiagram
     participant collect as collect
     participant package_leaf as package_leaf
     participant children_of as children_of
+    build_package_tree-->>build_package_tree: fn children_of(parent_fqn: &str, by_fqn: &BTreeMap<&str, &Node>) -> V...
     build_package_tree-->>iter: packages.iter()
     build_package_tree-->>as_str: p.fqn.as_str()
     build_package_tree-->>map: packages.iter().map(|p| (p.fqn.as_str(), *p))
     build_package_tree-->>collect: packages.iter().map(|p| (p.fqn.as_str(), *p)).collect()
-    build_package_tree-->>build_package_tree: fn children_of(parent_fqn: &str, by_fqn: &BTreeMap<&str, &Node>) -> V...
     build_package_tree-->>package_leaf: package_leaf(root)
     build_package_tree-->>children_of: children_of(&root.fqn, &by_fqn)

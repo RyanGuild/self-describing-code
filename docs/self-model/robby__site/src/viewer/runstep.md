@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.interface` |
-| location | [`apps/site/src/viewer.ts:114`](../../../../../apps/site/src/viewer.ts#L114) |
+| location | [`apps/site/src/viewer.ts:126`](../../../../../apps/site/src/viewer.ts#L126) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

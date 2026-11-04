@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-render/src/view/mod.rs:15`](../../../../../crates/robby-render/src/view/mod.rs#L15) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 55 |
+| nodes | 54 |
 
 ## Types
 
@@ -80,10 +80,8 @@ flowchart TB
         n_737bc7514c5fccaa["is_binary_module"]
         n_7debed98e7d8376c["main_process"]
         n_d02d0abf1c3600ac["markdown"]
-        n_11f6d2fb700cd378["source_name"]
         n_f5a635ba7e165c71["tui_all"]
     end
-    n_bb9971de7b6aa277 --> n_11f6d2fb700cd378
     n_bb9971de7b6aa277 --> n_52efbca52123222c
     n_bb9971de7b6aa277 --> n_737bc7514c5fccaa
     n_bb9971de7b6aa277 --> n_7debed98e7d8376c
@@ -95,7 +93,7 @@ flowchart TB
 
 | | select | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **select** | · | 4 | 19 |
+| **select** | · | 3 | 20 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
@@ -186,8 +184,8 @@ flowchart TB
           fqn: node.fqn.clone(),
           kind: node.kind.as_str().to_owned(),
           signature: node.signature.clone(),
-          location: node.span.as_ref().map(|s| s.location()),
-          provenance_source: source_name(node.provenance.source),
+          location: node.span.as_ref().map(robby_ir::Span::location),
+          provenance_source: node.provenance.source.as_str(),
           confidence: node.provenance.confidence,
           docs: node.docs.clone(),
           node_count: doc.subtree(&node.id).len(),
@@ -201,44 +199,28 @@ flowchart TB
   
       let types = if opts.types && is_module {
           let model = TypeModel::from_module(doc, &node.id);
-          if model.is_empty() {
-              None
-          } else {
-              Some(model)
-          }
+          if model.is_empty() { None } else { Some(model) }
       } else {
           None
       };
   
       let dependencies = if opts.dependencies && is_module {
           let views = DependencyViews::from_root(doc, &node.id);
-          if views.is_empty() {
-              None
-          } else {
-              Some(views)
-          }
+          if views.is_empty() { None } else { Some(views) }
       } else {
           None
       };
   
       let externals = if opts.externals && is_module {
           let view = ExternalsView::from_root(doc, &node.id);
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
   
       let comments = if opts.comments && is_module {
           let view = CommentsView::from_root(doc, &node.id, sources);
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
@@ -250,17 +232,9 @@ flowchart TB
       };
   
       let hierarchy = if opts.hierarchy {
-          let view = HierarchyView::from_node(
-              doc,
-              &node.id,
-              opts.hierarchy_depth,
-              opts.hierarchy_all,
-          );
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          let view =
+              HierarchyView::from_node(doc, &node.id, opts.hierarchy_depth, opts.hierarchy_all);
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
@@ -273,11 +247,7 @@ flowchart TB
   
       let sibling = if opts.sibling {
           let graph = SiblingGraph::from_root(doc, &node.id);
-          if graph.is_empty() {
-              None
-          } else {
-              Some(graph)
-          }
+          if graph.is_empty() { None } else { Some(graph) }
       } else {
           None
       };
@@ -305,8 +275,8 @@ flowchart TB
   ```
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, subtree
-- calls → [`robby_ir::span`](../../../robby_ir/span/index.md) — location
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::deps`](../deps/index.md) — from_root
 - calls → [`robby_render::view::links`](../links/index.md) — for_node, is_empty, is_module_kind
@@ -332,6 +302,7 @@ flowchart TB
 - calls ← [`robby_ir::codepath::build_code_paths`](../../../robby_ir/codepath/build-code-paths.md)
 - calls ← [`robby_ir::codepath::find_entrypoints`](../../../robby_ir/codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../../../robby_ir/codepath/index.md)
+- calls ← [`robby_ir::contract::impl CoverageGate for CoverageReport::failing_gaps`](../../../robby_ir/contract/index.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../../../robby_ir/coverage/file-coverage.md)
 - calls ← [`robby_ir::coverage::impl CoverageReport::worst_first`](../../../robby_ir/coverage/index.md)
 - calls ← [`robby_ir::coverage::preview`](../../../robby_ir/coverage/preview.md)
@@ -389,7 +360,6 @@ flowchart TB
 - calls ← [`robby_render::view::sibling::impl SiblingGraph::from_root`](../sibling/index.md)
 - calls ← [`robby_render::view::types::impl TypeModel::from_module`](../types/index.md)
 - calls ← [`robby_render::view::types::impl_methods`](../types/impl-methods.md)
-- calls ← [`robby_render::web::impl FrameDetail::from_node_in_doc`](../../web/index.md)
 
 ## Items
 
@@ -400,15 +370,14 @@ flowchart TB
 | [`impl Default for SelectOpts`](impl-default-for-selectopts.md) | `code.impl` | — | `crates/robby-render/src/view/select.rs:47:1` |
 | [`impl SelectOpts`](impl-selectopts.md) | `code.impl` | — | `crates/robby-render/src/view/select.rs:66:1` |
 | [`NodeViews`](nodeviews.md) | `code.struct` | — | `crates/robby-render/src/view/select.rs:81:1` |
-| [`collect`](collect.md) | `code.function` | 40 | `crates/robby-render/src/view/select.rs:97:1` |
-| [`is_binary_module`](is-binary-module.md) | `code.function` | 5 | `crates/robby-render/src/view/select.rs:228:1` |
-| [`main_process`](main-process.md) | `code.function` | 7 | `crates/robby-render/src/view/select.rs:234:1` |
-| [`source_name`](source-name.md) | `code.function` | 0 | `crates/robby-render/src/view/select.rs:242:1` |
+| [`collect`](collect.md) | `code.function` | 39 | `crates/robby-render/src/view/select.rs:97:1` |
+| [`is_binary_module`](is-binary-module.md) | `code.function` | 5 | `crates/robby-render/src/view/select.rs:200:1` |
+| [`main_process`](main-process.md) | `code.function` | 7 | `crates/robby-render/src/view/select.rs:207:1` |
 
 ## Imports
 
 - `use std::collections::BTreeMap;`
-- [`use robby_ir::{Document, Node, Source, kind};`](../../../robby_ir/index.md)
+- [`use robby_ir::{Document, Node, kind};`](../../../robby_ir/index.md)
 - `use super::comments::CommentsView;`
 - `use super::deps::DependencyViews;`
 - `use super::externals::ExternalsView;`

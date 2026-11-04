@@ -251,14 +251,10 @@ flowchart TB
       pub frames: BTreeMap<String, Frame>,
   }
   ```
-- `crates/robby-render/src/view/scene.rs:377:1` (docs, `robby_render::view::scene::attach_call_portals`): "Portals for every Calls hop among placed frames (tree children + cross edges)."
+- `crates/robby-render/src/view/scene.rs:368:1` (docs, `robby_render::view::scene::attach_call_portals`): "Portals for every Calls hop among placed frames (tree children + cross edges)."
   ```
   /// Portals for every Calls hop among placed frames (tree children + cross edges).
-  fn attach_call_portals(
-      doc: &Document,
-      tree: &CallTree,
-      frames: &mut BTreeMap<String, Frame>,
-  ) {
+  fn attach_call_portals(doc: &Document, tree: &CallTree, frames: &mut BTreeMap<String, Frame>) {
       let mut pairs: Vec<(NodeId, NodeId)> = Vec::new();
       for (from_id, kids) in &tree.children {
           for to_id in kids {
@@ -281,12 +277,10 @@ flowchart TB
           }
           let to_name = doc
               .get(to_id)
-              .map(|n| n.fqn.clone())
-              .unwrap_or_else(|| to_id.as_str().to_owned());
+              .map_or_else(|| to_id.as_str().to_owned(), |n| n.fqn.clone());
           let from_name = doc
               .get(from_id)
-              .map(|n| n.fqn.clone())
-              .unwrap_or_else(|| from_id.as_str().to_owned());
+              .map_or_else(|| from_id.as_str().to_owned(), |n| n.fqn.clone());
   
           if let Some(from_frame) = frames.get_mut(&from_sid) {
               from_frame.portals.push(Portal {
@@ -336,7 +330,7 @@ flowchart TB
       pub h: i64,
   }
   ```
-- `crates/robby-render/src/view/scene.rs:522:1` (docs, `robby_render::view::scene::layout_grid`): "Place `n` children in a grid on the local canvas (below the header, above portals)."
+- `crates/robby-render/src/view/scene.rs:507:1` (docs, `robby_render::view::scene::layout_grid`): "Place `n` children in a grid on the local canvas (below the header, above portals)."
   ```
   /// Place `n` children in a grid on the local canvas (below the header, above portals).
   fn layout_grid(n: usize) -> Vec<Rect> {
@@ -370,7 +364,7 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-render/src/view/scene.rs:554:1` (docs, `robby_render::view::scene::is_scene_skipped`): "Comments stay in the IR and markdown tree, but are not Prezi frames."
+- `crates/robby-render/src/view/scene.rs:539:1` (docs, `robby_render::view::scene::is_scene_skipped`): "Comments stay in the IR and markdown tree, but are not Prezi frames."
   ```
   /// Comments stay in the IR and markdown tree, but are not Prezi frames.
   fn is_scene_skipped(kind_name: &str) -> bool {
@@ -391,7 +385,8 @@ flowchart TB
   ```
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — edge_label, is_structural, short_kind
@@ -407,9 +402,10 @@ flowchart TB
 - calls ← [`robby_extract::test_typescript::bare_import_creates_external_npm_stub`](../../../robby_extract/test_typescript/bare-import-creates-external-npm-stub.md)
 - calls ← [`robby_extract::test_typescript::resolves_calls_and_imports`](../../../robby_extract/test_typescript/resolves-calls-and-imports.md)
 - calls ← [`robby_extract::typescript::resolve_calls`](../../../robby_extract/typescript/resolve-calls.md)
+- calls ← [`robby_ir::model::impl Document::adopt_parent`](../../../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::declare_file`](../../../robby_ir/model/index.md)
-- calls ← [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::merge`](../../../robby_ir/model/index.md)
+- calls ← [`robby_ir::model::impl Document::record_child`](../../../robby_ir/model/index.md)
 - calls ← [`robby_render::test_tree::every_internal_link_resolves`](../../test_tree/every-internal-link-resolves.md)
 - calls ← [`robby_render::test_web::entrypoints_scene_json_is_deterministic`](../../test_web/entrypoints-scene-json-is-deterministic.md)
 - calls ← [`robby_render::test_web::entrypoints_scene_roots_mains_and_nests_callees`](../../test_web/entrypoints-scene-roots-mains-and-nests-callees.md)
@@ -466,13 +462,13 @@ flowchart TB
 | [`Portal`](portal.md) | `code.struct` | — | `crates/robby-render/src/view/scene.rs:106:1` |
 | [`impl Scene`](impl-scene.md) | `code.impl` | — | `crates/robby-render/src/view/scene.rs:116:1` |
 | [`crate_roots`](crate-roots.md) | `code.function` | 14 | `crates/robby-render/src/view/scene.rs:225:1` |
-| [`build_frame`](build-frame.md) | `code.function` | 38 | `crates/robby-render/src/view/scene.rs:248:1` |
-| [`build_call_frame`](build-call-frame.md) | `code.function` | 44 | `crates/robby-render/src/view/scene.rs:312:1` |
-| [`attach_call_portals`](attach-call-portals.md) | `code.function` | 55 | `crates/robby-render/src/view/scene.rs:377:1` |
-| [`portals_for`](portals-for.md) | `code.function` | 49 | `crates/robby-render/src/view/scene.rs:449:1` |
-| [`layout_grid`](layout-grid.md) | `code.function` | 13 | `crates/robby-render/src/view/scene.rs:522:1` |
-| [`is_scene_skipped`](is-scene-skipped.md) | `code.function` | 0 | `crates/robby-render/src/view/scene.rs:554:1` |
-| [`map_local_to_world`](map-local-to-world.md) | `code.function` | 1 | `crates/robby-render/src/view/scene.rs:559:1` |
+| [`build_frame`](build-frame.md) | `code.function` | 38 | `crates/robby-render/src/view/scene.rs:246:1` |
+| [`build_call_frame`](build-call-frame.md) | `code.function` | 44 | `crates/robby-render/src/view/scene.rs:303:1` |
+| [`attach_call_portals`](attach-call-portals.md) | `code.function` | 53 | `crates/robby-render/src/view/scene.rs:368:1` |
+| [`portals_for`](portals-for.md) | `code.function` | 49 | `crates/robby-render/src/view/scene.rs:434:1` |
+| [`layout_grid`](layout-grid.md) | `code.function` | 13 | `crates/robby-render/src/view/scene.rs:507:1` |
+| [`is_scene_skipped`](is-scene-skipped.md) | `code.function` | 0 | `crates/robby-render/src/view/scene.rs:539:1` |
+| [`map_local_to_world`](map-local-to-world.md) | `code.function` | 1 | `crates/robby-render/src/view/scene.rs:544:1` |
 
 ## Imports
 

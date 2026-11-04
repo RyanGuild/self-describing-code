@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:231`](../../../../../apps/site/src/viewer.ts#L231) |
+| location | [`apps/site/src/viewer.ts:241`](../../../../../apps/site/src/viewer.ts#L241) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -20,10 +20,12 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     detailCache.clear();
     sceneCache.clear();
     runDetailCache.clear();
-    const structure = await fetchJson<Scene>(`scene.json?t=${Date.now()}`);
+    const structure = await fetchJson<Scene>(`${ORG_MODES.structure.file}?t=${Date.now()}`);
     sceneCache.set("structure", structure);
     try {
-      const entrypoints = await fetchJson<Scene>(`scene-entrypoints.json?t=${Date.now()}`);
+      const entrypoints = await fetchJson<Scene>(
+        `${ORG_MODES.entrypoints.file}?t=${Date.now()}`,
+      );
       sceneCache.set("entrypoints", entrypoints);
     } catch (err) {
       console.error(err);
@@ -34,9 +36,7 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     if (keepOrg === "runs") {
       showRunsPanel();
     } else {
-      const next =
-        sceneCache.get(keepOrg === "entrypoints" ? "entrypoints" : "structure") ??
-        structure;
+      const next = sceneCache.get(keepOrg) ?? structure;
       applyScene(next);
       syncOrgChrome(keepOrg);
       if (keepFocus && next.frames[keepFocus]) {

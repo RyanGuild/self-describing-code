@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_compact(kind_name: &str) -> bool` |
-| location | [`crates/robby-render/src/tree.rs:704`](../../../../crates/robby-render/src/tree.rs#L704) |
+| location | [`crates/robby-render/src/tree.rs:697`](../../../../crates/robby-render/src/tree.rs#L697) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

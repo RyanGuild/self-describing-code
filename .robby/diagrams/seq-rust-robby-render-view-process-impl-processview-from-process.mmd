@@ -13,7 +13,8 @@ sequenceDiagram
     participant len as len
     participant push as push
     participant unwrap_or_default as unwrap_or_default
-    participant keyword as keyword
+    participant as_str as as_str
+    participant clone_from as clone_from
     from_process-->>iter: process .participants .iter()
     from_process-->>clone: p.id.clone()
     from_process-->>clone: p.label.clone()
@@ -34,17 +35,17 @@ sequenceDiagram
     end
     from_process-->>len: step.blocks.len()
     alt common > 0 && step.blocks.len() >= common && step.blocks[common - 1]....
-    from_process-->>clone: step.blocks[common - 1] .branch .clone()
-    from_process-->>unwrap_or_default: step.blocks[common - 1] .branch .clone() .unwrap_or_default()
+    from_process-->>clone: step.blocks[common - 1].branch.clone()
+    from_process-->>unwrap_or_default: step.blocks[common - 1].branch.clone().unwrap_or_default()
     from_process-->>push: events.push(ProcessEvent::Else { label: branch })
     end
     from_process-->>len: step.blocks.len()
     loop opened < step.blocks.len()
-    from_process-->>keyword: keyword(block.kind)
+    from_process-->>as_str: block.kind.as_str()
     from_process-->>clone: block.label.clone()
-    from_process-->>push: events.push(ProcessEvent::Begin { keyword: keyword(block.kind), label...
+    from_process-->>push: events.push(ProcessEvent::Begin { keyword: block.kind.as_str(), label...
     end
-    from_process-->>clone: step.blocks.clone()
+    from_process-->>clone_from: stack.clone_from(&step.blocks)
     from_process-->>clone: step.from.clone()
     from_process-->>clone: step.to.clone()
     from_process-->>clone: step.label.clone()

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_scene_skipped(kind_name: &str) -> bool` |
-| location | [`crates/robby-render/src/view/scene.rs:554`](../../../../../crates/robby-render/src/view/scene.rs#L554) |
+| location | [`crates/robby-render/src/view/scene.rs:539`](../../../../../crates/robby-render/src/view/scene.rs#L539) |
 | provenance | extractor · confidence 1.00 |
 
 > Comments stay in the IR and markdown tree, but are not Prezi frames.

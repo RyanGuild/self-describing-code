@@ -8,6 +8,9 @@ edition = "2024"
 license = "MIT OR Apache-2.0"
 rust-version = "1.99"
 repository = "https://github.com/robby/robby"
+readme = "README.md"
+keywords = ["static-analysis", "code-map", "interpretability"]
+categories = ["development-tools"]
 
 [workspace.dependencies]
 robby-ir = { path = "crates/robby-ir" }
@@ -31,3 +34,42 @@ unicode-width = "0.2"
 
 [profile.release]
 lto = "thin"
+
+# `cargo clippy --workspace --all-targets --all-features -- -D warnings` is the bar.
+# Allows below are policy, not leftovers: each one is a lint we will not chase.
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused = { level = "deny", priority = -1 }
+unused_must_use = "deny"
+rust_2018_idioms = { level = "deny", priority = -1 }
+trivial_casts = "deny"
+trivial_numeric_casts = "deny"
+unused_lifetimes = "deny"
+unreachable_pub = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+cargo = { level = "deny", priority = -1 }
+
+# `#[must_use]` on every pure function is annotation noise in an internal workspace.
+must_use_candidate = "allow"
+return_self_not_must_use = "allow"
+# The map is the documentation. Rustdoc sections are not the contract.
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+doc_markdown = "allow"
+# Span math and scene layout cast between byte offsets and pixel widths on purpose.
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+cast_lossless = "allow"
+# Size limits fight extractors and renderers that are long because the AST is long.
+too_many_lines = "allow"
+too_many_arguments = "allow"
+type_complexity = "allow"
+similar_names = "allow"
+struct_excessive_bools = "allow"
+# Transitive duplicates we do not control: syn 2/3, base64, getrandom, windows-sys.
+multiple_crate_versions = "allow"

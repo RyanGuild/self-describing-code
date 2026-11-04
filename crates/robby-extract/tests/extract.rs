@@ -42,10 +42,7 @@ fn the_workspace_is_fully_covered() {
         .map(|(file, gap)| format!("{}:{}", file.file, gap.span.location()))
         .collect();
 
-    assert!(
-        report.is_complete(),
-        "unclaimed code: {failures:#?}"
-    );
+    assert!(report.is_complete(), "unclaimed code: {failures:#?}");
 }
 
 #[test]

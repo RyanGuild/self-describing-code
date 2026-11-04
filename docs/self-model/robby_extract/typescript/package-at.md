@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn package_at(extract_root: &Path, dir: &Path) -> Result<Option<Package>>` |
-| location | [`crates/robby-extract/src/typescript.rs:100`](../../../../crates/robby-extract/src/typescript.rs#L100) |
+| location | [`crates/robby-extract/src/typescript.rs:97`](../../../../crates/robby-extract/src/typescript.rs#L97) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

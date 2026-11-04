@@ -198,7 +198,10 @@ pub fn document_coverage(doc: &Document, sources: &BTreeMap<String, String>) -> 
 
     let mut files = Vec::new();
     for (path, source) in sources {
-        let spans = spans_by_file.get(path.as_str()).cloned().unwrap_or_default();
+        let spans = spans_by_file
+            .get(path.as_str())
+            .cloned()
+            .unwrap_or_default();
         files.push(file_coverage(path, source, &spans));
     }
     files.sort_by(|a, b| a.file.cmp(&b.file));
@@ -273,20 +276,11 @@ enum TriviaMode {
 
 impl TriviaMode {
     fn from_path(path: &str) -> Self {
-        let lower = path.to_ascii_lowercase();
-        if lower.ends_with(".ts")
-            || lower.ends_with(".tsx")
-            || lower.ends_with(".mts")
-            || lower.ends_with(".cts")
-            || lower.ends_with(".js")
-            || lower.ends_with(".jsx")
-            || lower.ends_with(".mjs")
-            || lower.ends_with(".cjs")
-        {
-            Self::TypeScript
-        } else {
-            Self::Rust
-        }
+        const SCRIPT: &[&str] = &["ts", "tsx", "mts", "cts", "js", "jsx", "mjs", "cjs"];
+        let script = std::path::Path::new(path)
+            .extension()
+            .is_some_and(|ext| SCRIPT.iter().any(|cand| ext.eq_ignore_ascii_case(cand)));
+        if script { Self::TypeScript } else { Self::Rust }
     }
 }
 
@@ -324,16 +318,12 @@ impl TriviaFlags {
 /// Returns the byte offset of the first token that is none of those, which is
 /// what makes the gap report actionable: it points at the exact byte that is
 /// missing from the map.
-fn scan_trivia(
-    bytes: &[u8],
-    start: u32,
-    end: u32,
-    mode: TriviaMode,
-) -> Result<TriviaFlags, u32> {
+fn scan_trivia(bytes: &[u8], start: u32, end: u32, mode: TriviaMode) -> Result<TriviaFlags, u32> {
     let mut flags = TriviaFlags::default();
     let mut i = start;
     // TypeScript shebang is trivia when it opens the file.
-    if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!' {
+    if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!'
+    {
         flags.comment = true;
         while i < end && bytes[i as usize] != b'\n' {
             i += 1;
@@ -357,7 +347,10 @@ fn scan_trivia(
                 if i + 1 < end && bytes[i as usize] == b'/' && bytes[(i + 1) as usize] == b'*' {
                     depth += 1;
                     i += 2;
-                } else if i + 1 < end && bytes[i as usize] == b'*' && bytes[(i + 1) as usize] == b'/' {
+                } else if i + 1 < end
+                    && bytes[i as usize] == b'*'
+                    && bytes[(i + 1) as usize] == b'/'
+                {
                     depth -= 1;
                     i += 2;
                 } else {

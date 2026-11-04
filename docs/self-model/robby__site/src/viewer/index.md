@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`apps/site/src/viewer.ts:1`](../../../../../apps/site/src/viewer.ts#L1) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 71 |
+| nodes | 75 |
 
 ## Entry
 
@@ -111,7 +111,7 @@ flowchart TB
     h: number;
   }
   ```
-- `apps/site/src/viewer.ts:209:1` (block, `robby__site/src/viewer/startBuildWatch`): "* Poll `build.json` written by `robby web` / `--watch`; remount when IR site rebuilds."
+- `apps/site/src/viewer.ts:219:1` (block, `robby__site/src/viewer/startBuildWatch`): "* Poll `build.json` written by `robby web` / `--watch`; remount when IR site rebuilds."
   ```
   async function startBuildWatch(): Promise<void> {
     const tick = async () => {
@@ -134,7 +134,7 @@ flowchart TB
     }, WATCH_POLL_MS);
   }
   ```
-- `apps/site/src/viewer.ts:222:7` (line, `robby__site/src/viewer/reloadFromDisk`): "build.json optional until first `robby web` with stamp support"
+- `apps/site/src/viewer.ts:232:7` (line, `robby__site/src/viewer/reloadFromDisk`): "build.json optional until first `robby web` with stamp support"
   ```
   async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     if (reloading || flying) {
@@ -147,10 +147,12 @@ flowchart TB
       detailCache.clear();
       sceneCache.clear();
       runDetailCache.clear();
-      const structure = await fetchJson<Scene>(`scene.json?t=${Date.now()}`);
+      const structure = await fetchJson<Scene>(`${ORG_MODES.structure.file}?t=${Date.now()}`);
       sceneCache.set("structure", structure);
       try {
-        const entrypoints = await fetchJson<Scene>(`scene-entrypoints.json?t=${Date.now()}`);
+        const entrypoints = await fetchJson<Scene>(
+          `${ORG_MODES.entrypoints.file}?t=${Date.now()}`,
+        );
         sceneCache.set("entrypoints", entrypoints);
       } catch (err) {
         console.error(err);
@@ -161,9 +163,7 @@ flowchart TB
       if (keepOrg === "runs") {
         showRunsPanel();
       } else {
-        const next =
-          sceneCache.get(keepOrg === "entrypoints" ? "entrypoints" : "structure") ??
-          structure;
+        const next = sceneCache.get(keepOrg) ?? structure;
         applyScene(next);
         syncOrgChrome(keepOrg);
         if (keepFocus && next.frames[keepFocus]) {
@@ -181,7 +181,7 @@ flowchart TB
     }
   }
   ```
-- `apps/site/src/viewer.ts:561:1` (block, `robby__site/src/viewer/screenRectFromWorld`): "* Absolute screen rect for a frame from its world coordinates + camera."
+- `apps/site/src/viewer.ts:576:1` (block, `robby__site/src/viewer/screenRectFromWorld`): "* Absolute screen rect for a frame from its world coordinates + camera."
   ```
   function screenRectFromWorld(f: SceneFrame, cam: Camera): ScreenRect {
     return {
@@ -192,7 +192,7 @@ flowchart TB
     };
   }
   ```
-- `apps/site/src/viewer.ts:571:1` (block, `robby__site/src/viewer/screenRectFor`): "* * Children of the focused frame are placed from `local_in_parent` into the * parent's screen box. Nested world intege…"
+- `apps/site/src/viewer.ts:586:1` (block, `robby__site/src/viewer/screenRectFor`): "* * Children of the focused frame are placed from `local_in_parent` into the * parent's screen box. Nested world intege…"
   ```
   function screenRectFor(f: SceneFrame, cam: Camera): ScreenRect {
     if (f.parent === focusId && f.local_in_parent) {
@@ -208,7 +208,7 @@ flowchart TB
     return screenRectFromWorld(f, cam);
   }
   ```
-- `apps/site/src/viewer.ts:600:3` (line, `robby__site/src/viewer/remount`): "Only top-level world cards (the focus). Children live in the body's grid."
+- `apps/site/src/viewer.ts:615:3` (line, `robby__site/src/viewer/remount`): "Only top-level world cards (the focus). Children live in the body's grid."
   ```
   function remount(): void {
     worldEl.innerHTML = "";
@@ -234,7 +234,7 @@ flowchart TB
     updateChrome();
   }
   ```
-- `apps/site/src/viewer.ts:614:3` (line, `robby__site/src/viewer/portalButton`): "Contained nodes sit in a scrollable grid inside the focus body so they can"
+- `apps/site/src/viewer.ts:629:3` (line, `robby__site/src/viewer/portalButton`): "Contained nodes sit in a scrollable grid inside the focus body so they can"
   ```
   function portalButton(portal: Portal): HTMLButtonElement {
     const btn = document.createElement("button");
@@ -254,7 +254,7 @@ flowchart TB
     return btn;
   }
   ```
-- `apps/site/src/viewer.ts:615:3` (line, `robby__site/src/viewer/portalButton`): "keep a readable minimum size instead of shrinking to fit."
+- `apps/site/src/viewer.ts:630:3` (line, `robby__site/src/viewer/portalButton`): "keep a readable minimum size instead of shrinking to fit."
   ```
   function portalButton(portal: Portal): HTMLButtonElement {
     const btn = document.createElement("button");
@@ -274,7 +274,7 @@ flowchart TB
     return btn;
   }
   ```
-- `apps/site/src/viewer.ts:735:3` (line, `robby__site/src/viewer/flyTo`): "Portals only on the focused frame. Child previews stay as clean cards so"
+- `apps/site/src/viewer.ts:750:3` (line, `robby__site/src/viewer/flyTo`): "Portals only on the focused frame. Child previews stay as clean cards so"
   ```
   function flyTo(id: string): void {
     if (!scene!.frames[id] || id === focusId || flying) {
@@ -294,7 +294,7 @@ flowchart TB
     });
   }
   ```
-- `apps/site/src/viewer.ts:736:3` (line, `robby__site/src/viewer/flyTo`): "dozens of "calls from …" chips don't paint over the sibling grid."
+- `apps/site/src/viewer.ts:751:3` (line, `robby__site/src/viewer/flyTo`): "dozens of "calls from …" chips don't paint over the sibling grid."
   ```
   function flyTo(id: string): void {
     if (!scene!.frames[id] || id === focusId || flying) {
@@ -314,7 +314,7 @@ flowchart TB
     });
   }
   ```
-- `apps/site/src/viewer.ts:762:5` (line, `robby__site/src/viewer/zoomOut`): "Remount at the settled camera so the focus card paints at native screen"
+- `apps/site/src/viewer.ts:777:5` (line, `robby__site/src/viewer/zoomOut`): "Remount at the settled camera so the focus card paints at native screen"
   ```
   function zoomOut(): void {
     const parent = frame(focusId).parent;
@@ -324,7 +324,7 @@ flowchart TB
     flyTo(parent);
   }
   ```
-- `apps/site/src/viewer.ts:763:5` (line, `robby__site/src/viewer/zoomOut`): "resolution instead of keeping a texture from the start of the tween."
+- `apps/site/src/viewer.ts:778:5` (line, `robby__site/src/viewer/zoomOut`): "resolution instead of keeping a texture from the start of the tween."
   ```
   function zoomOut(): void {
     const parent = frame(focusId).parent;
@@ -350,7 +350,7 @@ flowchart TB
     ty: number;
   }
   ```
-- `apps/site/src/viewer.ts:834:3` (line, `robby__site/src/viewer/appendExecution`): "Containers keep the child grid — inject execution above it."
+- `apps/site/src/viewer.ts:849:3` (line, `robby__site/src/viewer/appendExecution`): "Containers keep the child grid — inject execution above it."
   ```
   function appendExecution(
     panel: HTMLElement,
@@ -384,52 +384,56 @@ flowchart TB
 | [`ProcessEvent`](processevent.md) | `code.interface` | — | `apps/site/src/viewer.ts:51:1` |
 | [`FrameDetail`](framedetail.md) | `code.interface` | — | `apps/site/src/viewer.ts:62:1` |
 | [`Camera`](camera.md) | `code.interface` | — | `apps/site/src/viewer.ts:85:1` |
-| [`OrgMode`](orgmode.md) | `code.type_alias` | — | `apps/site/src/viewer.ts:91:1` |
-| [`BuildStamp`](buildstamp.md) | `code.interface` | — | `apps/site/src/viewer.ts:93:1` |
-| [`RunIndexEntry`](runindexentry.md) | `code.interface` | — | `apps/site/src/viewer.ts:101:1` |
-| [`RunsIndex`](runsindex.md) | `code.interface` | — | `apps/site/src/viewer.ts:110:1` |
-| [`RunStep`](runstep.md) | `code.interface` | — | `apps/site/src/viewer.ts:114:1` |
-| [`RunRecord`](runrecord.md) | `code.interface` | — | `apps/site/src/viewer.ts:121:1` |
-| [`main`](main.md) | `code.function` | 18 | `apps/site/src/viewer.ts:170:1` |
-| [`startBuildWatch`](startbuildwatch.md) | `code.function` | 5 | `apps/site/src/viewer.ts:210:1` |
-| [`reloadFromDisk`](reloadfromdisk.md) | `code.function` | 22 | `apps/site/src/viewer.ts:231:1` |
-| [`showWatchBadge`](showwatchbadge.md) | `code.function` | 0 | `apps/site/src/viewer.ts:276:1` |
-| [`prefetchEntrypoints`](prefetchentrypoints.md) | `code.function` | 5 | `apps/site/src/viewer.ts:285:1` |
-| [`prefetchRuns`](prefetchruns.md) | `code.function` | 4 | `apps/site/src/viewer.ts:299:1` |
-| [`syncOrgChrome`](syncorgchrome.md) | `code.function` | 4 | `apps/site/src/viewer.ts:314:1` |
-| [`frameSafeParent`](framesafeparent.md) | `code.function` | 4 | `apps/site/src/viewer.ts:330:1` |
-| [`setOrgMode`](setorgmode.md) | `code.function` | 13 | `apps/site/src/viewer.ts:338:1` |
-| [`applyScene`](applyscene.md) | `code.function` | 3 | `apps/site/src/viewer.ts:364:1` |
-| [`showRunsPanel`](showrunspanel.md) | `code.function` | 2 | `apps/site/src/viewer.ts:374:1` |
-| [`renderRunsList`](renderrunslist.md) | `code.function` | 9 | `apps/site/src/viewer.ts:386:1` |
-| [`selectRun`](selectrun.md) | `code.function` | 8 | `apps/site/src/viewer.ts:416:1` |
-| [`renderRunDetail`](renderrundetail.md) | `code.function` | 4 | `apps/site/src/viewer.ts:434:1` |
-| [`statusClass`](statusclass.md) | `code.function` | 3 | `apps/site/src/viewer.ts:478:1` |
-| [`formatDuration`](formatduration.md) | `code.function` | 4 | `apps/site/src/viewer.ts:488:1` |
-| [`formatRelative`](formatrelative.md) | `code.function` | 5 | `apps/site/src/viewer.ts:499:1` |
-| [`formatAbsolute`](formatabsolute.md) | `code.function` | 4 | `apps/site/src/viewer.ts:513:1` |
-| [`frame`](frame.md) | `code.function` | 1 | `apps/site/src/viewer.ts:521:1` |
-| [`ancestors`](ancestors.md) | `code.function` | 4 | `apps/site/src/viewer.ts:529:1` |
-| [`cameraForFocus`](cameraforfocus.md) | `code.function` | 3 | `apps/site/src/viewer.ts:539:1` |
-| [`ScreenRect`](screenrect.md) | `code.interface` | — | `apps/site/src/viewer.ts:554:1` |
-| [`screenRectFromWorld`](screenrectfromworld.md) | `code.function` | 1 | `apps/site/src/viewer.ts:562:1` |
-| [`screenRectFor`](screenrectfor.md) | `code.function` | 5 | `apps/site/src/viewer.ts:576:1` |
-| [`placeFrame`](placeframe.md) | `code.function` | 1 | `apps/site/src/viewer.ts:590:1` |
-| [`placeAllFrames`](placeallframes.md) | `code.function` | 2 | `apps/site/src/viewer.ts:599:1` |
-| [`remount`](remount.md) | `code.function` | 10 | `apps/site/src/viewer.ts:608:1` |
-| [`portalButton`](portalbutton.md) | `code.function` | 5 | `apps/site/src/viewer.ts:634:1` |
-| [`buildPortalStrip`](buildportalstrip.md) | `code.function` | 5 | `apps/site/src/viewer.ts:652:1` |
-| [`makeFrameEl`](makeframeel.md) | `code.function` | 15 | `apps/site/src/viewer.ts:701:1` |
-| [`flyTo`](flyto.md) | `code.function` | 5 | `apps/site/src/viewer.ts:753:1` |
-| [`zoomOut`](zoomout.md) | `code.function` | 3 | `apps/site/src/viewer.ts:771:1` |
-| [`easeOutCubic`](easeoutcubic.md) | `code.function` | 2 | `apps/site/src/viewer.ts:779:1` |
-| [`tweenCamera`](tweencamera.md) | `code.function` | 4 | `apps/site/src/viewer.ts:783:1` |
-| [`updateChrome`](updatechrome.md) | `code.function` | 1 | `apps/site/src/viewer.ts:808:1` |
-| [`loadDetail`](loaddetail.md) | `code.function` | 39 | `apps/site/src/viewer.ts:815:1` |
-| [`appendExecution`](appendexecution.md) | `code.function` | 8 | `apps/site/src/viewer.ts:918:1` |
-| [`loadMermaid`](loadmermaid.md) | `code.function` | 3 | `apps/site/src/viewer.ts:942:1` |
-| [`renderMermaid`](rendermermaid.md) | `code.function` | 7 | `apps/site/src/viewer.ts:957:1` |
-| [`fetchJson`](fetchjson.md) | `code.function` | 3 | `apps/site/src/viewer.ts:976:1` |
-| [`escapeHtml`](escapehtml.md) | `code.function` | 2 | `apps/site/src/viewer.ts:984:1` |
-| [`cssEscape`](cssescape.md) | `code.function` | 4 | `apps/site/src/viewer.ts:992:1` |
+| [`SceneOrgMode`](sceneorgmode.md) | `code.type_alias` | — | `apps/site/src/viewer.ts:102:1` |
+| [`OrgMode`](orgmode.md) | `code.type_alias` | — | `apps/site/src/viewer.ts:103:1` |
+| [`BuildStamp`](buildstamp.md) | `code.interface` | — | `apps/site/src/viewer.ts:105:1` |
+| [`RunIndexEntry`](runindexentry.md) | `code.interface` | — | `apps/site/src/viewer.ts:113:1` |
+| [`RunsIndex`](runsindex.md) | `code.interface` | — | `apps/site/src/viewer.ts:122:1` |
+| [`RunStep`](runstep.md) | `code.interface` | — | `apps/site/src/viewer.ts:126:1` |
+| [`RunRecord`](runrecord.md) | `code.interface` | — | `apps/site/src/viewer.ts:133:1` |
+| [`main`](main.md) | `code.function` | 18 | `apps/site/src/viewer.ts:180:1` |
+| [`startBuildWatch`](startbuildwatch.md) | `code.function` | 5 | `apps/site/src/viewer.ts:220:1` |
+| [`reloadFromDisk`](reloadfromdisk.md) | `code.function` | 22 | `apps/site/src/viewer.ts:241:1` |
+| [`showWatchBadge`](showwatchbadge.md) | `code.function` | 0 | `apps/site/src/viewer.ts:286:1` |
+| [`prefetchEntrypoints`](prefetchentrypoints.md) | `code.function` | 5 | `apps/site/src/viewer.ts:295:1` |
+| [`prefetchRuns`](prefetchruns.md) | `code.function` | 4 | `apps/site/src/viewer.ts:309:1` |
+| [`syncOrgChrome`](syncorgchrome.md) | `code.function` | 4 | `apps/site/src/viewer.ts:324:1` |
+| [`frameSafeParent`](framesafeparent.md) | `code.function` | 4 | `apps/site/src/viewer.ts:338:1` |
+| [`setOrgMode`](setorgmode.md) | `code.function` | 13 | `apps/site/src/viewer.ts:346:1` |
+| [`applyScene`](applyscene.md) | `code.function` | 3 | `apps/site/src/viewer.ts:372:1` |
+| [`showRunsPanel`](showrunspanel.md) | `code.function` | 2 | `apps/site/src/viewer.ts:382:1` |
+| [`renderRunsList`](renderrunslist.md) | `code.function` | 9 | `apps/site/src/viewer.ts:394:1` |
+| [`selectRun`](selectrun.md) | `code.function` | 8 | `apps/site/src/viewer.ts:424:1` |
+| [`renderRunDetail`](renderrundetail.md) | `code.function` | 4 | `apps/site/src/viewer.ts:442:1` |
+| [`statusClass`](statusclass.md) | `code.function` | 3 | `apps/site/src/viewer.ts:486:1` |
+| [`formatDuration`](formatduration.md) | `code.function` | 4 | `apps/site/src/viewer.ts:496:1` |
+| [`formatRelative`](formatrelative.md) | `code.function` | 5 | `apps/site/src/viewer.ts:507:1` |
+| [`formatAbsolute`](formatabsolute.md) | `code.function` | 4 | `apps/site/src/viewer.ts:521:1` |
+| [`currentScene`](currentscene.md) | `code.function` | 1 | `apps/site/src/viewer.ts:529:1` |
+| [`frame`](frame.md) | `code.function` | 2 | `apps/site/src/viewer.ts:536:1` |
+| [`ancestors`](ancestors.md) | `code.function` | 4 | `apps/site/src/viewer.ts:544:1` |
+| [`cameraForFocus`](cameraforfocus.md) | `code.function` | 3 | `apps/site/src/viewer.ts:554:1` |
+| [`ScreenRect`](screenrect.md) | `code.interface` | — | `apps/site/src/viewer.ts:569:1` |
+| [`screenRectFromWorld`](screenrectfromworld.md) | `code.function` | 1 | `apps/site/src/viewer.ts:577:1` |
+| [`screenRectFor`](screenrectfor.md) | `code.function` | 5 | `apps/site/src/viewer.ts:591:1` |
+| [`placeFrame`](placeframe.md) | `code.function` | 1 | `apps/site/src/viewer.ts:605:1` |
+| [`placeAllFrames`](placeallframes.md) | `code.function` | 2 | `apps/site/src/viewer.ts:614:1` |
+| [`remount`](remount.md) | `code.function` | 10 | `apps/site/src/viewer.ts:623:1` |
+| [`portalButton`](portalbutton.md) | `code.function` | 5 | `apps/site/src/viewer.ts:649:1` |
+| [`buildPortalStrip`](buildportalstrip.md) | `code.function` | 5 | `apps/site/src/viewer.ts:667:1` |
+| [`makeFrameEl`](makeframeel.md) | `code.function` | 15 | `apps/site/src/viewer.ts:716:1` |
+| [`flyTo`](flyto.md) | `code.function` | 5 | `apps/site/src/viewer.ts:768:1` |
+| [`zoomOut`](zoomout.md) | `code.function` | 3 | `apps/site/src/viewer.ts:786:1` |
+| [`easeOutCubic`](easeoutcubic.md) | `code.function` | 2 | `apps/site/src/viewer.ts:794:1` |
+| [`tweenCamera`](tweencamera.md) | `code.function` | 4 | `apps/site/src/viewer.ts:798:1` |
+| [`updateChrome`](updatechrome.md) | `code.function` | 1 | `apps/site/src/viewer.ts:823:1` |
+| [`loadDetail`](loaddetail.md) | `code.function` | 39 | `apps/site/src/viewer.ts:830:1` |
+| [`appendExecution`](appendexecution.md) | `code.function` | 8 | `apps/site/src/viewer.ts:933:1` |
+| [`loadMermaid`](loadmermaid.md) | `code.function` | 3 | `apps/site/src/viewer.ts:957:1` |
+| [`renderMermaid`](rendermermaid.md) | `code.function` | 7 | `apps/site/src/viewer.ts:972:1` |
+| [`fetchJson`](fetchjson.md) | `code.function` | 3 | `apps/site/src/viewer.ts:991:1` |
+| [`requireElement`](requireelement.md) | `code.function` | 2 | `apps/site/src/viewer.ts:999:1` |
+| [`requireButton`](requirebutton.md) | `code.function` | 2 | `apps/site/src/viewer.ts:1007:1` |
+| [`escapeHtml`](escapehtml.md) | `code.function` | 2 | `apps/site/src/viewer.ts:1015:1` |
+| [`cssEscape`](cssescape.md) | `code.function` | 4 | `apps/site/src/viewer.ts:1023:1` |
 

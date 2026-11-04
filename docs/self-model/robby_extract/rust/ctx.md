@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-extract/src/rust.rs:172`](../../../../crates/robby-extract/src/rust.rs#L172) |
+| location | [`crates/robby-extract/src/rust.rs:188`](../../../../crates/robby-extract/src/rust.rs#L188) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,8 +19,8 @@ struct Ctx<'a> {
 
 **Fields and variants**
 
-- `file` — `crates/robby-extract/src/rust.rs:173:5`
-- `source` — `crates/robby-extract/src/rust.rs:174:5`
-- `index` — `crates/robby-extract/src/rust.rs:175:5`
-- `module` — `crates/robby-extract/src/rust.rs:176:5`
+- `file` — `crates/robby-extract/src/rust.rs:189:5`
+- `source` — `crates/robby-extract/src/rust.rs:190:5`
+- `index` — `crates/robby-extract/src/rust.rs:191:5`
+- `module` — `crates/robby-extract/src/rust.rs:192:5`
 

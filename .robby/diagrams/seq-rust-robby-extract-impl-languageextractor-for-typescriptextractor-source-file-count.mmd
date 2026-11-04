@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant source_file_count as source_file_count()
+    participant typescript__source_file_count as typescript::source_file_count
+    source_file_count-->>typescript__source_file_count: typescript::source_file_count(root)

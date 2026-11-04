@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn code_window_for(     _doc: &Document,     sources: &BTreeMap<String, String>,     comment: &Node,     owner: Option<&Node>, ) -> String` |
-| location | [`crates/robby-agent/src/context.rs:134`](../../../../crates/robby-agent/src/context.rs#L134) |
+| location | [`crates/robby-agent/src/context.rs:133`](../../../../crates/robby-agent/src/context.rs#L133) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -16,10 +16,10 @@ fn code_window_for(
     comment: &Node,
     owner: Option<&Node>,
 ) -> String {
-    if let Some(owner) = owner {
-        if let Some(slice) = slice_node(sources, owner) {
-            return slice;
-        }
+    if let Some(owner) = owner
+        && let Some(slice) = slice_node(sources, owner)
+    {
+        return slice;
     }
     line_window(sources, comment).unwrap_or_default()
 }
@@ -32,11 +32,9 @@ sequenceDiagram
     participant slice_node as slice_node
     participant line_window as line_window
     participant unwrap_or_default as unwrap_or_default
-    alt let Some(owner) = owner
     code_window_for-->>slice_node: slice_node(sources, owner)
-    alt let Some(slice) = slice_node(sources, owner)
+    alt let Some(owner) = owner && let Some(slice) = slice_node(sources, owner)
     code_window_for-->>code_window_for: return
-    end
     end
     code_window_for-->>line_window: line_window(sources, comment)
     code_window_for-->>unwrap_or_default: line_window(sources, comment).unwrap_or_default()

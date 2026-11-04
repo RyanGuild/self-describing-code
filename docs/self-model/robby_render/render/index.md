@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-render/src/lib.rs:12`](../../../../crates/robby-render/src/lib.rs#L12) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 73 |
+| nodes | 72 |
 
 ## Types
 
@@ -251,7 +251,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, walk
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — walk
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::render::mermaid`](mermaid/index.md) — dsm_markdown_table
 - calls → [`robby_render::report`](../report/index.md) — push, to_terminal
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — apply_highlights, as_str
@@ -288,7 +289,7 @@ flowchart TB
 
 ## Modules
 
-- [`render::tui`](tui/index.md) — 52 nodes
+- [`render::tui`](tui/index.md) — 51 nodes
 
 ## Items
 

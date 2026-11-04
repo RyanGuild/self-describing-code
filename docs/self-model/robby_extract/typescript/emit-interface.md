@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn emit_interface(     doc: &mut Document,     iface: &TSInterfaceDeclaration<'_>,     parent: &NodeId,     ctx: &Ctx<'_>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:608`](../../../../crates/robby-extract/src/typescript.rs#L608) |
+| location | [`crates/robby-extract/src/typescript.rs:595`](../../../../crates/robby-extract/src/typescript.rs#L595) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,7 +18,12 @@ fn emit_interface(
 ) {
     let name = iface.id.name.as_str();
     let fqn = format!("{}/{}", ctx.module, name);
-    let mut node = item_node(kind::code::INTERFACE, &fqn, oxc_span(iface.span, ctx), parent);
+    let mut node = item_node(
+        kind::code::INTERFACE,
+        &fqn,
+        oxc_span(iface.span, ctx),
+        parent,
+    );
     for ext in &iface.extends {
         if let Some(n) = type_name(&ext.type_name) {
             let target = format!("{}/{}", ctx.module, n);
@@ -47,7 +52,7 @@ sequenceDiagram
     emit_interface-->>as_str: iface.id.name.as_str()
     emit_interface-->>emit_interface: format!('{}/{}', ctx.module, name)
     emit_interface-->>oxc_span: oxc_span(iface.span, ctx)
-    emit_interface-->>item_node: item_node(kind::code::INTERFACE, &fqn, oxc_span(iface.span, ctx), par...
+    emit_interface-->>item_node: item_node( kind::code::INTERFACE, &fqn, oxc_span(iface.span, ctx), pa...
     loop &iface.extends
     emit_interface-->>type_name: type_name(&ext.type_name)
     alt let Some(n) = type_name(&ext.type_name)

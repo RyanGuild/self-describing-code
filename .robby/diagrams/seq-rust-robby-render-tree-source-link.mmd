@@ -7,8 +7,7 @@ sequenceDiagram
     participant count as count
     participant parent as parent
     participant components as components
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     participant repeat as repeat
     source_link-->>split: out_rel.split('/')
     source_link-->>is_empty: s.is_empty()
@@ -17,7 +16,6 @@ sequenceDiagram
     source_link-->>parent: page.parent()
     source_link-->>components: p.components()
     source_link-->>count: p.components().count()
-    source_link-->>map: page.parent().map(|p| p.components().count())
-    source_link-->>unwrap_or: page.parent().map(|p| p.components().count()).unwrap_or(0)
+    source_link-->>map_or: page.parent().map_or(0, |p| p.components().count())
     source_link-->>repeat: '../'.repeat(out_depth + page_depth)
     source_link-->>source_link: format!( '[`{}:{}`]({}{} L{})', span.file, span.start.line, prefix, s...

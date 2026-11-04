@@ -121,27 +121,27 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_agent::enrich::impl FakeClient::new`](../enrich/tests/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::span::impl Span::is_empty`](../../robby_ir/span/index.md)
 - calls → [`robby_agent::context::has_decision_child`](has-decision-child.md)
 - calls → [`robby_agent::context::build_for_comment`](build-for-comment.md)
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::span::impl Span::is_empty`](../../robby_ir/span/index.md)
 - calls → [`robby_agent::context::has_decision_child`](has-decision-child.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_agent::context::parent_has_comment_with_text`](parent-has-comment-with-text.md)
 - calls → [`robby_agent::context::build_for_docs_owner`](build-for-docs-owner.md)
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 
 ## References
 
 - calls → [`robby_agent::context`](index.md) — build_for_comment, build_for_docs_owner, has_decision_child, parent_has_comment_with_text
 - calls → [`robby_agent::enrich::tests`](../enrich/tests/index.md) — new
-- calls → [`robby_agent::model`](../model/index.md) — as_str
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 

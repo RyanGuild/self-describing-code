@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-render/src/view/mod.rs:6`](../../../../../crates/robby-render/src/view/mod.rs#L6) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 44 |
+| nodes | 32 |
 
 ## Types
 
@@ -36,22 +36,6 @@ classDiagram
         Docs
         +as_str()
     }
-    class Verdict {
-        <<enumeration>>
-        Relevant
-        Noise
-    }
-    class NoteKind {
-        <<enumeration>>
-        UsageExample
-        ImplementationNote
-        +as_str()
-        +label()
-    }
-    class HighlightJson {
-        +start
-        +end
-    }
 ```
 
 ## Package diagram
@@ -72,7 +56,7 @@ flowchart TB
     subgraph n_2bf7728895532b9d["comments"]
         direction TB
         n_7d8b6f618e2e2b3d["apply_highlights"]
-        n_fab4eeebb9766d7f["as_str"]
+        n_ff7778a79352f45c["as_str"]
         n_641e5b5aeeab0279["code_window"]
         n_3768e26834af3c8a["decision_child"]
         n_c4f28ea180022df8["enrichment_fields"]
@@ -83,8 +67,8 @@ flowchart TB
         n_174ca23724aec60a["parse_verdict"]
         n_0f077b1dc0af073e["slice_node"]
     end
-    n_174ca23724aec60a --> n_fab4eeebb9766d7f
-    n_3768e26834af3c8a --> n_fab4eeebb9766d7f
+    n_174ca23724aec60a --> n_ff7778a79352f45c
+    n_3768e26834af3c8a --> n_ff7778a79352f45c
     n_6133008ee12510fc --> n_22563e829175fdb4
     n_641e5b5aeeab0279 --> n_0f077b1dc0af073e
     n_641e5b5aeeab0279 --> n_6133008ee12510fc
@@ -95,8 +79,7 @@ flowchart TB
     n_9770ebfdac89aad3 --> n_641e5b5aeeab0279
     n_9770ebfdac89aad3 --> n_b6f5763fd8852f21
     n_9770ebfdac89aad3 -->|"2"| n_c4f28ea180022df8
-    n_9770ebfdac89aad3 -->|"5"| n_fab4eeebb9766d7f
-    n_c4f28ea180022df8 --> n_fab4eeebb9766d7f
+    n_9770ebfdac89aad3 -->|"4"| n_ff7778a79352f45c
 ```
 
 ## Dependency matrix
@@ -109,7 +92,7 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-render/src/view/comments.rs:289:1` (docs, `robby_render::view::comments::apply_highlights`): "Apply «…» markers around highlight ranges in `code` (byte offsets)."
+- `crates/robby-render/src/view/comments.rs:247:1` (docs, `robby_render::view::comments::apply_highlights`): "Apply «…» markers around highlight ranges in `code` (byte offsets)."
   ```
   /// Apply «…» markers around highlight ranges in `code` (byte offsets).
   pub fn apply_highlights(code: &str, highlights: &[(u32, u32)]) -> String {
@@ -139,8 +122,8 @@ flowchart TB
   ```
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
-- calls → [`robby_ir::span`](../../../robby_ir/span/index.md) — location
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get, parse
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains, new
 - calls → [`robby_render::view::select`](../select/index.md) — collect
@@ -181,6 +164,7 @@ flowchart TB
 - calls ← [`robby_render::view::externals::owning_container_fqn`](../externals/owning-container-fqn.md)
 - calls ← [`robby_render::view::hierarchy::build`](../hierarchy/build.md)
 - calls ← [`robby_render::view::hierarchy::kind_tag`](../hierarchy/kind-tag.md)
+- calls ← [`robby_render::view::process::impl ProcessView::from_process`](../process/index.md)
 - calls ← [`robby_render::view::scene::attach_call_portals`](../scene/attach-call-portals.md)
 - calls ← [`robby_render::view::scene::build_call_frame`](../scene/build-call-frame.md)
 - calls ← [`robby_render::view::scene::build_frame`](../scene/build-frame.md)
@@ -192,6 +176,7 @@ flowchart TB
 - calls ← [`robby_render::view::types::class_from_node`](../types/class-from-node.md)
 - calls ← [`robby_render::view::types::impl TypeModel::from_module`](../types/index.md)
 - calls ← [`robby_render::view::types::impl_methods`](../types/impl-methods.md)
+- calls ← [`robby_render::web::impl FrameDetail::for_workspace`](../../web/index.md)
 - calls ← [`robby_render::web::impl FrameDetail::from_node_in_doc`](../../web/index.md)
 - calls ← [`robby_render::web::write_site`](../../web/write-site.md)
 
@@ -202,23 +187,19 @@ flowchart TB
 | [`CommentsView`](commentsview.md) | `code.struct` | — | `crates/robby-render/src/view/comments.rs:7:1` |
 | [`CommentEntry`](commententry.md) | `code.struct` | — | `crates/robby-render/src/view/comments.rs:12:1` |
 | [`CommentKind`](commentkind.md) | `code.enum` | — | `crates/robby-render/src/view/comments.rs:26:1` |
-| [`Verdict`](verdict.md) | `code.enum` | — | `crates/robby-render/src/view/comments.rs:33:1` |
-| [`NoteKind`](notekind.md) | `code.enum` | — | `crates/robby-render/src/view/comments.rs:39:1` |
-| [`impl CommentsView`](impl-commentsview.md) | `code.impl` | — | `crates/robby-render/src/view/comments.rs:45:1` |
-| [`impl CommentKind`](impl-commentkind.md) | `code.impl` | — | `crates/robby-render/src/view/comments.rs:142:1` |
-| [`impl NoteKind`](impl-notekind.md) | `code.impl` | — | `crates/robby-render/src/view/comments.rs:152:1` |
-| [`decision_child`](decision-child.md) | `code.function` | 6 | `crates/robby-render/src/view/comments.rs:168:1` |
-| [`parse_verdict`](parse-verdict.md) | `code.function` | 5 | `crates/robby-render/src/view/comments.rs:175:1` |
-| [`enrichment_fields`](enrichment-fields.md) | `code.function` | 15 | `crates/robby-render/src/view/comments.rs:183:1` |
-| [`HighlightJson`](highlightjson.md) | `code.struct` | — | `crates/robby-render/src/view/comments.rs:208:1` |
-| [`nearest_following_item`](nearest-following-item.md) | `code.function` | 10 | `crates/robby-render/src/view/comments.rs:214:1` |
-| [`code_window`](code-window.md) | `code.function` | 4 | `crates/robby-render/src/view/comments.rs:242:1` |
-| [`slice_node`](slice-node.md) | `code.function` | 7 | `crates/robby-render/src/view/comments.rs:255:1` |
-| [`line_window`](line-window.md) | `code.function` | 18 | `crates/robby-render/src/view/comments.rs:263:1` |
-| [`apply_highlights`](apply-highlights.md) | `code.function` | 15 | `crates/robby-render/src/view/comments.rs:289:1` |
+| [`impl CommentsView`](impl-commentsview.md) | `code.impl` | — | `crates/robby-render/src/view/comments.rs:33:1` |
+| [`impl CommentKind`](impl-commentkind.md) | `code.impl` | — | `crates/robby-render/src/view/comments.rs:134:1` |
+| [`decision_child`](decision-child.md) | `code.function` | 6 | `crates/robby-render/src/view/comments.rs:144:1` |
+| [`parse_verdict`](parse-verdict.md) | `code.function` | 4 | `crates/robby-render/src/view/comments.rs:151:1` |
+| [`enrichment_fields`](enrichment-fields.md) | `code.function` | 13 | `crates/robby-render/src/view/comments.rs:155:1` |
+| [`nearest_following_item`](nearest-following-item.md) | `code.function` | 10 | `crates/robby-render/src/view/comments.rs:176:1` |
+| [`code_window`](code-window.md) | `code.function` | 4 | `crates/robby-render/src/view/comments.rs:204:1` |
+| [`slice_node`](slice-node.md) | `code.function` | 6 | `crates/robby-render/src/view/comments.rs:217:1` |
+| [`line_window`](line-window.md) | `code.function` | 18 | `crates/robby-render/src/view/comments.rs:225:1` |
+| [`apply_highlights`](apply-highlights.md) | `code.function` | 15 | `crates/robby-render/src/view/comments.rs:247:1` |
 
 ## Imports
 
 - `use std::collections::{BTreeMap, BTreeSet};`
-- [`use robby_ir::{Document, Node, NodeId, kind};`](../../../robby_ir/index.md)
+- [`use robby_ir::{Document, Highlight, Node, NodeId, NoteKind, Verdict, kind};`](../../../robby_ir/index.md)
 

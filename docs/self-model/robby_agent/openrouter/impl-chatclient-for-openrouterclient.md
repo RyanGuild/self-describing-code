@@ -64,6 +64,7 @@ impl ChatClient for OpenRouterClient {
 
 ## References
 
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — is_success
 - calls → [`robby_render::util`](../../robby_render/util/index.md) — text
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 
@@ -191,4 +192,5 @@ sequenceDiagram
 
 - calls → [`robby_render::view::select::collect`](../../robby_render/view/select/collect.md)
 - calls → [`robby_render::util::text`](../../robby_render/util/text.md)
+- calls → [`robby_ir::run::impl RunStatus::is_success`](../../robby_ir/run/index.md)
 

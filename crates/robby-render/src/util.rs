@@ -4,10 +4,10 @@ use robby_ir::{EdgeKind, Kind, Node, kind};
 
 /// FNV-1a stable id for Mermaid / layout keys.
 pub fn stable_id(input: &str) -> String {
-    let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
+    let mut hash: u64 = 0xCBF2_9CE4_8422_2325;
     for byte in input.as_bytes() {
         hash ^= u64::from(*byte);
-        hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
+        hash = hash.wrapping_mul(0x0000_0100_0000_01B3);
     }
     format!("n_{hash:016x}")
 }
@@ -36,8 +36,7 @@ pub fn text(input: &str) -> String {
     let mut out = String::with_capacity(input.len());
     for ch in input.chars() {
         match ch {
-            '\n' | '\r' | '\t' => out.push(' '),
-            ';' | '#' => out.push(' '),
+            '\n' | '\r' | '\t' | ';' | '#' => out.push(' '),
             '"' => out.push('\''),
             _ => out.push(ch),
         }
@@ -99,14 +98,4 @@ pub fn strip_generics(name: &str) -> String {
 
 pub fn class_id(name: &str) -> String {
     alias(&strip_generics(name))
-}
-
-pub fn keyword(kind: robby_ir::BlockKind) -> &'static str {
-    match kind {
-        robby_ir::BlockKind::Alt => "alt",
-        robby_ir::BlockKind::Opt => "opt",
-        robby_ir::BlockKind::Loop => "loop",
-        robby_ir::BlockKind::Par => "par",
-        robby_ir::BlockKind::Break => "break",
-    }
 }

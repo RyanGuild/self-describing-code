@@ -2,11 +2,10 @@ sequenceDiagram
     autonumber
     participant enrichment_fields as enrichment_fields()
     participant get as get
-    participant as_str as as_str
-    participant Some as Some
+    participant NoteKind__parse as NoteKind::parse
     participant and_then as and_then
     participant clone as clone
-    participant serde_json__from_str_Vec_HighlightJson__ as serde_json::from_str<Vec<HighlightJson>>
+    participant serde_json__from_str_Vec_Highlight__ as serde_json::from_str<Vec<Highlight>>
     participant ok as ok
     participant unwrap_or_default as unwrap_or_default
     participant into_iter as into_iter
@@ -14,17 +13,12 @@ sequenceDiagram
     participant map as map
     participant collect as collect
     enrichment_fields-->>get: decision .annotations .get('note_kind')
-    enrichment_fields-->>as_str: s.as_str()
-    alt match s.as_str()
-    enrichment_fields-->>Some: Some(NoteKind::UsageExample)
-    else 'implementation_note'
-    enrichment_fields-->>Some: Some(NoteKind::ImplementationNote)
-    end
-    enrichment_fields-->>and_then: decision .annotations .get('note_kind') .and_then(|s| match s.as_str(...
+    enrichment_fields-->>NoteKind__parse: NoteKind::parse(s)
+    enrichment_fields-->>and_then: decision .annotations .get('note_kind') .and_then(|s| NoteKind::parse...
     enrichment_fields-->>clone: decision.docs.clone()
     enrichment_fields-->>get: decision .annotations .get('highlights')
-    enrichment_fields-->>serde_json__from_str_Vec_HighlightJson__: serde_json::from_str::<Vec<HighlightJson>>(raw)
-    enrichment_fields-->>ok: serde_json::from_str::<Vec<HighlightJson>>(raw).ok()
+    enrichment_fields-->>serde_json__from_str_Vec_Highlight__: serde_json::from_str::<Vec<Highlight>>(raw)
+    enrichment_fields-->>ok: serde_json::from_str::<Vec<Highlight>>(raw).ok()
     enrichment_fields-->>and_then: decision .annotations .get('highlights') .and_then(|raw| serde_json::...
     enrichment_fields-->>unwrap_or_default: decision .annotations .get('highlights') .and_then(|raw| serde_json::...
     enrichment_fields-->>into_iter: decision .annotations .get('highlights') .and_then(|raw| serde_json::...

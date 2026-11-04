@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn gap_is_attachable(source: &str, from: u32, to: u32) -> bool` |
-| location | [`crates/robby-extract/src/typescript.rs:501`](../../../../crates/robby-extract/src/typescript.rs#L501) |
+| location | [`crates/robby-extract/src/typescript.rs:492`](../../../../crates/robby-extract/src/typescript.rs#L492) |
 | provenance | extractor · confidence 1.00 |
 
 > True when the bytes between a comment and an item are only whitespace or
@@ -20,9 +20,8 @@ fn gap_is_attachable(source: &str, from: u32, to: u32) -> bool {
         return false;
     }
     let gap = source.get(from as usize..to as usize).unwrap_or("");
-    gap.split_whitespace().all(|tok| {
-        matches!(tok, "export" | "default" | "async" | "declare")
-    })
+    gap.split_whitespace()
+        .all(|tok| matches!(tok, "export" | "default" | "async" | "declare"))
 }
 ```
 
@@ -41,18 +40,18 @@ sequenceDiagram
     gap_is_attachable-->>unwrap_or: source.get(from as usize..to as usize).unwrap_or('')
     gap_is_attachable-->>split_whitespace: gap.split_whitespace()
     gap_is_attachable-->>gap_is_attachable: matches!(tok, 'export' | 'default' | 'async' | 'declare')
-    gap_is_attachable-->>all: gap.split_whitespace().all(|tok| { matches!(tok, 'export' | 'default'...
+    gap_is_attachable-->>all: gap.split_whitespace() .all(|tok| matches!(tok, 'export' | 'default' ...
 ```
 
 6 steps · 0 observed · 6 possible only
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

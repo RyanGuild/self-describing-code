@@ -17,7 +17,7 @@ sequenceDiagram
     read_package_name-->>read_package_name: ? (propagate)
     read_package_name-->>serde_json__from_str: serde_json::from_str(&text)
     read_package_name-->>read_package_name: format!('parsing {}', path.display())
-    read_package_name-->>with_context: serde_json::from_str(&text) .with_context(|| format!('parsing {}', pa...
+    read_package_name-->>with_context: serde_json::from_str(&text).with_context(|| format!('parsing {}', pat...
     read_package_name-->>read_package_name: ? (propagate)
     read_package_name-->>get: value .get('name')
     read_package_name-->>as_str: v.as_str()

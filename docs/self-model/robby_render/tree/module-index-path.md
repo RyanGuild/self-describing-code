@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn module_index_path(node: &Node, crate_dir: &str) -> Option<PathBuf>` |
-| location | [`crates/robby-render/src/tree.rs:715`](../../../../crates/robby-render/src/tree.rs#L715) |
+| location | [`crates/robby-render/src/tree.rs:708`](../../../../crates/robby-render/src/tree.rs#L708) |
 | provenance | extractor · confidence 1.00 |
 
 > `<crate>/<a>/<b>/index.md` for a module, `<crate>/index.md` for the crate root.

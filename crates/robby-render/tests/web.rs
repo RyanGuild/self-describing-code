@@ -19,12 +19,19 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
     krate.kind = Kind::from(code::CRATE);
     doc.insert(krate);
 
-    let mut left = Node::new(NodeId::symbol("rust", "demo::left"), code::MODULE, "demo::left");
+    let mut left = Node::new(
+        NodeId::symbol("rust", "demo::left"),
+        code::MODULE,
+        "demo::left",
+    );
     left.parent = Some(NodeId::from("rust://demo"));
     doc.insert(left);
 
-    let mut right =
-        Node::new(NodeId::symbol("rust", "demo::right"), code::MODULE, "demo::right");
+    let mut right = Node::new(
+        NodeId::symbol("rust", "demo::right"),
+        code::MODULE,
+        "demo::right",
+    );
     right.parent = Some(NodeId::from("rust://demo"));
     doc.insert(right);
 
@@ -35,7 +42,12 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
     );
     a.parent = Some(NodeId::symbol("rust", "demo::left"));
     a.signature = Some("fn a()".to_owned());
-    a.span = Some(Span::new("crates/demo/src/lib.rs", sources.get("crates/demo/src/lib.rs").unwrap(), 0, 9));
+    a.span = Some(Span::new(
+        "crates/demo/src/lib.rs",
+        sources.get("crates/demo/src/lib.rs").unwrap(),
+        0,
+        9,
+    ));
     let mut proc = Process::new();
     proc.participant("a", "a", Kind::from(code::FUNCTION));
     proc.step(Step {
@@ -56,8 +68,10 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
         "demo::right::b",
     );
     b.parent = Some(NodeId::symbol("rust", "demo::right"));
-    b.edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::left::a"), EdgeKind::Calls));
+    b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::left::a"),
+        EdgeKind::Calls,
+    ));
     let mut unresolved = Edge::new(NodeId::from("rust://missing::gone"), EdgeKind::Calls);
     unresolved.resolved = false;
     b.edges.push(unresolved);
@@ -68,19 +82,6 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
         26,
     ));
     doc.insert(b);
-
-    if let Some(krate) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        krate.children = vec![
-            NodeId::symbol("rust", "demo::left"),
-            NodeId::symbol("rust", "demo::right"),
-        ];
-    }
-    if let Some(left) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::left")) {
-        left.children = vec![NodeId::symbol("rust", "demo::left::a")];
-    }
-    if let Some(right) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::right")) {
-        right.children = vec![NodeId::symbol("rust", "demo::right::b")];
-    }
 
     (doc, sources)
 }
@@ -94,12 +95,14 @@ fn entrypoints_demo_doc() -> Document {
         code::FUNCTION,
         "demo::bin_a::main",
     );
-    main_a
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
-    main_a
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::helper"), EdgeKind::Calls));
+    main_a.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::shared"),
+        EdgeKind::Calls,
+    ));
+    main_a.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::helper"),
+        EdgeKind::Calls,
+    ));
     doc.insert(main_a);
 
     let mut helper = Node::new(
@@ -107,9 +110,10 @@ fn entrypoints_demo_doc() -> Document {
         code::FUNCTION,
         "demo::helper",
     );
-    helper
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+    helper.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::shared"),
+        EdgeKind::Calls,
+    ));
     doc.insert(helper);
 
     let shared = Node::new(
@@ -124,9 +128,10 @@ fn entrypoints_demo_doc() -> Document {
         code::FUNCTION,
         "demo::bin_b::main",
     );
-    main_b
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+    main_b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::shared"),
+        EdgeKind::Calls,
+    ));
     doc.insert(main_b);
 
     doc.rebuild_code_paths();
@@ -340,7 +345,10 @@ fn frame_detail_includes_execution_mermaid_for_call_path() {
         .get(&NodeId::symbol("rust", "demo::bin_a::main"))
         .expect("main");
     let detail = FrameDetail::from_node_in_doc(node, &sources, Some(&doc));
-    let mermaid = detail.execution_mermaid.as_deref().expect("execution_mermaid");
+    let mermaid = detail
+        .execution_mermaid
+        .as_deref()
+        .expect("execution_mermaid");
     assert!(
         mermaid.starts_with("sequenceDiagram"),
         "expected sequenceDiagram, got {mermaid:?}"
@@ -395,7 +403,10 @@ fn entrypoints_scene_roots_mains_and_nests_callees() {
         "main_b must not re-parent shared"
     );
     assert!(
-        main_b.portals.iter().any(|p| p.target.as_deref() == Some(shared_sid.as_str())),
+        main_b
+            .portals
+            .iter()
+            .any(|p| p.target.as_deref() == Some(shared_sid.as_str())),
         "main_b should portal to shared, got {:?}",
         main_b.portals
     );

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn walk_items(     doc: &mut Document,     items: &[Item],     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
-| location | [`crates/robby-extract/src/rust.rs:179`](../../../../crates/robby-extract/src/rust.rs#L179) |
+| location | [`crates/robby-extract/src/rust.rs:195`](../../../../crates/robby-extract/src/rust.rs#L195) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -44,7 +44,6 @@ fn walk_items(
                             &NodeId::symbol("rust", &fqn),
                         );
                         doc.merge(child);
-                        node.children.push(NodeId::symbol("rust", &child_fqn));
                     }
                 }
                 doc.merge(node);
@@ -61,7 +60,6 @@ fn walk_items(
                         span_of(variant, ctx),
                         &NodeId::symbol("rust", &fqn),
                     ));
-                    node.children.push(NodeId::symbol("rust", &child_fqn));
                 }
                 doc.merge(node);
             }
@@ -82,7 +80,6 @@ fn walk_items(
                             span_of(m, ctx),
                             &NodeId::symbol("rust", &fqn),
                         ));
-                        node.children.push(NodeId::symbol("rust", &child_fqn));
                     }
                 }
                 doc.merge(node);
@@ -95,7 +92,7 @@ fn walk_items(
                     .map(|(path, _)| format!("{} for ", path_text(path)))
                     .unwrap_or_default();
                 let fqn = format!("{fqn_base}::impl {trait_part}{self_name}");
-                let mut node = item_node(kind::code::IMPL, &fqn, span.clone(), parent);
+                let node = item_node(kind::code::IMPL, &fqn, span.clone(), parent);
                 for ii in &i.items {
                     match ii {
                         syn::ImplItem::Fn(m) => {
@@ -106,16 +103,13 @@ fn walk_items(
                                 span_of(m, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             );
-                            child.signature = Some(format!(
-                                "fn {}({})",
-                                m.sig.ident,
-                                m.sig.inputs.len()
-                            ));
+                            child.signature =
+                                Some(format!("fn {}({})", m.sig.ident, m.sig.inputs.len()));
                             child.docs = docs_of(&m.sig, &m.attrs);
-                            child.process =
-                                Some(build_process_sig(&m.sig, &m.block, ctx, &child_fqn, pending));
+                            child.process = Some(build_process_sig(
+                                &m.sig, &m.block, ctx, &child_fqn, pending,
+                            ));
                             doc.merge(child);
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         syn::ImplItem::Const(c) => {
                             let child_fqn = format!("{fqn}::{}", c.ident);
@@ -125,7 +119,6 @@ fn walk_items(
                                 span_of(c, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             ));
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         syn::ImplItem::Type(t) => {
                             let child_fqn = format!("{fqn}::{}", t.ident);
@@ -135,7 +128,6 @@ fn walk_items(
                                 span_of(t, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             ));
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         _ => {}
                     }
@@ -144,9 +136,8 @@ fn walk_items(
             }
             Item::Mod(m) => {
                 let fqn = format!("{fqn_base}::{}", m.ident);
-                let mut node = item_node(kind::code::MODULE, &fqn, span.clone(), parent);
+                let node = item_node(kind::code::MODULE, &fqn, span.clone(), parent);
                 if let Some((_, items)) = &m.content {
-                    node.children.clear();
                     doc.merge(node);
                     walk_items(doc, items, &NodeId::symbol("rust", &fqn), ctx, pending);
                 } else {
@@ -187,8 +178,7 @@ fn walk_items(
                 let name = m
                     .ident
                     .as_ref()
-                    .map(|i| i.to_string())
-                    .unwrap_or_else(|| "macro".to_owned());
+                    .map_or_else(|| "macro".to_owned(), std::string::ToString::to_string);
                 let fqn = format!("{fqn_base}::{name}@{}", span.start.byte);
                 doc.merge(item_node(kind::code::MACRO, &fqn, span, parent));
             }
@@ -214,16 +204,13 @@ sequenceDiagram
     participant build_process as build_process
     participant merge as merge
     participant NodeId__symbol as NodeId::symbol
-    participant push as push
     participant type_text as type_text
     participant as_ref as as_ref
     participant map as map
     participant unwrap_or_default as unwrap_or_default
     participant build_process_sig as build_process_sig
-    participant clear as clear
-    participant to_string as to_string
     participant to_owned as to_owned
-    participant unwrap_or_else as unwrap_or_else
+    participant map_or_else as map_or_else
     loop items
     walk_items-->>span_of: span_of(item, ctx)
     walk_items-->>clone: ctx.module.clone()
@@ -249,8 +236,6 @@ sequenceDiagram
     walk_items-->>NodeId__symbol: NodeId::symbol('rust', &fqn)
     walk_items-->>item_node: item_node( kind::code::FIELD, &child_fqn, span_of(field, ctx), &NodeI...
     walk_items-->>merge: doc.merge(child)
-    walk_items-->>NodeId__symbol: NodeId::symbol('rust', &child_fqn)
-    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
     end
     end
     walk_items-->>merge: doc.merge(node)
@@ -265,8 +250,6 @@ sequenceDiagram
     walk_items-->>NodeId__symbol: NodeId::symbol('rust', &fqn)
     walk_items-->>item_node: item_node( kind::code::VARIANT, &child_fqn, span_of(variant, ctx), &N...
     walk_items-->>merge: doc.merge(item_node( kind::code::VARIANT, &child_fqn, span_of(variant...
-    walk_items-->>NodeId__symbol: NodeId::symbol('rust', &child_fqn)
-    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
     end
     walk_items-->>merge: doc.merge(node)
     else Item::Union(u)
@@ -285,8 +268,6 @@ sequenceDiagram
     walk_items-->>NodeId__symbol: NodeId::symbol('rust', &fqn)
     walk_items-->>item_node: item_node( kind::code::METHOD, &child_fqn, span_of(m, ctx), &NodeId::...
     walk_items-->>merge: doc.merge(item_node( kind::code::METHOD, &child_fqn, span_of(m, ctx),...
-    walk_items-->>NodeId__symbol: NodeId::symbol('rust', &child_fqn)
-    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
     end
     end
     walk_items-->>merge: doc.merge(node)
@@ -305,30 +286,24 @@ sequenceDiagram
     walk_items-->>span_of: span_of(m, ctx)
     walk_items-->>NodeId__symbol: NodeId::symbol('rust', &fqn)
     walk_items-->>item_node: item_node( kind::code::METHOD, &child_fqn, span_of(m, ctx), &NodeId::...
-    walk_items-->>walk_items: format!( 'fn {}({})', m.sig.ident, m.sig.inputs.len() )
-    walk_items-->>Some: Some(format!( 'fn {}({})', m.sig.ident, m.sig.inputs.len() ))
+    walk_items-->>walk_items: format!('fn {}({})', m.sig.ident, m.sig.inputs.len())
+    walk_items-->>Some: Some(format!('fn {}({})', m.sig.ident, m.sig.inputs.len()))
     walk_items-->>docs_of: docs_of(&m.sig, &m.attrs)
-    walk_items-->>build_process_sig: build_process_sig(&m.sig, &m.block, ctx, &child_fqn, pending)
-    walk_items-->>Some: Some(build_process_sig(&m.sig, &m.block, ctx, &child_fqn, pending))
+    walk_items-->>build_process_sig: build_process_sig( &m.sig, &m.block, ctx, &child_fqn, pending, )
+    walk_items-->>Some: Some(build_process_sig( &m.sig, &m.block, ctx, &child_fqn, pending, ))
     walk_items-->>merge: doc.merge(child)
-    walk_items-->>NodeId__symbol: NodeId::symbol('rust', &child_fqn)
-    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
     else syn::ImplItem::Const(c)
     walk_items-->>walk_items: format!('{fqn}::{}', c.ident)
     walk_items-->>span_of: span_of(c, ctx)
     walk_items-->>NodeId__symbol: NodeId::symbol('rust', &fqn)
     walk_items-->>item_node: item_node( kind::code::CONST, &child_fqn, span_of(c, ctx), &NodeId::s...
     walk_items-->>merge: doc.merge(item_node( kind::code::CONST, &child_fqn, span_of(c, ctx), ...
-    walk_items-->>NodeId__symbol: NodeId::symbol('rust', &child_fqn)
-    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
     else syn::ImplItem::Type(t)
     walk_items-->>walk_items: format!('{fqn}::{}', t.ident)
     walk_items-->>span_of: span_of(t, ctx)
     walk_items-->>NodeId__symbol: NodeId::symbol('rust', &fqn)
     walk_items-->>item_node: item_node( kind::code::TYPE_ALIAS, &child_fqn, span_of(t, ctx), &Node...
     walk_items-->>merge: doc.merge(item_node( kind::code::TYPE_ALIAS, &child_fqn, span_of(t, c...
-    walk_items-->>NodeId__symbol: NodeId::symbol('rust', &child_fqn)
-    walk_items-->>push: node.children.push(NodeId::symbol('rust', &child_fqn))
     end
     end
     walk_items-->>merge: doc.merge(node)
@@ -337,7 +312,6 @@ sequenceDiagram
     walk_items-->>clone: span.clone()
     walk_items-->>item_node: item_node(kind::code::MODULE, &fqn, span.clone(), parent)
     alt let Some((_, items)) = &m.content
-    walk_items-->>clear: node.children.clear()
     walk_items-->>merge: doc.merge(node)
     walk_items-->>NodeId__symbol: NodeId::symbol('rust', &fqn)
     walk_items-->>walk_items: walk_items(doc, items, &NodeId::symbol('rust', &fqn), ctx, pending)
@@ -374,10 +348,8 @@ sequenceDiagram
     walk_items-->>merge: doc.merge(item_node(kind::code::FOREIGN_MOD, &fqn, span, parent))
     else Item::Macro(m)
     walk_items-->>as_ref: m .ident .as_ref()
-    walk_items-->>to_string: i.to_string()
-    walk_items-->>map: m .ident .as_ref() .map(|i| i.to_string())
     walk_items-->>to_owned: 'macro'.to_owned()
-    walk_items-->>unwrap_or_else: m .ident .as_ref() .map(|i| i.to_string()) .unwrap_or_else(|| 'macro'...
+    walk_items-->>map_or_else: m .ident .as_ref() .map_or_else(|| 'macro'.to_owned(), std::string::T...
     walk_items-->>walk_items: format!('{fqn_base}::{name}@{}', span.start.byte)
     walk_items-->>item_node: item_node(kind::code::MACRO, &fqn, span, parent)
     walk_items-->>merge: doc.merge(item_node(kind::code::MACRO, &fqn, span, parent))
@@ -389,7 +361,7 @@ sequenceDiagram
     end
 ```
 
-125 steps · 0 observed · 125 possible only
+110 steps · 0 observed · 110 possible only
 
 **Edges**
 
@@ -405,8 +377,6 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_extract::rust::docs_of`](docs-of.md)
@@ -414,8 +384,6 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
@@ -425,8 +393,6 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::type_text`](type-text.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
@@ -436,20 +402,14 @@ sequenceDiagram
 - calls → [`robby_extract::rust::docs_of`](docs-of.md)
 - calls → [`robby_extract::rust::build_process_sig`](build-process-sig.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_extract::rust::span_of`](span-of.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_extract::rust::span_of`](span-of.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
 - calls → [`robby_extract::rust::item_node`](item-node.md)
 - calls → [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
@@ -479,7 +439,6 @@ sequenceDiagram
 
 - calls → [`robby_extract::rust`](index.md) — 7 items
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — merge, symbol
-- calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 
 ## Referenced by
 

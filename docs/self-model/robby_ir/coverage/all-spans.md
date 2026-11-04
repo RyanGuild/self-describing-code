@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn all_spans(doc: &Document) -> BTreeMap<String, Vec<Span>>` |
-| location | [`crates/robby-ir/src/coverage.rs:209`](../../../../crates/robby-ir/src/coverage.rs#L209) |
+| location | [`crates/robby-ir/src/coverage.rs:212`](../../../../crates/robby-ir/src/coverage.rs#L212) |
 | provenance | extractor · confidence 1.00 |
 
 > Every span in the document, per file.

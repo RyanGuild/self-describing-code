@@ -5,7 +5,7 @@
 //! connects type lifelines and function nodes that describe the run.
 
 use robby_ir::{
-    CodePath, Document, Kind, Node, NodeId, Process, Step, StepKind, DEFAULT_MAX_DEPTH, kind,
+    CodePath, DEFAULT_MAX_DEPTH, Document, Kind, Node, NodeId, Process, Step, StepKind, kind,
 };
 
 use crate::util::alias;
@@ -43,11 +43,7 @@ pub fn from_code_path(doc: &Document, path: &CodePath) -> Option<Process> {
         let from_id = participant_id(from);
         if let Some(type_label) = owning_type_label(doc, to) {
             let type_id = alias(&type_label);
-            process.participant(
-                type_id.clone(),
-                type_label,
-                Kind::from(kind::code::STRUCT),
-            );
+            process.participant(type_id.clone(), type_label, Kind::from(kind::code::STRUCT));
             process.step(Step {
                 from: from_id,
                 to: type_id,
@@ -78,11 +74,7 @@ pub fn from_code_path(doc: &Document, path: &CodePath) -> Option<Process> {
 }
 
 fn add_callable(process: &mut Process, node: &Node) {
-    process.participant(
-        participant_id(node),
-        node.fqn.clone(),
-        node.kind.clone(),
-    );
+    process.participant(participant_id(node), node.fqn.clone(), node.kind.clone());
 }
 
 fn participant_id(node: &Node) -> String {
@@ -123,8 +115,10 @@ mod tests {
             kind::code::FUNCTION,
             "demo::main",
         );
-        main.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::run"), EdgeKind::Calls));
+        main.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::run"),
+            EdgeKind::Calls,
+        ));
         doc.insert(main);
 
         let mut run = Node::new(
@@ -163,7 +157,12 @@ mod tests {
         let doc = sample();
         let process =
             execution_process(&doc, &NodeId::symbol("rust", "demo::main")).expect("process");
-        assert!(process.participants.iter().any(|p| p.label.contains("main")));
+        assert!(
+            process
+                .participants
+                .iter()
+                .any(|p| p.label.contains("main"))
+        );
         assert!(process.participants.iter().any(|p| p.label.contains("run")));
         assert!(
             process.participants.iter().any(|p| p.label == "Foo"),

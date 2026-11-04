@@ -19,8 +19,7 @@ impl PackageStructure {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
 
@@ -47,12 +46,7 @@ impl PackageStructure {
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -113,7 +107,8 @@ impl PackageStructure {
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::util`](../../util/index.md) — is_container
 - calls → [`robby_render::view::deps`](index.md) — build_package_tree, is_under_fqn, package_edges, package_leaf
@@ -144,8 +139,7 @@ pub fn from_root(doc: &Document, root: &NodeId) -> Self {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
 
@@ -213,7 +207,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::is_container`](../../util/is-container.md)
 - calls → [`robby_render::view::deps::is_under_fqn`](is-under-fqn.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
@@ -230,7 +224,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn workspace(1)` |
-| location | [`crates/robby-render/src/view/deps.rs:137`](../../../../../crates/robby-render/src/view/deps.rs#L137) |
+| location | [`crates/robby-render/src/view/deps.rs:136`](../../../../../crates/robby-render/src/view/deps.rs#L136) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -238,12 +232,7 @@ pub fn workspace(doc: &Document) -> Self {
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -295,9 +284,9 @@ sequenceDiagram
     participant clone as clone
     participant package_edges as package_edges
     workspace-->>values: doc .nodes .values()
-    workspace-->>workspace: matches!( node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
-    workspace-->>filter: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
-    workspace-->>collect: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
+    workspace-->>workspace: matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
+    workspace-->>filter: doc .nodes .values() .filter(|node| matches!(node.kind.as_str(), kind...
+    workspace-->>collect: doc .nodes .values() .filter(|node| matches!(node.kind.as_str(), kind...
     workspace-->>is_empty: crates.is_empty()
     alt crates.is_empty()
     workspace-->>Self__empty: Self::empty()
@@ -341,7 +330,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn empty(0)` |
-| location | [`crates/robby-render/src/view/deps.rs:177`](../../../../../crates/robby-render/src/view/deps.rs#L177) |
+| location | [`crates/robby-render/src/view/deps.rs:171`](../../../../../crates/robby-render/src/view/deps.rs#L171) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -403,7 +392,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-render/src/view/deps.rs:194`](../../../../../crates/robby-render/src/view/deps.rs#L194) |
+| location | [`crates/robby-render/src/view/deps.rs:188`](../../../../../crates/robby-render/src/view/deps.rs#L188) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -435,7 +424,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn module_by_stable(2)` |
-| location | [`crates/robby-render/src/view/deps.rs:198`](../../../../../crates/robby-render/src/view/deps.rs#L198) |
+| location | [`crates/robby-render/src/view/deps.rs:192`](../../../../../crates/robby-render/src/view/deps.rs#L192) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

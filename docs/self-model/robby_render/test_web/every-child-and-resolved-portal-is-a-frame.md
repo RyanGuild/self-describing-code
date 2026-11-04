@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn every_child_and_resolved_portal_is_a_frame()` |
-| location | [`crates/robby-render/tests/web.rs:144`](../../../../crates/robby-render/tests/web.rs#L144) |
+| location | [`crates/robby-render/tests/web.rs:149`](../../../../crates/robby-render/tests/web.rs#L149) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

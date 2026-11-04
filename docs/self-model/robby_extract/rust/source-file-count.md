@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn source_file_count(root: &Path) -> Result<usize>` |
-| location | [`crates/robby-extract/src/rust.rs:956`](../../../../crates/robby-extract/src/rust.rs#L956) |
+| location | [`crates/robby-extract/src/rust.rs:961`](../../../../crates/robby-extract/src/rust.rs#L961) |
 | provenance | extractor · confidence 1.00 |
 
 > Count of `.rs` files the extractor considers part of the workspace.

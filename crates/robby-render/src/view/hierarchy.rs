@@ -64,7 +64,7 @@ fn build(
             .count();
         if remaining > 0 {
             children.push(HierarchyNode {
-                id: NodeId::from(format!("…{} more", remaining)),
+                id: NodeId::from(format!("…{remaining} more")),
                 name: format!("…{remaining} more"),
                 kind_tag: String::new(),
                 children: Vec::new(),

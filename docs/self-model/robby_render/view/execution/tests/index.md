@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-render/src/view/execution.rs:114`](../../../../../../crates/robby-render/src/view/execution.rs#L114) |
+| declared at | [`crates/robby-render/src/view/execution.rs:106`](../../../../../../crates/robby-render/src/view/execution.rs#L106) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 5 |
 
@@ -38,8 +38,8 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`sample`](sample.md) | `code.function` | 23 | `crates/robby-render/src/view/execution.rs:119:5` |
-| [`sequence_includes_call_and_type_lifeline`](sequence-includes-call-and-type-lifeline.md) | `code.function` | 8 | `crates/robby-render/src/view/execution.rs:161:5` |
+| [`sample`](sample.md) | `code.function` | 23 | `crates/robby-render/src/view/execution.rs:111:5` |
+| [`sequence_includes_call_and_type_lifeline`](sequence-includes-call-and-type-lifeline.md) | `code.function` | 8 | `crates/robby-render/src/view/execution.rs:155:5` |
 
 ## Imports
 

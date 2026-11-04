@@ -113,10 +113,16 @@ fn module_path(krate: &Krate, file: &Path) -> String {
     if rel == "build.rs" {
         return format!("{}::build", krate.name);
     }
-    if let Some(stem) = rel.strip_prefix("examples/").and_then(|s| s.strip_suffix(".rs")) {
+    if let Some(stem) = rel
+        .strip_prefix("examples/")
+        .and_then(|s| s.strip_suffix(".rs"))
+    {
         return format!("{}::example_{}", krate.name, stem.replace('-', "_"));
     }
-    if let Some(stem) = rel.strip_prefix("tests/").and_then(|s| s.strip_suffix(".rs")) {
+    if let Some(stem) = rel
+        .strip_prefix("tests/")
+        .and_then(|s| s.strip_suffix(".rs"))
+    {
         return format!("{}::test_{}", krate.name, stem.replace('-', "_"));
     }
     if let Some(rest) = rel.strip_prefix("src/") {
@@ -126,7 +132,11 @@ fn module_path(krate: &Krate, file: &Path) -> String {
         }
         return format!("{}::{}", krate.name, p.replace('/', "::"));
     }
-    format!("{}::{}", krate.name, rel.trim_end_matches(".rs").replace('/', "::"))
+    format!(
+        "{}::{}",
+        krate.name,
+        rel.trim_end_matches(".rs").replace('/', "::")
+    )
 }
 
 fn extract_file(
@@ -137,7 +147,13 @@ fn extract_file(
 ) -> Result<()> {
     let source = fs::read_to_string(file).with_context(|| format!("reading {}", file.display()))?;
     let rel = file
-        .strip_prefix(krate.dir.parent().and_then(|p| p.parent()).unwrap_or(&krate.dir))
+        .strip_prefix(
+            krate
+                .dir
+                .parent()
+                .and_then(|p| p.parent())
+                .unwrap_or(&krate.dir),
+        )
         .unwrap_or(file)
         .to_string_lossy()
         .replace('\\', "/");
@@ -210,7 +226,6 @@ fn walk_items(
                             &NodeId::symbol("rust", &fqn),
                         );
                         doc.merge(child);
-                        node.children.push(NodeId::symbol("rust", &child_fqn));
                     }
                 }
                 doc.merge(node);
@@ -227,7 +242,6 @@ fn walk_items(
                         span_of(variant, ctx),
                         &NodeId::symbol("rust", &fqn),
                     ));
-                    node.children.push(NodeId::symbol("rust", &child_fqn));
                 }
                 doc.merge(node);
             }
@@ -248,7 +262,6 @@ fn walk_items(
                             span_of(m, ctx),
                             &NodeId::symbol("rust", &fqn),
                         ));
-                        node.children.push(NodeId::symbol("rust", &child_fqn));
                     }
                 }
                 doc.merge(node);
@@ -261,7 +274,7 @@ fn walk_items(
                     .map(|(path, _)| format!("{} for ", path_text(path)))
                     .unwrap_or_default();
                 let fqn = format!("{fqn_base}::impl {trait_part}{self_name}");
-                let mut node = item_node(kind::code::IMPL, &fqn, span.clone(), parent);
+                let node = item_node(kind::code::IMPL, &fqn, span.clone(), parent);
                 for ii in &i.items {
                     match ii {
                         syn::ImplItem::Fn(m) => {
@@ -272,16 +285,13 @@ fn walk_items(
                                 span_of(m, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             );
-                            child.signature = Some(format!(
-                                "fn {}({})",
-                                m.sig.ident,
-                                m.sig.inputs.len()
-                            ));
+                            child.signature =
+                                Some(format!("fn {}({})", m.sig.ident, m.sig.inputs.len()));
                             child.docs = docs_of(&m.sig, &m.attrs);
-                            child.process =
-                                Some(build_process_sig(&m.sig, &m.block, ctx, &child_fqn, pending));
+                            child.process = Some(build_process_sig(
+                                &m.sig, &m.block, ctx, &child_fqn, pending,
+                            ));
                             doc.merge(child);
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         syn::ImplItem::Const(c) => {
                             let child_fqn = format!("{fqn}::{}", c.ident);
@@ -291,7 +301,6 @@ fn walk_items(
                                 span_of(c, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             ));
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         syn::ImplItem::Type(t) => {
                             let child_fqn = format!("{fqn}::{}", t.ident);
@@ -301,7 +310,6 @@ fn walk_items(
                                 span_of(t, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             ));
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         _ => {}
                     }
@@ -310,9 +318,8 @@ fn walk_items(
             }
             Item::Mod(m) => {
                 let fqn = format!("{fqn_base}::{}", m.ident);
-                let mut node = item_node(kind::code::MODULE, &fqn, span.clone(), parent);
+                let node = item_node(kind::code::MODULE, &fqn, span.clone(), parent);
                 if let Some((_, items)) = &m.content {
-                    node.children.clear();
                     doc.merge(node);
                     walk_items(doc, items, &NodeId::symbol("rust", &fqn), ctx, pending);
                 } else {
@@ -353,8 +360,7 @@ fn walk_items(
                 let name = m
                     .ident
                     .as_ref()
-                    .map(|i| i.to_string())
-                    .unwrap_or_else(|| "macro".to_owned());
+                    .map_or_else(|| "macro".to_owned(), std::string::ToString::to_string);
                 let fqn = format!("{fqn_base}::{name}@{}", span.start.byte);
                 doc.merge(item_node(kind::code::MACRO, &fqn, span, parent));
             }
@@ -377,23 +383,21 @@ fn item_node(kind_name: &str, fqn: &str, span: Span, parent: &NodeId) -> Node {
 }
 
 fn signature_of(f: &syn::ItemFn, ctx: &Ctx<'_>) -> String {
-    let text = slice(ctx, span_of(&f.sig, ctx));
+    let text = slice(ctx, &span_of(&f.sig, ctx));
     text.split('{').next().unwrap_or(&text).trim().to_owned()
 }
 
 fn docs_of<T: Spanned>(_t: &T, attrs: &[syn::Attribute]) -> Option<String> {
     let mut lines = Vec::new();
     for attr in attrs {
-        if attr.path().is_ident("doc") {
-            if let syn::Meta::NameValue(nv) = &attr.meta {
-                if let syn::Expr::Lit(syn::ExprLit {
-                    lit: syn::Lit::Str(s),
-                    ..
-                }) = &nv.value
-                {
-                    lines.push(s.value().trim().to_owned());
-                }
-            }
+        if attr.path().is_ident("doc")
+            && let syn::Meta::NameValue(nv) = &attr.meta
+            && let syn::Expr::Lit(syn::ExprLit {
+                lit: syn::Lit::Str(s),
+                ..
+            }) = &nv.value
+        {
+            lines.push(s.value().trim().to_owned());
         }
     }
     if lines.is_empty() {
@@ -402,7 +406,6 @@ fn docs_of<T: Spanned>(_t: &T, attrs: &[syn::Attribute]) -> Option<String> {
         Some(lines.join("\n"))
     }
 }
-
 
 fn path_text(path: &syn::Path) -> String {
     path.segments
@@ -463,13 +466,13 @@ fn type_text(ty: &Type) -> String {
 /// `proc-macro2`'s `span-locations` reports columns as character offsets within
 /// the line, so the conversion walks chars rather than bytes. This is what makes
 /// coverage exact on files containing non-ASCII identifiers or comments.
-pub struct LineIndex {
+pub(crate) struct LineIndex {
     starts: Vec<u32>,
     source: String,
 }
 
 impl LineIndex {
-    pub fn new(source: &str) -> Self {
+    pub(crate) fn new(source: &str) -> Self {
         let mut starts = vec![0u32];
         for (i, b) in source.bytes().enumerate() {
             if b == b'\n' {
@@ -482,7 +485,7 @@ impl LineIndex {
         }
     }
 
-    pub fn byte(&self, lc: LineColumn) -> u32 {
+    pub(crate) fn byte(&self, lc: LineColumn) -> u32 {
         let line = lc.line.saturating_sub(1).min(self.starts.len() - 1);
         let start = self.starts[line] as usize;
         let rest = &self.source[start..];
@@ -506,14 +509,14 @@ fn span_of<T: Spanned>(node: &T, ctx: &Ctx<'_>) -> Span {
     Span::new(ctx.file, ctx.source, start, end.max(start))
 }
 
-fn slice(ctx: &Ctx<'_>, span: Span) -> String {
+fn slice(ctx: &Ctx<'_>, span: &Span) -> String {
     ctx.source
         .get(span.start.byte as usize..span.end.byte as usize)
         .unwrap_or("")
         .to_owned()
 }
 
-fn label_of(ctx: &Ctx<'_>, span: Span) -> String {
+fn label_of(ctx: &Ctx<'_>, span: &Span) -> String {
     let raw = slice(ctx, span);
     let collapsed = raw.split_whitespace().collect::<Vec<_>>().join(" ");
     if collapsed.chars().count() > 72 {
@@ -561,7 +564,7 @@ fn build_process_sig(
     };
     builder.process.participant(
         sanitize(&me),
-        format!("{}()", me),
+        format!("{me}()"),
         Kind::from(kind::code::FUNCTION),
     );
     let _ = sig;
@@ -583,11 +586,17 @@ impl ProcBuilder<'_, '_> {
         let from = sanitize(&self.me);
         let to_id = sanitize(to);
         if from == to_id {
-            self.process
-                .participant(to_id.clone(), self.me.clone(), Kind::from(kind::code::FUNCTION));
+            self.process.participant(
+                to_id.clone(),
+                self.me.clone(),
+                Kind::from(kind::code::FUNCTION),
+            );
         } else {
-            self.process
-                .participant(to_id.clone(), to.to_owned(), Kind::from(kind::code::FUNCTION));
+            self.process.participant(
+                to_id.clone(),
+                to.to_owned(),
+                Kind::from(kind::code::FUNCTION),
+            );
         }
         self.process.step(Step {
             from,
@@ -622,28 +631,29 @@ impl ProcBuilder<'_, '_> {
 fn walk_stmts(builder: &mut ProcBuilder<'_, '_>, stmts: &[Stmt]) {
     for stmt in stmts {
         match stmt {
-            Stmt::Local(local) => match &local.init {
-                Some(init) => walk_expr(builder, &init.expr),
-                None => {
+            Stmt::Local(local) => {
+                if let Some(init) = &local.init {
+                    walk_expr(builder, &init.expr);
+                } else {
                     let span = span_of(local, builder.ctx);
                     builder.emit(
                         &builder.me.clone(),
-                        label_of(builder.ctx, span.clone()),
+                        label_of(builder.ctx, &span),
                         StepKind::Note,
                         span,
                     );
                 }
-            },
+            }
             Stmt::Expr(expr, _) => walk_expr(builder, expr),
             Stmt::Macro(m) => {
                 let span = span_of(m, builder.ctx);
                 let me = builder.me.clone();
-                builder.emit(&me, label_of(builder.ctx, span.clone()), StepKind::Note, span);
+                builder.emit(&me, label_of(builder.ctx, &span), StepKind::Note, span);
             }
             Stmt::Item(item) => {
                 let span = span_of(item, builder.ctx);
                 let me = builder.me.clone();
-                builder.emit(&me, label_of(builder.ctx, span.clone()), StepKind::Note, span);
+                builder.emit(&me, label_of(builder.ctx, &span), StepKind::Note, span);
             }
         }
     }
@@ -655,7 +665,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
             let span = span_of(expr, builder.ctx);
             let display = callee_display(&call.func);
             let key = callee_name(&call.func);
-            let label = label_of(builder.ctx, span.clone());
+            let label = label_of(builder.ctx, &span);
             // Walk the callee expression (e.g. `(get_fn())()` ) and args for nested calls.
             walk_expr(builder, &call.func);
             for arg in &call.args {
@@ -671,7 +681,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         Expr::MethodCall(m) => {
             let span = span_of(expr, builder.ctx);
             let name = m.method.to_string();
-            let label = label_of(builder.ctx, span.clone());
+            let label = label_of(builder.ctx, &span);
             walk_expr(builder, &m.receiver);
             for arg in &m.args {
                 walk_expr(builder, arg);
@@ -685,7 +695,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         }
         Expr::If(if_expr) => {
             walk_expr(builder, &if_expr.cond);
-            let cond = label_of(builder.ctx, span_of(&if_expr.cond, builder.ctx));
+            let cond = label_of(builder.ctx, &span_of(&if_expr.cond, builder.ctx));
             builder.push_block(BlockKind::Alt, cond);
             walk_stmts(builder, &if_expr.then_branch.stmts);
             if let Some((_, else_expr)) = &if_expr.else_branch {
@@ -696,14 +706,14 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         }
         Expr::ForLoop(f) => {
             walk_expr(builder, &f.expr);
-            let label = label_of(builder.ctx, span_of(&f.expr, builder.ctx));
+            let label = label_of(builder.ctx, &span_of(&f.expr, builder.ctx));
             builder.push_block(BlockKind::Loop, label);
             walk_stmts(builder, &f.body.stmts);
             builder.pop_block();
         }
         Expr::While(w) => {
             walk_expr(builder, &w.cond);
-            let label = label_of(builder.ctx, span_of(&w.cond, builder.ctx));
+            let label = label_of(builder.ctx, &span_of(&w.cond, builder.ctx));
             builder.push_block(BlockKind::Loop, label);
             walk_stmts(builder, &w.body.stmts);
             builder.pop_block();
@@ -716,11 +726,11 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         Expr::Match(m) => {
             // Scrutinee holds real calls (`match run() { ... }`) — walk it.
             walk_expr(builder, &m.expr);
-            let label = label_of(builder.ctx, span_of(&m.expr, builder.ctx));
+            let label = label_of(builder.ctx, &span_of(&m.expr, builder.ctx));
             builder.push_block(BlockKind::Alt, format!("match {label}"));
             for (i, arm) in m.arms.iter().enumerate() {
                 if i > 0 {
-                    let pat = label_of(builder.ctx, span_of(&arm.pat, builder.ctx));
+                    let pat = label_of(builder.ctx, &span_of(&arm.pat, builder.ctx));
                     builder.branch(pat);
                 }
                 walk_expr(builder, &arm.body);
@@ -810,7 +820,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         _ => {
             let span = span_of(expr, builder.ctx);
             let me = builder.me.clone();
-            builder.emit(&me, label_of(builder.ctx, span.clone()), StepKind::Note, span);
+            builder.emit(&me, label_of(builder.ctx, &span), StepKind::Note, span);
         }
     }
 }
@@ -830,8 +840,7 @@ fn callee_name(func: &Expr) -> String {
             .path
             .segments
             .last()
-            .map(|s| s.ident.to_string())
-            .unwrap_or_else(|| "call".to_owned()),
+            .map_or_else(|| "call".to_owned(), |s| s.ident.to_string()),
         Expr::Field(f) => match &f.member {
             syn::Member::Named(n) => n.to_string(),
             syn::Member::Unnamed(i) => format!("field{}", i.index),
@@ -883,10 +892,7 @@ fn resolve_calls(doc: &mut Document, pending: Vec<PendingCall>) {
         let Some(targets) = by_name.get(&call.name) else {
             continue;
         };
-        let caller_fqn = doc
-            .get(&call.from)
-            .map(|n| n.fqn.as_str())
-            .unwrap_or("");
+        let caller_fqn = doc.get(&call.from).map_or("", |n| n.fqn.as_str());
         let (target, confidence) = pick_call_target(caller_fqn, targets);
         if let Some(node) = doc.nodes.get_mut(&call.from) {
             let mut edge = Edge::new(target, EdgeKind::Calls);
@@ -911,7 +917,7 @@ fn pick_call_target(caller_fqn: &str, targets: &[NodeId]) -> (NodeId, f32) {
         .map(|target| {
             let target_fqn = id_fqn(target);
             let target_mod = module_prefix(target_fqn);
-            let exact = if target_mod == caller_mod { 1 } else { 0 };
+            let exact = i32::from(target_mod == caller_mod);
             let shared = shared_module_score(caller_mod, target_mod) as i32;
             // Shorter FQN wins ties (crate::run over crate::nested::run).
             let len = target_fqn.len();
@@ -935,12 +941,11 @@ fn pick_call_target(caller_fqn: &str, targets: &[NodeId]) -> (NodeId, f32) {
 fn id_fqn(id: &NodeId) -> &str {
     id.as_str()
         .split_once("://")
-        .map(|(_, fqn)| fqn)
-        .unwrap_or(id.as_str())
+        .map_or(id.as_str(), |(_, fqn)| fqn)
 }
 
 fn module_prefix(fqn: &str) -> &str {
-    fqn.rsplit_once("::").map(|(m, _)| m).unwrap_or(fqn)
+    fqn.rsplit_once("::").map_or(fqn, |(m, _)| m)
 }
 
 fn shared_module_score(a: &str, b: &str) -> usize {
@@ -980,17 +985,11 @@ mod tests {
         let index = LineIndex::new(source);
 
         // Start of line 2.
-        let line_two = index.byte(LineColumn {
-            line: 2,
-            column: 0,
-        });
+        let line_two = index.byte(LineColumn { line: 2, column: 0 });
         assert_eq!(line_two, source.find("fn a").unwrap() as u32);
 
         // Column 5 is just past the two-byte `é`, so the byte offset is 6.
-        let after_e_acute = index.byte(LineColumn {
-            line: 1,
-            column: 5,
-        });
+        let after_e_acute = index.byte(LineColumn { line: 1, column: 5 });
         assert_eq!(after_e_acute, 6);
     }
 }

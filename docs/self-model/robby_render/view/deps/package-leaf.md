@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn package_leaf(node: &Node) -> PackageNode` |
-| location | [`crates/robby-render/src/view/deps.rs:653`](../../../../../crates/robby-render/src/view/deps.rs#L653) |
+| location | [`crates/robby-render/src/view/deps.rs:636`](../../../../../crates/robby-render/src/view/deps.rs#L636) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -41,7 +41,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 

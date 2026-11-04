@@ -20,7 +20,7 @@ sequenceDiagram
     render_files-->>crate__flowchart: crate::flowchart(doc, root)
     render_files-->>render_files: format!('graph-{}.mmd', slug(root.as_str()))
     render_files-->>join: out.join(format!('graph-{}.mmd', slug(root.as_str())))
-    render_files-->>fs__write: fs::write(out.join(format!('graph-{}.mmd', slug(root.as_str()))), mer...
+    render_files-->>fs__write: fs::write( out.join(format!('graph-{}.mmd', slug(root.as_str()))), me...
     render_files-->>render_files: ? (propagate)
     end
     render_files-->>Ok: Ok(count)

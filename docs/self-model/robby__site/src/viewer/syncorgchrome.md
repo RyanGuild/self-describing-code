@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:314`](../../../../../apps/site/src/viewer.ts#L314) |
+| location | [`apps/site/src/viewer.ts:324`](../../../../../apps/site/src/viewer.ts#L324) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -15,10 +15,8 @@ function syncOrgChrome(mode: OrgMode): void {
   orgRunsBtn.classList.toggle("is-active", mode === "runs");
   if (mode === "runs") {
     hintEl.textContent = HINT_RUNS;
-  } else if (mode === "entrypoints") {
-    hintEl.textContent = HINT_ENTRYPOINTS;
   } else {
-    hintEl.textContent = HINT_STRUCTURE;
+    hintEl.textContent = ORG_MODES[mode].hint;
   }
   viewportEl.classList.toggle("runs-open", mode === "runs");
   runsPanelEl.hidden = mode !== "runs";

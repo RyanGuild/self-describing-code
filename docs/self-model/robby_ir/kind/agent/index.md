@@ -5,9 +5,9 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/kind.rs:97`](../../../../../crates/robby-ir/src/kind.rs#L97) |
+| declared at | [`crates/robby-ir/src/kind.rs:99`](../../../../../crates/robby-ir/src/kind.rs#L99) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 4 |
+| nodes | 6 |
 
 ## Package diagram
 
@@ -25,7 +25,9 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`DECISION`](decision.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:99:5` |
-| [`ACTION`](action.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:100:5` |
-| [`OBSERVATION`](observation.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:101:5` |
+| [`DECISION`](decision.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:101:5` |
+| [`ACTION`](action.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:102:5` |
+| [`OBSERVATION`](observation.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:103:5` |
+| [`PIPELINE`](pipeline.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:104:5` |
+| [`RUN`](run.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:106:5` |
 

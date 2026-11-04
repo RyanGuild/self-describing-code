@@ -5,12 +5,12 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn slice(ctx: &Ctx<'_>, span: Span) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:509`](../../../../crates/robby-extract/src/rust.rs#L509) |
+| signature | `fn slice(ctx: &Ctx<'_>, span: &Span) -> String` |
+| location | [`crates/robby-extract/src/rust.rs:512`](../../../../crates/robby-extract/src/rust.rs#L512) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn slice(ctx: &Ctx<'_>, span: Span) -> String {
+fn slice(ctx: &Ctx<'_>, span: &Span) -> String {
     ctx.source
         .get(span.start.byte as usize..span.end.byte as usize)
         .unwrap_or("")
@@ -34,11 +34,11 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn attributes_are_classified()` |
-| location | [`crates/robby-ir/tests/coverage.rs:56`](../../../../crates/robby-ir/tests/coverage.rs#L56) |
+| location | [`crates/robby-ir/tests/coverage.rs:57`](../../../../crates/robby-ir/tests/coverage.rs#L57) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

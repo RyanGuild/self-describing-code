@@ -1,0 +1,13 @@
+# Stable rustfmt only. The pipeline is stable-channel; nightly-only options
+# (import grouping, comment wrapping, macro formatting) are left off so
+# `cargo fmt --check` does not depend on a nightly rustfmt.
+edition = "2024"
+style_edition = "2024"
+max_width = 100
+newline_style = "Unix"
+use_field_init_shorthand = true
+use_try_shorthand = true
+reorder_imports = true
+reorder_modules = true
+hex_literal_case = "Upper"
+match_arm_leading_pipes = "Never"

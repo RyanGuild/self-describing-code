@@ -60,12 +60,11 @@ fn main() -> ExitCode {
 fn run() -> Result<ExitCode> {
     let args = Args::parse();
 
-    let loaded = match &args.ir {
-        Some(ir) => pipeline::load(ir, &args.root)?,
-        None => {
-            let document = robby_extract::extract(&args.root)?;
-            pipeline::from_document(document, &args.root)
-        }
+    let loaded = if let Some(ir) = &args.ir {
+        pipeline::load(ir, &args.root)?
+    } else {
+        let document = robby_extract::extract(&args.root)?;
+        pipeline::from_document(document, &args.root)
     };
 
     println!("{}", loaded.summary());

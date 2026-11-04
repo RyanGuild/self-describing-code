@@ -74,7 +74,11 @@ fn is_external_package(node: &Node) -> bool {
         return false;
     }
     node.tags.iter().any(|t| t == "external")
-        || node.annotations.get("external").map(|v| v.as_str()) == Some("true")
+        || node
+            .annotations
+            .get("external")
+            .map(std::string::String::as_str)
+            == Some("true")
         || node.fqn.starts_with("npm/")
 }
 

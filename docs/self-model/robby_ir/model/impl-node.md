@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:216`](../../../../crates/robby-ir/src/model.rs#L216) |
+| location | [`crates/robby-ir/src/model.rs:253`](../../../../crates/robby-ir/src/model.rs#L253) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -94,7 +94,7 @@ impl Node {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(3)` |
-| location | [`crates/robby-ir/src/model.rs:217`](../../../../crates/robby-ir/src/model.rs#L217) |
+| location | [`crates/robby-ir/src/model.rs:254`](../../../../crates/robby-ir/src/model.rs#L254) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -123,7 +123,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn with_lang(4)` |
-| location | [`crates/robby-ir/src/model.rs:221`](../../../../crates/robby-ir/src/model.rs#L221) |
+| location | [`crates/robby-ir/src/model.rs:258`](../../../../crates/robby-ir/src/model.rs#L258) |
 | provenance | extractor · confidence 1.00 |
 
 > Like [`Node::new`], with an explicit language tag.
@@ -195,7 +195,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn with_span(2)` |
-| location | [`crates/robby-ir/src/model.rs:249`](../../../../crates/robby-ir/src/model.rs#L249) |
+| location | [`crates/robby-ir/src/model.rs:286`](../../../../crates/robby-ir/src/model.rs#L286) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -221,7 +221,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn with_docs(2)` |
-| location | [`crates/robby-ir/src/model.rs:254`](../../../../crates/robby-ir/src/model.rs#L254) |
+| location | [`crates/robby-ir/src/model.rs:291`](../../../../crates/robby-ir/src/model.rs#L291) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -249,7 +249,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn with_provenance(2)` |
-| location | [`crates/robby-ir/src/model.rs:259`](../../../../crates/robby-ir/src/model.rs#L259) |
+| location | [`crates/robby-ir/src/model.rs:296`](../../../../crates/robby-ir/src/model.rs#L296) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -273,7 +273,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn with_process(2)` |
-| location | [`crates/robby-ir/src/model.rs:264`](../../../../crates/robby-ir/src/model.rs#L264) |
+| location | [`crates/robby-ir/src/model.rs:301`](../../../../crates/robby-ir/src/model.rs#L301) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -299,7 +299,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn with_signature(2)` |
-| location | [`crates/robby-ir/src/model.rs:269`](../../../../crates/robby-ir/src/model.rs#L269) |
+| location | [`crates/robby-ir/src/model.rs:306`](../../../../crates/robby-ir/src/model.rs#L306) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -327,7 +327,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn set_lang(2)` |
-| location | [`crates/robby-ir/src/model.rs:274`](../../../../crates/robby-ir/src/model.rs#L274) |
+| location | [`crates/robby-ir/src/model.rs:311`](../../../../crates/robby-ir/src/model.rs#L311) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

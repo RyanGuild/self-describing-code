@@ -51,14 +51,14 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 
 ## References
 
-- calls → [`robby_agent::model`](../model/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

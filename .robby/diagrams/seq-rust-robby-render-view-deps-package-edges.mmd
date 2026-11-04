@@ -59,7 +59,7 @@ sequenceDiagram
     package_edges-->>stable_id: stable_id(to_mod.id.as_str())
     package_edges-->>insert_module: insert_module(&mut modules, from_mod, false, doc)
     package_edges-->>contains: scope.contains(&to_mod.id)
-    package_edges-->>insert_module: insert_module( &mut modules, to_mod, !scope.contains(&to_mod.id), doc, )
+    package_edges-->>insert_module: insert_module(&mut modules, to_mod, !scope.contains(&to_mod.id), doc)
     package_edges-->>entry: weights.entry((from_sid, to_sid))
     package_edges-->>or_default: weights.entry((from_sid, to_sid)).or_default()
     end
@@ -71,7 +71,8 @@ sequenceDiagram
     package_edges-->>entry: adj.entry(sid.clone())
     package_edges-->>or_default: adj.entry(sid.clone()).or_default()
     end
-    loop &weights
+    package_edges-->>keys: weights.keys()
+    loop weights.keys()
     package_edges-->>clone: from.clone()
     package_edges-->>entry: adj.entry(from.clone())
     package_edges-->>or_default: adj.entry(from.clone()).or_default()
@@ -92,7 +93,8 @@ sequenceDiagram
     package_edges-->>iter: scc.iter()
     package_edges-->>cloned: scc.iter().cloned()
     package_edges-->>collect: scc.iter().cloned().collect()
-    loop &weights
+    package_edges-->>keys: weights.keys()
+    loop weights.keys()
     package_edges-->>contains: set.contains(from)
     package_edges-->>contains: set.contains(to)
     alt set.contains(from) && set.contains(to)
@@ -121,7 +123,7 @@ sequenceDiagram
     package_edges-->>collect: modules.into_values().collect()
     package_edges-->>cmp: a.name.cmp(&b.name)
     package_edges-->>sort_by: module_list.sort_by(|a, b| a.name.cmp(&b.name))
-    package_edges-->>iter: module_list .iter()
-    package_edges-->>filter: module_list .iter() .filter(|m| m.external)
-    package_edges-->>cloned: module_list .iter() .filter(|m| m.external) .cloned()
-    package_edges-->>collect: module_list .iter() .filter(|m| m.external) .cloned() .collect()
+    package_edges-->>iter: module_list.iter()
+    package_edges-->>filter: module_list.iter().filter(|m| m.external)
+    package_edges-->>cloned: module_list.iter().filter(|m| m.external).cloned()
+    package_edges-->>collect: module_list.iter().filter(|m| m.external).cloned().collect()

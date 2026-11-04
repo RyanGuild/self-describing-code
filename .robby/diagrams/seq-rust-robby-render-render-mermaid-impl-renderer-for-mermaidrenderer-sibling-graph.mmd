@@ -11,5 +11,5 @@ sequenceDiagram
     end
     sibling_graph-->>push_str: out.push_str(' end\n')
     loop &view.edges
-    sibling_graph-->>sibling_graph: writeln!( out, ' {} {arrow}|{}| {}', edge.from, edge.label, edge.to )
+    sibling_graph-->>sibling_graph: writeln!(out, ' {} {arrow}|{}| {}', edge.from, edge.label, edge.to)
     end

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:78`](../../../../crates/robby-ir/src/model.rs#L78) |
+| location | [`crates/robby-ir/src/model.rs:80`](../../../../crates/robby-ir/src/model.rs#L80) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -23,6 +23,17 @@ impl Source {
             Source::Hand => 4,
         }
     }
+
+    /// Serde name. Views display this rather than keeping a second match.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Extractor => "extractor",
+            Self::Macro => "macro",
+            Self::Trace => "trace",
+            Self::Agent => "agent",
+            Self::Hand => "hand",
+        }
+    }
 }
 ```
 
@@ -32,7 +43,7 @@ impl Source {
 |---|---|
 | kind | `code.method` |
 | signature | `fn precedence(1)` |
-| location | [`crates/robby-ir/src/model.rs:79`](../../../../crates/robby-ir/src/model.rs#L79) |
+| location | [`crates/robby-ir/src/model.rs:81`](../../../../crates/robby-ir/src/model.rs#L81) |
 | provenance | extractor · confidence 1.00 |
 
 > Lower numbers win when two producers disagree about the same fact.
@@ -60,6 +71,38 @@ impl Source {
 sequenceDiagram
     autonumber
     participant precedence as precedence()
+```
+
+0 steps · 0 observed · 0 possible only
+
+### `as_str`
+
+| | |
+|---|---|
+| kind | `code.method` |
+| signature | `fn as_str(1)` |
+| location | [`crates/robby-ir/src/model.rs:95`](../../../../crates/robby-ir/src/model.rs#L95) |
+| provenance | extractor · confidence 1.00 |
+
+> Serde name. Views display this rather than keeping a second match.
+
+```rust
+/// Serde name. Views display this rather than keeping a second match.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Extractor => "extractor",
+            Self::Macro => "macro",
+            Self::Trace => "trace",
+            Self::Agent => "agent",
+            Self::Hand => "hand",
+        }
+    }
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant as_str as as_str()
 ```
 
 0 steps · 0 observed · 0 possible only

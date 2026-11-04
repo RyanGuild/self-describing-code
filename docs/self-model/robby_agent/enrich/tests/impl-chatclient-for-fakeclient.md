@@ -5,12 +5,17 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-agent/src/enrich.rs:170`](../../../../../crates/robby-agent/src/enrich.rs#L170) |
+| location | [`crates/robby-agent/src/enrich.rs:168`](../../../../../crates/robby-agent/src/enrich.rs#L168) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 impl ChatClient for FakeClient {
-        fn chat(&self, _model: &str, _messages: &[ChatMessage], _json_mode: bool) -> Result<String> {
+        fn chat(
+            &self,
+            _model: &str,
+            _messages: &[ChatMessage],
+            _json_mode: bool,
+        ) -> Result<String> {
             let mut q = self.responses.lock().unwrap();
             if q.is_empty() {
                 anyhow::bail!("FakeClient exhausted");
@@ -30,11 +35,16 @@ impl ChatClient for FakeClient {
 |---|---|
 | kind | `code.method` |
 | signature | `fn chat(4)` |
-| location | [`crates/robby-agent/src/enrich.rs:171`](../../../../../crates/robby-agent/src/enrich.rs#L171) |
+| location | [`crates/robby-agent/src/enrich.rs:169`](../../../../../crates/robby-agent/src/enrich.rs#L169) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn chat(&self, _model: &str, _messages: &[ChatMessage], _json_mode: bool) -> Result<String> {
+fn chat(
+            &self,
+            _model: &str,
+            _messages: &[ChatMessage],
+            _json_mode: bool,
+        ) -> Result<String> {
             let mut q = self.responses.lock().unwrap();
             if q.is_empty() {
                 anyhow::bail!("FakeClient exhausted");

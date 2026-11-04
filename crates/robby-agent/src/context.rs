@@ -66,7 +66,7 @@ pub fn collect_comment_contexts(
     out
 }
 
-pub fn has_decision_child(doc: &Document, node: &Node) -> bool {
+pub(crate) fn has_decision_child(doc: &Document, node: &Node) -> bool {
     node.children.iter().any(|id| {
         doc.get(id)
             .is_some_and(|c| c.kind.as_str() == kind::agent::DECISION)
@@ -110,9 +110,8 @@ fn build_for_docs_owner(
     text: String,
 ) -> CommentContext {
     let (file, location) = file_location(owner);
-    let code_window = slice_node(sources, owner).unwrap_or_else(|| {
-        line_window(sources, owner).unwrap_or_default()
-    });
+    let code_window = slice_node(sources, owner)
+        .unwrap_or_else(|| line_window(sources, owner).unwrap_or_default());
     let _ = doc;
     CommentContext {
         parent_id: owner.id.clone(),
@@ -137,16 +136,16 @@ fn code_window_for(
     comment: &Node,
     owner: Option<&Node>,
 ) -> String {
-    if let Some(owner) = owner {
-        if let Some(slice) = slice_node(sources, owner) {
-            return slice;
-        }
+    if let Some(owner) = owner
+        && let Some(slice) = slice_node(sources, owner)
+    {
+        return slice;
     }
     line_window(sources, comment).unwrap_or_default()
 }
 
 /// Nearest following sibling item (not comment/import), by span start.
-pub fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
+pub(crate) fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
     let parent = comment.parent.as_ref().and_then(|id| doc.get(id))?;
     let comment_start = comment.span.as_ref()?.start.byte;
     let mut best: Option<(&Node, u32)> = None;
@@ -179,7 +178,7 @@ fn slice_node(sources: &BTreeMap<String, String>, node: &Node) -> Option<String>
     let source = sources.get(&span.file)?;
     source
         .get(span.start.byte as usize..span.end.byte as usize)
-        .map(|s| s.to_owned())
+        .map(std::borrow::ToOwned::to_owned)
 }
 
 /// ±20 lines around the node's span.
@@ -201,9 +200,5 @@ fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String
         out.push_str(line);
         out.push('\n');
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }

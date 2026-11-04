@@ -6,12 +6,11 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn build_package_tree(root: &Node, packages: &[&Node]) -> PackageNode` |
-| location | [`crates/robby-render/src/view/deps.rs:615`](../../../../../crates/robby-render/src/view/deps.rs#L615) |
+| location | [`crates/robby-render/src/view/deps.rs:598`](../../../../../crates/robby-render/src/view/deps.rs#L598) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn build_package_tree(root: &Node, packages: &[&Node]) -> PackageNode {
-    let by_fqn: BTreeMap<&str, &Node> = packages.iter().map(|p| (p.fqn.as_str(), *p)).collect();
     fn children_of(parent_fqn: &str, by_fqn: &BTreeMap<&str, &Node>) -> Vec<PackageNode> {
         let prefix = format!("{parent_fqn}::");
         let mut kids = Vec::new();
@@ -29,6 +28,7 @@ fn build_package_tree(root: &Node, packages: &[&Node]) -> PackageNode {
         kids.sort_by(|a, b| a.name.cmp(&b.name));
         kids
     }
+    let by_fqn: BTreeMap<&str, &Node> = packages.iter().map(|p| (p.fqn.as_str(), *p)).collect();
     let mut root_node = package_leaf(root);
     root_node.children = children_of(&root.fqn, &by_fqn);
     root_node
@@ -45,11 +45,11 @@ sequenceDiagram
     participant collect as collect
     participant package_leaf as package_leaf
     participant children_of as children_of
+    build_package_tree-->>build_package_tree: fn children_of(parent_fqn: &str, by_fqn: &BTreeMap<&str, &Node>) -> V...
     build_package_tree-->>iter: packages.iter()
     build_package_tree-->>as_str: p.fqn.as_str()
     build_package_tree-->>map: packages.iter().map(|p| (p.fqn.as_str(), *p))
     build_package_tree-->>collect: packages.iter().map(|p| (p.fqn.as_str(), *p)).collect()
-    build_package_tree-->>build_package_tree: fn children_of(parent_fqn: &str, by_fqn: &BTreeMap<&str, &Node>) -> V...
     build_package_tree-->>package_leaf: package_leaf(root)
     build_package_tree-->>children_of: children_of(&root.fqn, &by_fqn)
 ```
@@ -58,7 +58,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::deps::package_leaf`](package-leaf.md)
 - calls → [`robby_render::view::entrypoints::impl CallTree::children_of`](../entrypoints/index.md)

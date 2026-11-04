@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn format_context(ctx: &CommentContext) -> String` |
-| location | [`crates/robby-agent/src/model.rs:177`](../../../../crates/robby-agent/src/model.rs#L177) |
+| location | [`crates/robby-agent/src/model.rs:125`](../../../../crates/robby-agent/src/model.rs#L125) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

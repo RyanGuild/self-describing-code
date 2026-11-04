@@ -6,15 +6,14 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn id_fqn(id: &NodeId) -> &str` |
-| location | [`crates/robby-extract/src/rust.rs:935`](../../../../crates/robby-extract/src/rust.rs#L935) |
+| location | [`crates/robby-extract/src/rust.rs:941`](../../../../crates/robby-extract/src/rust.rs#L941) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn id_fqn(id: &NodeId) -> &str {
     id.as_str()
         .split_once("://")
-        .map(|(_, fqn)| fqn)
-        .unwrap_or(id.as_str())
+        .map_or(id.as_str(), |(_, fqn)| fqn)
 }
 ```
 
@@ -24,16 +23,14 @@ sequenceDiagram
     participant id_fqn as id_fqn()
     participant as_str as as_str
     participant split_once as split_once
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     id_fqn-->>as_str: id.as_str()
     id_fqn-->>split_once: id.as_str() .split_once('://')
-    id_fqn-->>map: id.as_str() .split_once('://') .map(|(_, fqn)| fqn)
     id_fqn-->>as_str: id.as_str()
-    id_fqn-->>unwrap_or: id.as_str() .split_once('://') .map(|(_, fqn)| fqn) .unwrap_or(id.as_...
+    id_fqn-->>map_or: id.as_str() .split_once('://') .map_or(id.as_str(), |(_, fqn)| fqn)
 ```
 
-5 steps · 0 observed · 5 possible only
+4 steps · 0 observed · 4 possible only
 
 **Edges**
 

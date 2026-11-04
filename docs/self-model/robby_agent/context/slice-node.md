@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn slice_node(sources: &BTreeMap<String, String>, node: &Node) -> Option<String>` |
-| location | [`crates/robby-agent/src/context.rs:177`](../../../../crates/robby-agent/src/context.rs#L177) |
+| location | [`crates/robby-agent/src/context.rs:176`](../../../../crates/robby-agent/src/context.rs#L176) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -15,7 +15,7 @@ fn slice_node(sources: &BTreeMap<String, String>, node: &Node) -> Option<String>
     let source = sources.get(&span.file)?;
     source
         .get(span.start.byte as usize..span.end.byte as usize)
-        .map(|s| s.to_owned())
+        .map(std::borrow::ToOwned::to_owned)
 }
 ```
 
@@ -25,27 +25,25 @@ sequenceDiagram
     participant slice_node as slice_node()
     participant as_ref as as_ref
     participant get as get
-    participant to_owned as to_owned
     participant map as map
     slice_node-->>as_ref: node.span.as_ref()
     slice_node-->>slice_node: ? (propagate)
     slice_node-->>get: sources.get(&span.file)
     slice_node-->>slice_node: ? (propagate)
     slice_node-->>get: source .get(span.start.byte as usize..span.end.byte as usize)
-    slice_node-->>to_owned: s.to_owned()
-    slice_node-->>map: source .get(span.start.byte as usize..span.end.byte as usize) .map(|s...
+    slice_node-->>map: source .get(span.start.byte as usize..span.end.byte as usize) .map(st...
 ```
 
-7 steps · 0 observed · 7 possible only
+6 steps · 0 observed · 6 possible only
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

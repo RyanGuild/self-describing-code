@@ -6,15 +6,15 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn respects_max_depth()` |
-| location | [`crates/robby-ir/src/codepath.rs:176`](../../../../../crates/robby-ir/src/codepath.rs#L176) |
+| location | [`crates/robby-ir/src/codepath.rs:182`](../../../../../crates/robby-ir/src/codepath.rs#L182) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 #[test]
     fn respects_max_depth() {
         let doc = sample_doc();
-        let path = CodePath::from_entry(&doc, &NodeId::symbol("rust", "demo::main"), 1)
-            .expect("path");
+        let path =
+            CodePath::from_entry(&doc, &NodeId::symbol("rust", "demo::main"), 1).expect("path");
         assert_eq!(path.edges.len(), 1);
         assert_eq!(path.edges[0].to, NodeId::symbol("rust", "demo::a"));
     }
@@ -31,7 +31,7 @@ sequenceDiagram
     respects_max_depth-->>sample_doc: sample_doc()
     respects_max_depth-->>NodeId__symbol: NodeId::symbol('rust', 'demo::main')
     respects_max_depth-->>CodePath__from_entry: CodePath::from_entry(&doc, &NodeId::symbol('rust', 'demo::main'), 1)
-    respects_max_depth-->>expect: CodePath::from_entry(&doc, &NodeId::symbol('rust', 'demo::main'), 1) ...
+    respects_max_depth-->>expect: CodePath::from_entry(&doc, &NodeId::symbol('rust', 'demo::main'), 1)....
     respects_max_depth-->>respects_max_depth: assert_eq!(path.edges.len(), 1)
     respects_max_depth-->>respects_max_depth: assert_eq!(path.edges[0].to, NodeId::symbol('rust', 'demo::a'))
 ```

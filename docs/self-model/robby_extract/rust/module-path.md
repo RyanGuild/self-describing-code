@@ -23,10 +23,16 @@ fn module_path(krate: &Krate, file: &Path) -> String {
     if rel == "build.rs" {
         return format!("{}::build", krate.name);
     }
-    if let Some(stem) = rel.strip_prefix("examples/").and_then(|s| s.strip_suffix(".rs")) {
+    if let Some(stem) = rel
+        .strip_prefix("examples/")
+        .and_then(|s| s.strip_suffix(".rs"))
+    {
         return format!("{}::example_{}", krate.name, stem.replace('-', "_"));
     }
-    if let Some(stem) = rel.strip_prefix("tests/").and_then(|s| s.strip_suffix(".rs")) {
+    if let Some(stem) = rel
+        .strip_prefix("tests/")
+        .and_then(|s| s.strip_suffix(".rs"))
+    {
         return format!("{}::test_{}", krate.name, stem.replace('-', "_"));
     }
     if let Some(rest) = rel.strip_prefix("src/") {
@@ -36,7 +42,11 @@ fn module_path(krate: &Krate, file: &Path) -> String {
         }
         return format!("{}::{}", krate.name, p.replace('/', "::"));
     }
-    format!("{}::{}", krate.name, rel.trim_end_matches(".rs").replace('/', "::"))
+    format!(
+        "{}::{}",
+        krate.name,
+        rel.trim_end_matches(".rs").replace('/', "::")
+    )
 }
 ```
 
@@ -68,17 +78,17 @@ sequenceDiagram
     module_path-->>module_path: format!('{}::build', krate.name)
     module_path-->>module_path: return
     end
-    module_path-->>strip_prefix: rel.strip_prefix('examples/')
+    module_path-->>strip_prefix: rel .strip_prefix('examples/')
     module_path-->>strip_suffix: s.strip_suffix('.rs')
-    module_path-->>and_then: rel.strip_prefix('examples/').and_then(|s| s.strip_suffix('.rs'))
-    alt let Some(stem) = rel.strip_prefix('examples/').and_then(|s| s.strip_s...
+    module_path-->>and_then: rel .strip_prefix('examples/') .and_then(|s| s.strip_suffix('.rs'))
+    alt let Some(stem) = rel .strip_prefix('examples/') .and_then(|s| s.strip...
     module_path-->>module_path: format!('{}::example_{}', krate.name, stem.replace('-', '_'))
     module_path-->>module_path: return
     end
-    module_path-->>strip_prefix: rel.strip_prefix('tests/')
+    module_path-->>strip_prefix: rel .strip_prefix('tests/')
     module_path-->>strip_suffix: s.strip_suffix('.rs')
-    module_path-->>and_then: rel.strip_prefix('tests/').and_then(|s| s.strip_suffix('.rs'))
-    alt let Some(stem) = rel.strip_prefix('tests/').and_then(|s| s.strip_suff...
+    module_path-->>and_then: rel .strip_prefix('tests/') .and_then(|s| s.strip_suffix('.rs'))
+    alt let Some(stem) = rel .strip_prefix('tests/') .and_then(|s| s.strip_su...
     module_path-->>module_path: format!('{}::test_{}', krate.name, stem.replace('-', '_'))
     module_path-->>module_path: return
     end
@@ -94,7 +104,7 @@ sequenceDiagram
     module_path-->>module_path: format!('{}::{}', krate.name, p.replace('/', '::'))
     module_path-->>module_path: return
     end
-    module_path-->>module_path: format!('{}::{}', krate.name, rel.trim_end_matches('.rs').replace('/'...
+    module_path-->>module_path: format!( '{}::{}', krate.name, rel.trim_end_matches('.rs').replace('/...
 ```
 
 27 steps · 0 observed · 27 possible only

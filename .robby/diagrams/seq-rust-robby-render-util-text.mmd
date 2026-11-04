@@ -14,8 +14,6 @@ sequenceDiagram
     loop input.chars()
     alt match ch
     text-->>push: out.push(' ')
-    else ' ' | ' '
-    text-->>push: out.push(' ')
     else '''
     text-->>push: out.push('\'')
     else _

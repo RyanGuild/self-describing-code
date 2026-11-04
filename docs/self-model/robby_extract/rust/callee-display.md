@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn callee_display(func: &Expr) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:818`](../../../../crates/robby-extract/src/rust.rs#L818) |
+| location | [`crates/robby-extract/src/rust.rs:828`](../../../../crates/robby-extract/src/rust.rs#L828) |
 | provenance | extractor · confidence 1.00 |
 
 > The readable callee, including its module path: `Document::new`.

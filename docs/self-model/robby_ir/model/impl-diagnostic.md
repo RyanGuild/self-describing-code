@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:425`](../../../../crates/robby-ir/src/model.rs#L425) |
+| location | [`crates/robby-ir/src/model.rs:546`](../../../../crates/robby-ir/src/model.rs#L546) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -45,7 +45,7 @@ impl Diagnostic {
 |---|---|
 | kind | `code.method` |
 | signature | `fn error(2)` |
-| location | [`crates/robby-ir/src/model.rs:426`](../../../../crates/robby-ir/src/model.rs#L426) |
+| location | [`crates/robby-ir/src/model.rs:547`](../../../../crates/robby-ir/src/model.rs#L547) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -76,7 +76,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn warning(2)` |
-| location | [`crates/robby-ir/src/model.rs:435`](../../../../crates/robby-ir/src/model.rs#L435) |
+| location | [`crates/robby-ir/src/model.rs:556`](../../../../crates/robby-ir/src/model.rs#L556) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -107,7 +107,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn about(2)` |
-| location | [`crates/robby-ir/src/model.rs:444`](../../../../crates/robby-ir/src/model.rs#L444) |
+| location | [`crates/robby-ir/src/model.rs:565`](../../../../crates/robby-ir/src/model.rs#L565) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

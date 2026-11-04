@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn code_window(     sources: &BTreeMap<String, String>,     comment: &Node,     owner: Option<&Node>, ) -> Option<String>` |
-| location | [`crates/robby-render/src/view/comments.rs:242`](../../../../../crates/robby-render/src/view/comments.rs#L242) |
+| location | [`crates/robby-render/src/view/comments.rs:204`](../../../../../crates/robby-render/src/view/comments.rs#L204) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -15,10 +15,10 @@ fn code_window(
     comment: &Node,
     owner: Option<&Node>,
 ) -> Option<String> {
-    if let Some(owner) = owner {
-        if let Some(slice) = slice_node(sources, owner) {
-            return Some(slice);
-        }
+    if let Some(owner) = owner
+        && let Some(slice) = slice_node(sources, owner)
+    {
+        return Some(slice);
     }
     line_window(sources, comment)
 }
@@ -31,12 +31,10 @@ sequenceDiagram
     participant slice_node as slice_node
     participant Some as Some
     participant line_window as line_window
-    alt let Some(owner) = owner
     code_window-->>slice_node: slice_node(sources, owner)
-    alt let Some(slice) = slice_node(sources, owner)
+    alt let Some(owner) = owner && let Some(slice) = slice_node(sources, owner)
     code_window-->>Some: Some(slice)
     code_window-->>code_window: return
-    end
     end
     code_window-->>line_window: line_window(sources, comment)
 ```

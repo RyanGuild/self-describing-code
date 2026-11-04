@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn preview(source: &str, start: u32, end: u32) -> String` |
-| location | [`crates/robby-ir/src/coverage.rs:293`](../../../../crates/robby-ir/src/coverage.rs#L293) |
+| location | [`crates/robby-ir/src/coverage.rs:287`](../../../../crates/robby-ir/src/coverage.rs#L287) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

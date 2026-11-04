@@ -6,14 +6,14 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn finalize_edges(weights: BTreeMap<(String, String), usize>) -> Vec<WeightedEdge>` |
-| location | [`crates/robby-render/src/view/deps.rs:580`](../../../../../crates/robby-render/src/view/deps.rs#L580) |
+| location | [`crates/robby-render/src/view/deps.rs:563`](../../../../../crates/robby-render/src/view/deps.rs#L563) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn finalize_edges(weights: BTreeMap<(String, String), usize>) -> Vec<WeightedEdge> {
     let adjacency: BTreeMap<String, BTreeSet<String>> = {
         let mut adj: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             adj.entry(from.clone()).or_default().insert(to.clone());
             adj.entry(to.clone()).or_default();
         }
@@ -26,7 +26,7 @@ fn finalize_edges(weights: BTreeMap<(String, String), usize>) -> Vec<WeightedEdg
             continue;
         }
         let set: BTreeSet<_> = scc.iter().cloned().collect();
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             if set.contains(from) && set.contains(to) {
                 edge_in_cycle.insert((from.clone(), to.clone()));
             }
@@ -51,6 +51,7 @@ sequenceDiagram
     autonumber
     participant finalize_edges as finalize_edges()
     participant BTreeMap__new as BTreeMap::new
+    participant keys as keys
     participant clone as clone
     participant entry as entry
     participant or_default as or_default
@@ -67,7 +68,8 @@ sequenceDiagram
     participant cmp as cmp
     participant sort_by as sort_by
     finalize_edges-->>BTreeMap__new: BTreeMap::new()
-    loop &weights
+    finalize_edges-->>keys: weights.keys()
+    loop weights.keys()
     finalize_edges-->>clone: from.clone()
     finalize_edges-->>entry: adj.entry(from.clone())
     finalize_edges-->>or_default: adj.entry(from.clone()).or_default()
@@ -84,7 +86,8 @@ sequenceDiagram
     finalize_edges-->>iter: scc.iter()
     finalize_edges-->>cloned: scc.iter().cloned()
     finalize_edges-->>collect: scc.iter().cloned().collect()
-    loop &weights
+    finalize_edges-->>keys: weights.keys()
+    loop weights.keys()
     finalize_edges-->>contains: set.contains(from)
     finalize_edges-->>contains: set.contains(to)
     alt set.contains(from) && set.contains(to)
@@ -104,7 +107,7 @@ sequenceDiagram
     finalize_edges-->>sort_by: edges.sort_by(|a, b| (&a.from, &a.to).cmp(&(&b.from, &b.to)))
 ```
 
-28 steps · 0 observed · 28 possible only
+30 steps · 0 observed · 30 possible only
 
 **Edges**
 

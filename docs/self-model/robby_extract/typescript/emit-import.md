@@ -5,24 +5,19 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn emit_import(     doc: &mut Document,     imp: &ImportDeclaration<'_>,     parent: &NodeId,     ctx: &Ctx<'_>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:347`](../../../../crates/robby-extract/src/typescript.rs#L347) |
+| signature | `fn emit_import(doc: &mut Document, imp: &ImportDeclaration<'_>, parent: &NodeId, ctx: &Ctx<'_>)` |
+| location | [`crates/robby-extract/src/typescript.rs:344`](../../../../crates/robby-extract/src/typescript.rs#L344) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn emit_import(
-    doc: &mut Document,
-    imp: &ImportDeclaration<'_>,
-    parent: &NodeId,
-    ctx: &Ctx<'_>,
-) {
+fn emit_import(doc: &mut Document, imp: &ImportDeclaration<'_>, parent: &NodeId, ctx: &Ctx<'_>) {
     let source = js_str(&imp.source.value);
     let fqn = format!("{}/import:{}", ctx.module, source);
     let mut node = item_node(kind::code::IMPORT, &fqn, oxc_span(imp.span, ctx), parent);
     // Resolve relative imports to a module FQN under the same package prefix.
     if let Some(target) = resolve_relative_import(&ctx.module, source) {
         let mut edge = Edge::new(NodeId::symbol("typescript", &target), EdgeKind::Imports);
-        edge.span = node.span.clone();
+        edge.span.clone_from(&node.span);
         node.edges.push(edge);
     } else if is_bare_specifier(source) {
         let stub_fqn = format!("npm/{}", npm_bare_name(source));
@@ -38,7 +33,7 @@ fn emit_import(
         stub.annotations.insert("external".into(), "true".into());
         doc.merge(stub);
         let mut edge = Edge::new(stub_id, EdgeKind::Imports);
-        edge.span = node.span.clone();
+        edge.span.clone_from(&node.span);
         node.edges.push(edge);
     }
     doc.merge(node);
@@ -55,9 +50,10 @@ sequenceDiagram
     participant resolve_relative_import as resolve_relative_import
     participant NodeId__symbol as NodeId::symbol
     participant Edge__new as Edge::new
-    participant clone as clone
+    participant clone_from as clone_from
     participant push as push
     participant is_bare_specifier as is_bare_specifier
+    participant clone as clone
     participant Node__with_lang as Node::with_lang
     participant Provenance__new as Provenance::new
     participant into as into
@@ -71,7 +67,7 @@ sequenceDiagram
     alt let Some(target) = resolve_relative_import(&ctx.module, source)
     emit_import-->>NodeId__symbol: NodeId::symbol('typescript', &target)
     emit_import-->>Edge__new: Edge::new(NodeId::symbol('typescript', &target), EdgeKind::Imports)
-    emit_import-->>clone: node.span.clone()
+    emit_import-->>clone_from: edge.span.clone_from(&node.span)
     emit_import-->>push: node.edges.push(edge)
     else else
     emit_import-->>is_bare_specifier: is_bare_specifier(source)
@@ -89,7 +85,7 @@ sequenceDiagram
     emit_import-->>insert: stub.annotations.insert('external'.into(), 'true'.into())
     emit_import-->>merge: doc.merge(stub)
     emit_import-->>Edge__new: Edge::new(stub_id, EdgeKind::Imports)
-    emit_import-->>clone: node.span.clone()
+    emit_import-->>clone_from: edge.span.clone_from(&node.span)
     emit_import-->>push: node.edges.push(edge)
     end
     end

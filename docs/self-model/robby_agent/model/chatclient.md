@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.trait` |
-| location | [`crates/robby-agent/src/model.rs:40`](../../../../crates/robby-agent/src/model.rs#L40) |
+| location | [`crates/robby-agent/src/model.rs:42`](../../../../crates/robby-agent/src/model.rs#L42) |
 | provenance | extractor · confidence 1.00 |
 
 > Pluggable chat backend (OpenRouter or fakes in tests).
@@ -27,7 +27,7 @@ pub trait ChatClient {
 | | |
 |---|---|
 | kind | `code.method` |
-| location | [`crates/robby-agent/src/model.rs:42`](../../../../crates/robby-agent/src/model.rs#L42) |
+| location | [`crates/robby-agent/src/model.rs:44`](../../../../crates/robby-agent/src/model.rs#L44) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

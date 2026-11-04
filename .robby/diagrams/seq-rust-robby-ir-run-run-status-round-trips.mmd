@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant run_status_round_trips as run_status_round_trips()
+    loop [ RunStatus::Queued, RunStatus::Running, RunStatus::Pass, RunStatus::...
+    run_status_round_trips-->>run_status_round_trips: assert_eq!(RunStatus::parse(status.as_str()), Some(status))
+    end
+    run_status_round_trips-->>run_status_round_trips: assert!(RunStatus::Pass.is_success())
+    run_status_round_trips-->>run_status_round_trips: assert!(RunStatus::Fail.is_terminal())
+    run_status_round_trips-->>run_status_round_trips: assert!(!RunStatus::Running.is_terminal())

@@ -17,9 +17,7 @@ fn item_children<'a>(doc: &'a Document, node: &Node) -> Vec<&'a Node> {
     node.children
         .iter()
         .filter_map(|child| doc.get(child))
-        .filter(|child| {
-            !is_module(child) && !is_compact(child.kind.as_str())
-        })
+        .filter(|child| !is_module(child) && !is_compact(child.kind.as_str()))
         .collect()
 }
 ```
@@ -50,15 +48,15 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::tree::is_compact`](is-compact.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::tree`](index.md) — is_compact, is_module
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::select`](../view/select/index.md) — collect

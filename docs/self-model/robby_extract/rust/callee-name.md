@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn callee_name(func: &Expr) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:826`](../../../../crates/robby-extract/src/rust.rs#L826) |
+| location | [`crates/robby-extract/src/rust.rs:836`](../../../../crates/robby-extract/src/rust.rs#L836) |
 | provenance | extractor · confidence 1.00 |
 
 > The last segment, used to match against known items.
@@ -19,8 +19,7 @@ fn callee_name(func: &Expr) -> String {
             .path
             .segments
             .last()
-            .map(|s| s.ident.to_string())
-            .unwrap_or_else(|| "call".to_owned()),
+            .map_or_else(|| "call".to_owned(), |s| s.ident.to_string()),
         Expr::Field(f) => match &f.member {
             syn::Member::Named(n) => n.to_string(),
             syn::Member::Unnamed(i) => format!("field{}", i.index),
@@ -35,16 +34,14 @@ sequenceDiagram
     autonumber
     participant callee_name as callee_name()
     participant last as last
-    participant to_string as to_string
-    participant map as map
     participant to_owned as to_owned
-    participant unwrap_or_else as unwrap_or_else
+    participant to_string as to_string
+    participant map_or_else as map_or_else
     alt match func
     callee_name-->>last: p .path .segments .last()
-    callee_name-->>to_string: s.ident.to_string()
-    callee_name-->>map: p .path .segments .last() .map(|s| s.ident.to_string())
     callee_name-->>to_owned: 'call'.to_owned()
-    callee_name-->>unwrap_or_else: p .path .segments .last() .map(|s| s.ident.to_string()) .unwrap_or_el...
+    callee_name-->>to_string: s.ident.to_string()
+    callee_name-->>map_or_else: p .path .segments .last() .map_or_else(|| 'call'.to_owned(), |s| s.id...
     else Expr::Field(f)
     alt match &f.member
     callee_name-->>to_string: n.to_string()
@@ -56,7 +53,7 @@ sequenceDiagram
     end
 ```
 
-8 steps · 0 observed · 8 possible only
+7 steps · 0 observed · 7 possible only
 
 ## Referenced by
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn spans_point_at_the_right_bytes()` |
-| location | [`crates/robby-extract/tests/extract.rs:71`](../../../../crates/robby-extract/tests/extract.rs#L71) |
+| location | [`crates/robby-extract/tests/extract.rs:68`](../../../../crates/robby-extract/tests/extract.rs#L68) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

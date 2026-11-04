@@ -4,9 +4,6 @@ sequenceDiagram
     participant as_ref as as_ref
     participant ProcessView__from_process as ProcessView::from_process
     participant process as process
-    participant into_iter as into_iter
-    participant map as map
-    participant collect as collect
     participant Some as Some
     participant execution_process as execution_process
     participant is_empty as is_empty
@@ -16,19 +13,12 @@ sequenceDiagram
     participant stable_id as stable_id
     participant to_owned as to_owned
     participant clone as clone
-    participant location as location
-    participant provenance_name as provenance_name
+    participant map as map
     from_node_in_doc-->>as_ref: node.process.as_ref()
     alt match node.process.as_ref()
     from_node_in_doc-->>ProcessView__from_process: ProcessView::from_process(p)
     from_node_in_doc-->>process: MermaidRenderer.process(&view)
-    from_node_in_doc-->>into_iter: view .participants .into_iter()
-    from_node_in_doc-->>map: view .participants .into_iter() .map(|p| ParticipantDetail { id: p.id...
-    from_node_in_doc-->>collect: view .participants .into_iter() .map(|p| ParticipantDetail { id: p.id...
-    from_node_in_doc-->>into_iter: view.events.into_iter()
-    from_node_in_doc-->>map: view.events.into_iter().map(event_detail)
-    from_node_in_doc-->>collect: view.events.into_iter().map(event_detail).collect()
-    from_node_in_doc-->>Some: Some(detail)
+    from_node_in_doc-->>Some: Some(view)
     from_node_in_doc-->>Some: Some(mermaid)
     end
     from_node_in_doc-->>execution_process: execution_process(d, &node.id)
@@ -42,7 +32,6 @@ sequenceDiagram
     from_node_in_doc-->>Some: Some(MermaidRenderer.process(&view))
     from_node_in_doc-->>and_then: doc.and_then(|d| { let exec = execution_process(d, &node.id)? // Pre...
     from_node_in_doc-->>SourceSlice__from_node: SourceSlice::from_node(node, sources)
-    from_node_in_doc-->>map: SourceSlice::from_node(node, sources).map(|s| SourceDetail { file: s....
     from_node_in_doc-->>as_str: node.id.as_str()
     from_node_in_doc-->>stable_id: stable_id(node.id.as_str())
     from_node_in_doc-->>as_str: node.id.as_str()
@@ -53,6 +42,5 @@ sequenceDiagram
     from_node_in_doc-->>clone: node.signature.clone()
     from_node_in_doc-->>clone: node.docs.clone()
     from_node_in_doc-->>as_ref: node.span.as_ref()
-    from_node_in_doc-->>location: s.location()
-    from_node_in_doc-->>map: node.span.as_ref().map(|s| s.location())
-    from_node_in_doc-->>provenance_name: provenance_name(node.provenance.source)
+    from_node_in_doc-->>map: node.span.as_ref().map(robby_ir::Span::location)
+    from_node_in_doc-->>as_str: node.provenance.source.as_str()

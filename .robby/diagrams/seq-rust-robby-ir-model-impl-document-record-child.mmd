@@ -1,0 +1,54 @@
+sequenceDiagram
+    autonumber
+    participant record_child as record_child()
+    participant get_mut as get_mut
+    participant contains as contains
+    participant clone as clone
+    participant push as push
+    participant entry as entry
+    participant or_default as or_default
+    participant contains_key as contains_key
+    participant or_insert_with as or_insert_with
+    participant get as get
+    participant is_none as is_none
+    participant is_some_and as is_some_and
+    participant Some as Some
+    participant retain as retain
+    alt parent == child
+    record_child-->>record_child: return
+    end
+    record_child-->>get_mut: self.nodes.get_mut(parent)
+    alt let Some(parent_node) = self.nodes.get_mut(parent)
+    record_child-->>contains: parent_node.children.contains(child)
+    alt !parent_node.children.contains(child)
+    record_child-->>clone: child.clone()
+    record_child-->>push: parent_node.children.push(child.clone())
+    end
+    else else
+    record_child-->>clone: parent.clone()
+    record_child-->>entry: self.pending_children.entry(parent.clone())
+    record_child-->>or_default: self.pending_children.entry(parent.clone()).or_default()
+    record_child-->>contains: pending.contains(child)
+    alt !pending.contains(child)
+    record_child-->>clone: child.clone()
+    record_child-->>push: pending.push(child.clone())
+    end
+    end
+    record_child-->>contains_key: self.nodes.contains_key(child)
+    alt !self.nodes.contains_key(child)
+    record_child-->>clone: child.clone()
+    record_child-->>entry: self.pending_parents .entry(child.clone())
+    record_child-->>clone: parent.clone()
+    record_child-->>or_insert_with: self.pending_parents .entry(child.clone()) .or_insert_with(|| parent....
+    end
+    record_child-->>get: self .nodes .get(child)
+    record_child-->>is_none: node.parent.is_none()
+    record_child-->>is_some_and: self .nodes .get(child) .is_some_and(|node| node.parent.is_none())
+    alt needs_parent
+    record_child-->>get_mut: self.nodes.get_mut(child)
+    alt let Some(node) = self.nodes.get_mut(child)
+    record_child-->>clone: parent.clone()
+    record_child-->>Some: Some(parent.clone())
+    end
+    record_child-->>retain: self.roots.retain(|root| root != child)
+    end

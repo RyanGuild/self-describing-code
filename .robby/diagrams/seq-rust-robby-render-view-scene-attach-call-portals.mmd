@@ -15,9 +15,8 @@ sequenceDiagram
     participant stable_id as stable_id
     participant contains_key as contains_key
     participant get as get
-    participant map as map
     participant to_owned as to_owned
-    participant unwrap_or_else as unwrap_or_else
+    participant map_or_else as map_or_else
     participant get_mut as get_mut
     participant Some as Some
     participant values_mut as values_mut
@@ -50,17 +49,15 @@ sequenceDiagram
     attach_call_portals-->>contains_key: frames.contains_key(&from_sid)
     attach_call_portals-->>contains_key: frames.contains_key(&to_sid)
     attach_call_portals-->>get: doc .get(to_id)
-    attach_call_portals-->>clone: n.fqn.clone()
-    attach_call_portals-->>map: doc .get(to_id) .map(|n| n.fqn.clone())
     attach_call_portals-->>as_str: to_id.as_str()
     attach_call_portals-->>to_owned: to_id.as_str().to_owned()
-    attach_call_portals-->>unwrap_or_else: doc .get(to_id) .map(|n| n.fqn.clone()) .unwrap_or_else(|| to_id.as_s...
-    attach_call_portals-->>get: doc .get(from_id)
     attach_call_portals-->>clone: n.fqn.clone()
-    attach_call_portals-->>map: doc .get(from_id) .map(|n| n.fqn.clone())
+    attach_call_portals-->>map_or_else: doc .get(to_id) .map_or_else(|| to_id.as_str().to_owned(), |n| n.fqn....
+    attach_call_portals-->>get: doc .get(from_id)
     attach_call_portals-->>as_str: from_id.as_str()
     attach_call_portals-->>to_owned: from_id.as_str().to_owned()
-    attach_call_portals-->>unwrap_or_else: doc .get(from_id) .map(|n| n.fqn.clone()) .unwrap_or_else(|| from_id....
+    attach_call_portals-->>clone: n.fqn.clone()
+    attach_call_portals-->>map_or_else: doc .get(from_id) .map_or_else(|| from_id.as_str().to_owned(), |n| n....
     attach_call_portals-->>get_mut: frames.get_mut(&from_sid)
     alt let Some(from_frame) = frames.get_mut(&from_sid)
     attach_call_portals-->>clone: to_name.clone()

@@ -14,10 +14,10 @@ sequenceDiagram
     participant push_str as push_str
     participant iter as iter
     participant find as find
-    participant clone as clone
-    participant map as map
     participant to_owned as to_owned
-    participant unwrap_or_else as unwrap_or_else
+    participant clone as clone
+    participant map_or_else as map_or_else
+    ascii_coupling-->>ascii_coupling: fn walk( node: &CouplingModule, by_parent: &BTreeMap<&str, Vec<&str>>...
     ascii_coupling-->>is_empty: view.is_empty()
     alt view.is_empty()
     ascii_coupling-->>String__from: String::from('(no internal coupling)\n')
@@ -33,17 +33,15 @@ sequenceDiagram
     ascii_coupling-->>push: map.entry(leaf.parent_stable_id.as_str()) .or_default() .push(leaf.na...
     end
     ascii_coupling-->>String__new: String::new()
-    ascii_coupling-->>ascii_coupling: fn walk( node: &CouplingModule, by_parent: &BTreeMap<&str, Vec<&str>>...
     ascii_coupling-->>walk: walk(&view.root, &by_parent, '', true, &mut out)
     ascii_coupling-->>is_empty: view.edges.is_empty()
     alt !view.edges.is_empty()
     ascii_coupling-->>push_str: out.push_str('calls\n')
     ascii_coupling-->>iter: leaves .iter()
     ascii_coupling-->>find: leaves .iter() .find(|f| f.stable_id == sid)
-    ascii_coupling-->>clone: f.name.clone()
-    ascii_coupling-->>map: leaves .iter() .find(|f| f.stable_id == sid) .map(|f| f.name.clone())
     ascii_coupling-->>to_owned: sid.to_owned()
-    ascii_coupling-->>unwrap_or_else: leaves .iter() .find(|f| f.stable_id == sid) .map(|f| f.name.clone())...
+    ascii_coupling-->>clone: f.name.clone()
+    ascii_coupling-->>map_or_else: leaves .iter() .find(|f| f.stable_id == sid) .map_or_else(|| sid.to_o...
     loop &view.edges
     alt edge.weight > 1
     ascii_coupling-->>ascii_coupling: format!(' ×{}', edge.weight)

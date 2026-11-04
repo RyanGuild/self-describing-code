@@ -11,7 +11,7 @@ mod openrouter;
 pub use context::{CommentContext, collect_comment_contexts};
 pub use enrich::{EnrichOpts, EnrichStats, enrich_comments};
 pub use model::{
-    ChatClient, ChatMessage, Decision, DecisionModel, Highlight, Note, NoteKind, NoteModel,
-    Role, Verdict, DEFAULT_DECISION_MODEL, DEFAULT_NOTE_MODEL,
+    ChatClient, ChatMessage, DEFAULT_DECISION_MODEL, DEFAULT_NOTE_MODEL, Decision, DecisionModel,
+    Highlight, Note, NoteKind, NoteModel, Role, Verdict,
 };
 pub use openrouter::OpenRouterClient;

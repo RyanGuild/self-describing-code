@@ -6,6 +6,7 @@ sequenceDiagram
     participant module_prefix as module_prefix
     participant iter as iter
     participant id_fqn as id_fqn
+    participant i32__from as i32::from
     participant shared_module_score as shared_module_score
     participant map as map
     participant collect as collect
@@ -19,6 +20,7 @@ sequenceDiagram
     pick_call_target-->>iter: targets .iter()
     pick_call_target-->>id_fqn: id_fqn(target)
     pick_call_target-->>module_prefix: module_prefix(target_fqn)
+    pick_call_target-->>i32__from: i32::from(target_mod == caller_mod)
     pick_call_target-->>shared_module_score: shared_module_score(caller_mod, target_mod)
     pick_call_target-->>len: target_fqn.len()
     pick_call_target-->>map: targets .iter() .map(|target| { let target_fqn = id_fqn(target) let ...

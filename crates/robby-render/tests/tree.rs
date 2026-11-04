@@ -30,7 +30,10 @@ fn every_internal_link_resolves() {
         let dir = page.path.parent().unwrap_or(Path::new(""));
         for link in markdown_links(&page.body) {
             let target = link.split('#').next().unwrap_or("");
-            if !target.ends_with(".md") {
+            if !std::path::Path::new(target)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
+            {
                 continue;
             }
             let resolved = normalize(&dir.join(target));
@@ -105,9 +108,7 @@ fn modules_link_out_and_back() {
         .map(|page| (page.path.to_string_lossy().replace('\\', "/"), page))
         .collect();
 
-    let cli = by_path
-        .get("robby_cli/index.md")
-        .expect("robby_cli index");
+    let cli = by_path.get("robby_cli/index.md").expect("robby_cli index");
     assert!(
         cli.body.contains("## References"),
         "crate pages should list outbound references"
@@ -167,9 +168,8 @@ fn normalize(path: &Path) -> String {
             Component::ParentDir => {
                 parts.pop();
             }
-            Component::CurDir => {}
             Component::Normal(part) => parts.push(part.to_string_lossy().to_string()),
-            _ => {}
+            Component::CurDir | Component::Prefix(_) | Component::RootDir => {}
         }
     }
     parts.join("/")

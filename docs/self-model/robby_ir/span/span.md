@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/span.rs:40`](../../../../crates/robby-ir/src/span.rs#L40) |
+| location | [`crates/robby-ir/src/span.rs:42`](../../../../crates/robby-ir/src/span.rs#L42) |
 | provenance | extractor · confidence 1.00 |
 
 > A half-open byte range within one file.
@@ -23,7 +23,7 @@ pub struct Span {
 
 **Fields and variants**
 
-- `file` — `crates/robby-ir/src/span.rs:43:5`
-- `start` — `crates/robby-ir/src/span.rs:45:5`
-- `end` — `crates/robby-ir/src/span.rs:46:5`
+- `file` — `crates/robby-ir/src/span.rs:45:5`
+- `start` — `crates/robby-ir/src/span.rs:47:5`
+- `end` — `crates/robby-ir/src/span.rs:48:5`
 

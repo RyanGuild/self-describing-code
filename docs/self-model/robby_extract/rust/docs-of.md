@@ -6,23 +6,21 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn docs_of<T: Spanned>(_t: &T, attrs: &[syn::Attribute]) -> Option<String>` |
-| location | [`crates/robby-extract/src/rust.rs:384`](../../../../crates/robby-extract/src/rust.rs#L384) |
+| location | [`crates/robby-extract/src/rust.rs:390`](../../../../crates/robby-extract/src/rust.rs#L390) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn docs_of<T: Spanned>(_t: &T, attrs: &[syn::Attribute]) -> Option<String> {
     let mut lines = Vec::new();
     for attr in attrs {
-        if attr.path().is_ident("doc") {
-            if let syn::Meta::NameValue(nv) = &attr.meta {
-                if let syn::Expr::Lit(syn::ExprLit {
-                    lit: syn::Lit::Str(s),
-                    ..
-                }) = &nv.value
-                {
-                    lines.push(s.value().trim().to_owned());
-                }
-            }
+        if attr.path().is_ident("doc")
+            && let syn::Meta::NameValue(nv) = &attr.meta
+            && let syn::Expr::Lit(syn::ExprLit {
+                lit: syn::Lit::Str(s),
+                ..
+            }) = &nv.value
+        {
+            lines.push(s.value().trim().to_owned());
         }
     }
     if lines.is_empty() {
@@ -51,15 +49,11 @@ sequenceDiagram
     loop attrs
     docs_of-->>path: attr.path()
     docs_of-->>is_ident: attr.path().is_ident('doc')
-    alt attr.path().is_ident('doc')
-    alt let syn::Meta::NameValue(nv) = &attr.meta
-    alt let syn::Expr::Lit(syn::ExprLit { lit: syn::Lit::Str(s), .. }) = &nv....
+    alt attr.path().is_ident('doc') && let syn::Meta::NameValue(nv) = &attr.m...
     docs_of-->>value: s.value()
     docs_of-->>trim: s.value().trim()
     docs_of-->>to_owned: s.value().trim().to_owned()
     docs_of-->>push: lines.push(s.value().trim().to_owned())
-    end
-    end
     end
     end
     docs_of-->>is_empty: lines.is_empty()

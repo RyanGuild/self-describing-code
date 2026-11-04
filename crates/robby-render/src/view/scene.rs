@@ -227,10 +227,8 @@ fn crate_roots(doc: &Document) -> Vec<&Node> {
         .nodes
         .values()
         .filter(|node| {
-            matches!(
-                node.kind.as_str(),
-                kind::code::CRATE | kind::code::PACKAGE
-            ) && node.parent.is_none()
+            matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
+                && node.parent.is_none()
         })
         .collect();
     if crates.is_empty() {
@@ -294,14 +292,7 @@ fn build_frame(
     for (i, child) in visible.iter().enumerate() {
         let local = placements[i];
         let child_world = map_local_to_world(&world, &local);
-        let child_sid = build_frame(
-            doc,
-            child,
-            Some(sid.clone()),
-            local,
-            child_world,
-            frames,
-        );
+        let child_sid = build_frame(doc, child, Some(sid.clone()), local, child_world, frames);
         frame.children.push(child_sid);
     }
 
@@ -375,11 +366,7 @@ fn build_call_frame(
 }
 
 /// Portals for every Calls hop among placed frames (tree children + cross edges).
-fn attach_call_portals(
-    doc: &Document,
-    tree: &CallTree,
-    frames: &mut BTreeMap<String, Frame>,
-) {
+fn attach_call_portals(doc: &Document, tree: &CallTree, frames: &mut BTreeMap<String, Frame>) {
     let mut pairs: Vec<(NodeId, NodeId)> = Vec::new();
     for (from_id, kids) in &tree.children {
         for to_id in kids {
@@ -402,12 +389,10 @@ fn attach_call_portals(
         }
         let to_name = doc
             .get(to_id)
-            .map(|n| n.fqn.clone())
-            .unwrap_or_else(|| to_id.as_str().to_owned());
+            .map_or_else(|| to_id.as_str().to_owned(), |n| n.fqn.clone());
         let from_name = doc
             .get(from_id)
-            .map(|n| n.fqn.clone())
-            .unwrap_or_else(|| from_id.as_str().to_owned());
+            .map_or_else(|| from_id.as_str().to_owned(), |n| n.fqn.clone());
 
         if let Some(from_frame) = frames.get_mut(&from_sid) {
             from_frame.portals.push(Portal {

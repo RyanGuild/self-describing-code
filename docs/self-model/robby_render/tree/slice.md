@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn slice<'a>(sources: &'a BTreeMap<String, String>, span: &robby_ir::Span) -> Option<&'a str>` |
-| location | [`crates/robby-render/src/tree.rs:803`](../../../../crates/robby-render/src/tree.rs#L803) |
+| location | [`crates/robby-render/src/tree.rs:799`](../../../../crates/robby-render/src/tree.rs#L799) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -31,12 +31,12 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

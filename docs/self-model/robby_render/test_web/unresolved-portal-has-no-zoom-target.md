@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn unresolved_portal_has_no_zoom_target()` |
-| location | [`crates/robby-render/tests/web.rs:254`](../../../../crates/robby-render/tests/web.rs#L254) |
+| location | [`crates/robby-render/tests/web.rs:259`](../../../../crates/robby-render/tests/web.rs#L259) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

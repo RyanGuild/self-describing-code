@@ -29,12 +29,10 @@ sequenceDiagram
     loop &view.layers
     loop layer
     dsm_markdown_table-->>module_by_stable: view.module_by_stable(sid)
-    alt let Some(m) = view.module_by_stable(sid)
     dsm_markdown_table-->>clone: sid.clone()
     dsm_markdown_table-->>insert: seen.insert(sid.clone())
-    alt seen.insert(sid.clone())
+    alt let Some(m) = view.module_by_stable(sid) && seen.insert(sid.clone())
     dsm_markdown_table-->>push: ordered.push(m)
-    end
     end
     end
     end

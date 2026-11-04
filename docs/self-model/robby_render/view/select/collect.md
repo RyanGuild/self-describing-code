@@ -26,8 +26,8 @@ pub fn collect(
         fqn: node.fqn.clone(),
         kind: node.kind.as_str().to_owned(),
         signature: node.signature.clone(),
-        location: node.span.as_ref().map(|s| s.location()),
-        provenance_source: source_name(node.provenance.source),
+        location: node.span.as_ref().map(robby_ir::Span::location),
+        provenance_source: node.provenance.source.as_str(),
         confidence: node.provenance.confidence,
         docs: node.docs.clone(),
         node_count: doc.subtree(&node.id).len(),
@@ -41,44 +41,28 @@ pub fn collect(
 
     let types = if opts.types && is_module {
         let model = TypeModel::from_module(doc, &node.id);
-        if model.is_empty() {
-            None
-        } else {
-            Some(model)
-        }
+        if model.is_empty() { None } else { Some(model) }
     } else {
         None
     };
 
     let dependencies = if opts.dependencies && is_module {
         let views = DependencyViews::from_root(doc, &node.id);
-        if views.is_empty() {
-            None
-        } else {
-            Some(views)
-        }
+        if views.is_empty() { None } else { Some(views) }
     } else {
         None
     };
 
     let externals = if opts.externals && is_module {
         let view = ExternalsView::from_root(doc, &node.id);
-        if view.is_empty() {
-            None
-        } else {
-            Some(view)
-        }
+        if view.is_empty() { None } else { Some(view) }
     } else {
         None
     };
 
     let comments = if opts.comments && is_module {
         let view = CommentsView::from_root(doc, &node.id, sources);
-        if view.is_empty() {
-            None
-        } else {
-            Some(view)
-        }
+        if view.is_empty() { None } else { Some(view) }
     } else {
         None
     };
@@ -90,17 +74,9 @@ pub fn collect(
     };
 
     let hierarchy = if opts.hierarchy {
-        let view = HierarchyView::from_node(
-            doc,
-            &node.id,
-            opts.hierarchy_depth,
-            opts.hierarchy_all,
-        );
-        if view.is_empty() {
-            None
-        } else {
-            Some(view)
-        }
+        let view =
+            HierarchyView::from_node(doc, &node.id, opts.hierarchy_depth, opts.hierarchy_all);
+        if view.is_empty() { None } else { Some(view) }
     } else {
         None
     };
@@ -113,11 +89,7 @@ pub fn collect(
 
     let sibling = if opts.sibling {
         let graph = SiblingGraph::from_root(doc, &node.id);
-        if graph.is_empty() {
-            None
-        } else {
-            Some(graph)
-        }
+        if graph.is_empty() { None } else { Some(graph) }
     } else {
         None
     };
@@ -154,9 +126,7 @@ sequenceDiagram
     participant clone as clone
     participant to_owned as to_owned
     participant as_ref as as_ref
-    participant location as location
     participant map as map
-    participant source_name as source_name
     participant subtree as subtree
     participant len as len
     participant main_process as main_process
@@ -180,9 +150,8 @@ sequenceDiagram
     collect-->>to_owned: node.kind.as_str().to_owned()
     collect-->>clone: node.signature.clone()
     collect-->>as_ref: node.span.as_ref()
-    collect-->>location: s.location()
-    collect-->>map: node.span.as_ref().map(|s| s.location())
-    collect-->>source_name: source_name(node.provenance.source)
+    collect-->>map: node.span.as_ref().map(robby_ir::Span::location)
+    collect-->>as_str: node.provenance.source.as_str()
     collect-->>clone: node.docs.clone()
     collect-->>subtree: doc.subtree(&node.id)
     collect-->>len: doc.subtree(&node.id).len()
@@ -223,7 +192,7 @@ sequenceDiagram
     collect-->>map: node.process.as_ref().map(ProcessView::from_process)
     end
     alt opts.hierarchy
-    collect-->>HierarchyView__from_node: HierarchyView::from_node( doc, &node.id, opts.hierarchy_depth, opts.h...
+    collect-->>HierarchyView__from_node: HierarchyView::from_node(doc, &node.id, opts.hierarchy_depth, opts.hi...
     collect-->>is_empty: view.is_empty()
     alt view.is_empty()
     collect-->>Some: Some(view)
@@ -247,16 +216,15 @@ sequenceDiagram
     end
 ```
 
-40 steps · 0 observed · 40 possible only
+39 steps · 0 observed · 39 possible only
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::links::is_module_kind`](../links/is-module-kind.md)
 - calls → [`robby_render::view::select::is_binary_module`](is-binary-module.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_ir::span::impl Span::location`](../../../robby_ir/span/index.md)
-- calls → [`robby_render::view::select::source_name`](source-name.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::select::main_process`](main-process.md)
 - calls → [`robby_render::view::types::impl TypeModel::from_module`](../types/index.md)
@@ -278,11 +246,10 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — subtree
-- calls → [`robby_ir::span`](../../../robby_ir/span/index.md) — location
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::deps`](../deps/index.md) — from_root
 - calls → [`robby_render::view::links`](../links/index.md) — for_node, is_empty, is_module_kind
-- calls → [`robby_render::view::select`](index.md) — default, is_binary_module, main_process, source_name
+- calls → [`robby_render::view::select`](index.md) — default, is_binary_module, main_process
 - calls → [`robby_render::view::source`](../source/index.md) — from_node
 - calls → [`robby_render::view::types`](../types/index.md) — from_module
 
@@ -305,6 +272,7 @@ sequenceDiagram
 - calls ← [`robby_ir::codepath::build_code_paths`](../../../robby_ir/codepath/build-code-paths.md)
 - calls ← [`robby_ir::codepath::find_entrypoints`](../../../robby_ir/codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../../../robby_ir/codepath/index.md)
+- calls ← [`robby_ir::contract::impl CoverageGate for CoverageReport::failing_gaps`](../../../robby_ir/contract/index.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../../../robby_ir/coverage/file-coverage.md)
 - calls ← [`robby_ir::coverage::impl CoverageReport::worst_first`](../../../robby_ir/coverage/index.md)
 - calls ← [`robby_ir::coverage::preview`](../../../robby_ir/coverage/preview.md)
@@ -362,5 +330,4 @@ sequenceDiagram
 - calls ← [`robby_render::view::sibling::impl SiblingGraph::from_root`](../sibling/index.md)
 - calls ← [`robby_render::view::types::impl TypeModel::from_module`](../types/index.md)
 - calls ← [`robby_render::view::types::impl_methods`](../types/impl-methods.md)
-- calls ← [`robby_render::web::impl FrameDetail::from_node_in_doc`](../../web/index.md)
 

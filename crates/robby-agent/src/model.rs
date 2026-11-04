@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::CommentContext;
 
+pub use robby_ir::{Highlight, NoteKind, Verdict};
+
 pub const DEFAULT_DECISION_MODEL: &str = "openai/gpt-4o-mini";
 pub const DEFAULT_NOTE_MODEL: &str = "openai/gpt-4o";
 
@@ -42,65 +44,11 @@ pub trait ChatClient {
     fn chat(&self, model: &str, messages: &[ChatMessage], json_mode: bool) -> Result<String>;
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Verdict {
-    Relevant,
-    Noise,
-}
-
-impl Verdict {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::Relevant => "relevant",
-            Self::Noise => "noise",
-        }
-    }
-
-    pub fn parse(raw: &str) -> Option<Self> {
-        match raw {
-            "relevant" => Some(Self::Relevant),
-            "noise" => Some(Self::Noise),
-            _ => None,
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Decision {
     pub verdict: Verdict,
     #[serde(default)]
     pub reason: String,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum NoteKind {
-    UsageExample,
-    ImplementationNote,
-}
-
-impl NoteKind {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::UsageExample => "usage_example",
-            Self::ImplementationNote => "implementation_note",
-        }
-    }
-
-    pub fn parse(raw: &str) -> Option<Self> {
-        match raw {
-            "usage_example" => Some(Self::UsageExample),
-            "implementation_note" => Some(Self::ImplementationNote),
-            _ => None,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Highlight {
-    pub start: u32,
-    pub end: u32,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -245,8 +193,8 @@ fn extract_json(raw: &str) -> Result<serde_json::Value> {
     let end = trimmed
         .rfind('}')
         .with_context(|| format!("no JSON object in response: {raw}"))?;
-    Ok(serde_json::from_str(&trimmed[start..=end])
-        .with_context(|| format!("invalid JSON in response: {raw}"))?)
+    serde_json::from_str(&trimmed[start..=end])
+        .with_context(|| format!("invalid JSON in response: {raw}"))
 }
 
 fn clamp_highlights(highlights: &mut Vec<Highlight>, len: u32) {

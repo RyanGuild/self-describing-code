@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn has_span_descendant(doc: &Document, id: &crate::model::NodeId) -> bool` |
-| location | [`crates/robby-ir/src/coverage.rs:244`](../../../../crates/robby-ir/src/coverage.rs#L244) |
+| location | [`crates/robby-ir/src/coverage.rs:247`](../../../../crates/robby-ir/src/coverage.rs#L247) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -42,13 +42,13 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
 - calls → [`robby_ir::coverage::has_span_descendant`](has-span-descendant.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../model/index.md) — get
+- calls → [`robby_ir::run`](../run/index.md) — get
 
 ## Referenced by
 

@@ -126,11 +126,7 @@ impl Renderer for MarkdownRenderer {
                 } else {
                     format!(" — {} items", link.items.len())
                 };
-                let _ = writeln!(
-                    out,
-                    "- {} → `{}`{detail}",
-                    link.kind_label, link.module_fqn
-                );
+                let _ = writeln!(out, "- {} → `{}`{detail}", link.kind_label, link.module_fqn);
             }
             out.push('\n');
         }
@@ -591,7 +587,7 @@ sequenceDiagram
 - calls → [`robby_render::render::markdown::impl MarkdownRenderer::new`](index.md)
 - calls → [`robby_render::view::comments::apply_highlights`](../../view/comments/apply-highlights.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::render::markdown::trim_comment`](trim-comment.md)
 - calls → [`robby_render::view::comments::apply_highlights`](../../view/comments/apply-highlights.md)
 
@@ -615,11 +611,7 @@ fn links(&self, view: &LinkGraph) -> String {
                 } else {
                     format!(" — {} items", link.items.len())
                 };
-                let _ = writeln!(
-                    out,
-                    "- {} → `{}`{detail}",
-                    link.kind_label, link.module_fqn
-                );
+                let _ = writeln!(out, "- {} → `{}`{detail}", link.kind_label, link.module_fqn);
             }
             out.push('\n');
         }
@@ -656,7 +648,7 @@ sequenceDiagram
     else else
     links-->>links: format!(' — {} items', link.items.len())
     end
-    links-->>links: writeln!( out, '- {} → `{}`{detail}', link.kind_label, link.module_fqn )
+    links-->>links: writeln!(out, '- {} → `{}`{detail}', link.kind_label, link.module_fqn)
     end
     links-->>push: out.push('\n')
     end
@@ -687,7 +679,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn sibling_graph(2)` |
-| location | [`crates/robby-render/src/render/markdown.rs:178`](../../../../../crates/robby-render/src/render/markdown.rs#L178) |
+| location | [`crates/robby-render/src/render/markdown.rs:174`](../../../../../crates/robby-render/src/render/markdown.rs#L174) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -718,7 +710,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn source(2)` |
-| location | [`crates/robby-render/src/render/markdown.rs:182`](../../../../../crates/robby-render/src/render/markdown.rs#L182) |
+| location | [`crates/robby-render/src/render/markdown.rs:178`](../../../../../crates/robby-render/src/render/markdown.rs#L178) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

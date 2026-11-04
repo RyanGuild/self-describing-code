@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    participant extract_with as extract_with()
+    participant into_iter as into_iter
+    participant next as next
+    participant extract as extract
+    participant merge_documents as merge_documents
+    participant Ok as Ok
+    extract_with-->>into_iter: extractors.into_iter()
+    extract_with-->>next: iter.next()
+    extract_with-->>extract: first.extract(root)
+    extract_with-->>extract_with: ? (propagate)
+    loop iter
+    extract_with-->>extract: extractor.extract(root)
+    extract_with-->>extract_with: ? (propagate)
+    extract_with-->>merge_documents: merge_documents(&mut doc, extractor.extract(root)?)
+    end
+    extract_with-->>Ok: Ok(doc)

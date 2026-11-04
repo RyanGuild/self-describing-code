@@ -5,12 +5,12 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:521`](../../../../../apps/site/src/viewer.ts#L521) |
+| location | [`apps/site/src/viewer.ts:536`](../../../../../apps/site/src/viewer.ts#L536) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 function frame(id: string): SceneFrame {
-  const f = scene!.frames[id];
+  const f = currentScene().frames[id];
   if (!f) {
     throw new Error(`missing frame ${id}`);
   }
@@ -22,10 +22,20 @@ function frame(id: string): SceneFrame {
 sequenceDiagram
     autonumber
     participant frame as frame()
+    participant currentScene as currentScene
+    self-->>currentScene: 
     return-->>caller: 
 ```
 
-1 steps · 0 observed · 1 possible only
+2 steps · 0 observed · 2 possible only
+
+**Edges**
+
+- calls → [`robby__site/src/viewer/currentScene`](currentscene.md)
+
+## References
+
+- calls → [`robby__site/src/viewer`](index.md) — currentScene
 
 ## Referenced by
 

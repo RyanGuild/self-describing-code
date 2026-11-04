@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn oxc_span(span: OxcSpan, ctx: &Ctx<'_>) -> Span` |
-| location | [`crates/robby-extract/src/typescript.rs:1016`](../../../../crates/robby-extract/src/typescript.rs#L1016) |
+| location | [`crates/robby-extract/src/typescript.rs:1009`](../../../../crates/robby-extract/src/typescript.rs#L1009) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

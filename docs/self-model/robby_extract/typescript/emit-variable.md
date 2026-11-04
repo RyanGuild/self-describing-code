@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn emit_variable<'a>(     doc: &mut Document,     decl: &VariableDeclarator<'a>,     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:542`](../../../../crates/robby-extract/src/typescript.rs#L542) |
+| signature | `fn emit_variable(     doc: &mut Document,     decl: &VariableDeclarator<'_>,     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:535`](../../../../crates/robby-extract/src/typescript.rs#L535) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn emit_variable<'a>(
+fn emit_variable(
     doc: &mut Document,
-    decl: &VariableDeclarator<'a>,
+    decl: &VariableDeclarator<'_>,
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,
@@ -25,14 +25,13 @@ fn emit_variable<'a>(
     // Arrow / function expressions assigned to const.
     if let Some(Expression::ArrowFunctionExpression(arrow)) = &decl.init {
         let fqn = format!("{}/{}", ctx.module, name);
-        let mut node = item_node(
-            kind::code::FUNCTION,
-            &fqn,
-            oxc_span(decl.span, ctx),
-            parent,
-        );
+        let mut node = item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent);
         let mut process = Process::new();
-        process.participant(sanitize(name), format!("{name}()"), Kind::from(kind::code::FUNCTION));
+        process.participant(
+            sanitize(name),
+            format!("{name}()"),
+            Kind::from(kind::code::FUNCTION),
+        );
         let from = NodeId::symbol("typescript", &fqn);
         match &arrow.body {
             ArrowFunctionBody::FunctionBody(body) => {
@@ -48,12 +47,7 @@ fn emit_variable<'a>(
         doc.merge(node);
     } else if let Some(Expression::FunctionExpression(f)) = &decl.init {
         let fqn = format!("{}/{}", ctx.module, name);
-        let mut node = item_node(
-            kind::code::FUNCTION,
-            &fqn,
-            oxc_span(decl.span, ctx),
-            parent,
-        );
+        let mut node = item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent);
         node.process = Some(build_function_process(f, &fqn, pending, ctx));
         doc.merge(node);
     }
@@ -86,12 +80,12 @@ sequenceDiagram
     alt let Some(Expression::ArrowFunctionExpression(arrow)) = &decl.init
     emit_variable-->>emit_variable: format!('{}/{}', ctx.module, name)
     emit_variable-->>oxc_span: oxc_span(decl.span, ctx)
-    emit_variable-->>item_node: item_node( kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), pare...
+    emit_variable-->>item_node: item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent)
     emit_variable-->>Process__new: Process::new()
     emit_variable-->>sanitize: sanitize(name)
     emit_variable-->>emit_variable: format!('{name}()')
     emit_variable-->>Kind__from: Kind::from(kind::code::FUNCTION)
-    emit_variable-->>participant: process.participant(sanitize(name), format!('{name}()'), Kind::from(k...
+    emit_variable-->>participant: process.participant( sanitize(name), format!('{name}()'), Kind::from(...
     emit_variable-->>NodeId__symbol: NodeId::symbol('typescript', &fqn)
     alt match &arrow.body
     emit_variable-->>walk_stmts: walk_stmts(&body.statements, &mut process, &[], pending, &from, ctx)
@@ -107,7 +101,7 @@ sequenceDiagram
     alt let Some(Expression::FunctionExpression(f)) = &decl.init
     emit_variable-->>emit_variable: format!('{}/{}', ctx.module, name)
     emit_variable-->>oxc_span: oxc_span(decl.span, ctx)
-    emit_variable-->>item_node: item_node( kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), pare...
+    emit_variable-->>item_node: item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent)
     emit_variable-->>build_function_process: build_function_process(f, &fqn, pending, ctx)
     emit_variable-->>Some: Some(build_function_process(f, &fqn, pending, ctx))
     emit_variable-->>merge: doc.merge(node)

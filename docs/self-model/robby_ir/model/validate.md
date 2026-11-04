@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn validate(doc: &Document) -> Vec<Diagnostic>` |
-| location | [`crates/robby-ir/src/model.rs:450`](../../../../crates/robby-ir/src/model.rs#L450) |
+| location | [`crates/robby-ir/src/model.rs:571`](../../../../crates/robby-ir/src/model.rs#L571) |
 | provenance | extractor · confidence 1.00 |
 
 > Structural checks that do not depend on source text.
@@ -33,16 +33,28 @@ pub fn validate(doc: &Document) -> Vec<Diagnostic> {
     }
 
     for (id, node) in &doc.nodes {
-        if let Some(parent) = &node.parent {
-            if !doc.nodes.contains_key(parent) {
-                out.push(
-                    Diagnostic::error(
-                        "node/parent-missing",
-                        format!("parent {parent} is not in the document"),
-                    )
-                    .about(id.clone()),
-                );
-            }
+        if let Some(parent) = &node.parent
+            && !doc.nodes.contains_key(parent)
+        {
+            out.push(
+                Diagnostic::error(
+                    "node/parent-missing",
+                    format!("parent {parent} is not in the document"),
+                )
+                .about(id.clone()),
+            );
+        }
+        if let Some(parent) = &node.parent
+            && let Some(parent_node) = doc.nodes.get(parent)
+            && !parent_node.children.iter().any(|child| child == id)
+        {
+            out.push(
+                Diagnostic::error(
+                    "node/parent-link",
+                    format!("parent {parent} does not list this node"),
+                )
+                .about(id.clone()),
+            );
         }
         for child in &node.children {
             if !doc.nodes.contains_key(child) {
@@ -50,6 +62,14 @@ pub fn validate(doc: &Document) -> Vec<Diagnostic> {
                     Diagnostic::error(
                         "node/child-missing",
                         format!("child {child} is not in the document"),
+                    )
+                    .about(id.clone()),
+                );
+            } else if doc.nodes.get(child).and_then(|n| n.parent.as_ref()) != Some(id) {
+                out.push(
+                    Diagnostic::error(
+                        "node/child-link",
+                        format!("child {child} does not point at this parent"),
                     )
                     .about(id.clone()),
                 );
@@ -132,6 +152,12 @@ sequenceDiagram
     participant contains_key as contains_key
     participant clone as clone
     participant about as about
+    participant get as get
+    participant iter as iter
+    participant any as any
+    participant as_ref as as_ref
+    participant and_then as and_then
+    participant Some as Some
     participant Diagnostic__warning as Diagnostic::warning
     participant crate__kind__is_known as crate::kind::is_known
     validate-->>Vec__new: Vec::new()
@@ -141,15 +167,23 @@ sequenceDiagram
     validate-->>push: out.push(Diagnostic::error( 'schema/version', format!( 'document sche...
     end
     loop &doc.nodes
-    alt let Some(parent) = &node.parent
     validate-->>contains_key: doc.nodes.contains_key(parent)
-    alt !doc.nodes.contains_key(parent)
+    alt let Some(parent) = &node.parent && !doc.nodes.contains_key(parent)
     validate-->>validate: format!('parent {parent} is not in the document')
     validate-->>Diagnostic__error: Diagnostic::error( 'node/parent-missing', format!('parent {parent} is...
     validate-->>clone: id.clone()
     validate-->>about: Diagnostic::error( 'node/parent-missing', format!('parent {parent} is...
     validate-->>push: out.push( Diagnostic::error( 'node/parent-missing', format!('parent {...
     end
+    validate-->>get: doc.nodes.get(parent)
+    validate-->>iter: parent_node.children.iter()
+    validate-->>any: parent_node.children.iter().any(|child| child == id)
+    alt let Some(parent) = &node.parent && let Some(parent_node) = doc.nodes....
+    validate-->>validate: format!('parent {parent} does not list this node')
+    validate-->>Diagnostic__error: Diagnostic::error( 'node/parent-link', format!('parent {parent} does ...
+    validate-->>clone: id.clone()
+    validate-->>about: Diagnostic::error( 'node/parent-link', format!('parent {parent} does ...
+    validate-->>push: out.push( Diagnostic::error( 'node/parent-link', format!('parent {par...
     end
     loop &node.children
     validate-->>contains_key: doc.nodes.contains_key(child)
@@ -159,6 +193,18 @@ sequenceDiagram
     validate-->>clone: id.clone()
     validate-->>about: Diagnostic::error( 'node/child-missing', format!('child {child} is no...
     validate-->>push: out.push( Diagnostic::error( 'node/child-missing', format!('child {ch...
+    else else
+    validate-->>get: doc.nodes.get(child)
+    validate-->>as_ref: n.parent.as_ref()
+    validate-->>and_then: doc.nodes.get(child).and_then(|n| n.parent.as_ref())
+    validate-->>Some: Some(id)
+    alt doc.nodes.get(child).and_then(|n| n.parent.as_ref()) != Some(id)
+    validate-->>validate: format!('child {child} does not point at this parent')
+    validate-->>Diagnostic__error: Diagnostic::error( 'node/child-link', format!('child {child} does not...
+    validate-->>clone: id.clone()
+    validate-->>about: Diagnostic::error( 'node/child-link', format!('child {child} does not...
+    validate-->>push: out.push( Diagnostic::error( 'node/child-link', format!('child {child...
+    end
     end
     end
     loop &node.edges
@@ -217,7 +263,7 @@ sequenceDiagram
     end
 ```
 
-51 steps · 0 observed · 51 possible only
+68 steps · 0 observed · 68 possible only
 
 **Edges**
 
@@ -227,6 +273,14 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl Diagnostic::error`](index.md)
 - calls → [`robby_ir::model::impl Diagnostic::about`](index.md)
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+- calls → [`robby_ir::model::impl Document::get`](index.md)
+- calls → [`robby_ir::model::impl Diagnostic::error`](index.md)
+- calls → [`robby_ir::model::impl Diagnostic::about`](index.md)
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+- calls → [`robby_ir::model::impl Diagnostic::error`](index.md)
+- calls → [`robby_ir::model::impl Diagnostic::about`](index.md)
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+- calls → [`robby_ir::model::impl Document::get`](index.md)
 - calls → [`robby_ir::model::impl Diagnostic::error`](index.md)
 - calls → [`robby_ir::model::impl Diagnostic::about`](index.md)
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
@@ -253,7 +307,7 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_ir::kind`](../kind/index.md) — is_known
-- calls → [`robby_ir::model`](index.md) — about, error, new, warning
+- calls → [`robby_ir::model`](index.md) — 5 items
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 
 ## Referenced by

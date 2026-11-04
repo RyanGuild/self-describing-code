@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/span.rs:49`](../../../../crates/robby-ir/src/span.rs#L49) |
+| location | [`crates/robby-ir/src/span.rs:51`](../../../../crates/robby-ir/src/span.rs#L51) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -56,12 +56,6 @@ impl Span {
 - calls ← [`robby_extract::typescript::resolve_relative_import`](../../robby_extract/typescript/resolve-relative-import.md)
 - calls ← [`robby_extract::typescript::sanitize`](../../robby_extract/typescript/sanitize.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
-- calls ← [`robby_render::markdown::index`](../../robby_render/markdown/index-n_fadae9.md)
-- calls ← [`robby_render::tree::module_page`](../../robby_render/tree/module-page.md)
-- calls ← [`robby_render::tree::render_node`](../../robby_render/tree/render-node.md)
-- calls ← [`robby_render::view::comments::impl CommentsView::from_root`](../../robby_render/view/comments/index.md)
-- calls ← [`robby_render::view::select::collect`](../../robby_render/view/select/collect.md)
-- calls ← [`robby_render::web::impl FrameDetail::from_node_in_doc`](../../robby_render/web/index.md)
 
 ### `new`
 
@@ -69,7 +63,7 @@ impl Span {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(4)` |
-| location | [`crates/robby-ir/src/span.rs:50`](../../../../crates/robby-ir/src/span.rs#L50) |
+| location | [`crates/robby-ir/src/span.rs:52`](../../../../crates/robby-ir/src/span.rs#L52) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -113,7 +107,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn byte_range(1)` |
-| location | [`crates/robby-ir/src/span.rs:59`](../../../../crates/robby-ir/src/span.rs#L59) |
+| location | [`crates/robby-ir/src/span.rs:61`](../../../../crates/robby-ir/src/span.rs#L61) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -136,7 +130,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-ir/src/span.rs:63`](../../../../crates/robby-ir/src/span.rs#L63) |
+| location | [`crates/robby-ir/src/span.rs:65`](../../../../crates/robby-ir/src/span.rs#L65) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -159,7 +153,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn location(1)` |
-| location | [`crates/robby-ir/src/span.rs:67`](../../../../crates/robby-ir/src/span.rs#L67) |
+| location | [`crates/robby-ir/src/span.rs:69`](../../../../crates/robby-ir/src/span.rs#L69) |
 | provenance | extractor · confidence 1.00 |
 
 > `file:line:column`, suitable for editor links.

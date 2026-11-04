@@ -10,8 +10,8 @@ use crate::view::{
     PackageStructure, ProcessView, SiblingGraph, SourceSlice, TypeModel,
 };
 
-use super::mermaid::{self, MermaidRenderer};
 use super::Renderer;
+use super::mermaid::{self, MermaidRenderer};
 
 #[derive(Debug, Default, Clone, Copy)]
 pub struct MarkdownRenderer {
@@ -156,11 +156,7 @@ impl Renderer for MarkdownRenderer {
                 } else {
                     format!(" — {} items", link.items.len())
                 };
-                let _ = writeln!(
-                    out,
-                    "- {} → `{}`{detail}",
-                    link.kind_label, link.module_fqn
-                );
+                let _ = writeln!(out, "- {} → `{}`{detail}", link.kind_label, link.module_fqn);
             }
             out.push('\n');
         }

@@ -37,7 +37,7 @@ fn build(
             .count();
         if remaining > 0 {
             children.push(HierarchyNode {
-                id: NodeId::from(format!("…{} more", remaining)),
+                id: NodeId::from(format!("…{remaining} more")),
                 name: format!("…{remaining} more"),
                 kind_tag: String::new(),
                 children: Vec::new(),
@@ -90,12 +90,12 @@ sequenceDiagram
     build-->>filter: node .children .iter() .filter_map(|id| doc.get(id)) .filter(|child| ...
     build-->>count: node .children .iter() .filter_map(|id| doc.get(id)) .filter(|child| ...
     alt remaining > 0
-    build-->>build: format!('…{} more', remaining)
-    build-->>NodeId__from: NodeId::from(format!('…{} more', remaining))
+    build-->>build: format!('…{remaining} more')
+    build-->>NodeId__from: NodeId::from(format!('…{remaining} more'))
     build-->>build: format!('…{remaining} more')
     build-->>String__new: String::new()
     build-->>Vec__new: Vec::new()
-    build-->>push: children.push(HierarchyNode { id: NodeId::from(format!('…{} more', re...
+    build-->>push: children.push(HierarchyNode { id: NodeId::from(format!('…{remaining} ...
     end
     end
     build-->>clone: node.id.clone()
@@ -109,13 +109,13 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::hierarchy::is_compact`](is-compact.md)
 - calls → [`robby_render::view::hierarchy::build`](build.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::hierarchy::is_compact`](is-compact.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../../robby_ir/kind/index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
@@ -126,7 +126,7 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::hierarchy`](index.md) — is_compact, kind_tag

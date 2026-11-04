@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_module_kind(kind_name: &str) -> bool` |
-| location | [`crates/robby-render/src/tree.rs:697`](../../../../crates/robby-render/src/tree.rs#L697) |
+| location | [`crates/robby-render/src/tree.rs:690`](../../../../crates/robby-render/src/tree.rs#L690) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

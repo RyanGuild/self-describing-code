@@ -74,7 +74,6 @@ flowchart TB
     n_c58f68f7fc449f63 --> n_356bf2c23da68961
     n_c58f68f7fc449f63 --> n_9c636b098ca4450e
     n_c58f68f7fc449f63 --> n_a331a60ee1568354
-    n_c58f68f7fc449f63 --> n_f3e9f97d91a4f4af
 ```
 
 ## Module coupling
@@ -126,8 +125,8 @@ flowchart TB
 | | build | example_self_model | robby_cli | robby_ir | robby_render | robby_agent |
 |---|---:|---:|---:|---:|---:|---:|
 | **build** | · | | 1 | 2 | 5 | |
-| **example_self_model** | | · | 1 | 1 | 6 | 1 |
-| **robby_cli** | | | · | 8 | 15 | 2 |
+| **example_self_model** | | · | 1 | 2 | 6 | |
+| **robby_cli** | | | · | 9 | 15 | 1 |
 | **robby_ir** | | | | · | | |
 | **robby_render** | | | | | · | |
 | **robby_agent** | | | | | | · |
@@ -172,12 +171,12 @@ flowchart TB
   ```
 ## References
 
-- calls → [`robby_agent::model`](../robby_agent/model/index.md) — parse
 - calls → [`robby_agent::openrouter`](../robby_agent/openrouter/index.md) — from_env
 - calls → [`robby_ir`](../robby_ir/index.md) — schema_json
 - calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — failures, is_failure, worst_first
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — as_str, from, new
 - calls → [`robby_ir::process`](../robby_ir/process/index.md) — default
+- calls → [`robby_ir::run`](../robby_ir/run/index.md) — parse
 - calls → [`robby_render::pipeline`](../robby_render/pipeline/index.md) — 6 items
 - calls → [`robby_render::report`](../robby_render/report/index.md) — push
 - calls → [`robby_render::tui`](../robby_render/tui/index.md) — tree

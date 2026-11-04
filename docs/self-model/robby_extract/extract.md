@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn extract(root: &Path) -> Result<Document>` |
-| location | [`crates/robby-extract/src/lib.rs:18`](../../../crates/robby-extract/src/lib.rs#L18) |
+| location | [`crates/robby-extract/src/lib.rs:62`](../../../crates/robby-extract/src/lib.rs#L62) |
 | provenance | extractor · confidence 1.00 |
 
 > Extract a document describing Rust crates and TypeScript packages under `root`.
@@ -14,8 +14,8 @@
 ```rust
 /// Extract a document describing Rust crates and TypeScript packages under `root`.
 pub fn extract(root: &Path) -> Result<Document> {
-    let mut doc = rust::extract(root)?;
-    let ts = typescript::extract(root)?;
+    let mut doc = RustExtractor.extract(root)?;
+    let ts = TypeScriptExtractor.extract(root)?;
     merge_documents(&mut doc, ts);
     Ok(doc)
 }
@@ -25,13 +25,11 @@ pub fn extract(root: &Path) -> Result<Document> {
 sequenceDiagram
     autonumber
     participant extract as extract()
-    participant rust__extract as rust::extract
-    participant typescript__extract as typescript::extract
     participant merge_documents as merge_documents
     participant Ok as Ok
-    extract-->>rust__extract: rust::extract(root)
+    extract-->>extract: RustExtractor.extract(root)
     extract-->>extract: ? (propagate)
-    extract-->>typescript__extract: typescript::extract(root)
+    extract-->>extract: TypeScriptExtractor.extract(root)
     extract-->>extract: ? (propagate)
     extract-->>merge_documents: merge_documents(&mut doc, ts)
     extract-->>Ok: Ok(doc)
@@ -51,6 +49,7 @@ sequenceDiagram
 
 ## Referenced by
 
+- calls ← [`robby_extract::extract_with`](extract-with.md)
 - calls ← [`robby_extract::test_extract::every_source_file_is_declared`](test_extract/every-source-file-is-declared.md)
 - calls ← [`robby_extract::test_extract::functions_produce_process_steps`](test_extract/functions-produce-process-steps.md)
 - calls ← [`robby_extract::test_extract::spans_point_at_the_right_bytes`](test_extract/spans-point-at-the-right-bytes.md)

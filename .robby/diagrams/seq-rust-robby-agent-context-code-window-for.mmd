@@ -4,11 +4,9 @@ sequenceDiagram
     participant slice_node as slice_node
     participant line_window as line_window
     participant unwrap_or_default as unwrap_or_default
-    alt let Some(owner) = owner
     code_window_for-->>slice_node: slice_node(sources, owner)
-    alt let Some(slice) = slice_node(sources, owner)
+    alt let Some(owner) = owner && let Some(slice) = slice_node(sources, owner)
     code_window_for-->>code_window_for: return
-    end
     end
     code_window_for-->>line_window: line_window(sources, comment)
     code_window_for-->>unwrap_or_default: line_window(sources, comment).unwrap_or_default()

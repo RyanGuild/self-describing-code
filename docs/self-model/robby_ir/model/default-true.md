@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn default_true() -> bool` |
-| location | [`crates/robby-ir/src/model.rs:156`](../../../../crates/robby-ir/src/model.rs#L156) |
+| location | [`crates/robby-ir/src/model.rs:171`](../../../../crates/robby-ir/src/model.rs#L171) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

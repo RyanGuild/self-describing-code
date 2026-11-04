@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn sibling_world_rects_do_not_collapse_onto_each_other()` |
-| location | [`crates/robby-render/tests/web.rs:213`](../../../../crates/robby-render/tests/web.rs#L213) |
+| location | [`crates/robby-render/tests/web.rs:218`](../../../../crates/robby-render/tests/web.rs#L218) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn class_diagram_marks_traits_as_interfaces()` |
-| location | [`crates/robby-render/tests/render.rs:469`](../../../../crates/robby-render/tests/render.rs#L469) |
+| location | [`crates/robby-render/tests/render.rs:434`](../../../../crates/robby-render/tests/render.rs#L434) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -36,7 +36,6 @@ fn class_diagram_marks_traits_as_interfaces() {
 
     let mut point = Node::new(NodeId::symbol("rust", "demo::Point"), code::STRUCT, "Point");
     point.parent = Some(NodeId::from("rust://demo"));
-    point.children = vec![NodeId::symbol("rust", "demo::Point::x")];
     doc.insert(point);
 
     let mut field = Node::new(NodeId::symbol("rust", "demo::Point::x"), code::FIELD, "x");
@@ -50,17 +49,6 @@ fn class_diagram_marks_traits_as_interfaces() {
     );
     impl_node.parent = Some(NodeId::from("rust://demo"));
     doc.insert(impl_node);
-
-    if let Some(module) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        module.children = vec![
-            NodeId::symbol("rust", "demo::Drawable"),
-            NodeId::symbol("rust", "demo::Point"),
-            NodeId::symbol("rust", "demo::impl Drawable for Point"),
-        ];
-    }
-    if let Some(drawable) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::Drawable")) {
-        drawable.children = vec![NodeId::symbol("rust", "demo::Drawable::draw")];
-    }
 
     let out = class_diagram(&doc, &NodeId::from("rust://demo"));
     assert!(out.contains("<<interface>>"));
@@ -83,7 +71,6 @@ sequenceDiagram
     participant insert as insert
     participant NodeId__symbol as NodeId::symbol
     participant Some as Some
-    participant get_mut as get_mut
     participant class_diagram as class_diagram
     class_diagram_marks_traits_as_interfaces-->>Document__new: Document::new('test')
     class_diagram_marks_traits_as_interfaces-->>NodeId__from: NodeId::from('rust://demo')
@@ -104,7 +91,6 @@ sequenceDiagram
     class_diagram_marks_traits_as_interfaces-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::Point'), code::STRUCT, 'Point')
     class_diagram_marks_traits_as_interfaces-->>NodeId__from: NodeId::from('rust://demo')
     class_diagram_marks_traits_as_interfaces-->>Some: Some(NodeId::from('rust://demo'))
-    class_diagram_marks_traits_as_interfaces-->>class_diagram_marks_traits_as_interfaces: vec![NodeId::symbol('rust', 'demo::Point::x')]
     class_diagram_marks_traits_as_interfaces-->>insert: doc.insert(point)
     class_diagram_marks_traits_as_interfaces-->>NodeId__symbol: NodeId::symbol('rust', 'demo::Point::x')
     class_diagram_marks_traits_as_interfaces-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::Point::x'), code::FIELD, 'x')
@@ -117,16 +103,6 @@ sequenceDiagram
     class_diagram_marks_traits_as_interfaces-->>Some: Some(NodeId::from('rust://demo'))
     class_diagram_marks_traits_as_interfaces-->>insert: doc.insert(impl_node)
     class_diagram_marks_traits_as_interfaces-->>NodeId__from: NodeId::from('rust://demo')
-    class_diagram_marks_traits_as_interfaces-->>get_mut: doc.nodes.get_mut(&NodeId::from('rust://demo'))
-    alt let Some(module) = doc.nodes.get_mut(&NodeId::from('rust://demo'))
-    class_diagram_marks_traits_as_interfaces-->>class_diagram_marks_traits_as_interfaces: vec![ NodeId::symbol('rust', 'demo::Drawable'), NodeId::symbol('rust'...
-    end
-    class_diagram_marks_traits_as_interfaces-->>NodeId__symbol: NodeId::symbol('rust', 'demo::Drawable')
-    class_diagram_marks_traits_as_interfaces-->>get_mut: doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::Drawable'))
-    alt let Some(drawable) = doc.nodes.get_mut(&NodeId::symbol('rust', 'demo:...
-    class_diagram_marks_traits_as_interfaces-->>class_diagram_marks_traits_as_interfaces: vec![NodeId::symbol('rust', 'demo::Drawable::draw')]
-    end
-    class_diagram_marks_traits_as_interfaces-->>NodeId__from: NodeId::from('rust://demo')
     class_diagram_marks_traits_as_interfaces-->>class_diagram: class_diagram(&doc, &NodeId::from('rust://demo'))
     class_diagram_marks_traits_as_interfaces-->>class_diagram_marks_traits_as_interfaces: assert!(out.contains('<<interface>>'))
     class_diagram_marks_traits_as_interfaces-->>class_diagram_marks_traits_as_interfaces: assert!(out.contains('class Drawable'))
@@ -136,7 +112,7 @@ sequenceDiagram
     class_diagram_marks_traits_as_interfaces-->>class_diagram_marks_traits_as_interfaces: assert!(out.contains('Point ..|> Drawable : implements'))
 ```
 
-45 steps · 0 observed · 45 possible only
+38 steps · 0 observed · 38 possible only
 
 **Edges**
 
@@ -165,8 +141,6 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
 - calls → [`robby_render::class_diagram`](../class-diagram.md)
 

@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn emit_function<'a>(     doc: &mut Document,     f: &Function<'a>,     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:591`](../../../../crates/robby-extract/src/typescript.rs#L591) |
+| signature | `fn emit_function(     doc: &mut Document,     f: &Function<'_>,     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:578`](../../../../crates/robby-extract/src/typescript.rs#L578) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn emit_function<'a>(
+fn emit_function(
     doc: &mut Document,
-    f: &Function<'a>,
+    f: &Function<'_>,
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,

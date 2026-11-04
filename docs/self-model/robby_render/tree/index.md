@@ -38,7 +38,6 @@ flowchart TB
         direction TB
         n_7f2a8756106a28dc["crate_index_path"]
         n_22c884af901eb923["crate_of"]
-        n_d7e28b7b7f1708a7["first_line"]
         n_a3553c31416c47fa["global_index"]
         n_6de8c81bdaacb2c4["is_compact"]
         n_fdfc429b571e713a["is_crate"]
@@ -100,7 +99,6 @@ flowchart TB
     n_d84657d79773bf18 -->|"2"| n_562f41d40a0543b1
     n_d84657d79773bf18 --> n_9f77a6e59badeee8
     n_d84657d79773bf18 --> n_a09f9f042f43ca1b
-    n_d84657d79773bf18 --> n_d7e28b7b7f1708a7
     n_d84657d79773bf18 --> n_ebf19a6a762f1087
     n_eaf247f5644149ed --> n_6de8c81bdaacb2c4
     n_eaf247f5644149ed --> n_ebf19a6a762f1087
@@ -117,7 +115,7 @@ flowchart TB
 
 | | tree | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **tree** | · | 33 | 88 |
+| **tree** | · | 31 | 88 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
@@ -130,13 +128,11 @@ flowchart TB
       node.children
           .iter()
           .filter_map(|child| doc.get(child))
-          .filter(|child| {
-              !is_module(child) && !is_compact(child.kind.as_str())
-          })
+          .filter(|child| !is_module(child) && !is_compact(child.kind.as_str()))
           .collect()
   }
   ```
-- `crates/robby-render/src/tree.rs:115:1` (docs, `robby_render::tree::item_slugs`): "Page slugs for a module's items. `index` is reserved for the module page."
+- `crates/robby-render/src/tree.rs:113:1` (docs, `robby_render::tree::item_slugs`): "Page slugs for a module's items. `index` is reserved for the module page."
   ```
   /// Page slugs for a module's items. `index` is reserved for the module page.
   fn item_slugs(items: &[&Node]) -> BTreeMap<NodeId, String> {
@@ -150,7 +146,7 @@ flowchart TB
       slugs
   }
   ```
-- `crates/robby-render/src/tree.rs:214:1` (docs, `robby_render::tree::module_page`): "A module page: what is in here, and where to go next."
+- `crates/robby-render/src/tree.rs:208:1` (docs, `robby_render::tree::module_page`): "A module page: what is in here, and where to go next."
   ```
   /// A module page: what is in here, and where to go next.
   fn module_page(
@@ -170,12 +166,16 @@ flowchart TB
       let _ = writeln!(out, "|---|---|");
       let _ = writeln!(out, "| kind | `{}` |", node.kind);
       if let Some(span) = &node.span {
-          let _ = writeln!(out, "| declared at | {} |", source_link(&page, out_rel, span));
+          let _ = writeln!(
+              out,
+              "| declared at | {} |",
+              source_link(&page, out_rel, span)
+          );
       }
       let _ = writeln!(
           out,
           "| provenance | {} · confidence {:.2} |",
-          source_name(node.provenance.source),
+          node.provenance.source.as_str(),
           node.provenance.confidence
       );
       let _ = writeln!(out, "| nodes | {} |", doc.subtree(&node.id).len());
@@ -270,18 +270,18 @@ flowchart TB
           out.push_str("## Items\n\n");
           out.push_str("| Item | Kind | Steps | Location |\n|---|---|---:|---|\n");
           for item in items {
-              let Some(slug) = slugs.get(&item.id) else { continue };
+              let Some(slug) = slugs.get(&item.id) else {
+                  continue;
+              };
               let target = module_dir.join(format!("{slug}.md"));
               let location = item
                   .span
                   .as_ref()
-                  .map(|span| span.location())
-                  .unwrap_or_else(|| "—".to_owned());
+                  .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
               let steps = item
                   .process
                   .as_ref()
-                  .map(|process| process.steps.len().to_string())
-                  .unwrap_or_else(|| "—".to_owned());
+                  .map_or_else(|| "—".to_owned(), |process| process.steps.len().to_string());
               let _ = writeln!(
                   out,
                   "| [`{}`]({}) | `{}` | {} | `{}` |",
@@ -300,8 +300,7 @@ flowchart TB
           for import in imports {
               let text = sources
                   .and_then(|s| import.span.as_ref().and_then(|span| slice(s, span)))
-                  .map(|text| first_line(&text))
-                  .unwrap_or_else(|| import.name.clone());
+                  .map_or_else(|| import.name.clone(), first_line);
               let _ = writeln!(out, "- {}", linked_import(doc, &page, &text));
           }
           out.push('\n');
@@ -332,11 +331,7 @@ flowchart TB
   ) -> Vec<Page> {
       let mut pages = Vec::new();
   
-      let crates: Vec<&Node> = doc
-          .nodes
-          .values()
-          .filter(|node| is_crate(node))
-          .collect();
+      let crates: Vec<&Node> = doc.nodes.values().filter(|node| is_crate(node)).collect();
   
       pages.push(Page {
           path: PathBuf::from("README.md"),
@@ -351,7 +346,7 @@ flowchart TB
       pages
   }
   ```
-- `crates/robby-render/src/tree.rs:372:1` (docs, `robby_render::tree::item_page`): "An item page: the source, its process, its edges."
+- `crates/robby-render/src/tree.rs:369:1` (docs, `robby_render::tree::item_page`): "An item page: the source, its process, its edges."
   ```
   /// An item page: the source, its process, its edges.
   fn item_page(
@@ -368,7 +363,7 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-render/src/tree.rs:564:1` (docs, `robby_render::tree::render_links`): "Render a [`LinkGraph`] as markdown with resolved page paths."
+- `crates/robby-render/src/tree.rs:562:1` (docs, `robby_render::tree::render_links`): "Render a [`LinkGraph`] as markdown with resolved page paths."
   ```
   /// Render a [`LinkGraph`] as markdown with resolved page paths.
   fn render_links(doc: &Document, links: &LinkGraph, page: &Path) -> String {
@@ -430,7 +425,7 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-render/src/tree.rs:715:1` (docs, `robby_render::tree::module_index_path`): "`<crate>/<a>/<b>/index.md` for a module, `<crate>/index.md` for the crate root."
+- `crates/robby-render/src/tree.rs:708:1` (docs, `robby_render::tree::module_index_path`): "`<crate>/<a>/<b>/index.md` for a module, `<crate>/index.md` for the crate root."
   ```
   /// `<crate>/<a>/<b>/index.md` for a module, `<crate>/index.md` for the crate root.
   fn module_index_path(node: &Node, crate_dir: &str) -> Option<PathBuf> {
@@ -447,24 +442,23 @@ flowchart TB
       )))
   }
   ```
-- `crates/robby-render/src/tree.rs:730:1` (docs, `robby_render::tree::page_of_node`): "The most specific page for a node: its item page if it has one."
+- `crates/robby-render/src/tree.rs:723:1` (docs, `robby_render::tree::page_of_node`): "The most specific page for a node: its item page if it has one."
   ```
   /// The most specific page for a node: its item page if it has one.
   fn page_of_node(doc: &Document, node: &Node) -> Option<PathBuf> {
-      let crate_dir = crate_of(node)?;
+      let crate_dir = crate_of(node);
   
-      if !is_module(node) && !is_compact(node.kind.as_str()) {
-          if let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id)) {
-              if is_module(parent) {
-                  if let Some(index) = module_index_path(parent, &crate_dir) {
-                      let module_dir = index.parent().unwrap_or(Path::new("."));
-                      let items = item_children(doc, parent);
-                      let slugs = item_slugs(&items);
-                      if let Some(slug) = slugs.get(&node.id) {
-                          return Some(module_dir.join(format!("{slug}.md")));
-                      }
-                  }
-              }
+      if !is_module(node)
+          && !is_compact(node.kind.as_str())
+          && let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id))
+          && is_module(parent)
+          && let Some(index) = module_index_path(parent, &crate_dir)
+      {
+          let module_dir = index.parent().unwrap_or(Path::new("."));
+          let items = item_children(doc, parent);
+          let slugs = item_slugs(&items);
+          if let Some(slug) = slugs.get(&node.id) {
+              return Some(module_dir.join(format!("{slug}.md")));
           }
       }
   
@@ -474,12 +468,16 @@ flowchart TB
           if is_module(candidate) {
               return module_index_path(candidate, &crate_dir);
           }
-          current = candidate.parent.clone();
+          // `while let` moves `current`, so this has to be a fresh assignment.
+          #[allow(clippy::assigning_clones)]
+          {
+              current = candidate.parent.clone();
+          }
       }
       None
   }
   ```
-- `crates/robby-render/src/tree.rs:760:1` (docs, `robby_render::tree::rel_link`): "Relative link from one page to another. Both are relative to the output root."
+- `crates/robby-render/src/tree.rs:756:1` (docs, `robby_render::tree::rel_link`): "Relative link from one page to another. Both are relative to the output root."
   ```
   /// Relative link from one page to another. Both are relative to the output root.
   fn rel_link(from: &Path, to: &Path) -> String {
@@ -513,12 +511,12 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-render/src/tree.rs:792:1` (docs, `robby_render::tree::source_link`): "A link from a generated page back to the exact source span."
+- `crates/robby-render/src/tree.rs:788:1` (docs, `robby_render::tree::source_link`): "A link from a generated page back to the exact source span."
   ```
   /// A link from a generated page back to the exact source span.
   fn source_link(page: &Path, out_rel: &str, span: &robby_ir::Span) -> String {
       let out_depth = out_rel.split('/').filter(|s| !s.is_empty()).count();
-      let page_depth = page.parent().map(|p| p.components().count()).unwrap_or(0);
+      let page_depth = page.parent().map_or(0, |p| p.components().count());
       let prefix = "../".repeat(out_depth + page_depth);
       format!(
           "[`{}:{}`]({}{}#L{})",
@@ -526,7 +524,7 @@ flowchart TB
       )
   }
   ```
-- `crates/robby-render/src/tree.rs:827:1` (docs, `robby_render::tree::item_slug`): "A filesystem-safe, human-readable page name, disambiguated on collision."
+- `crates/robby-render/src/tree.rs:823:1` (docs, `robby_render::tree::item_slug`): "A filesystem-safe, human-readable page name, disambiguated on collision."
   ```
   /// A filesystem-safe, human-readable page name, disambiguated on collision.
   fn item_slug(name: &str, id: &NodeId, used: &mut BTreeSet<String>) -> String {
@@ -555,7 +553,7 @@ flowchart TB
       alt
   }
   ```
-- `crates/robby-render/src/tree.rs:854:1` (docs, `robby_render::tree::page_paths`): "Every page path a document will produce, for tests and stale-file cleanup."
+- `crates/robby-render/src/tree.rs:850:1` (docs, `robby_render::tree::page_paths`): "Every page path a document will produce, for tests and stale-file cleanup."
   ```
   /// Every page path a document will produce, for tests and stale-file cleanup.
   pub fn page_paths(doc: &Document) -> Vec<PathBuf> {
@@ -568,8 +566,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, subtree, symbol
-- calls → [`robby_ir::span`](../../robby_ir/span/index.md) — location
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, subtree, symbol
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — sequence, stable_id, workspace_dependencies
 - calls → [`robby_render::markdown`](../markdown/index.md) — coverage_section
 - calls → [`robby_render::render`](../render/index.md) — comments, dependency_sections, externals, types
@@ -585,34 +583,34 @@ flowchart TB
 |---|---|---:|---|
 | [`Page`](page.md) | `code.struct` | — | `crates/robby-render/src/tree.rs:29:1` |
 | [`tree`](tree.md) | `code.function` | 10 | `crates/robby-render/src/tree.rs:35:1` |
-| [`module_pages`](module-pages.md) | `code.function` | 19 | `crates/robby-render/src/tree.rs:66:1` |
+| [`module_pages`](module-pages.md) | `code.function` | 19 | `crates/robby-render/src/tree.rs:62:1` |
 | [`item_children`](item-children.md) | `code.function` | 8 | `crates/robby-render/src/tree.rs:104:1` |
-| [`item_slugs`](item-slugs.md) | `code.function` | 7 | `crates/robby-render/src/tree.rs:115:1` |
-| [`global_index`](global-index.md) | `code.function` | 22 | `crates/robby-render/src/tree.rs:131:1` |
-| [`module_tree_line`](module-tree-line.md) | `code.function` | 6 | `crates/robby-render/src/tree.rs:188:1` |
-| [`module_page`](module-page.md) | `code.function` | 87 | `crates/robby-render/src/tree.rs:214:1` |
-| [`item_page`](item-page.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:372:1` |
-| [`nav`](nav.md) | `code.function` | 32 | `crates/robby-render/src/tree.rs:387:1` |
-| [`render_node`](render-node.md) | `code.function` | 58 | `crates/robby-render/src/tree.rs:436:1` |
-| [`render_links`](render-links.md) | `code.function` | 21 | `crates/robby-render/src/tree.rs:564:1` |
-| [`linked_import`](linked-import.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:624:1` |
-| [`resolve_use_path`](resolve-use-path.md) | `code.function` | 25 | `crates/robby-render/src/tree.rs:631:1` |
-| [`crate_of`](crate-of.md) | `code.function` | 10 | `crates/robby-render/src/tree.rs:674:1` |
-| [`is_crate`](is-crate.md) | `code.function` | 1 | `crates/robby-render/src/tree.rs:686:1` |
-| [`is_module`](is-module.md) | `code.function` | 2 | `crates/robby-render/src/tree.rs:693:1` |
-| [`is_module_kind`](is-module-kind.md) | `code.function` | 1 | `crates/robby-render/src/tree.rs:697:1` |
-| [`is_compact`](is-compact.md) | `code.function` | 1 | `crates/robby-render/src/tree.rs:704:1` |
-| [`crate_index_path`](crate-index-path.md) | `code.function` | 2 | `crates/robby-render/src/tree.rs:711:1` |
-| [`module_index_path`](module-index-path.md) | `code.function` | 12 | `crates/robby-render/src/tree.rs:715:1` |
-| [`page_of_node`](page-of-node.md) | `code.function` | 28 | `crates/robby-render/src/tree.rs:730:1` |
-| [`rel_link`](rel-link.md) | `code.function` | 22 | `crates/robby-render/src/tree.rs:760:1` |
-| [`source_link`](source-link.md) | `code.function` | 11 | `crates/robby-render/src/tree.rs:792:1` |
-| [`slice`](slice.md) | `code.function` | 3 | `crates/robby-render/src/tree.rs:803:1` |
-| [`first_line`](first-line.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:809:1` |
-| [`count_modules`](count-modules.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:813:1` |
-| [`short_fqn`](short-fqn.md) | `code.function` | 4 | `crates/robby-render/src/tree.rs:820:1` |
-| [`item_slug`](item-slug.md) | `code.function` | 20 | `crates/robby-render/src/tree.rs:827:1` |
-| [`page_paths`](page-paths.md) | `code.function` | 4 | `crates/robby-render/src/tree.rs:854:1` |
+| [`item_slugs`](item-slugs.md) | `code.function` | 7 | `crates/robby-render/src/tree.rs:113:1` |
+| [`global_index`](global-index.md) | `code.function` | 22 | `crates/robby-render/src/tree.rs:129:1` |
+| [`module_tree_line`](module-tree-line.md) | `code.function` | 6 | `crates/robby-render/src/tree.rs:186:1` |
+| [`module_page`](module-page.md) | `code.function` | 82 | `crates/robby-render/src/tree.rs:208:1` |
+| [`item_page`](item-page.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:369:1` |
+| [`nav`](nav.md) | `code.function` | 30 | `crates/robby-render/src/tree.rs:384:1` |
+| [`render_node`](render-node.md) | `code.function` | 57 | `crates/robby-render/src/tree.rs:436:1` |
+| [`render_links`](render-links.md) | `code.function` | 21 | `crates/robby-render/src/tree.rs:562:1` |
+| [`linked_import`](linked-import.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:622:1` |
+| [`resolve_use_path`](resolve-use-path.md) | `code.function` | 23 | `crates/robby-render/src/tree.rs:629:1` |
+| [`crate_of`](crate-of.md) | `code.function` | 7 | `crates/robby-render/src/tree.rs:670:1` |
+| [`is_crate`](is-crate.md) | `code.function` | 1 | `crates/robby-render/src/tree.rs:682:1` |
+| [`is_module`](is-module.md) | `code.function` | 2 | `crates/robby-render/src/tree.rs:686:1` |
+| [`is_module_kind`](is-module-kind.md) | `code.function` | 1 | `crates/robby-render/src/tree.rs:690:1` |
+| [`is_compact`](is-compact.md) | `code.function` | 1 | `crates/robby-render/src/tree.rs:697:1` |
+| [`crate_index_path`](crate-index-path.md) | `code.function` | 2 | `crates/robby-render/src/tree.rs:704:1` |
+| [`module_index_path`](module-index-path.md) | `code.function` | 12 | `crates/robby-render/src/tree.rs:708:1` |
+| [`page_of_node`](page-of-node.md) | `code.function` | 27 | `crates/robby-render/src/tree.rs:723:1` |
+| [`rel_link`](rel-link.md) | `code.function` | 22 | `crates/robby-render/src/tree.rs:756:1` |
+| [`source_link`](source-link.md) | `code.function` | 10 | `crates/robby-render/src/tree.rs:788:1` |
+| [`slice`](slice.md) | `code.function` | 3 | `crates/robby-render/src/tree.rs:799:1` |
+| [`first_line`](first-line.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:805:1` |
+| [`count_modules`](count-modules.md) | `code.function` | 5 | `crates/robby-render/src/tree.rs:809:1` |
+| [`short_fqn`](short-fqn.md) | `code.function` | 4 | `crates/robby-render/src/tree.rs:816:1` |
+| [`item_slug`](item-slug.md) | `code.function` | 20 | `crates/robby-render/src/tree.rs:823:1` |
+| [`page_paths`](page-paths.md) | `code.function` | 4 | `crates/robby-render/src/tree.rs:850:1` |
 
 ## Imports
 
@@ -620,7 +618,7 @@ flowchart TB
 - `use std::fmt::Write as _;`
 - `use std::path::{Path, PathBuf};`
 - [`use robby_ir::{CoverageReport, Document, Node, NodeId, kind};`](../../robby_ir/index.md)
-- `use crate::markdown::{cell, coverage_section, edge_name, source_name};`
+- `use crate::markdown::{cell, coverage_section};`
 - `use crate::render::{MarkdownRenderer, Renderer};`
 - `use crate::report::Report;`
 - `use crate::view::{LinkGraph, SelectOpts, collect};`

@@ -39,6 +39,19 @@ pub enum StepKind {
     Note,
 }
 
+impl StepKind {
+    /// Serde / display name. One mapping, shared by every renderer.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Call => "call",
+            Self::Return => "return",
+            Self::Signal => "signal",
+            Self::Decision => "decision",
+            Self::Note => "note",
+        }
+    }
+}
+
 /// A control-flow frame enclosing a step.
 ///
 /// Frames form a stack per step. The renderer diffs consecutive stacks and
@@ -61,6 +74,19 @@ pub enum BlockKind {
     Loop,
     Par,
     Break,
+}
+
+impl BlockKind {
+    /// Mermaid block keyword. Matches the serde name.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Alt => "alt",
+            Self::Opt => "opt",
+            Self::Loop => "loop",
+            Self::Par => "par",
+            Self::Break => "break",
+        }
+    }
 }
 
 /// A single ordered interaction.
@@ -98,7 +124,12 @@ impl Process {
     }
 
     /// Add a participant, returning its index. Duplicate ids are ignored.
-    pub fn participant(&mut self, id: impl Into<String>, label: impl Into<String>, kind: Kind) -> usize {
+    pub fn participant(
+        &mut self,
+        id: impl Into<String>,
+        label: impl Into<String>,
+        kind: Kind,
+    ) -> usize {
         let id = id.into();
         if let Some(idx) = self.participants.iter().position(|p| p.id == id) {
             return idx;
@@ -121,32 +152,50 @@ impl Process {
     /// observed; steps known statically but never seen stay dashed. Observed
     /// steps not present statically are appended, because runtime is the
     /// ground truth for what actually happened.
+    ///
+    /// Canonical implementation: [`crate::contract::Absorb`].
     pub fn absorb(&mut self, observed: &Process) {
-        for p in &observed.participants {
-            if !self.participants.iter().any(|q| q.id == p.id) {
-                self.participants.push(p.clone());
-            }
-        }
-
-        let mut matched = vec![false; observed.steps.len()];
-        for step in &mut self.steps {
-            if let Some(idx) = observed.steps.iter().position(|o| {
-                o.from == step.from && o.to == step.to && o.label == step.label
-            }) {
-                step.observed = true;
-                matched[idx] = true;
-            }
-        }
-        for (idx, step) in observed.steps.iter().enumerate() {
-            if !matched[idx] {
-                self.steps.push(step.clone());
-            }
-        }
+        <Self as crate::contract::Absorb>::absorb(self, observed);
     }
 }
 
 impl Default for Process {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn wire<T: serde::Serialize>(value: T) -> String {
+        serde_json::to_value(value)
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_owned()
+    }
+
+    #[test]
+    fn names_match_serde() {
+        for kind in [
+            StepKind::Call,
+            StepKind::Return,
+            StepKind::Signal,
+            StepKind::Decision,
+            StepKind::Note,
+        ] {
+            assert_eq!(wire(kind), kind.as_str());
+        }
+        for kind in [
+            BlockKind::Alt,
+            BlockKind::Opt,
+            BlockKind::Loop,
+            BlockKind::Par,
+            BlockKind::Break,
+        ] {
+            assert_eq!(wire(kind), kind.as_str());
+        }
     }
 }

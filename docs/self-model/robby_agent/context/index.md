@@ -71,17 +71,17 @@ flowchart TB
 
 | | context | robby_ir | robby_render | robby_agent |
 |---|---:|---:|---:|---:|
-| **context** | · | 12 | 3 | 11 |
+| **context** | · | 20 | 3 | 3 |
 | **robby_ir** | | · | | |
 | **robby_render** | | | · | |
 | **robby_agent** | | | | · |
 
 ## Comments
 
-- `crates/robby-agent/src/context.rs:148:1` (docs, `robby_agent::context::nearest_following_item`): "Nearest following sibling item (not comment/import), by span start."
+- `crates/robby-agent/src/context.rs:147:1` (docs, `robby_agent::context::nearest_following_item`): "Nearest following sibling item (not comment/import), by span start."
   ```
   /// Nearest following sibling item (not comment/import), by span start.
-  pub fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
+  pub(crate) fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
       let parent = comment.parent.as_ref().and_then(|id| doc.get(id))?;
       let comment_start = comment.span.as_ref()?.start.byte;
       let mut best: Option<(&Node, u32)> = None;
@@ -163,7 +163,7 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-agent/src/context.rs:185:1` (docs, `robby_agent::context::line_window`): "±20 lines around the node's span."
+- `crates/robby-agent/src/context.rs:184:1` (docs, `robby_agent::context::line_window`): "±20 lines around the node's span."
   ```
   /// ±20 lines around the node's span.
   fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String> {
@@ -184,18 +184,14 @@ flowchart TB
           out.push_str(line);
           out.push('\n');
       }
-      if out.is_empty() {
-          None
-      } else {
-          Some(out)
-      }
+      if out.is_empty() { None } else { Some(out) }
   }
   ```
 ## References
 
 - calls → [`robby_agent::enrich::tests`](../enrich/tests/index.md) — new
-- calls → [`robby_agent::model`](../model/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty, location
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 
@@ -213,11 +209,11 @@ flowchart TB
 | [`parent_has_comment_with_text`](parent-has-comment-with-text.md) | `code.function` | 10 | `crates/robby-agent/src/context.rs:76:1` |
 | [`build_for_comment`](build-for-comment.md) | `code.function` | 6 | `crates/robby-agent/src/context.rs:87:1` |
 | [`build_for_docs_owner`](build-for-docs-owner.md) | `code.function` | 8 | `crates/robby-agent/src/context.rs:106:1` |
-| [`file_location`](file-location.md) | `code.function` | 4 | `crates/robby-agent/src/context.rs:127:1` |
-| [`code_window_for`](code-window-for.md) | `code.function` | 4 | `crates/robby-agent/src/context.rs:134:1` |
-| [`nearest_following_item`](nearest-following-item.md) | `code.function` | 10 | `crates/robby-agent/src/context.rs:148:1` |
-| [`slice_node`](slice-node.md) | `code.function` | 7 | `crates/robby-agent/src/context.rs:177:1` |
-| [`line_window`](line-window.md) | `code.function` | 18 | `crates/robby-agent/src/context.rs:185:1` |
+| [`file_location`](file-location.md) | `code.function` | 4 | `crates/robby-agent/src/context.rs:126:1` |
+| [`code_window_for`](code-window-for.md) | `code.function` | 4 | `crates/robby-agent/src/context.rs:133:1` |
+| [`nearest_following_item`](nearest-following-item.md) | `code.function` | 10 | `crates/robby-agent/src/context.rs:147:1` |
+| [`slice_node`](slice-node.md) | `code.function` | 6 | `crates/robby-agent/src/context.rs:176:1` |
+| [`line_window`](line-window.md) | `code.function` | 18 | `crates/robby-agent/src/context.rs:184:1` |
 
 ## Imports
 

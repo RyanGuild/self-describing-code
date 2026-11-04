@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn whitespace_and_comments_are_classified_not_failed()` |
-| location | [`crates/robby-ir/tests/coverage.rs:45`](../../../../crates/robby-ir/tests/coverage.rs#L45) |
+| location | [`crates/robby-ir/tests/coverage.rs:46`](../../../../crates/robby-ir/tests/coverage.rs#L46) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

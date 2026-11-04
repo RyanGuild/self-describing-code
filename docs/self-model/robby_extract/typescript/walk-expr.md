@@ -5,13 +5,13 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn walk_expr<'a>(     expr: &Expression<'a>,     process: &mut Process,     frames: &[Block],     pending: &mut Vec<PendingCall>,     from: &NodeId,     ctx: &Ctx<'_>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:869`](../../../../crates/robby-extract/src/typescript.rs#L869) |
+| signature | `fn walk_expr(     expr: &Expression<'_>,     process: &mut Process,     frames: &[Block],     pending: &mut Vec<PendingCall>,     from: &NodeId,     ctx: &Ctx<'_>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:862`](../../../../crates/robby-extract/src/typescript.rs#L862) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn walk_expr<'a>(
-    expr: &Expression<'a>,
+fn walk_expr(
+    expr: &Expression<'_>,
     process: &mut Process,
     frames: &[Block],
     pending: &mut Vec<PendingCall>,

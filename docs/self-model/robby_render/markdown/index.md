@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-render/src/lib.rs:10`](../../../../crates/robby-render/src/lib.rs#L10) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 17 |
+| nodes | 15 |
 
 ## Package diagram
 
@@ -40,7 +40,7 @@ flowchart TB
 
 | | markdown | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **markdown** | · | 12 | 32 |
+| **markdown** | · | 11 | 32 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
@@ -134,7 +134,7 @@ flowchart TB
       artifact.to_markdown()
   }
   ```
-- `crates/robby-render/src/markdown.rs:276:1` (docs, `robby_render::markdown::index`): "A compact index of every node, for the top of the report."
+- `crates/robby-render/src/markdown.rs:246:1` (docs, `robby_render::markdown::index`): "A compact index of every node, for the top of the report."
   ```
   /// A compact index of every node, for the top of the report.
   pub fn index(doc: &Document) -> String {
@@ -145,20 +145,13 @@ flowchart TB
           let location = node
               .span
               .as_ref()
-              .map(|s| s.location())
-              .unwrap_or_else(|| "—".to_owned());
-          let _ = writeln!(
-              out,
-              "| `{}` | `{}` | `{}` |",
-              node.fqn,
-              node.kind,
-              location
-          );
+              .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
+          let _ = writeln!(out, "| `{}` | `{}` | `{}` |", node.fqn, node.kind, location);
       }
       out
   }
   ```
-- `crates/robby-render/src/markdown.rs:298:1` (docs, `robby_render::markdown::anchor`): "Sanity check used by tests: every id has a deterministic short form."
+- `crates/robby-render/src/markdown.rs:261:1` (docs, `robby_render::markdown::anchor`): "Sanity check used by tests: every id has a deterministic short form."
   ```
   /// Sanity check used by tests: every id has a deterministic short form.
   pub fn anchor(id: &NodeId) -> String {
@@ -169,8 +162,8 @@ flowchart TB
 
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — failures, is_complete, worst_first
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, subtree
-- calls → [`robby_ir::span`](../../robby_ir/span/index.md) — location
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — subtree
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — sequence, stable_id
 - calls → [`robby_render::render`](../render/index.md) — comments, dependency_sections, externals, types
 - calls → [`robby_render::report`](../report/index.md) — 5 items
@@ -195,18 +188,16 @@ flowchart TB
 | [`report`](report.md) | `code.function` | 31 | `crates/robby-render/src/markdown.rs:17:1` |
 | [`coverage_section`](coverage-section.md) | `code.function` | 16 | `crates/robby-render/src/markdown.rs:103:1` |
 | [`node_section`](node-section.md) | `code.function` | 45 | `crates/robby-render/src/markdown.rs:145:1` |
-| [`heading_depth`](heading-depth.md) | `code.function` | 4 | `crates/robby-render/src/markdown.rs:238:1` |
-| [`cell`](cell.md) | `code.function` | 2 | `crates/robby-render/src/markdown.rs:248:1` |
-| [`source_name`](source-name.md) | `code.function` | 0 | `crates/robby-render/src/markdown.rs:252:1` |
-| [`edge_name`](edge-name.md) | `code.function` | 0 | `crates/robby-render/src/markdown.rs:262:1` |
-| [`index`](index-n_fadae9.md) | `code.function` | 9 | `crates/robby-render/src/markdown.rs:276:1` |
-| [`anchor`](anchor.md) | `code.function` | 2 | `crates/robby-render/src/markdown.rs:298:1` |
+| [`heading_depth`](heading-depth.md) | `code.function` | 4 | `crates/robby-render/src/markdown.rs:232:1` |
+| [`cell`](cell.md) | `code.function` | 2 | `crates/robby-render/src/markdown.rs:242:1` |
+| [`index`](index-n_fadae9.md) | `code.function` | 7 | `crates/robby-render/src/markdown.rs:246:1` |
+| [`anchor`](anchor.md) | `code.function` | 2 | `crates/robby-render/src/markdown.rs:261:1` |
 
 ## Imports
 
 - `use std::collections::BTreeMap;`
 - `use std::fmt::Write as _;`
-- [`use robby_ir::{CoverageReport, Document, EdgeKind, Node, NodeId};`](../../robby_ir/index.md)
+- [`use robby_ir::{CoverageReport, Document, Node, NodeId};`](../../robby_ir/index.md)
 - `use crate::render::{MarkdownRenderer, Renderer};`
 - `use crate::report::Report;`
 - `use crate::view::{SelectOpts, collect};`

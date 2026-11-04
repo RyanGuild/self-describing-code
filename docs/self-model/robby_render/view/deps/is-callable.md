@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_callable(node: &Node) -> bool` |
-| location | [`crates/robby-render/src/view/deps.rs:680`](../../../../../crates/robby-render/src/view/deps.rs#L680) |
+| location | [`crates/robby-render/src/view/deps.rs:663`](../../../../../crates/robby-render/src/view/deps.rs#L663) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

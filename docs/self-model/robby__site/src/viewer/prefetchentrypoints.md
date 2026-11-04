@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:285`](../../../../../apps/site/src/viewer.ts#L285) |
+| location | [`apps/site/src/viewer.ts:295`](../../../../../apps/site/src/viewer.ts#L295) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -14,12 +14,12 @@ async function prefetchEntrypoints(): Promise<void> {
     return;
   }
   try {
-    const entrypoints = await fetchJson<Scene>("scene-entrypoints.json");
+    const entrypoints = await fetchJson<Scene>(ORG_MODES.entrypoints.file);
     sceneCache.set("entrypoints", entrypoints);
   } catch (err) {
     console.error(err);
     orgEntrypointsBtn.disabled = true;
-    orgEntrypointsBtn.title = "scene-entrypoints.json missing — re-run robby web";
+    orgEntrypointsBtn.title = `${ORG_MODES.entrypoints.file} missing — re-run robby web`;
   }
 }
 ```

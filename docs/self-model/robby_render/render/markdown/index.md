@@ -93,13 +93,13 @@ flowchart TB
 | [`MarkdownRenderer`](markdownrenderer.md) | `code.struct` | — | `crates/robby-render/src/render/markdown.rs:16:1` |
 | [`impl MarkdownRenderer`](impl-markdownrenderer.md) | `code.impl` | — | `crates/robby-render/src/render/markdown.rs:21:1` |
 | [`impl Renderer for MarkdownRenderer`](impl-renderer-for-markdownrenderer.md) | `code.impl` | — | `crates/robby-render/src/render/markdown.rs:42:1` |
-| [`cell`](cell.md) | `code.function` | 2 | `crates/robby-render/src/render/markdown.rs:190:1` |
-| [`trim_comment`](trim-comment.md) | `code.function` | 12 | `crates/robby-render/src/render/markdown.rs:194:1` |
+| [`cell`](cell.md) | `code.function` | 2 | `crates/robby-render/src/render/markdown.rs:186:1` |
+| [`trim_comment`](trim-comment.md) | `code.function` | 12 | `crates/robby-render/src/render/markdown.rs:190:1` |
 
 ## Imports
 
 - `use std::fmt::Write as _;`
 - `use crate::view::{`
-- `use super::mermaid::{self, MermaidRenderer};`
 - `use super::Renderer;`
+- `use super::mermaid::{self, MermaidRenderer};`
 

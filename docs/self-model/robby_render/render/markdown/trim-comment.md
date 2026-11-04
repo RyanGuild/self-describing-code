@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn trim_comment(text: &str, max: usize) -> String` |
-| location | [`crates/robby-render/src/render/markdown.rs:194`](../../../../../crates/robby-render/src/render/markdown.rs#L194) |
+| location | [`crates/robby-render/src/render/markdown.rs:190`](../../../../../crates/robby-render/src/render/markdown.rs#L190) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

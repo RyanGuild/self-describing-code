@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-render/src/view/source.rs:7`](../../../../../crates/robby-render/src/view/source.rs#L7) |
+| location | [`crates/robby-render/src/view/source.rs:8`](../../../../../crates/robby-render/src/view/source.rs#L8) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SourceSlice {
     pub file: String,
     pub text: String,
@@ -18,6 +18,6 @@ pub struct SourceSlice {
 
 **Fields and variants**
 
-- `file` — `crates/robby-render/src/view/source.rs:9:5`
-- `text` — `crates/robby-render/src/view/source.rs:10:5`
+- `file` — `crates/robby-render/src/view/source.rs:10:5`
+- `text` — `crates/robby-render/src/view/source.rs:11:5`
 

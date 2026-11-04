@@ -4,11 +4,11 @@ use robby_ir::kind::code;
 use robby_ir::{
     Block, BlockKind, Document, Edge, EdgeKind, Kind, Node, NodeId, Process, Source, Step, StepKind,
 };
+use robby_render::view::{CommentsView, ExternalsView};
 use robby_render::{
     MarkdownRenderer, Renderer, class_diagram, collect, coupling, dependencies, flowchart,
     sequence, stable_id, workspace_dependencies,
 };
-use robby_render::view::{CommentsView, ExternalsView};
 
 fn step(from: &str, to: &str, label: &str, observed: bool, blocks: Vec<Block>) -> Step {
     Step {
@@ -153,7 +153,10 @@ fn flowchart_clusters_modules() {
 
     let mut b = Node::new(NodeId::symbol("rust", "demo::b"), code::FUNCTION, "demo::b");
     b.parent = Some(NodeId::from("rust://demo"));
-    b.edges.push(Edge::new(NodeId::symbol("rust", "demo::a"), EdgeKind::Calls));
+    b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::a"),
+        EdgeKind::Calls,
+    ));
     doc.insert(b);
 
     let out = flowchart(&doc, &NodeId::from("rust://demo"));
@@ -172,12 +175,19 @@ fn dependencies_emits_package_weighted_and_dsm() {
     doc.insert(krate);
 
     // Third arg is FQN (name is derived); mirror extractor shape.
-    let mut left = Node::new(NodeId::symbol("rust", "demo::left"), code::MODULE, "demo::left");
+    let mut left = Node::new(
+        NodeId::symbol("rust", "demo::left"),
+        code::MODULE,
+        "demo::left",
+    );
     left.parent = Some(NodeId::from("rust://demo"));
     doc.insert(left);
 
-    let mut right =
-        Node::new(NodeId::symbol("rust", "demo::right"), code::MODULE, "demo::right");
+    let mut right = Node::new(
+        NodeId::symbol("rust", "demo::right"),
+        code::MODULE,
+        "demo::right",
+    );
     right.parent = Some(NodeId::from("rust://demo"));
     doc.insert(right);
 
@@ -203,26 +213,11 @@ fn dependencies_emits_package_weighted_and_dsm() {
         "demo::right::b",
     );
     b.parent = Some(NodeId::symbol("rust", "demo::right"));
-    b.edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::left::a"), EdgeKind::Calls));
+    b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::left::a"),
+        EdgeKind::Calls,
+    ));
     doc.insert(b);
-
-    // Keep parent→child links consistent with how the extractor builds the tree.
-    if let Some(krate) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        krate.children = vec![
-            NodeId::symbol("rust", "demo::left"),
-            NodeId::symbol("rust", "demo::right"),
-        ];
-    }
-    if let Some(left) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::left")) {
-        left.children = vec![
-            NodeId::symbol("rust", "demo::left::Point"),
-            NodeId::symbol("rust", "demo::left::a"),
-        ];
-    }
-    if let Some(right) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::right")) {
-        right.children = vec![NodeId::symbol("rust", "demo::right::b")];
-    }
 
     let out = dependencies(&doc, &NodeId::from("rust://demo"));
 
@@ -234,13 +229,16 @@ fn dependencies_emits_package_weighted_and_dsm() {
         !out.contains("Point"),
         "types belong in the class diagram, not module deps"
     );
-    assert!(!out.contains("[\"a\"]"), "functions stay out of the package diagram");
+    assert!(
+        !out.contains("[\"a\"]"),
+        "functions stay out of the package diagram"
+    );
 
     let coupled = coupling(&doc, &NodeId::from("rust://demo"));
     assert!(coupled.starts_with("flowchart TB\n"));
     assert!(coupled.contains("subgraph"), "coupling nests modules");
-    assert!(coupled.contains("a"), "coupling shows callee");
-    assert!(coupled.contains("b"), "coupling shows caller");
+    assert!(coupled.contains('a'), "coupling shows callee");
+    assert!(coupled.contains('b'), "coupling shows caller");
     assert!(coupled.contains("-->"), "coupling draws the call edge");
     assert!(!coupled.contains("Point"), "types stay out of coupling");
 
@@ -260,11 +258,7 @@ fn dependencies_emits_package_weighted_and_dsm() {
 fn externals_and_comments_sections_render() {
     let mut doc = Document::new("test");
 
-    let mut pkg = Node::new(
-        NodeId::symbol("typescript", "demo"),
-        code::PACKAGE,
-        "demo",
-    );
+    let mut pkg = Node::new(NodeId::symbol("typescript", "demo"), code::PACKAGE, "demo");
     pkg.lang = robby_ir::Lang::TypeScript;
     doc.insert(pkg);
 
@@ -337,10 +331,9 @@ fn externals_and_comments_sections_render() {
     decision
         .annotations
         .insert("note_kind".into(), "usage_example".into());
-    decision.annotations.insert(
-        "highlights".into(),
-        r#"[{"start":0,"end":6}]"#.into(),
-    );
+    decision
+        .annotations
+        .insert("highlights".into(), r#"[{"start":0,"end":6}]"#.into());
     doc.insert(decision);
 
     let mut noise = Node::new(
@@ -387,36 +380,6 @@ fn externals_and_comments_sections_render() {
     });
     doc.insert(iface);
 
-    if let Some(pkg) = doc.nodes.get_mut(&NodeId::symbol("typescript", "demo")) {
-        pkg.children = vec![NodeId::symbol("typescript", "demo/shapes")];
-    }
-    if let Some(module) = doc.nodes.get_mut(&NodeId::symbol("typescript", "demo/shapes")) {
-        module.children = vec![
-            NodeId::symbol("typescript", "demo/shapes/import:demo-ext"),
-            NodeId::symbol("typescript", "demo/shapes/comment@0"),
-            NodeId::symbol("typescript", "demo/shapes/comment@99"),
-            NodeId::symbol("typescript", "demo/shapes/Drawable"),
-        ];
-    }
-    if let Some(c) = doc
-        .nodes
-        .get_mut(&NodeId::symbol("typescript", "demo/shapes/comment@0"))
-    {
-        c.children = vec![NodeId::symbol(
-            "typescript",
-            "demo/shapes/comment@0/decision",
-        )];
-    }
-    if let Some(c) = doc
-        .nodes
-        .get_mut(&NodeId::symbol("typescript", "demo/shapes/comment@99"))
-    {
-        c.children = vec![NodeId::symbol(
-            "typescript",
-            "demo/shapes/comment@99/decision",
-        )];
-    }
-
     let mut sources = std::collections::BTreeMap::new();
     sources.insert(
         "shapes.ts".into(),
@@ -431,10 +394,7 @@ fn externals_and_comments_sections_render() {
     let comments = CommentsView::from_root(&doc, &root, Some(&sources));
     assert!(!comments.is_empty());
     assert!(
-        comments
-            .entries
-            .iter()
-            .all(|e| e.text != "TODO: delete me"),
+        comments.entries.iter().all(|e| e.text != "TODO: delete me"),
         "noise comments filtered"
     );
     let enriched = comments
@@ -442,7 +402,12 @@ fn externals_and_comments_sections_render() {
         .iter()
         .find(|e| e.note.is_some())
         .expect("enriched entry");
-    assert!(enriched.code.as_ref().is_some_and(|c| c.contains("Drawable")));
+    assert!(
+        enriched
+            .code
+            .as_ref()
+            .is_some_and(|c| c.contains("Drawable"))
+    );
 
     let md = MarkdownRenderer::new();
     let ext_body = md.externals(&externals);
@@ -492,7 +457,6 @@ fn class_diagram_marks_traits_as_interfaces() {
 
     let mut point = Node::new(NodeId::symbol("rust", "demo::Point"), code::STRUCT, "Point");
     point.parent = Some(NodeId::from("rust://demo"));
-    point.children = vec![NodeId::symbol("rust", "demo::Point::x")];
     doc.insert(point);
 
     let mut field = Node::new(NodeId::symbol("rust", "demo::Point::x"), code::FIELD, "x");
@@ -506,17 +470,6 @@ fn class_diagram_marks_traits_as_interfaces() {
     );
     impl_node.parent = Some(NodeId::from("rust://demo"));
     doc.insert(impl_node);
-
-    if let Some(module) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        module.children = vec![
-            NodeId::symbol("rust", "demo::Drawable"),
-            NodeId::symbol("rust", "demo::Point"),
-            NodeId::symbol("rust", "demo::impl Drawable for Point"),
-        ];
-    }
-    if let Some(drawable) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::Drawable")) {
-        drawable.children = vec![NodeId::symbol("rust", "demo::Drawable::draw")];
-    }
 
     let out = class_diagram(&doc, &NodeId::from("rust://demo"));
     assert!(out.contains("<<interface>>"));

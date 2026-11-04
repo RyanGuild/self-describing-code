@@ -5,29 +5,24 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/coverage.rs:274`](../../../../crates/robby-ir/src/coverage.rs#L274) |
+| location | [`crates/robby-ir/src/coverage.rs:277`](../../../../crates/robby-ir/src/coverage.rs#L277) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 impl TriviaMode {
     fn from_path(path: &str) -> Self {
-        let lower = path.to_ascii_lowercase();
-        if lower.ends_with(".ts")
-            || lower.ends_with(".tsx")
-            || lower.ends_with(".mts")
-            || lower.ends_with(".cts")
-            || lower.ends_with(".js")
-            || lower.ends_with(".jsx")
-            || lower.ends_with(".mjs")
-            || lower.ends_with(".cjs")
-        {
-            Self::TypeScript
-        } else {
-            Self::Rust
-        }
+        const SCRIPT: &[&str] = &["ts", "tsx", "mts", "cts", "js", "jsx", "mjs", "cjs"];
+        let script = std::path::Path::new(path)
+            .extension()
+            .is_some_and(|ext| SCRIPT.iter().any(|cand| ext.eq_ignore_ascii_case(cand)));
+        if script { Self::TypeScript } else { Self::Rust }
     }
 }
 ```
+
+## References
+
+- calls → [`robby_ir::kind`](../kind/index.md) — new
 
 ## Referenced by
 
@@ -40,25 +35,16 @@ impl TriviaMode {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_path(1)` |
-| location | [`crates/robby-ir/src/coverage.rs:275`](../../../../crates/robby-ir/src/coverage.rs#L275) |
+| location | [`crates/robby-ir/src/coverage.rs:278`](../../../../crates/robby-ir/src/coverage.rs#L278) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn from_path(path: &str) -> Self {
-        let lower = path.to_ascii_lowercase();
-        if lower.ends_with(".ts")
-            || lower.ends_with(".tsx")
-            || lower.ends_with(".mts")
-            || lower.ends_with(".cts")
-            || lower.ends_with(".js")
-            || lower.ends_with(".jsx")
-            || lower.ends_with(".mjs")
-            || lower.ends_with(".cjs")
-        {
-            Self::TypeScript
-        } else {
-            Self::Rust
-        }
+        const SCRIPT: &[&str] = &["ts", "tsx", "mts", "cts", "js", "jsx", "mjs", "cjs"];
+        let script = std::path::Path::new(path)
+            .extension()
+            .is_some_and(|ext| SCRIPT.iter().any(|cand| ext.eq_ignore_ascii_case(cand)));
+        if script { Self::TypeScript } else { Self::Rust }
     }
 ```
 
@@ -66,18 +52,24 @@ fn from_path(path: &str) -> Self {
 sequenceDiagram
     autonumber
     participant from_path as from_path()
-    participant to_ascii_lowercase as to_ascii_lowercase
-    participant ends_with as ends_with
-    from_path-->>to_ascii_lowercase: path.to_ascii_lowercase()
-    from_path-->>ends_with: lower.ends_with('.ts')
-    from_path-->>ends_with: lower.ends_with('.tsx')
-    from_path-->>ends_with: lower.ends_with('.mts')
-    from_path-->>ends_with: lower.ends_with('.cts')
-    from_path-->>ends_with: lower.ends_with('.js')
-    from_path-->>ends_with: lower.ends_with('.jsx')
-    from_path-->>ends_with: lower.ends_with('.mjs')
-    from_path-->>ends_with: lower.ends_with('.cjs')
+    participant std__path__Path__new as std::path::Path::new
+    participant extension as extension
+    participant iter as iter
+    participant eq_ignore_ascii_case as eq_ignore_ascii_case
+    participant any as any
+    participant is_some_and as is_some_and
+    from_path-->>from_path: const SCRIPT: &[&str] = &['ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mj...
+    from_path-->>std__path__Path__new: std::path::Path::new(path)
+    from_path-->>extension: std::path::Path::new(path) .extension()
+    from_path-->>iter: SCRIPT.iter()
+    from_path-->>eq_ignore_ascii_case: ext.eq_ignore_ascii_case(cand)
+    from_path-->>any: SCRIPT.iter().any(|cand| ext.eq_ignore_ascii_case(cand))
+    from_path-->>is_some_and: std::path::Path::new(path) .extension() .is_some_and(|ext| SCRIPT.ite...
 ```
 
-9 steps · 0 observed · 9 possible only
+7 steps · 0 observed · 7 possible only
+
+**Edges**
+
+- calls → [`robby_ir::kind::impl Kind::new`](../kind/index.md)
 

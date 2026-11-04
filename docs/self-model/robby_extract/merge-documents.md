@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn merge_documents(into: &mut Document, from: Document)` |
-| location | [`crates/robby-extract/src/lib.rs:32`](../../../crates/robby-extract/src/lib.rs#L32) |
+| location | [`crates/robby-extract/src/lib.rs:103`](../../../crates/robby-extract/src/lib.rs#L103) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -50,4 +50,5 @@ sequenceDiagram
 ## Referenced by
 
 - calls ← [`robby_extract::extract`](extract.md)
+- calls ← [`robby_extract::extract_with`](extract-with.md)
 

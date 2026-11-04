@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn type_text(ty: &Type) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:432`](../../../../crates/robby-extract/src/rust.rs#L432) |
+| location | [`crates/robby-extract/src/rust.rs:435`](../../../../crates/robby-extract/src/rust.rs#L435) |
 | provenance | extractor · confidence 1.00 |
 
 > Render a type just well enough to disambiguate impl blocks.
