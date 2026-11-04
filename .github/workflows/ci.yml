@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
         with:
+          # Required by the action; keep in sync with rust-toolchain.toml.
+          toolchain: 1.99.0
           components: rustfmt, clippy
       - name: format
         run: cargo fmt --all -- --check
