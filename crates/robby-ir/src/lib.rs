@@ -16,14 +16,17 @@
 //!    `resolved: false` and a confidence score.
 
 pub mod codepath;
+pub mod contract;
 pub mod coverage;
 pub mod kind;
 pub mod model;
 pub mod process;
+pub mod run;
 pub mod span;
 pub mod vocab;
 
 pub use codepath::{CodePath, CodePathEdge, DEFAULT_MAX_DEPTH, build_code_paths, find_entrypoints};
+pub use contract::{Absorb, CoverageGate, KindNamespace};
 pub use coverage::{
     CoverageReport, FileCoverage, Gap, GapReason, document_coverage, file_coverage,
 };
@@ -33,6 +36,7 @@ pub use model::{
     Source, leaf_name, validate,
 };
 pub use process::{Block, BlockKind, Participant, Process, Step, StepKind};
+pub use run::{Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus};
 pub use span::{Position, Span};
 pub use vocab::{Highlight, NoteKind, Verdict};
 

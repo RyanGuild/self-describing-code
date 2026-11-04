@@ -152,29 +152,10 @@ impl Process {
     /// observed; steps known statically but never seen stay dashed. Observed
     /// steps not present statically are appended, because runtime is the
     /// ground truth for what actually happened.
+    ///
+    /// Canonical implementation: [`crate::contract::Absorb`].
     pub fn absorb(&mut self, observed: &Process) {
-        for p in &observed.participants {
-            if !self.participants.iter().any(|q| q.id == p.id) {
-                self.participants.push(p.clone());
-            }
-        }
-
-        let mut matched = vec![false; observed.steps.len()];
-        for step in &mut self.steps {
-            if let Some(idx) = observed
-                .steps
-                .iter()
-                .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
-            {
-                step.observed = true;
-                matched[idx] = true;
-            }
-        }
-        for (idx, step) in observed.steps.iter().enumerate() {
-            if !matched[idx] {
-                self.steps.push(step.clone());
-            }
-        }
+        <Self as crate::contract::Absorb>::absorb(self, observed);
     }
 }
 

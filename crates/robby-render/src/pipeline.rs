@@ -10,9 +10,14 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use robby_ir::{CoverageReport, Diagnostic, Document, Severity, coverage, validate};
+use robby_ir::{
+    CoverageGate, CoverageReport, Diagnostic, Document, Severity, coverage, validate,
+};
 
 /// A document plus everything derived from it.
+///
+/// This is the checked snapshot between extract and render: coverage and
+/// structural diagnostics are always computed here so write paths share one gate.
 pub struct Loaded {
     pub document: Document,
     pub sources: BTreeMap<String, String>,
@@ -25,7 +30,7 @@ pub struct Loaded {
 impl Loaded {
     /// True when the coverage gate passes and there are no error diagnostics.
     pub fn is_ok(&self) -> bool {
-        self.coverage.is_complete()
+        CoverageGate::passes(&self.coverage)
             && !self
                 .diagnostics
                 .iter()
