@@ -13,6 +13,7 @@ use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 
 use robby_ir::run::{RecipeId, RunRecord, RunStatus, recipes};
+use robby_ir::sample::OpportunitySample;
 use robby_ir::{Document, Kind, Process, Step, StepKind, kind::agent};
 
 /// Thin index row so the dock can list without fetching every record.
@@ -129,6 +130,35 @@ impl SiteRunsStore {
         sort_index_newest_first(&mut index);
         self.write_index(&index)?;
         Ok(())
+    }
+
+    /// Soft-queue `robby.review_view` for each subject in a seeded opportunity
+    /// sample (not every IR node). Copies `sample_seed` / `sample_n` stats onto
+    /// every queued record so Allow → metric_test can stay scoped to the draw.
+    pub fn queue_sampled_review_views(
+        &self,
+        sample: &OpportunitySample,
+        trigger: &str,
+    ) -> Result<Vec<RunRecord>> {
+        let sample_stats = sample.stats();
+        let mut out = Vec::with_capacity(sample.subjects.len());
+        for opportunity in &sample.subjects {
+            let mut record = self.queue_review_view(
+                opportunity.subject.as_str(),
+                trigger,
+                Some(opportunity.name.as_str()),
+            )?;
+            for (key, value) in &sample_stats {
+                record.stats.insert(key.clone(), value.clone());
+            }
+            record.stats.insert(
+                "opportunity_reason".to_owned(),
+                opportunity.reason.as_str().to_owned(),
+            );
+            self.put(&record)?;
+            out.push(record);
+        }
+        Ok(out)
     }
 
     /// Soft-queue a `robby.review_view` for `subject` (one pending per subject).
@@ -446,6 +476,50 @@ mod tests {
         assert_eq!(b.recipe.as_str(), recipes::REVIEW_VIEW);
         let index = store.read_index().unwrap();
         assert_eq!(index.runs.len(), 1);
+    }
+
+    #[test]
+    fn queue_sampled_review_views_stamps_sample_stats() {
+        use robby_ir::sample::{
+            Opportunity, OpportunityReason, OpportunitySample, STRATEGY_RANDOM, STAT_SAMPLE_N,
+            STAT_SAMPLE_SEED,
+        };
+        use robby_ir::NodeId;
+
+        let store = temp_store();
+        let sample = OpportunitySample {
+            seed: 42,
+            n: 2,
+            strategy: STRATEGY_RANDOM.to_owned(),
+            candidate_count: 10,
+            subjects: vec![
+                Opportunity {
+                    subject: NodeId::from("rust://a"),
+                    reason: OpportunityReason::WorkspaceRoot,
+                    name: "a".into(),
+                },
+                Opportunity {
+                    subject: NodeId::from("rust://b"),
+                    reason: OpportunityReason::FunctionWithProcess,
+                    name: "b".into(),
+                },
+            ],
+        };
+        let records = store
+            .queue_sampled_review_views(&sample, "cli.sample_opportunities")
+            .unwrap();
+        assert_eq!(records.len(), 2);
+        for record in &records {
+            assert_eq!(
+                record.stats.get(STAT_SAMPLE_SEED).map(String::as_str),
+                Some("42")
+            );
+            assert_eq!(
+                record.stats.get(STAT_SAMPLE_N).map(String::as_str),
+                Some("2")
+            );
+            assert!(record.stats.contains_key("opportunity_reason"));
+        }
     }
 
     #[test]
