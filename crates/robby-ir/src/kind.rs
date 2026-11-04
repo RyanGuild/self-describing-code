@@ -96,11 +96,15 @@ pub mod runtime {
     pub const EVENT: &str = "runtime.event";
 }
 
-/// Reserved for Robby's own processes. Nothing produces these yet.
+/// Reserved for Robby's own processes.
 pub mod agent {
     pub const DECISION: &str = "agent.decision";
     pub const ACTION: &str = "agent.action";
     pub const OBSERVATION: &str = "agent.observation";
+    /// Invokable procedure (recipe) in the pipeline catalog.
+    pub const PIPELINE: &str = "agent.pipeline";
+    /// One invocation of a recipe (past, live, or queued).
+    pub const RUN: &str = "agent.run";
 }
 
 /// True when `kind` is understood by the current version of the tool.
@@ -108,5 +112,6 @@ pub mod agent {
 /// Unknown kinds are never an error — they are rendered generically and
 /// reported as a soft gap, so an older viewer can still display a newer graph.
 pub fn is_known(kind: &Kind) -> bool {
-    matches!(kind.namespace(), "code" | "runtime" | "agent")
+    use crate::contract::KindNamespace;
+    kind.is_known_namespace()
 }
