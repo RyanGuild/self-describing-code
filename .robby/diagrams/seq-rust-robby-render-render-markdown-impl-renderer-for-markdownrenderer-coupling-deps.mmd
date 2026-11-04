@@ -1,6 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant coupling_deps as coupling_deps()
-    participant Self__fence as Self::fence
-    coupling_deps-->>coupling_deps: self.mermaid.coupling_deps(view)
-    coupling_deps-->>Self__fence: Self::fence('mermaid', &self.mermaid.coupling_deps(view))

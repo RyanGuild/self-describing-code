@@ -10,9 +10,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use robby_ir::{
-    CoverageGate, CoverageReport, Diagnostic, Document, Severity, coverage, validate,
-};
+use robby_ir::{CoverageGate, CoverageReport, Diagnostic, Document, Severity, coverage, validate};
 
 /// A document plus everything derived from it.
 ///

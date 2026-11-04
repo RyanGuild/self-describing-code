@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant sequence as sequence()
-    participant ProcView__from_process as ProcView::from_process
-    participant process as process
-    sequence-->>ProcView__from_process: ProcView::from_process(process)
-    sequence-->>process: MermaidRenderer.process(&ProcView::from_process(process))

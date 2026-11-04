@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant failing_gaps as failing_gaps()
-    participant failures as failures
-    participant collect as collect
-    failing_gaps-->>failures: self.failures()
-    failing_gaps-->>collect: self.failures().collect()

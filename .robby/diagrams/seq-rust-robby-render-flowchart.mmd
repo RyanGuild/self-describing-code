@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant flowchart as flowchart()
-    participant SiblingGraph__from_root as SiblingGraph::from_root
-    participant sibling_graph as sibling_graph
-    flowchart-->>SiblingGraph__from_root: SiblingGraph::from_root(doc, root)
-    flowchart-->>sibling_graph: MermaidRenderer.sibling_graph(&SiblingGraph::from_root(doc, root))

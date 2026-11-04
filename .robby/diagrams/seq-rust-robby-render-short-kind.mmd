@@ -1,5 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant short_kind as short_kind()
-    participant unwrap_or as unwrap_or
-    short_kind-->>unwrap_or: kind.as_str().rsplit('.').next().unwrap_or(kind.as_str())

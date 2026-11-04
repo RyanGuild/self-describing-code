@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant source_and_edge_names_match_serde as source_and_edge_names_match_serde()
-    loop [ Source::Extractor, Source::Macro, Source::Trace, Source::Agent, Sou...
-    source_and_edge_names_match_serde-->>source_and_edge_names_match_serde: assert_eq!(wire(source), source.as_str())
-    end
-    loop [ EdgeKind::Contains, EdgeKind::Calls, EdgeKind::Uses, EdgeKind::Impo...
-    source_and_edge_names_match_serde-->>source_and_edge_names_match_serde: assert_eq!(wire(kind), kind.as_str())
-    end

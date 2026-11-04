@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant slice as slice()
-    participant get as get
-    slice-->>get: sources .get(&span.file)
-    slice-->>slice: ? (propagate)
-    slice-->>get: sources .get(&span.file)? .get(span.start.byte as usize..span.end.byt...

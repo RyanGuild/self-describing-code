@@ -1,8 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant common_prefix as common_prefix()
-    common_prefix-->>common_prefix: 0
-    loop i < a.len() && i < b.len() && a[i].kind == b[i].kind && a[i].label ==...
-    common_prefix-->>common_prefix: i += 1
-    end
-    common_prefix-->>common_prefix: i

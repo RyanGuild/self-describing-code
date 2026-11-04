@@ -1,8 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant pick_call_prefers_same_module as pick_call_prefers_same_module()
-    participant pick_call_target as pick_call_target
-    pick_call_prefers_same_module-->>pick_call_prefers_same_module: vec![ NodeId::symbol('rust', 'robby_cli::example_self_model::run'), N...
-    pick_call_prefers_same_module-->>pick_call_target: pick_call_target(caller, &targets)
-    pick_call_prefers_same_module-->>pick_call_prefers_same_module: assert_eq!(picked, NodeId::symbol('rust', 'robby_cli::run'))
-    pick_call_prefers_same_module-->>pick_call_prefers_same_module: assert!(conf >= 0.9)

@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant graph as graph()
-    participant SiblingGraph__from_root as SiblingGraph::from_root
-    participant TuiRenderer__new as TuiRenderer::new
-    participant sibling_graph as sibling_graph
-    graph-->>SiblingGraph__from_root: SiblingGraph::from_root(doc, root)
-    graph-->>TuiRenderer__new: TuiRenderer::new(opts.width)
-    graph-->>sibling_graph: TuiRenderer::new(opts.width).sibling_graph(&view)

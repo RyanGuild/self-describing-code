@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant source_file_count as source_file_count()
-    participant Ok as Ok
-    source_file_count-->>source_file_count: RustExtractor.source_file_count(root)
-    source_file_count-->>source_file_count: ? (propagate)
-    source_file_count-->>source_file_count: TypeScriptExtractor.source_file_count(root)
-    source_file_count-->>source_file_count: ? (propagate)
-    source_file_count-->>Ok: Ok(RustExtractor.source_file_count(root)? + TypeScriptExtractor.sourc...

@@ -1,6 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant package_deps as package_deps()
-    participant Self__fence as Self::fence
-    package_deps-->>package_deps: self.mermaid.package_deps(view)
-    package_deps-->>Self__fence: Self::fence('mermaid', &self.mermaid.package_deps(view))

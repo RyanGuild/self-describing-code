@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant parse as parse()
-    participant Some as Some
-    alt match raw
-    parse-->>Some: Some(Self::Relevant)
-    else 'noise'
-    parse-->>Some: Some(Self::Noise)
-    end

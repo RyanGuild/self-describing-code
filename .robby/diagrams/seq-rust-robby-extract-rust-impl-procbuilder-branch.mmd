@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant branch as branch()
-    participant last_mut as last_mut
-    participant Some as Some
-    branch-->>last_mut: self.blocks.last_mut()
-    alt let Some(last) = self.blocks.last_mut()
-    branch-->>Some: Some(name)
-    end

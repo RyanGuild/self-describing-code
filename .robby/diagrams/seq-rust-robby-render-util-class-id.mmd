@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant class_id as class_id()
-    participant strip_generics as strip_generics
-    participant alias as alias
-    class_id-->>strip_generics: strip_generics(name)
-    class_id-->>alias: alias(&strip_generics(name))

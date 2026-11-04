@@ -1,5 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant strip_generics as strip_generics()
-    participant to_owned as to_owned
-    strip_generics-->>to_owned: name.split('<').next().unwrap_or(name).trim().to_owned()

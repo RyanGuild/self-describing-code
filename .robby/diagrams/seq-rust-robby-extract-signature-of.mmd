@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant signature_of as signature_of()
-    participant slice as slice
-    participant to_owned as to_owned
-    signature_of-->>slice: slice(ctx, span_of(&f.sig, ctx))
-    signature_of-->>to_owned: text.split('{').next().unwrap_or(&text).trim().to_owned()
