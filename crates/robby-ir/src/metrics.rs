@@ -57,7 +57,7 @@ impl MetricMeasurement {
     pub fn score_string(&self) -> String {
         if (self.value - self.value.round()).abs() < f64::EPSILON
             && (0.0..=1.0).contains(&self.value)
-            && (self.value == 0.0 || self.value == 1.0)
+            && (self.value.abs() < f64::EPSILON || (self.value - 1.0).abs() < f64::EPSILON)
         {
             format!("{}", self.value as i32)
         } else {
@@ -97,10 +97,7 @@ pub fn doc_coverage_complete(report: &CoverageReport) -> MetricMeasurement {
         "doc.coverage_files".to_owned(),
         report.files.len().to_string(),
     );
-    details.insert(
-        "doc.unknown_gap_count".to_owned(),
-        unknown_gaps.to_string(),
-    );
+    details.insert("doc.unknown_gap_count".to_owned(), unknown_gaps.to_string());
     MetricMeasurement {
         id: ids::DOC_COVERAGE_COMPLETE.to_owned(),
         value: if complete { 1.0 } else { 0.0 },
@@ -120,8 +117,7 @@ pub fn edge_resolve_rate(doc: &Document) -> MetricMeasurement {
 ///
 /// Returns `None` when the node is missing from the document.
 pub fn edge_resolve_rate_at(doc: &Document, node: &NodeId) -> Option<MetricMeasurement> {
-    doc.get(node)
-        .map(|n| resolve_rate_from(n.edges.iter()))
+    doc.get(node).map(|n| resolve_rate_from(n.edges.iter()))
 }
 
 /// `edge.resolve_rate` for an arbitrary edge slice (tests / callers).
@@ -178,10 +174,7 @@ pub fn compute(
 
 /// First-slice pair: coverage completeness + document edge resolve rate.
 pub fn first_slice(doc: &Document, coverage: &CoverageReport) -> Vec<MetricMeasurement> {
-    vec![
-        doc_coverage_complete(coverage),
-        edge_resolve_rate(doc),
-    ]
+    vec![doc_coverage_complete(coverage), edge_resolve_rate(doc)]
 }
 
 /// Write measurements into [`RunRecord::stats`].
@@ -256,7 +249,10 @@ mod tests {
         assert_eq!(m.id, ids::EDGE_RESOLVE_RATE);
         assert!((m.value - 0.5).abs() < 1e-9);
         assert_eq!(m.score_string(), "0.5");
-        assert_eq!(m.details.get("edge.resolved").map(String::as_str), Some("1"));
+        assert_eq!(
+            m.details.get("edge.resolved").map(String::as_str),
+            Some("1")
+        );
         assert_eq!(m.details.get("edge.total").map(String::as_str), Some("2"));
     }
 
@@ -298,7 +294,10 @@ mod tests {
         stamp_first_slice(&mut record, &doc, &coverage);
 
         assert_eq!(
-            record.stats.get(ids::DOC_COVERAGE_COMPLETE).map(String::as_str),
+            record
+                .stats
+                .get(ids::DOC_COVERAGE_COMPLETE)
+                .map(String::as_str),
             Some("1")
         );
         assert_eq!(
