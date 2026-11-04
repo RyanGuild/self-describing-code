@@ -7,6 +7,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::{Context, Result, bail};
@@ -318,8 +319,18 @@ fn now_ms() -> i64 {
         .map_or(0, |d| d.as_millis() as i64)
 }
 
-fn mint_run_id(prefix: &str) -> String {
-    format!("{prefix}-{}", now_ms())
+/// Monotonic suffix so burst mints in the same millisecond never share a path.
+///
+/// Earlier `prefix-{ms}` collided under `sample-opportunities --queue` (N>1),
+/// overwriting `runs/review-<ms>.json` and losing subjects.
+static RUN_ID_SEQ: AtomicU64 = AtomicU64::new(0);
+
+/// Mint a filesystem-safe run id unique under same-ms burst minting.
+///
+/// Format: `{prefix}-{unix_ms}-{seq}` — opaque to consumers (lookup / filename only).
+pub fn mint_run_id(prefix: &str) -> String {
+    let seq = RUN_ID_SEQ.fetch_add(1, Ordering::Relaxed);
+    format!("{prefix}-{}-{seq}", now_ms())
 }
 
 fn sort_index_newest_first(index: &mut RunsIndex) {
@@ -581,6 +592,63 @@ mod tests {
         assert_eq!(b.recipe.as_str(), recipes::REVIEW_VIEW);
         let index = store.read_index().unwrap();
         assert_eq!(index.runs.len(), 1);
+    }
+
+    /// Regression: `prefix-{ms}` alone overwrote files when sample-opportunities
+    /// queued N>1 subjects in the same millisecond (trial seed 42 lost 2/8).
+    #[test]
+    fn mint_run_id_unique_under_same_ms_burst() {
+        let n = 32;
+        let mut ids = std::collections::BTreeSet::new();
+        let mut stems = std::collections::BTreeSet::new();
+        for _ in 0..n {
+            let id = mint_run_id("review");
+            assert!(
+                ids.insert(id.clone()),
+                "duplicate run_id under burst mint: {id}"
+            );
+            assert!(
+                stems.insert(run_file_stem(&id)),
+                "duplicate file stem under burst mint: {id}"
+            );
+        }
+        assert_eq!(ids.len(), n);
+    }
+
+    #[test]
+    fn queue_burst_writes_distinct_run_files() {
+        let store = temp_store();
+        let n = 16;
+        let mut ids = std::collections::BTreeSet::new();
+        for i in 0..n {
+            let record = store
+                .queue_review_view(&format!("sid-burst-{i}"), "burst", Some("Burst"))
+                .unwrap();
+            assert!(
+                ids.insert(record.run_id.clone()),
+                "duplicate run_id: {}",
+                record.run_id
+            );
+            assert!(
+                store.record_path(&record.run_id).is_file(),
+                "missing file for {}",
+                record.run_id
+            );
+        }
+        let index = store.read_index().unwrap();
+        assert_eq!(index.runs.len(), n);
+        assert_eq!(ids.len(), n);
+        let on_disk: usize = fs::read_dir(store.runs_dir())
+            .unwrap()
+            .filter_map(Result::ok)
+            .filter(|e| {
+                e.path()
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .is_some_and(|n| n.starts_with("review-") && n.ends_with(".json"))
+            })
+            .count();
+        assert_eq!(on_disk, n);
     }
 
     #[test]

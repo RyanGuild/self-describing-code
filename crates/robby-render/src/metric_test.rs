@@ -77,7 +77,7 @@ pub fn build_metric_test_run(
         RunStatus::Fail
     };
 
-    let run_id = mint_run_id("metric");
+    let run_id = crate::runs::mint_run_id("metric");
     let mut record = RunRecord::new(run_id, RecipeId::from(recipes::METRIC_TEST), status);
     if let Some(subject) = &req.subject {
         record.subject = Some(subject.clone());
@@ -310,10 +310,6 @@ fn now_ms() -> i64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_or(0, |d| d.as_millis() as i64)
-}
-
-fn mint_run_id(prefix: &str) -> String {
-    format!("{prefix}-{}", now_ms())
 }
 
 #[cfg(test)]

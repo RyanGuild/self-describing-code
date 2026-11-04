@@ -7,6 +7,7 @@
 
 use std::collections::BTreeMap;
 use std::path::Path;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::Result;
@@ -568,8 +569,12 @@ fn now_ms() -> i64 {
         .map_or(0, |d| d.as_millis() as i64)
 }
 
+/// Monotonic suffix so burst mints in the same millisecond never collide.
+static RUN_ID_SEQ: AtomicU64 = AtomicU64::new(0);
+
 fn mint_run_id(prefix: &str) -> String {
-    format!("{prefix}-{}", now_ms())
+    let seq = RUN_ID_SEQ.fetch_add(1, Ordering::Relaxed);
+    format!("{prefix}-{}-{seq}", now_ms())
 }
 
 #[cfg(test)]
