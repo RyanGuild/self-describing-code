@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:26`](../../../../crates/robby-ir/src/model.rs#L26) |
+| location | [`crates/robby-ir/src/model.rs:28`](../../../../crates/robby-ir/src/model.rs#L28) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -47,6 +47,7 @@ impl NodeId {
 - calls ← [`robby_extract::typescript::item_node`](../../robby_extract/typescript/item-node.md)
 - calls ← [`robby_ir::codepath::respects_max_depth`](../codepath/tests/respects-max-depth.md)
 - calls ← [`robby_ir::codepath::sample_doc`](../codepath/tests/sample-doc.md)
+- calls ← [`robby_ir::model::wire`](tests/wire.md)
 - calls ← [`robby_ir::test_coverage::frontier_spans_exclude_parents_that_have_span_children`](../test_coverage/frontier-spans-exclude-parents-that-have-span-children.md)
 - calls ← [`robby_ir::test_coverage::report_orders_worst_files_first`](../test_coverage/report-orders-worst-files-first.md)
 - calls ← [`robby_ir::test_coverage::typescript_node_sets_lang`](../test_coverage/typescript-node-sets-lang.md)
@@ -71,7 +72,7 @@ impl NodeId {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(1)` |
-| location | [`crates/robby-ir/src/model.rs:27`](../../../../crates/robby-ir/src/model.rs#L27) |
+| location | [`crates/robby-ir/src/model.rs:29`](../../../../crates/robby-ir/src/model.rs#L29) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -98,7 +99,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn as_str(1)` |
-| location | [`crates/robby-ir/src/model.rs:31`](../../../../crates/robby-ir/src/model.rs#L31) |
+| location | [`crates/robby-ir/src/model.rs:33`](../../../../crates/robby-ir/src/model.rs#L33) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -121,7 +122,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn symbol(2)` |
-| location | [`crates/robby-ir/src/model.rs:35`](../../../../crates/robby-ir/src/model.rs#L35) |
+| location | [`crates/robby-ir/src/model.rs:37`](../../../../crates/robby-ir/src/model.rs#L37) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -147,7 +148,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn child(2)` |
-| location | [`crates/robby-ir/src/model.rs:39`](../../../../crates/robby-ir/src/model.rs#L39) |
+| location | [`crates/robby-ir/src/model.rs:41`](../../../../crates/robby-ir/src/model.rs#L41) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

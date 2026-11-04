@@ -6,15 +6,13 @@ sequenceDiagram
     participant matches as matches
     participant count as count
     participant rfind as rfind
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     participant chars as chars
     at-->>len: source.len()
     at-->>min: byte.min(source.len() as u32)
     at-->>matches: prefix.matches('\n')
     at-->>count: prefix.matches('\n').count()
     at-->>rfind: prefix.rfind('\n')
-    at-->>map: prefix.rfind('\n').map(|i| i + 1)
-    at-->>unwrap_or: prefix.rfind('\n').map(|i| i + 1).unwrap_or(0)
+    at-->>map_or: prefix.rfind('\n').map_or(0, |i| i + 1)
     at-->>chars: prefix[line_start..].chars()
     at-->>count: prefix[line_start..].chars().count()

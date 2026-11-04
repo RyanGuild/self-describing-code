@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/kind.rs:37`](../../../../crates/robby-ir/src/kind.rs#L37) |
+| location | [`crates/robby-ir/src/kind.rs:39`](../../../../crates/robby-ir/src/kind.rs#L39) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,7 +22,7 @@ impl std::fmt::Display for Kind {
 |---|---|
 | kind | `code.method` |
 | signature | `fn fmt(2)` |
-| location | [`crates/robby-ir/src/kind.rs:38`](../../../../crates/robby-ir/src/kind.rs#L38) |
+| location | [`crates/robby-ir/src/kind.rs:40`](../../../../crates/robby-ir/src/kind.rs#L40) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

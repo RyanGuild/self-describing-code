@@ -7,7 +7,7 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use robby_ir::{CoverageReport, Document, EdgeKind, Node, NodeId};
+use robby_ir::{CoverageReport, Document, Node, NodeId};
 
 use crate::render::{MarkdownRenderer, Renderer};
 use crate::report::Report;
@@ -170,7 +170,7 @@ fn node_section(
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     if !node.tags.is_empty() {
@@ -185,14 +185,13 @@ fn node_section(
         out.push('\n');
     }
 
-    if let Some(span) = &node.span {
-        if let Some(source) = sources.and_then(|s| s.get(&span.file)) {
-            if let Some(slice) = source.get(span.start.byte as usize..span.end.byte as usize) {
-                out.push_str("```rust\n");
-                out.push_str(slice.trim_end());
-                out.push_str("\n```\n\n");
-            }
-        }
+    if let Some(span) = &node.span
+        && let Some(source) = sources.and_then(|s| s.get(&span.file))
+        && let Some(slice) = source.get(span.start.byte as usize..span.end.byte as usize)
+    {
+        out.push_str("```rust\n");
+        out.push_str(slice.trim_end());
+        out.push_str("\n```\n\n");
     }
 
     if let Some(process) = &node.process {
@@ -214,12 +213,7 @@ fn node_section(
         let _ = writeln!(out, "**Edges**\n");
         for edge in &node.edges {
             let marker = if edge.resolved { "" } else { " (unresolved)" };
-            let _ = writeln!(
-                out,
-                "- {} → `{}`{marker}",
-                edge_name(edge.kind),
-                edge.to
-            );
+            let _ = writeln!(out, "- {} → `{}`{marker}", edge.kind.as_str(), edge.to);
         }
         out.push('\n');
     }
@@ -249,30 +243,6 @@ pub(crate) fn cell(input: &str) -> String {
     input.replace('|', "\\|").replace('\n', " ")
 }
 
-pub(crate) fn source_name(source: robby_ir::Source) -> &'static str {
-    match source {
-        robby_ir::Source::Extractor => "extractor",
-        robby_ir::Source::Macro => "macro",
-        robby_ir::Source::Trace => "trace",
-        robby_ir::Source::Agent => "agent",
-        robby_ir::Source::Hand => "hand",
-    }
-}
-
-pub(crate) fn edge_name(kind: EdgeKind) -> &'static str {
-    match kind {
-        EdgeKind::Contains => "contains",
-        EdgeKind::Calls => "calls",
-        EdgeKind::Uses => "uses",
-        EdgeKind::Imports => "imports",
-        EdgeKind::Implements => "implements",
-        EdgeKind::Extends => "extends",
-        EdgeKind::Returns => "returns",
-        EdgeKind::Field => "field",
-        EdgeKind::References => "references",
-    }
-}
-
 /// A compact index of every node, for the top of the report.
 pub fn index(doc: &Document) -> String {
     let mut out = String::from("| Node | Kind | Location |\n|---|---|---|\n");
@@ -282,15 +252,8 @@ pub fn index(doc: &Document) -> String {
         let location = node
             .span
             .as_ref()
-            .map(|s| s.location())
-            .unwrap_or_else(|| "—".to_owned());
-        let _ = writeln!(
-            out,
-            "| `{}` | `{}` | `{}` |",
-            node.fqn,
-            node.kind,
-            location
-        );
+            .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
+        let _ = writeln!(out, "| `{}` | `{}` | `{}` |", node.fqn, node.kind, location);
     }
     out
 }

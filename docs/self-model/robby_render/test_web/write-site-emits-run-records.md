@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn write_site_emits_run_records()` |
-| location | [`crates/robby-render/tests/web.rs:292`](../../../../crates/robby-render/tests/web.rs#L292) |
+| location | [`crates/robby-render/tests/web.rs:297`](../../../../crates/robby-render/tests/web.rs#L297) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -97,7 +97,7 @@ sequenceDiagram
 - calls → [`robby_render::test_web::demo_doc`](demo-doc.md)
 - calls → [`robby_render::test_web::tempfile_dir`](tempfile-dir.md)
 - calls → [`robby_render::web::write_site`](../web/write-site.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 
 ## References

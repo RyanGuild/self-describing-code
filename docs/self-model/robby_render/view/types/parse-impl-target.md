@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn parse_impl_target(node: &Node) -> Option<(Option<String>, String)>` |
-| location | [`crates/robby-render/src/view/types.rs:229`](../../../../../crates/robby-render/src/view/types.rs#L229) |
+| location | [`crates/robby-render/src/view/types.rs:230`](../../../../../crates/robby-render/src/view/types.rs#L230) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn clip(text: &str, max: usize) -> String` |
-| location | [`crates/robby-render/src/render/tui.rs:586`](../../../../../crates/robby-render/src/render/tui.rs#L586) |
+| location | [`crates/robby-render/src/render/tui.rs:578`](../../../../../crates/robby-render/src/render/tui.rs#L578) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

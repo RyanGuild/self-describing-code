@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-agent/src/enrich.rs:158`](../../../../../crates/robby-agent/src/enrich.rs#L158) |
+| location | [`crates/robby-agent/src/enrich.rs:156`](../../../../../crates/robby-agent/src/enrich.rs#L156) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -16,5 +16,5 @@ struct FakeClient {
 
 **Fields and variants**
 
-- `responses` — `crates/robby-agent/src/enrich.rs:159:9`
+- `responses` — `crates/robby-agent/src/enrich.rs:157:9`
 

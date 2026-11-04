@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn strip_ts_ext(path: &str) -> String` |
-| location | [`crates/robby-extract/src/typescript.rs:190`](../../../../crates/robby-extract/src/typescript.rs#L190) |
+| location | [`crates/robby-extract/src/typescript.rs:187`](../../../../crates/robby-extract/src/typescript.rs#L187) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

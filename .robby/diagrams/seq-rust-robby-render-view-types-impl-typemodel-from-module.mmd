@@ -103,5 +103,5 @@ sequenceDiagram
     end
     end
     from_module-->>cmp: (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind))
-    from_module-->>sort_by: relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from...
+    from_module-->>sort_by: relations .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.fro...
     from_module-->>dedup: relations.dedup()

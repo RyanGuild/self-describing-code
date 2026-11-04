@@ -2,23 +2,30 @@ sequenceDiagram
     autonumber
     participant merge as merge()
     participant clone as clone
+    participant std__mem__take as std::mem::take
     participant get_mut as get_mut
     participant is_none as is_none
+    participant is_some as is_some
     participant contains as contains
     participant push as push
     participant entry as entry
     participant or_insert as or_insert
+    participant remove as remove
+    participant Some as Some
     participant insert as insert
+    participant record_child as record_child
+    participant get as get
+    participant and_then as and_then
+    participant retain as retain
+    participant adopt_parent as adopt_parent
     merge-->>clone: node.id.clone()
+    merge-->>std__mem__take: std::mem::take(&mut node.children)
+    merge-->>clone: node.parent.clone()
     merge-->>get_mut: self.nodes.get_mut(&id)
     alt let Some(existing) = self.nodes.get_mut(&id)
     merge-->>is_none: existing.span.is_none()
-    loop node.children
-    merge-->>contains: existing.children.contains(&child)
-    alt !existing.children.contains(&child)
-    merge-->>push: existing.children.push(child)
-    end
-    end
+    merge-->>is_none: existing.parent.is_none()
+    merge-->>is_some: incoming_parent.is_some()
     loop node.edges
     merge-->>contains: existing.edges.contains(&edge)
     alt !existing.edges.contains(&edge)
@@ -35,6 +42,36 @@ sequenceDiagram
     merge-->>push: existing.tags.push(tag)
     end
     end
-    merge-->>merge: return
+    else else
+    merge-->>is_none: node.parent.is_none()
+    merge-->>remove: self.pending_parents.remove(&id)
+    alt node.parent.is_none() && let Some(parent) = self.pending_parents.remo...
+    merge-->>Some: Some(parent)
     end
-    merge-->>insert: self.insert(node)
+    merge-->>is_none: node.parent.is_none()
+    alt node.parent.is_none()
+    merge-->>clone: id.clone()
+    merge-->>push: self.roots.push(id.clone())
+    end
+    merge-->>clone: id.clone()
+    merge-->>insert: self.nodes.insert(id.clone(), node)
+    merge-->>remove: self.pending_children.remove(&id)
+    alt let Some(waiting) = self.pending_children.remove(&id)
+    loop waiting
+    merge-->>record_child: self.record_child(&id, &child)
+    end
+    end
+    end
+    merge-->>get: self.nodes.get(&id)
+    merge-->>clone: n.parent.clone()
+    merge-->>and_then: self.nodes.get(&id).and_then(|n| n.parent.clone())
+    alt let Some(parent) = self.nodes.get(&id).and_then(|n| n.parent.clone())
+    merge-->>record_child: self.record_child(&parent, &id)
+    end
+    alt adopted_parent
+    merge-->>retain: self.roots.retain(|root| root != &id)
+    end
+    loop declared_children
+    merge-->>record_child: self.record_child(&id, &child)
+    end
+    merge-->>adopt_parent: self.adopt_parent(&id)

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn property_key_name(key: &PropertyKey<'_>) -> Option<String>` |
-| location | [`crates/robby-extract/src/typescript.rs:701`](../../../../crates/robby-extract/src/typescript.rs#L701) |
+| location | [`crates/robby-extract/src/typescript.rs:688`](../../../../crates/robby-extract/src/typescript.rs#L688) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

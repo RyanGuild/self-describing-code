@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-agent/src/model.rs:18`](../../../../crates/robby-agent/src/model.rs#L18) |
+| location | [`crates/robby-agent/src/model.rs:20`](../../../../crates/robby-agent/src/model.rs#L20) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,6 +18,6 @@ pub struct ChatMessage {
 
 **Fields and variants**
 
-- `role` — `crates/robby-agent/src/model.rs:20:5`
-- `content` — `crates/robby-agent/src/model.rs:21:5`
+- `role` — `crates/robby-agent/src/model.rs:22:5`
+- `content` — `crates/robby-agent/src/model.rs:23:5`
 

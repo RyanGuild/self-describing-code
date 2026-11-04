@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn write_site_emits_scene_and_frames()` |
-| location | [`crates/robby-render/tests/web.rs:271`](../../../../crates/robby-render/tests/web.rs#L271) |
+| location | [`crates/robby-render/tests/web.rs:276`](../../../../crates/robby-render/tests/web.rs#L276) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

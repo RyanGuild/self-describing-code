@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/kind.rs:43`](../../../../crates/robby-ir/src/kind.rs#L43) |
+| location | [`crates/robby-ir/src/kind.rs:45`](../../../../crates/robby-ir/src/kind.rs#L45) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -24,6 +24,7 @@ impl From<&str> for Kind {
 - calls ← [`robby_extract::rust::build_process_sig`](../../robby_extract/rust/build-process-sig.md)
 - calls ← [`robby_extract::rust::impl ProcBuilder<'_, '_>::emit`](../../robby_extract/rust/index.md)
 - calls ← [`robby_extract::rust::item_node`](../../robby_extract/rust/item-node.md)
+- calls ← [`robby_extract::rust::pick_call_target`](../../robby_extract/rust/pick-call-target.md)
 - calls ← [`robby_extract::test_extract::root`](../../robby_extract/test_extract/root.md)
 - calls ← [`robby_extract::test_typescript::fixture`](../../robby_extract/test_typescript/fixture.md)
 - calls ← [`robby_extract::typescript::build_function_process`](../../robby_extract/typescript/build-function-process.md)
@@ -74,7 +75,7 @@ impl From<&str> for Kind {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from(1)` |
-| location | [`crates/robby-ir/src/kind.rs:44`](../../../../crates/robby-ir/src/kind.rs#L44) |
+| location | [`crates/robby-ir/src/kind.rs:46`](../../../../crates/robby-ir/src/kind.rs#L46) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

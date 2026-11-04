@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn relevant_writes_note_and_highlights()` |
-| location | [`crates/robby-agent/src/enrich.rs:259`](../../../../../crates/robby-agent/src/enrich.rs#L259) |
+| location | [`crates/robby-agent/src/enrich.rs:255`](../../../../../crates/robby-agent/src/enrich.rs#L255) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -27,7 +27,10 @@
             .expect("decision");
         assert_eq!(decision.docs.as_deref(), Some("Implement draw()."));
         assert_eq!(
-            decision.annotations.get("note_kind").map(|s| s.as_str()),
+            decision
+                .annotations
+                .get("note_kind")
+                .map(std::string::String::as_str),
             Some("usage_example")
         );
         assert!(
@@ -65,7 +68,7 @@ sequenceDiagram
     relevant_writes_note_and_highlights-->>find: doc .nodes .values() .find(|n| n.kind.as_str() == kind::agent::DECISION)
     relevant_writes_note_and_highlights-->>expect: doc .nodes .values() .find(|n| n.kind.as_str() == kind::agent::DECISI...
     relevant_writes_note_and_highlights-->>relevant_writes_note_and_highlights: assert_eq!(decision.docs.as_deref(), Some('Implement draw().'))
-    relevant_writes_note_and_highlights-->>relevant_writes_note_and_highlights: assert_eq!( decision.annotations.get('note_kind').map(|s| s.as_str())...
+    relevant_writes_note_and_highlights-->>relevant_writes_note_and_highlights: assert_eq!( decision .annotations .get('note_kind') .map(std::string:...
     relevant_writes_note_and_highlights-->>relevant_writes_note_and_highlights: assert!( decision .annotations .get('highlights') .is_some_and(|h| h....
 ```
 
@@ -77,11 +80,11 @@ sequenceDiagram
 - calls → [`robby_agent::enrich::impl FakeClient::new`](index.md)
 - calls → [`robby_agent::enrich::impl Default for EnrichOpts::default`](../index.md)
 - calls → [`robby_agent::enrich::enrich_comments`](../enrich-comments.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../../model/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../../robby_ir/kind/index.md)
 
 ## References
 
 - calls → [`robby_agent::enrich`](../index.md) — default, enrich_comments
 - calls → [`robby_agent::enrich::tests`](index.md) — mini_doc, new
-- calls → [`robby_agent::model`](../../model/index.md) — as_str
+- calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — as_str
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn unreferenced_files_appear_fully_uncovered()` |
-| location | [`crates/robby-ir/tests/coverage.rs:117`](../../../../crates/robby-ir/tests/coverage.rs#L117) |
+| location | [`crates/robby-ir/tests/coverage.rs:118`](../../../../crates/robby-ir/tests/coverage.rs#L118) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

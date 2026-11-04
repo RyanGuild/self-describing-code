@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/coverage.rs:304`](../../../../crates/robby-ir/src/coverage.rs#L304) |
+| location | [`crates/robby-ir/src/coverage.rs:298`](../../../../crates/robby-ir/src/coverage.rs#L298) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,7 +19,7 @@ struct TriviaFlags {
 
 **Fields and variants**
 
-- `whitespace` — `crates/robby-ir/src/coverage.rs:306:5`
-- `comment` — `crates/robby-ir/src/coverage.rs:307:5`
-- `attribute` — `crates/robby-ir/src/coverage.rs:308:5`
+- `whitespace` — `crates/robby-ir/src/coverage.rs:300:5`
+- `comment` — `crates/robby-ir/src/coverage.rs:301:5`
+- `attribute` — `crates/robby-ir/src/coverage.rs:302:5`
 

@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn emit_method<'a>(     doc: &mut Document,     method: &MethodDefinition<'a>,     parent: &NodeId,     class_fqn: &str,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:679`](../../../../crates/robby-extract/src/typescript.rs#L679) |
+| signature | `fn emit_method(     doc: &mut Document,     method: &MethodDefinition<'_>,     parent: &NodeId,     class_fqn: &str,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:671`](../../../../crates/robby-extract/src/typescript.rs#L671) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn emit_method<'a>(
+fn emit_method(
     doc: &mut Document,
-    method: &MethodDefinition<'a>,
+    method: &MethodDefinition<'_>,
     parent: &NodeId,
     class_fqn: &str,
     ctx: &Ctx<'_>,
@@ -23,12 +23,7 @@ fn emit_method<'a>(
     };
     let fqn = format!("{class_fqn}/{name}");
     let mut node = item_node(kind::code::METHOD, &fqn, oxc_span(method.span, ctx), parent);
-    node.process = Some(build_function_process(
-        &method.value,
-        &fqn,
-        pending,
-        ctx,
-    ));
+    node.process = Some(build_function_process(&method.value, &fqn, pending, ctx));
     doc.merge(node);
 }
 ```
@@ -47,8 +42,8 @@ sequenceDiagram
     emit_method-->>emit_method: format!('{class_fqn}/{name}')
     emit_method-->>oxc_span: oxc_span(method.span, ctx)
     emit_method-->>item_node: item_node(kind::code::METHOD, &fqn, oxc_span(method.span, ctx), parent)
-    emit_method-->>build_function_process: build_function_process( &method.value, &fqn, pending, ctx, )
-    emit_method-->>Some: Some(build_function_process( &method.value, &fqn, pending, ctx, ))
+    emit_method-->>build_function_process: build_function_process(&method.value, &fqn, pending, ctx)
+    emit_method-->>Some: Some(build_function_process(&method.value, &fqn, pending, ctx))
     emit_method-->>merge: doc.merge(node)
 ```
 

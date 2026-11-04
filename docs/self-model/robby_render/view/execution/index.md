@@ -66,7 +66,7 @@ flowchart TB
       from_code_path(doc, &path)
   }
   ```
-- `crates/robby-render/src/view/execution.rs:92:1` (docs, `robby_render::view::execution::owning_type_label`): "From a method under `impl … for Type`, recover the type name for a lifeline."
+- `crates/robby-render/src/view/execution.rs:84:1` (docs, `robby_render::view::execution::owning_type_label`): "From a method under `impl … for Type`, recover the type name for a lifeline."
   ```
   /// From a method under `impl … for Type`, recover the type name for a lifeline.
   fn owning_type_label(doc: &Document, method: &Node) -> Option<String> {
@@ -94,8 +94,9 @@ flowchart TB
 
 - calls → [`robby_ir::codepath`](../../../robby_ir/codepath/index.md) — from_entry
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, symbol
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, symbol
 - calls → [`robby_ir::process`](../../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::test_render`](../../test_render/index.md) — step
 - calls → [`robby_render::util`](../../util/index.md) — alias
@@ -119,9 +120,9 @@ flowchart TB
 | [`MAX_EDGES`](max-edges.md) | `code.const` | — | `crates/robby-render/src/view/execution.rs:13:1` |
 | [`execution_process`](execution-process.md) | `code.function` | 3 | `crates/robby-render/src/view/execution.rs:16:1` |
 | [`from_code_path`](from-code-path.md) | `code.function` | 32 | `crates/robby-render/src/view/execution.rs:22:1` |
-| [`add_callable`](add-callable.md) | `code.function` | 4 | `crates/robby-render/src/view/execution.rs:80:1` |
-| [`participant_id`](participant-id.md) | `code.function` | 2 | `crates/robby-render/src/view/execution.rs:88:1` |
-| [`owning_type_label`](owning-type-label.md) | `code.function` | 21 | `crates/robby-render/src/view/execution.rs:92:1` |
+| [`add_callable`](add-callable.md) | `code.function` | 4 | `crates/robby-render/src/view/execution.rs:76:1` |
+| [`participant_id`](participant-id.md) | `code.function` | 2 | `crates/robby-render/src/view/execution.rs:80:1` |
+| [`owning_type_label`](owning-type-label.md) | `code.function` | 21 | `crates/robby-render/src/view/execution.rs:84:1` |
 
 ## Imports
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn page_names_never_collide_with_index()` |
-| location | [`crates/robby-render/tests/tree.rs:90`](../../../../crates/robby-render/tests/tree.rs#L90) |
+| location | [`crates/robby-render/tests/tree.rs:93`](../../../../crates/robby-render/tests/tree.rs#L93) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

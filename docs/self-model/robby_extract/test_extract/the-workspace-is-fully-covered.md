@@ -28,10 +28,7 @@ fn the_workspace_is_fully_covered() {
         .map(|(file, gap)| format!("{}:{}", file.file, gap.span.location()))
         .collect();
 
-    assert!(
-        report.is_complete(),
-        "unclaimed code: {failures:#?}"
-    );
+    assert!(report.is_complete(), "unclaimed code: {failures:#?}");
 }
 ```
 
@@ -69,7 +66,7 @@ sequenceDiagram
     the_workspace_is_fully_covered-->>the_workspace_is_fully_covered: format!('{}:{}', file.file, gap.span.location())
     the_workspace_is_fully_covered-->>map: report .failures() .map(|(file, gap)| format!('{}:{}', file.file, gap...
     the_workspace_is_fully_covered-->>collect: report .failures() .map(|(file, gap)| format!('{}:{}', file.file, gap...
-    the_workspace_is_fully_covered-->>the_workspace_is_fully_covered: assert!( report.is_complete(), 'unclaimed code: {failures: ?}' )
+    the_workspace_is_fully_covered-->>the_workspace_is_fully_covered: assert!(report.is_complete(), 'unclaimed code: {failures: ?}')
 ```
 
 16 steps · 0 observed · 16 possible only

@@ -6,25 +6,11 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn ascii_coupling(view: &CouplingGraph) -> String` |
-| location | [`crates/robby-render/src/render/tui.rs:510`](../../../../../crates/robby-render/src/render/tui.rs#L510) |
+| location | [`crates/robby-render/src/render/tui.rs:499`](../../../../../crates/robby-render/src/render/tui.rs#L499) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn ascii_coupling(view: &CouplingGraph) -> String {
-    if view.is_empty() {
-        return String::from("(no internal coupling)\n");
-    }
-    let leaves = view.leaf_nodes();
-    let by_parent: BTreeMap<&str, Vec<&str>> = {
-        let mut map: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
-        for leaf in leaves {
-            map.entry(leaf.parent_stable_id.as_str())
-                .or_default()
-                .push(leaf.name.as_str());
-        }
-        map
-    };
-    let mut out = String::new();
     fn walk(
         node: &CouplingModule,
         by_parent: &BTreeMap<&str, Vec<&str>>,
@@ -47,7 +33,10 @@ fn ascii_coupling(view: &CouplingGraph) -> String {
         } else {
             format!("{prefix}│   ")
         };
-        let fns = by_parent.get(node.stable_id.as_str()).cloned().unwrap_or_default();
+        let fns = by_parent
+            .get(node.stable_id.as_str())
+            .cloned()
+            .unwrap_or_default();
         let total = node.children.len() + fns.len();
         for (index, child) in node.children.iter().enumerate() {
             walk(child, by_parent, &child_prefix, index + 1 == total, out);
@@ -58,6 +47,21 @@ fn ascii_coupling(view: &CouplingGraph) -> String {
             let _ = writeln!(out, "{child_prefix}{b}{name}()");
         }
     }
+
+    if view.is_empty() {
+        return String::from("(no internal coupling)\n");
+    }
+    let leaves = view.leaf_nodes();
+    let by_parent: BTreeMap<&str, Vec<&str>> = {
+        let mut map: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
+        for leaf in leaves {
+            map.entry(leaf.parent_stable_id.as_str())
+                .or_default()
+                .push(leaf.name.as_str());
+        }
+        map
+    };
+    let mut out = String::new();
     walk(&view.root, &by_parent, "", true, &mut out);
     if !view.edges.is_empty() {
         out.push_str("calls\n");
@@ -65,8 +69,7 @@ fn ascii_coupling(view: &CouplingGraph) -> String {
             leaves
                 .iter()
                 .find(|f| f.stable_id == sid)
-                .map(|f| f.name.clone())
-                .unwrap_or_else(|| sid.to_owned())
+                .map_or_else(|| sid.to_owned(), |f| f.name.clone())
         };
         for edge in &view.edges {
             let mark = if edge.in_cycle { " ⇄" } else { "" };
@@ -104,10 +107,10 @@ sequenceDiagram
     participant push_str as push_str
     participant iter as iter
     participant find as find
-    participant clone as clone
-    participant map as map
     participant to_owned as to_owned
-    participant unwrap_or_else as unwrap_or_else
+    participant clone as clone
+    participant map_or_else as map_or_else
+    ascii_coupling-->>ascii_coupling: fn walk( node: &CouplingModule, by_parent: &BTreeMap<&str, Vec<&str>>...
     ascii_coupling-->>is_empty: view.is_empty()
     alt view.is_empty()
     ascii_coupling-->>String__from: String::from('(no internal coupling)\n')
@@ -123,17 +126,15 @@ sequenceDiagram
     ascii_coupling-->>push: map.entry(leaf.parent_stable_id.as_str()) .or_default() .push(leaf.na...
     end
     ascii_coupling-->>String__new: String::new()
-    ascii_coupling-->>ascii_coupling: fn walk( node: &CouplingModule, by_parent: &BTreeMap<&str, Vec<&str>>...
     ascii_coupling-->>walk: walk(&view.root, &by_parent, '', true, &mut out)
     ascii_coupling-->>is_empty: view.edges.is_empty()
     alt !view.edges.is_empty()
     ascii_coupling-->>push_str: out.push_str('calls\n')
     ascii_coupling-->>iter: leaves .iter()
     ascii_coupling-->>find: leaves .iter() .find(|f| f.stable_id == sid)
-    ascii_coupling-->>clone: f.name.clone()
-    ascii_coupling-->>map: leaves .iter() .find(|f| f.stable_id == sid) .map(|f| f.name.clone())
     ascii_coupling-->>to_owned: sid.to_owned()
-    ascii_coupling-->>unwrap_or_else: leaves .iter() .find(|f| f.stable_id == sid) .map(|f| f.name.clone())...
+    ascii_coupling-->>clone: f.name.clone()
+    ascii_coupling-->>map_or_else: leaves .iter() .find(|f| f.stable_id == sid) .map_or_else(|| sid.to_o...
     loop &view.edges
     alt edge.weight > 1
     ascii_coupling-->>ascii_coupling: format!(' ×{}', edge.weight)
@@ -145,7 +146,7 @@ sequenceDiagram
     end
 ```
 
-24 steps · 0 observed · 24 possible only
+23 steps · 0 observed · 23 possible only
 
 **Edges**
 
@@ -153,8 +154,8 @@ sequenceDiagram
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../../robby_ir/kind/index.md)
 - calls → [`robby_render::view::deps::impl CouplingGraph::leaf_nodes`](../../view/deps/index.md)
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](index.md)
 - calls → [`robby_ir::model::impl Document::walk`](../../../robby_ir/model/index.md)

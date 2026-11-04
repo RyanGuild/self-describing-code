@@ -51,10 +51,7 @@ fn resolves_calls_and_imports() {
         .find(|n| n.kind.as_str() == kind::code::CLASS && n.name == "Point")
         .expect("Point");
     assert!(
-        point
-            .edges
-            .iter()
-            .any(|e| e.kind == EdgeKind::Implements),
+        point.edges.iter().any(|e| e.kind == EdgeKind::Implements),
         "Point implements Drawable"
     );
 }
@@ -100,7 +97,7 @@ sequenceDiagram
     resolves_calls_and_imports-->>as_str: n.kind.as_str()
     resolves_calls_and_imports-->>find: doc .nodes .values() .find(|n| n.kind.as_str() == kind::code::CLASS &...
     resolves_calls_and_imports-->>expect: doc .nodes .values() .find(|n| n.kind.as_str() == kind::code::CLASS &...
-    resolves_calls_and_imports-->>resolves_calls_and_imports: assert!( point .edges .iter() .any(|e| e.kind == EdgeKind::Implements...
+    resolves_calls_and_imports-->>resolves_calls_and_imports: assert!( point.edges.iter().any(|e| e.kind == EdgeKind::Implements), ...
 ```
 
 27 steps · 0 observed · 27 possible only

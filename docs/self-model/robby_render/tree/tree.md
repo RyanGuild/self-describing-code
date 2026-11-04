@@ -27,11 +27,7 @@ pub fn tree(
 ) -> Vec<Page> {
     let mut pages = Vec::new();
 
-    let crates: Vec<&Node> = doc
-        .nodes
-        .values()
-        .filter(|node| is_crate(node))
-        .collect();
+    let crates: Vec<&Node> = doc.nodes.values().filter(|node| is_crate(node)).collect();
 
     pages.push(Page {
         path: PathBuf::from("README.md"),
@@ -62,10 +58,10 @@ sequenceDiagram
     participant clone as clone
     participant module_pages as module_pages
     tree-->>Vec__new: Vec::new()
-    tree-->>values: doc .nodes .values()
+    tree-->>values: doc.nodes.values()
     tree-->>is_crate: is_crate(node)
-    tree-->>filter: doc .nodes .values() .filter(|node| is_crate(node))
-    tree-->>collect: doc .nodes .values() .filter(|node| is_crate(node)) .collect()
+    tree-->>filter: doc.nodes.values().filter(|node| is_crate(node))
+    tree-->>collect: doc.nodes.values().filter(|node| is_crate(node)).collect()
     tree-->>PathBuf__from: PathBuf::from('README.md')
     tree-->>global_index: global_index(doc, coverage, &crates)
     tree-->>push: pages.push(Page { path: PathBuf::from('README.md'), body: global_inde...

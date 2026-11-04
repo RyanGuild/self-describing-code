@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn pad(text: &str, width: usize) -> String` |
-| location | [`crates/robby-render/src/render/tui.rs:607`](../../../../../crates/robby-render/src/render/tui.rs#L607) |
+| location | [`crates/robby-render/src/render/tui.rs:599`](../../../../../crates/robby-render/src/render/tui.rs#L599) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

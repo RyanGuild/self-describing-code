@@ -6,15 +6,11 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn ascii_package_structure(view: &PackageStructure) -> String` |
-| location | [`crates/robby-render/src/render/tui.rs:459`](../../../../../crates/robby-render/src/render/tui.rs#L459) |
+| location | [`crates/robby-render/src/render/tui.rs:450`](../../../../../crates/robby-render/src/render/tui.rs#L450) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn ascii_package_structure(view: &PackageStructure) -> String {
-    if view.is_empty() {
-        return String::from("(no package structure)\n");
-    }
-    let mut out = String::new();
     fn walk(node: &PackageNode, prefix: &str, is_last: bool, out: &mut String) {
         let branch = if prefix.is_empty() {
             ""
@@ -36,6 +32,10 @@ fn ascii_package_structure(view: &PackageStructure) -> String {
             walk(child, &child_prefix, index + 1 == count, out);
         }
     }
+    if view.is_empty() {
+        return String::from("(no package structure)\n");
+    }
+    let mut out = String::new();
     walk(&view.root, "", true, &mut out);
     if !view.externals.is_empty() {
         out.push_str("externals\n");
@@ -49,12 +49,10 @@ fn ascii_package_structure(view: &PackageStructure) -> String {
             let mark = if edge.in_cycle { " ⇄" } else { "" };
             let from = view
                 .module_by_stable(&edge.from)
-                .map(|m| m.name.as_str())
-                .unwrap_or(edge.from.as_str());
+                .map_or(edge.from.as_str(), |m| m.name.as_str());
             let to = view
                 .module_by_stable(&edge.to)
-                .map(|m| m.name.as_str())
-                .unwrap_or(edge.to.as_str());
+                .map_or(edge.to.as_str(), |m| m.name.as_str());
             let _ = writeln!(out, "  {from} → {to}{mark}");
         }
     }
@@ -73,15 +71,14 @@ sequenceDiagram
     participant push_str as push_str
     participant module_by_stable as module_by_stable
     participant as_str as as_str
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
+    ascii_package_structure-->>ascii_package_structure: fn walk(node: &PackageNode, prefix: &str, is_last: bool, out: &mut St...
     ascii_package_structure-->>is_empty: view.is_empty()
     alt view.is_empty()
     ascii_package_structure-->>String__from: String::from('(no package structure)\n')
     ascii_package_structure-->>ascii_package_structure: return
     end
     ascii_package_structure-->>String__new: String::new()
-    ascii_package_structure-->>ascii_package_structure: fn walk(node: &PackageNode, prefix: &str, is_last: bool, out: &mut St...
     ascii_package_structure-->>walk: walk(&view.root, '', true, &mut out)
     ascii_package_structure-->>is_empty: view.externals.is_empty()
     alt !view.externals.is_empty()
@@ -95,21 +92,19 @@ sequenceDiagram
     ascii_package_structure-->>push_str: out.push_str('depends\n')
     loop &view.edges
     ascii_package_structure-->>module_by_stable: view .module_by_stable(&edge.from)
-    ascii_package_structure-->>as_str: m.name.as_str()
-    ascii_package_structure-->>map: view .module_by_stable(&edge.from) .map(|m| m.name.as_str())
     ascii_package_structure-->>as_str: edge.from.as_str()
-    ascii_package_structure-->>unwrap_or: view .module_by_stable(&edge.from) .map(|m| m.name.as_str()) .unwrap_...
-    ascii_package_structure-->>module_by_stable: view .module_by_stable(&edge.to)
     ascii_package_structure-->>as_str: m.name.as_str()
-    ascii_package_structure-->>map: view .module_by_stable(&edge.to) .map(|m| m.name.as_str())
+    ascii_package_structure-->>map_or: view .module_by_stable(&edge.from) .map_or(edge.from.as_str(), |m| m....
+    ascii_package_structure-->>module_by_stable: view .module_by_stable(&edge.to)
     ascii_package_structure-->>as_str: edge.to.as_str()
-    ascii_package_structure-->>unwrap_or: view .module_by_stable(&edge.to) .map(|m| m.name.as_str()) .unwrap_or...
+    ascii_package_structure-->>as_str: m.name.as_str()
+    ascii_package_structure-->>map_or: view .module_by_stable(&edge.to) .map_or(edge.to.as_str(), |m| m.name...
     ascii_package_structure-->>ascii_package_structure: writeln!(out, ' {from} → {to}{mark}')
     end
     end
 ```
 
-22 steps · 0 observed · 22 possible only
+20 steps · 0 observed · 20 possible only
 
 **Edges**
 
@@ -120,11 +115,11 @@ sequenceDiagram
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../../view/links/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../../view/links/index.md)
 - calls → [`robby_render::view::deps::impl PackageStructure::module_by_stable`](../../view/deps/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::deps::impl PackageStructure::module_by_stable`](../../view/deps/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 
 ## References
 

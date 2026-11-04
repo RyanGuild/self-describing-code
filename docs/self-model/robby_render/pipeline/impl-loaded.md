@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/pipeline.rs:27`](../../../../crates/robby-render/src/pipeline.rs#L27) |
+| location | [`crates/robby-render/src/pipeline.rs:30`](../../../../crates/robby-render/src/pipeline.rs#L30) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 impl Loaded {
     /// True when the coverage gate passes and there are no error diagnostics.
     pub fn is_ok(&self) -> bool {
-        self.coverage.is_complete()
+        CoverageGate::passes(&self.coverage)
             && !self
                 .diagnostics
                 .iter()
@@ -23,7 +23,12 @@ impl Loaded {
     pub fn summary(&self) -> String {
         let files = self.coverage.files.len();
         let claimed: u32 = self.coverage.files.iter().map(|f| f.covered_bytes).sum();
-        let unclaimed: u32 = self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum();
+        let unclaimed: u32 = self
+            .coverage
+            .files
+            .iter()
+            .map(robby_ir::FileCoverage::uncovered_bytes)
+            .sum();
         format!(
             "{files} file(s), {claimed} bytes claimed, {unclaimed} unclaimed, {} diagnostic(s)",
             self.diagnostics.len()
@@ -34,7 +39,7 @@ impl Loaded {
 
 ## References
 
-- calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — is_complete, uncovered_bytes
+- calls → [`robby_ir::contract`](../../robby_ir/contract/index.md) — passes
 
 ## Referenced by
 
@@ -49,7 +54,7 @@ impl Loaded {
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_ok(1)` |
-| location | [`crates/robby-render/src/pipeline.rs:28`](../../../../crates/robby-render/src/pipeline.rs#L28) |
+| location | [`crates/robby-render/src/pipeline.rs:31`](../../../../crates/robby-render/src/pipeline.rs#L31) |
 | provenance | extractor · confidence 1.00 |
 
 > True when the coverage gate passes and there are no error diagnostics.
@@ -57,7 +62,7 @@ impl Loaded {
 ```rust
 /// True when the coverage gate passes and there are no error diagnostics.
     pub fn is_ok(&self) -> bool {
-        self.coverage.is_complete()
+        CoverageGate::passes(&self.coverage)
             && !self
                 .diagnostics
                 .iter()
@@ -69,10 +74,10 @@ impl Loaded {
 sequenceDiagram
     autonumber
     participant is_ok as is_ok()
-    participant is_complete as is_complete
+    participant CoverageGate__passes as CoverageGate::passes
     participant iter as iter
     participant any as any
-    is_ok-->>is_complete: self.coverage.is_complete()
+    is_ok-->>CoverageGate__passes: CoverageGate::passes(&self.coverage)
     is_ok-->>iter: self .diagnostics .iter()
     is_ok-->>any: self .diagnostics .iter() .any(|d| d.severity == Severity::Error)
 ```
@@ -81,7 +86,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::coverage::impl FileCoverage::is_complete`](../../robby_ir/coverage/index.md)
+- calls → [`robby_ir::contract::CoverageGate::passes`](../../robby_ir/contract/index.md)
 
 ### `summary`
 
@@ -89,7 +94,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn summary(1)` |
-| location | [`crates/robby-render/src/pipeline.rs:37`](../../../../crates/robby-render/src/pipeline.rs#L37) |
+| location | [`crates/robby-render/src/pipeline.rs:40`](../../../../crates/robby-render/src/pipeline.rs#L40) |
 | provenance | extractor · confidence 1.00 |
 
 > One-line summary for build output and CI logs.
@@ -99,7 +104,12 @@ sequenceDiagram
     pub fn summary(&self) -> String {
         let files = self.coverage.files.len();
         let claimed: u32 = self.coverage.files.iter().map(|f| f.covered_bytes).sum();
-        let unclaimed: u32 = self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum();
+        let unclaimed: u32 = self
+            .coverage
+            .files
+            .iter()
+            .map(robby_ir::FileCoverage::uncovered_bytes)
+            .sum();
         format!(
             "{files} file(s), {claimed} bytes claimed, {unclaimed} unclaimed, {} diagnostic(s)",
             self.diagnostics.len()
@@ -115,21 +125,15 @@ sequenceDiagram
     participant iter as iter
     participant map as map
     participant sum as sum
-    participant uncovered_bytes as uncovered_bytes
     summary-->>len: self.coverage.files.len()
     summary-->>iter: self.coverage.files.iter()
     summary-->>map: self.coverage.files.iter().map(|f| f.covered_bytes)
     summary-->>sum: self.coverage.files.iter().map(|f| f.covered_bytes).sum()
-    summary-->>iter: self.coverage.files.iter()
-    summary-->>uncovered_bytes: f.uncovered_bytes()
-    summary-->>map: self.coverage.files.iter().map(|f| f.uncovered_bytes())
-    summary-->>sum: self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum()
+    summary-->>iter: self .coverage .files .iter()
+    summary-->>map: self .coverage .files .iter() .map(robby_ir::FileCoverage::uncovered_...
+    summary-->>sum: self .coverage .files .iter() .map(robby_ir::FileCoverage::uncovered_...
     summary-->>summary: format!( '{files} file(s), {claimed} bytes claimed, {unclaimed} uncla...
 ```
 
-9 steps · 0 observed · 9 possible only
-
-**Edges**
-
-- calls → [`robby_ir::coverage::impl FileCoverage::uncovered_bytes`](../../robby_ir/coverage/index.md)
+8 steps · 0 observed · 8 possible only
 

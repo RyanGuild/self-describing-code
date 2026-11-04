@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn insert_module(     modules: &mut BTreeMap<String, DepModule>,     node: &Node,     external: bool,     doc: &Document, )` |
-| location | [`crates/robby-render/src/view/deps.rs:663`](../../../../../crates/robby-render/src/view/deps.rs#L663) |
+| location | [`crates/robby-render/src/view/deps.rs:646`](../../../../../crates/robby-render/src/view/deps.rs#L646) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -57,7 +57,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_render::util::text`](../../util/text.md)
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)

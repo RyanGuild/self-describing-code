@@ -6,7 +6,25 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 164 |
+| nodes | 180 |
+
+## Types
+
+```mermaid
+classDiagram
+    class LanguageExtractor {
+        <<interface>>
+        +language()
+        +extract()
+        +source_file_count()
+    }
+    class RustExtractor {
+    }
+    class TypeScriptExtractor {
+    }
+    RustExtractor ..|> LanguageExtractor : implements
+    TypeScriptExtractor ..|> LanguageExtractor : implements
+```
 
 ## Package diagram
 
@@ -22,7 +40,6 @@ flowchart TB
         n_707c83973fcabf1f["test_typescript"]
         n_65efc424c4086ad0["typescript"]
     end
-    n_f3e9f97d91a4f4af(["robby_agent"])
     n_356bf2c23da68961(["robby_ir"])
     n_9c636b098ca4450e(["robby_render"])
     n_286b1b9602b65f8d --> n_356bf2c23da68961
@@ -32,7 +49,6 @@ flowchart TB
     n_65efc424c4086ad0 --> n_356bf2c23da68961
     n_65efc424c4086ad0 --> n_9c636b098ca4450e
     n_65efc424c4086ad0 --> n_a95c010a8299da11
-    n_65efc424c4086ad0 --> n_f3e9f97d91a4f4af
     n_707c83973fcabf1f --> n_356bf2c23da68961
     n_707c83973fcabf1f --> n_9c636b098ca4450e
     n_707c83973fcabf1f --> n_a95c010a8299da11
@@ -148,9 +164,15 @@ flowchart TB
             n_9823549b185de270["walk_stmt"]
             n_e1eac68a67870b19["walk_stmts"]
         end
+        n_11f6e0e69955e302["extract"]
+        n_8814203572f08297["extract"]
         n_9a097a01ca297a4c["extract"]
+        n_a2836e8fda63021d["extract_with"]
         n_6b8440ffa3a2e7c0["merge_documents"]
         n_0478cf609a402211["source_file_count"]
+        n_7f2aabf60f4c3937["source_file_count"]
+        n_e766dd16f7f14c9a["source_file_count"]
+        n_eb327c4de66cd1f6["source_file_count_with"]
     end
     n_04598dcdf47019ad --> n_18d198c74ea04d46
     n_04598dcdf47019ad --> n_359f9b30d43ad0b3
@@ -250,6 +272,8 @@ flowchart TB
     n_96f42359af8dd731 --> n_e15579d20b9b2edd
     n_9823549b185de270 -.->|"1 circular"| n_e1eac68a67870b19
     n_9a097a01ca297a4c --> n_6b8440ffa3a2e7c0
+    n_a2836e8fda63021d --> n_6b8440ffa3a2e7c0
+    n_a2836e8fda63021d -->|"2"| n_9a097a01ca297a4c
     n_aad6691009267c88 --> n_1c1c14a8e043f39b
     n_b0a6b64e43c0a4f9 --> n_1b53af5a44fa5068
     n_b0a6b64e43c0a4f9 --> n_3d45ae7c14c050a5
@@ -303,6 +327,7 @@ flowchart TB
     n_e2da56648b8aafaa -->|"5"| n_bd9191c7b36f1f58
     n_e2da56648b8aafaa --> n_e0aff4d7ad1207be
     n_e2da56648b8aafaa -.->|"9 circular"| n_e0f46f8e875851fc
+    n_eb327c4de66cd1f6 --> n_0478cf609a402211
     n_ef635844bddcf7e1 -->|"3"| n_3d45ae7c14c050a5
     n_ef635844bddcf7e1 --> n_494ba2a3fa438ab3
     n_ef635844bddcf7e1 --> n_be96122d6baee981
@@ -323,36 +348,75 @@ flowchart TB
 
 ## Dependency matrix
 
-| | test_extract | typescript | test_typescript | tests | rust | robby_extract | robby_agent | robby_ir | robby_render |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **test_extract** | · | | | | 1 | 5 | | 4 | 1 |
-| **typescript** | | · | | | 23 | | 1 | 76 | 31 |
-| **test_typescript** | | | · | | 1 | 5 | | 11 | 5 |
-| **tests** | | | | · | | | | | |
-| **rust** | | | | | · | | | 65 | 31 |
-| **robby_extract** | | | | | | · | | 2 | |
-| **robby_agent** | | | | | | | · | | |
-| **robby_ir** | | | | | | | | · | |
-| **robby_render** | | | | | | | | | · |
+| | test_extract | typescript | test_typescript | tests | rust | robby_extract | robby_ir | robby_render |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| **test_extract** | · | | | | 1 | 5 | 4 | 1 |
+| **typescript** | | · | | | 23 | | 77 | 31 |
+| **test_typescript** | | | · | | 1 | 5 | 11 | 5 |
+| **tests** | | | | · | | | | |
+| **rust** | | | | | · | | 60 | 25 |
+| **robby_extract** | | | | | | · | 2 | |
+| **robby_ir** | | | | | | | · | |
+| **robby_render** | | | | | | | | · |
 
 ## Comments
 
-- `crates/robby-extract/src/lib.rs:18:1` (docs, `robby_extract::extract`): "Extract a document describing Rust crates and TypeScript packages under `root`."
+- `crates/robby-extract/src/lib.rs:18:1` (docs, `robby_extract::LanguageExtractor`): "One language's producer. Future crates (`robby-extract-rust`, `robby-extract-typescript`) should keep this signature."
+  ```
+  /// One language's producer. Future crates (`robby-extract-rust`,
+  /// `robby-extract-typescript`) should keep this signature.
+  pub trait LanguageExtractor {
+      fn language(&self) -> Lang;
+      fn extract(&self, root: &Path) -> Result<Document>;
+      fn source_file_count(&self, root: &Path) -> Result<usize>;
+  }
+  ```
+- `crates/robby-extract/src/lib.rs:26:1` (docs, `robby_extract::RustExtractor`): "Syn-based Rust extractor."
+  ```
+  /// Syn-based Rust extractor.
+  #[derive(Debug, Default, Clone, Copy)]
+  pub struct RustExtractor;
+  ```
+- `crates/robby-extract/src/lib.rs:44:1` (docs, `robby_extract::TypeScriptExtractor`): "Oxc-based TypeScript / JS extractor."
+  ```
+  /// Oxc-based TypeScript / JS extractor.
+  #[derive(Debug, Default, Clone, Copy)]
+  pub struct TypeScriptExtractor;
+  ```
+- `crates/robby-extract/src/lib.rs:62:1` (docs, `robby_extract::extract`): "Extract a document describing Rust crates and TypeScript packages under `root`."
   ```
   /// Extract a document describing Rust crates and TypeScript packages under `root`.
   pub fn extract(root: &Path) -> Result<Document> {
-      let mut doc = rust::extract(root)?;
-      let ts = typescript::extract(root)?;
+      let mut doc = RustExtractor.extract(root)?;
+      let ts = TypeScriptExtractor.extract(root)?;
       merge_documents(&mut doc, ts);
       Ok(doc)
   }
   ```
-- `crates/robby-extract/src/lib.rs:26:1` (docs, `robby_extract::source_file_count`): "Count of source files (`.rs` + TypeScript) the extractor considers part of the workspace."
+- `crates/robby-extract/src/lib.rs:70:1` (docs, `robby_extract::extract_with`): "Merge language extractors in order (first is the base document)."
+  ```
+  /// Merge language extractors in order (first is the base document).
+  pub fn extract_with<'a>(
+      root: &Path,
+      extractors: impl IntoIterator<Item = &'a dyn LanguageExtractor>,
+  ) -> Result<Document> {
+      let mut iter = extractors.into_iter();
+      let Some(first) = iter.next() else {
+          return Ok(Document::new("robby-extract"));
+      };
+      let mut doc = first.extract(root)?;
+      for extractor in iter {
+          merge_documents(&mut doc, extractor.extract(root)?);
+      }
+      Ok(doc)
+  }
+  ```
+- `crates/robby-extract/src/lib.rs:86:1` (docs, `robby_extract::source_file_count`): "Count of source files (`.rs` + TypeScript) the extractor considers part of the workspace."
   ```
   /// Count of source files (`.rs` + TypeScript) the extractor considers part of
   /// the workspace.
   pub fn source_file_count(root: &Path) -> Result<usize> {
-      Ok(rust::source_file_count(root)? + typescript::source_file_count(root)?)
+      Ok(RustExtractor.source_file_count(root)? + TypeScriptExtractor.source_file_count(root)?)
   }
   ```
 - `crates/robby-extract/src/rust.rs:16:1` (docs, `robby_extract::rust::extract`): "Extract a document describing every Rust crate under `<root>/crates`."
@@ -382,7 +446,7 @@ flowchart TB
       Ok(doc)
   }
   ```
-- `crates/robby-extract/src/rust.rs:432:1` (docs, `robby_extract::rust::type_text`): "Render a type just well enough to disambiguate impl blocks. `impl From<&str> for Kind` and `impl From<String> for Kind`…"
+- `crates/robby-extract/src/rust.rs:435:1` (docs, `robby_extract::rust::type_text`): "Render a type just well enough to disambiguate impl blocks. `impl From<&str> for Kind` and `impl From<String> for Kind`…"
   ```
   /// Render a type just well enough to disambiguate impl blocks.
   ///
@@ -409,19 +473,19 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/rust.rs:461:1` (docs, `robby_extract::rust::LineIndex`): "Converts proc-macro2 line/column positions into byte offsets. `proc-macro2`'s `span-locations` reports columns as chara…"
+- `crates/robby-extract/src/rust.rs:464:1` (docs, `robby_extract::rust::LineIndex`): "Converts proc-macro2 line/column positions into byte offsets. `proc-macro2`'s `span-locations` reports columns as chara…"
   ```
   /// Converts proc-macro2 line/column positions into byte offsets.
   ///
   /// `proc-macro2`'s `span-locations` reports columns as character offsets within
   /// the line, so the conversion walks chars rather than bytes. This is what makes
   /// coverage exact on files containing non-ASCII identifiers or comments.
-  pub struct LineIndex {
+  pub(crate) struct LineIndex {
       starts: Vec<u32>,
       source: String,
   }
   ```
-- `crates/robby-extract/src/rust.rs:818:1` (docs, `robby_extract::rust::callee_display`): "The readable callee, including its module path: `Document::new`."
+- `crates/robby-extract/src/rust.rs:828:1` (docs, `robby_extract::rust::callee_display`): "The readable callee, including its module path: `Document::new`."
   ```
   /// The readable callee, including its module path: `Document::new`.
   fn callee_display(func: &Expr) -> String {
@@ -431,7 +495,7 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/rust.rs:826:1` (docs, `robby_extract::rust::callee_name`): "The last segment, used to match against known items."
+- `crates/robby-extract/src/rust.rs:836:1` (docs, `robby_extract::rust::callee_name`): "The last segment, used to match against known items."
   ```
   /// The last segment, used to match against known items.
   fn callee_name(func: &Expr) -> String {
@@ -440,8 +504,7 @@ flowchart TB
               .path
               .segments
               .last()
-              .map(|s| s.ident.to_string())
-              .unwrap_or_else(|| "call".to_owned()),
+              .map_or_else(|| "call".to_owned(), |s| s.ident.to_string()),
           Expr::Field(f) => match &f.member {
               syn::Member::Named(n) => n.to_string(),
               syn::Member::Unnamed(i) => format!("field{}", i.index),
@@ -450,7 +513,7 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/rust.rs:902:1` (docs, `robby_extract::rust::pick_call_target`): "Prefer the callee in the same module as the caller; then longest shared module prefix; then shortest FQN (sibling over …"
+- `crates/robby-extract/src/rust.rs:908:1` (docs, `robby_extract::rust::pick_call_target`): "Prefer the callee in the same module as the caller; then longest shared module prefix; then shortest FQN (sibling over …"
   ```
   /// Prefer the callee in the same module as the caller; then longest shared
   /// module prefix; then shortest FQN (sibling over nested crate paths).
@@ -464,7 +527,7 @@ flowchart TB
           .map(|target| {
               let target_fqn = id_fqn(target);
               let target_mod = module_prefix(target_fqn);
-              let exact = if target_mod == caller_mod { 1 } else { 0 };
+              let exact = i32::from(target_mod == caller_mod);
               let shared = shared_module_score(caller_mod, target_mod) as i32;
               // Shorter FQN wins ties (crate::run over crate::nested::run).
               let len = target_fqn.len();
@@ -485,7 +548,7 @@ flowchart TB
       (best.clone(), confidence)
   }
   ```
-- `crates/robby-extract/src/rust.rs:956:1` (docs, `robby_extract::rust::source_file_count`): "Count of `.rs` files the extractor considers part of the workspace."
+- `crates/robby-extract/src/rust.rs:961:1` (docs, `robby_extract::rust::source_file_count`): "Count of `.rs` files the extractor considers part of the workspace."
   ```
   /// Count of `.rs` files the extractor considers part of the workspace.
   pub(crate) fn source_file_count(root: &Path) -> Result<usize> {
@@ -519,7 +582,7 @@ flowchart TB
       Ok(doc)
   }
   ```
-- `crates/robby-extract/src/typescript.rs:388:1` (docs, `robby_extract::typescript::npm_bare_name`): "`react/jsx-runtime` → `react`; `@scope/pkg/sub` → `@scope/pkg`."
+- `crates/robby-extract/src/typescript.rs:380:1` (docs, `robby_extract::typescript::npm_bare_name`): "`react/jsx-runtime` → `react`; `@scope/pkg/sub` → `@scope/pkg`."
   ```
   /// `react/jsx-runtime` → `react`; `@scope/pkg/sub` → `@scope/pkg`.
   fn npm_bare_name(spec: &str) -> String {
@@ -535,7 +598,7 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/typescript.rs:429:1` (docs, `robby_extract::typescript::attach_leading_docs`): "Attach leading comments (JSDoc-style) onto the following item's `docs`. Oxc's `attached_to` is the start of the next *t…"
+- `crates/robby-extract/src/typescript.rs:421:1` (docs, `robby_extract::typescript::attach_leading_docs`): "Attach leading comments (JSDoc-style) onto the following item's `docs`. Oxc's `attached_to` is the start of the next *t…"
   ```
   /// Attach leading comments (JSDoc-style) onto the following item's `docs`.
   ///
@@ -599,17 +662,16 @@ flowchart TB
               }
           }
   
-          if let Some((_, id)) = best {
-              if let Some(child) = doc.nodes.get_mut(&id) {
-                  if child.docs.is_none() {
-                      child.docs = Some(raw.to_owned());
-                  }
-              }
+          if let Some((_, id)) = best
+              && let Some(child) = doc.nodes.get_mut(&id)
+              && child.docs.is_none()
+          {
+              child.docs = Some(raw.to_owned());
           }
       }
   }
   ```
-- `crates/robby-extract/src/typescript.rs:501:1` (docs, `robby_extract::typescript::gap_is_attachable`): "True when the bytes between a comment and an item are only whitespace or declaration prefixes (`export` / `default` / `…"
+- `crates/robby-extract/src/typescript.rs:492:1` (docs, `robby_extract::typescript::gap_is_attachable`): "True when the bytes between a comment and an item are only whitespace or declaration prefixes (`export` / `default` / `…"
   ```
   /// True when the bytes between a comment and an item are only whitespace or
   /// declaration prefixes (`export` / `default` / `async`).
@@ -618,18 +680,17 @@ flowchart TB
           return false;
       }
       let gap = source.get(from as usize..to as usize).unwrap_or("");
-      gap.split_whitespace().all(|tok| {
-          matches!(tok, "export" | "default" | "async" | "declare")
-      })
+      gap.split_whitespace()
+          .all(|tok| matches!(tok, "export" | "default" | "async" | "declare"))
   }
   ```
 ## References
 
-- calls → [`robby_agent::model`](../robby_agent/model/index.md) — parse
 - calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — document_coverage, failures, from_path
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — as_str, from
-- calls → [`robby_ir::model`](../robby_ir/model/index.md) — 7 items
+- calls → [`robby_ir::model`](../robby_ir/model/index.md) — 6 items
 - calls → [`robby_ir::process`](../robby_ir/process/index.md) — default, participant
+- calls → [`robby_ir::run`](../robby_ir/run/index.md) — get, parse
 - calls → [`robby_ir::span`](../robby_ir/span/index.md) — is_empty
 - calls → [`robby_ir::test_coverage`](../robby_ir/test_coverage/index.md) — span
 - calls → [`robby_render::report`](../robby_render/report/index.md) — push
@@ -648,13 +709,20 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`extract`](extract.md) | `code.function` | 6 | `crates/robby-extract/src/lib.rs:18:1` |
-| [`source_file_count`](source-file-count.md) | `code.function` | 5 | `crates/robby-extract/src/lib.rs:26:1` |
-| [`merge_documents`](merge-documents.md) | `code.function` | 3 | `crates/robby-extract/src/lib.rs:32:1` |
+| [`LanguageExtractor`](languageextractor.md) | `code.trait` | — | `crates/robby-extract/src/lib.rs:18:1` |
+| [`RustExtractor`](rustextractor.md) | `code.struct` | — | `crates/robby-extract/src/lib.rs:26:1` |
+| [`impl LanguageExtractor for RustExtractor`](impl-languageextractor-for-rustextractor.md) | `code.impl` | — | `crates/robby-extract/src/lib.rs:30:1` |
+| [`TypeScriptExtractor`](typescriptextractor.md) | `code.struct` | — | `crates/robby-extract/src/lib.rs:44:1` |
+| [`impl LanguageExtractor for TypeScriptExtractor`](impl-languageextractor-for-typescriptextractor.md) | `code.impl` | — | `crates/robby-extract/src/lib.rs:48:1` |
+| [`extract`](extract.md) | `code.function` | 6 | `crates/robby-extract/src/lib.rs:62:1` |
+| [`extract_with`](extract-with.md) | `code.function` | 8 | `crates/robby-extract/src/lib.rs:70:1` |
+| [`source_file_count`](source-file-count.md) | `code.function` | 5 | `crates/robby-extract/src/lib.rs:86:1` |
+| [`source_file_count_with`](source-file-count-with.md) | `code.function` | 3 | `crates/robby-extract/src/lib.rs:92:1` |
+| [`merge_documents`](merge-documents.md) | `code.function` | 3 | `crates/robby-extract/src/lib.rs:103:1` |
 
 ## Imports
 
 - `use std::path::Path;`
 - `use anyhow::Result;`
-- [`use robby_ir::Document;`](../robby_ir/index.md)
+- [`use robby_ir::{Document, Lang};`](../robby_ir/index.md)
 

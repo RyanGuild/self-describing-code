@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn walk_statements<'a>(     doc: &mut Document,     stmts: &[Statement<'a>],     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:260`](../../../../crates/robby-extract/src/typescript.rs#L260) |
+| signature | `fn walk_statements(     doc: &mut Document,     stmts: &[Statement<'_>],     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:257`](../../../../crates/robby-extract/src/typescript.rs#L257) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn walk_statements<'a>(
+fn walk_statements(
     doc: &mut Document,
-    stmts: &[Statement<'a>],
+    stmts: &[Statement<'_>],
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,

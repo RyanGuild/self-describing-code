@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn sample_doc() -> Document` |
-| location | [`crates/robby-ir/src/codepath.rs:134`](../../../../../crates/robby-ir/src/codepath.rs#L134) |
+| location | [`crates/robby-ir/src/codepath.rs:136`](../../../../../crates/robby-ir/src/codepath.rs#L136) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -17,8 +17,10 @@ fn sample_doc() -> Document {
             kind::code::FUNCTION,
             "demo::main",
         );
-        main.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::a"), EdgeKind::Calls));
+        main.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::a"),
+            EdgeKind::Calls,
+        ));
         doc.insert(main);
 
         let mut a = Node::new(
@@ -26,8 +28,10 @@ fn sample_doc() -> Document {
             kind::code::FUNCTION,
             "demo::a",
         );
-        a.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::b"), EdgeKind::Calls));
+        a.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::b"),
+            EdgeKind::Calls,
+        ));
         doc.insert(a);
 
         doc.insert(Node::new(
@@ -53,14 +57,14 @@ sequenceDiagram
     sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::main')
     sample_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::main'), kind::code::FUNCTION...
     sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
-    sample_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKind::Calls)
-    sample_doc-->>push: main.edges .push(Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKin...
+    sample_doc-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::a'), EdgeKind::Calls, )
+    sample_doc-->>push: main.edges.push(Edge::new( NodeId::symbol('rust', 'demo::a'), EdgeKin...
     sample_doc-->>insert: doc.insert(main)
     sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
     sample_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::a'), kind::code::FUNCTION, '...
     sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::b')
-    sample_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeKind::Calls)
-    sample_doc-->>push: a.edges .push(Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeKind::...
+    sample_doc-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::b'), EdgeKind::Calls, )
+    sample_doc-->>push: a.edges.push(Edge::new( NodeId::symbol('rust', 'demo::b'), EdgeKind::...
     sample_doc-->>insert: doc.insert(a)
     sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::b')
     sample_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::b'), kind::code::FUNCTION, '...

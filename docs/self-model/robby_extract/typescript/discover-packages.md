@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn discover_packages(root: &Path) -> Result<Vec<Package>>` |
-| location | [`crates/robby-extract/src/typescript.rs:63`](../../../../crates/robby-extract/src/typescript.rs#L63) |
+| location | [`crates/robby-extract/src/typescript.rs:60`](../../../../crates/robby-extract/src/typescript.rs#L60) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

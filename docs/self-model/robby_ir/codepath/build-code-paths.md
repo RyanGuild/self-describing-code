@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn build_code_paths(doc: &Document, max_depth: u32) -> Vec<CodePath>` |
-| location | [`crates/robby-ir/src/codepath.rs:121`](../../../../crates/robby-ir/src/codepath.rs#L121) |
+| location | [`crates/robby-ir/src/codepath.rs:123`](../../../../crates/robby-ir/src/codepath.rs#L123) |
 | provenance | extractor · confidence 1.00 |
 
 > Build a [`CodePath`] for every discovered entrypoint.

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn participant_id(node: &Node) -> String` |
-| location | [`crates/robby-render/src/view/execution.rs:88`](../../../../../crates/robby-render/src/view/execution.rs#L88) |
+| location | [`crates/robby-render/src/view/execution.rs:80`](../../../../../crates/robby-render/src/view/execution.rs#L80) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -29,7 +29,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::util::alias`](../../util/alias.md)
 
 ## References

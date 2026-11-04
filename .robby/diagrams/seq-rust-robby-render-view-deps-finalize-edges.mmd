@@ -2,6 +2,7 @@ sequenceDiagram
     autonumber
     participant finalize_edges as finalize_edges()
     participant BTreeMap__new as BTreeMap::new
+    participant keys as keys
     participant clone as clone
     participant entry as entry
     participant or_default as or_default
@@ -18,7 +19,8 @@ sequenceDiagram
     participant cmp as cmp
     participant sort_by as sort_by
     finalize_edges-->>BTreeMap__new: BTreeMap::new()
-    loop &weights
+    finalize_edges-->>keys: weights.keys()
+    loop weights.keys()
     finalize_edges-->>clone: from.clone()
     finalize_edges-->>entry: adj.entry(from.clone())
     finalize_edges-->>or_default: adj.entry(from.clone()).or_default()
@@ -35,7 +37,8 @@ sequenceDiagram
     finalize_edges-->>iter: scc.iter()
     finalize_edges-->>cloned: scc.iter().cloned()
     finalize_edges-->>collect: scc.iter().cloned().collect()
-    loop &weights
+    finalize_edges-->>keys: weights.keys()
+    loop weights.keys()
     finalize_edges-->>contains: set.contains(from)
     finalize_edges-->>contains: set.contains(to)
     alt set.contains(from) && set.contains(to)

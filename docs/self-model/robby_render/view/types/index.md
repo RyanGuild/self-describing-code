@@ -85,7 +85,8 @@ flowchart TB
 | **robby_render** | | | · |
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — class_id, is_type, strip_generics, text
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
@@ -108,9 +109,9 @@ flowchart TB
 | [`TypeRelation`](typerelation.md) | `code.struct` | — | `crates/robby-render/src/view/types.rs:37:1` |
 | [`RelationKind`](relationkind.md) | `code.enum` | — | `crates/robby-render/src/view/types.rs:44:1` |
 | [`impl TypeModel`](impl-typemodel.md) | `code.impl` | — | `crates/robby-render/src/view/types.rs:50:1` |
-| [`class_from_node`](class-from-node.md) | `code.function` | 24 | `crates/robby-render/src/view/types.rs:165:1` |
-| [`impl_methods`](impl-methods.md) | `code.function` | 9 | `crates/robby-render/src/view/types.rs:217:1` |
-| [`parse_impl_target`](parse-impl-target.md) | `code.function` | 17 | `crates/robby-render/src/view/types.rs:229:1` |
+| [`class_from_node`](class-from-node.md) | `code.function` | 24 | `crates/robby-render/src/view/types.rs:166:1` |
+| [`impl_methods`](impl-methods.md) | `code.function` | 9 | `crates/robby-render/src/view/types.rs:218:1` |
+| [`parse_impl_target`](parse-impl-target.md) | `code.function` | 17 | `crates/robby-render/src/view/types.rs:230:1` |
 
 ## Imports
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn extract_file(     doc: &mut Document,     package: &Package,     file: &Path,     pending: &mut Vec<PendingCall>, ) -> Result<()>` |
-| location | [`crates/robby-extract/src/typescript.rs:199`](../../../../crates/robby-extract/src/typescript.rs#L199) |
+| location | [`crates/robby-extract/src/typescript.rs:196`](../../../../crates/robby-extract/src/typescript.rs#L196) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -137,7 +137,7 @@ sequenceDiagram
 - calls → [`robby_ir::process::impl Default for Process::default`](../../robby_ir/process/index.md)
 - calls → [`robby_ir::coverage::impl TriviaMode::from_path`](../../robby_ir/coverage/index.md)
 - calls → [`robby_extract::rust::impl LineIndex::new`](../rust/index.md)
-- calls → [`robby_agent::model::impl Verdict::parse`](../../robby_agent/model/index.md)
+- calls → [`robby_ir::run::impl RunStatus::parse`](../../robby_ir/run/index.md)
 - calls → [`robby_extract::typescript::module_fqn`](module-fqn.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Node::with_lang`](../../robby_ir/model/index.md)
@@ -151,12 +151,12 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_agent::model`](../../robby_agent/model/index.md) — parse
 - calls → [`robby_extract::rust`](../rust/index.md) — new
 - calls → [`robby_extract::typescript`](index.md) — attach_leading_docs, emit_comments, module_fqn, walk_statements
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — from_path
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — declare_file, merge, symbol, with_lang
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — default
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — parse
 
 ## Referenced by
 

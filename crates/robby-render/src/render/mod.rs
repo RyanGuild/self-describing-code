@@ -11,8 +11,8 @@ pub use tui::{ShowOptions, TuiRenderer};
 
 use crate::report::{Report, Section};
 use crate::view::{
-    CommentsView, CouplingGraph, DependencyViews, ExternalsView, HierarchyView, LinkGraph, NodeMeta,
-    NodeViews, PackageStructure, ProcessView, SiblingGraph, SourceSlice, TypeModel,
+    CommentsView, CouplingGraph, DependencyViews, ExternalsView, HierarchyView, LinkGraph,
+    NodeMeta, NodeViews, PackageStructure, ProcessView, SiblingGraph, SourceSlice, TypeModel,
 };
 
 /// Transform one view into text.

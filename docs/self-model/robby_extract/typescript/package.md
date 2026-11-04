@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-extract/src/typescript.rs:55`](../../../../crates/robby-extract/src/typescript.rs#L55) |
+| location | [`crates/robby-extract/src/typescript.rs:52`](../../../../crates/robby-extract/src/typescript.rs#L52) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -20,8 +20,8 @@ struct Package {
 
 **Fields and variants**
 
-- `name` — `crates/robby-extract/src/typescript.rs:56:5`
-- `dir` — `crates/robby-extract/src/typescript.rs:57:5`
-- `root` — `crates/robby-extract/src/typescript.rs:58:5`
-- `files` — `crates/robby-extract/src/typescript.rs:60:5`
+- `name` — `crates/robby-extract/src/typescript.rs:53:5`
+- `dir` — `crates/robby-extract/src/typescript.rs:54:5`
+- `root` — `crates/robby-extract/src/typescript.rs:55:5`
+- `files` — `crates/robby-extract/src/typescript.rs:57:5`
 

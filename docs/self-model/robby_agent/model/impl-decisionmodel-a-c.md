@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-agent/src/model.rs:119`](../../../../crates/robby-agent/src/model.rs#L119) |
+| location | [`crates/robby-agent/src/model.rs:67`](../../../../crates/robby-agent/src/model.rs#L67) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -47,7 +47,7 @@ impl<'a, C: ChatClient + ?Sized> DecisionModel<'a, C> {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(2)` |
-| location | [`crates/robby-agent/src/model.rs:120`](../../../../crates/robby-agent/src/model.rs#L120) |
+| location | [`crates/robby-agent/src/model.rs:68`](../../../../crates/robby-agent/src/model.rs#L68) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -75,7 +75,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn decide(2)` |
-| location | [`crates/robby-agent/src/model.rs:127`](../../../../crates/robby-agent/src/model.rs#L127) |
+| location | [`crates/robby-agent/src/model.rs:75`](../../../../crates/robby-agent/src/model.rs#L75) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

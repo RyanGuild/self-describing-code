@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/kind.rs:22`](../../../../crates/robby-ir/src/kind.rs#L22) |
+| location | [`crates/robby-ir/src/kind.rs:24`](../../../../crates/robby-ir/src/kind.rs#L24) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -27,6 +27,14 @@ impl Kind {
 
 ## Referenced by
 
+- calls ← [`robby_agent::context::collect_comment_contexts`](../../robby_agent/context/collect-comment-contexts.md)
+- calls ← [`robby_agent::context::has_decision_child`](../../robby_agent/context/has-decision-child.md)
+- calls ← [`robby_agent::context::parent_has_comment_with_text`](../../robby_agent/context/parent-has-comment-with-text.md)
+- calls ← [`robby_agent::enrich::insert_decision`](../../robby_agent/enrich/insert-decision.md)
+- calls ← [`robby_agent::enrich::noise_short_circuits_without_note_call`](../../robby_agent/enrich/tests/noise-short-circuits-without-note-call.md)
+- calls ← [`robby_agent::enrich::relevant_writes_note_and_highlights`](../../robby_agent/enrich/tests/relevant-writes-note-and-highlights.md)
+- calls ← [`robby_agent::model::parse_decision`](../../robby_agent/model/parse-decision.md)
+- calls ← [`robby_agent::model::parse_note`](../../robby_agent/model/parse-note.md)
 - calls ← [`robby_cli::resolve`](../../robby_cli/resolve.md)
 - calls ← [`robby_cli::workspace`](../../robby_cli/workspace.md)
 - calls ← [`robby_extract::rust::id_fqn`](../../robby_extract/rust/id-fqn.md)
@@ -51,10 +59,13 @@ impl Kind {
 - calls ← [`robby_ir::codepath::find_entrypoints`](../codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../codepath/index.md)
 - calls ← [`robby_ir::codepath::sample_doc`](../codepath/tests/sample-doc.md)
+- calls ← [`robby_ir::contract::absorb_trait_marks_matching_steps_observed`](../contract/tests/absorb-trait-marks-matching-steps-observed.md)
+- calls ← [`robby_ir::contract::kind_namespace_helpers`](../contract/tests/kind-namespace-helpers.md)
 - calls ← [`robby_ir::coverage::all_spans`](../coverage/all-spans.md)
 - calls ← [`robby_ir::coverage::document_coverage`](../coverage/document-coverage.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
 - calls ← [`robby_ir::coverage::frontier_spans`](../coverage/frontier-spans.md)
+- calls ← [`robby_ir::coverage::impl TriviaMode::from_path`](../coverage/index.md)
 - calls ← [`robby_ir::coverage::make_gap`](../coverage/make-gap.md)
 - calls ← [`robby_ir::test_coverage::document_coverage_is_union_at_any_depth`](../test_coverage/document-coverage-is-union-at-any-depth.md)
 - calls ← [`robby_ir::test_coverage::frontier_spans_exclude_parents_that_have_span_children`](../test_coverage/frontier-spans-exclude-parents-that-have-span-children.md)
@@ -70,7 +81,7 @@ impl Kind {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(1)` |
-| location | [`crates/robby-ir/src/kind.rs:23`](../../../../crates/robby-ir/src/kind.rs#L23) |
+| location | [`crates/robby-ir/src/kind.rs:25`](../../../../crates/robby-ir/src/kind.rs#L25) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -97,7 +108,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn as_str(1)` |
-| location | [`crates/robby-ir/src/kind.rs:27`](../../../../crates/robby-ir/src/kind.rs#L27) |
+| location | [`crates/robby-ir/src/kind.rs:29`](../../../../crates/robby-ir/src/kind.rs#L29) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -120,7 +131,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn namespace(1)` |
-| location | [`crates/robby-ir/src/kind.rs:31`](../../../../crates/robby-ir/src/kind.rs#L31) |
+| location | [`crates/robby-ir/src/kind.rs:33`](../../../../crates/robby-ir/src/kind.rs#L33) |
 | provenance | extractor · confidence 1.00 |
 
 > The namespace prefix, e.g. `code` in `code.function`.

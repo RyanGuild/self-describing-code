@@ -7,9 +7,10 @@ sequenceDiagram
     participant resolve_relative_import as resolve_relative_import
     participant NodeId__symbol as NodeId::symbol
     participant Edge__new as Edge::new
-    participant clone as clone
+    participant clone_from as clone_from
     participant push as push
     participant is_bare_specifier as is_bare_specifier
+    participant clone as clone
     participant Node__with_lang as Node::with_lang
     participant Provenance__new as Provenance::new
     participant into as into
@@ -23,7 +24,7 @@ sequenceDiagram
     alt let Some(target) = resolve_relative_import(&ctx.module, source)
     emit_import-->>NodeId__symbol: NodeId::symbol('typescript', &target)
     emit_import-->>Edge__new: Edge::new(NodeId::symbol('typescript', &target), EdgeKind::Imports)
-    emit_import-->>clone: node.span.clone()
+    emit_import-->>clone_from: edge.span.clone_from(&node.span)
     emit_import-->>push: node.edges.push(edge)
     else else
     emit_import-->>is_bare_specifier: is_bare_specifier(source)
@@ -41,7 +42,7 @@ sequenceDiagram
     emit_import-->>insert: stub.annotations.insert('external'.into(), 'true'.into())
     emit_import-->>merge: doc.merge(stub)
     emit_import-->>Edge__new: Edge::new(stub_id, EdgeKind::Imports)
-    emit_import-->>clone: node.span.clone()
+    emit_import-->>clone_from: edge.span.clone_from(&node.span)
     emit_import-->>push: node.edges.push(edge)
     end
     end

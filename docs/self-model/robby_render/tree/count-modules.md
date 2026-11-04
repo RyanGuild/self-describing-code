@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn count_modules(doc: &Document, krate: &Node) -> usize` |
-| location | [`crates/robby-render/src/tree.rs:813`](../../../../crates/robby-render/src/tree.rs#L813) |
+| location | [`crates/robby-render/src/tree.rs:809`](../../../../crates/robby-render/src/tree.rs#L809) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -39,7 +39,7 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_ir::model::impl Document::subtree`](../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 
 ## References
 

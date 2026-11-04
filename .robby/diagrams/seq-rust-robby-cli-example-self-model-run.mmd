@@ -14,10 +14,10 @@ sequenceDiagram
     participant filter as filter
     participant failures as failures
     run-->>Args__parse: Args::parse()
-    alt match &args.ir
+    alt let Some(ir) = &args.ir
     run-->>pipeline__load: pipeline::load(ir, &args.root)
     run-->>run: ? (propagate)
-    else None
+    else else
     run-->>robby_extract__extract: robby_extract::extract(&args.root)
     run-->>run: ? (propagate)
     run-->>pipeline__from_document: pipeline::from_document(document, &args.root)

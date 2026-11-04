@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-agent/src/model.rs:69`](../../../../crates/robby-agent/src/model.rs#L69) |
+| location | [`crates/robby-agent/src/model.rs:47`](../../../../crates/robby-agent/src/model.rs#L47) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,6 +19,6 @@ pub struct Decision {
 
 **Fields and variants**
 
-- `verdict` — `crates/robby-agent/src/model.rs:71:5`
-- `reason` — `crates/robby-agent/src/model.rs:72:5`
+- `verdict` — `crates/robby-agent/src/model.rs:49:5`
+- `reason` — `crates/robby-agent/src/model.rs:50:5`
 

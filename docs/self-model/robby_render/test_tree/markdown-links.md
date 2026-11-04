@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn markdown_links(body: &str) -> Vec<String>` |
-| location | [`crates/robby-render/tests/tree.rs:135`](../../../../crates/robby-render/tests/tree.rs#L135) |
+| location | [`crates/robby-render/tests/tree.rs:136`](../../../../crates/robby-render/tests/tree.rs#L136) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn ts_files(package_dir: &Path) -> Result<Vec<PathBuf>>` |
-| location | [`crates/robby-extract/src/typescript.rs:136`](../../../../crates/robby-extract/src/typescript.rs#L136) |
+| location | [`crates/robby-extract/src/typescript.rs:133`](../../../../crates/robby-extract/src/typescript.rs#L133) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

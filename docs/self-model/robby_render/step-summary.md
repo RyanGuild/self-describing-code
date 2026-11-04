@@ -14,14 +14,7 @@
 ```rust
 /// Compact one-liner for a step.
 pub fn step_summary(step: &Step) -> String {
-    let kind = match step.kind {
-        StepKind::Call => "call",
-        StepKind::Return => "return",
-        StepKind::Signal => "signal",
-        StepKind::Decision => "decision",
-        StepKind::Note => "note",
-    };
-    format!("{kind} {} -> {}", step.from, step.to)
+    format!("{} {} -> {}", step.kind.as_str(), step.from, step.to)
 }
 ```
 
@@ -29,7 +22,7 @@ pub fn step_summary(step: &Step) -> String {
 sequenceDiagram
     autonumber
     participant step_summary as step_summary()
-    step_summary-->>step_summary: format!('{kind} {} -> {}', step.from, step.to)
+    step_summary-->>step_summary: format!('{} {} -> {}', step.kind.as_str(), step.from, step.to)
 ```
 
 1 steps · 0 observed · 1 possible only

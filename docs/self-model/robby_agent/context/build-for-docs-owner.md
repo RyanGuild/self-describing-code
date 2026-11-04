@@ -17,9 +17,8 @@ fn build_for_docs_owner(
     text: String,
 ) -> CommentContext {
     let (file, location) = file_location(owner);
-    let code_window = slice_node(sources, owner).unwrap_or_else(|| {
-        line_window(sources, owner).unwrap_or_default()
-    });
+    let code_window = slice_node(sources, owner)
+        .unwrap_or_else(|| line_window(sources, owner).unwrap_or_default());
     let _ = doc;
     CommentContext {
         parent_id: owner.id.clone(),
@@ -47,7 +46,7 @@ sequenceDiagram
     build_for_docs_owner-->>slice_node: slice_node(sources, owner)
     build_for_docs_owner-->>line_window: line_window(sources, owner)
     build_for_docs_owner-->>unwrap_or_default: line_window(sources, owner).unwrap_or_default()
-    build_for_docs_owner-->>unwrap_or_else: slice_node(sources, owner).unwrap_or_else(|| { line_window(sources, o...
+    build_for_docs_owner-->>unwrap_or_else: slice_node(sources, owner) .unwrap_or_else(|| line_window(sources, ow...
     build_for_docs_owner-->>clone: owner.id.clone()
     build_for_docs_owner-->>clone: owner.fqn.clone()
     build_for_docs_owner-->>Some: Some(owner.fqn.clone())

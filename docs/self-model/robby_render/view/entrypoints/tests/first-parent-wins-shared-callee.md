@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn first_parent_wins_shared_callee()` |
-| location | [`crates/robby-render/src/view/entrypoints.rs:188`](../../../../../../crates/robby-render/src/view/entrypoints.rs#L188) |
+| location | [`crates/robby-render/src/view/entrypoints.rs:189`](../../../../../../crates/robby-render/src/view/entrypoints.rs#L189) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -23,14 +23,13 @@
             tree.children_of(&NodeId::symbol("rust", "demo::a")),
             &[NodeId::symbol("rust", "demo::b")]
         );
-        assert!(tree
-            .cross_edges
-            .iter()
-            .any(|(f, t)| f == &NodeId::symbol("rust", "demo::other")
-                && t == &NodeId::symbol("rust", "demo::b")));
-        assert!(tree
-            .children_of(&NodeId::symbol("rust", "demo::other"))
-            .is_empty());
+        assert!(
+            tree.cross_edges
+                .iter()
+                .any(|(f, t)| f == &NodeId::symbol("rust", "demo::other")
+                    && t == &NodeId::symbol("rust", "demo::b"))
+        );
+        assert_eq!(tree.children_of(&NodeId::symbol("rust", "demo::other")), []);
     }
 ```
 
@@ -44,8 +43,8 @@ sequenceDiagram
     first_parent_wins_shared_callee-->>first_parent_wins_shared_callee: vec![ NodeId::symbol('rust', 'demo::main'), NodeId::symbol('rust', 'd...
     first_parent_wins_shared_callee-->>CallTree__from_entries: CallTree::from_entries(&doc, &entries, MAX_CALL_DEPTH)
     first_parent_wins_shared_callee-->>first_parent_wins_shared_callee: assert_eq!( tree.children_of(&NodeId::symbol('rust', 'demo::a')), &[N...
-    first_parent_wins_shared_callee-->>first_parent_wins_shared_callee: assert!(tree .cross_edges .iter() .any(|(f, t)| f == &NodeId::symbol(...
-    first_parent_wins_shared_callee-->>first_parent_wins_shared_callee: assert!(tree .children_of(&NodeId::symbol('rust', 'demo::other')) .is...
+    first_parent_wins_shared_callee-->>first_parent_wins_shared_callee: assert!( tree.cross_edges .iter() .any(|(f, t)| f == &NodeId::symbol(...
+    first_parent_wins_shared_callee-->>first_parent_wins_shared_callee: assert_eq!(tree.children_of(&NodeId::symbol('rust', 'demo::other')), ...
 ```
 
 6 steps · 0 observed · 6 possible only

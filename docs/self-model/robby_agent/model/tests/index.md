@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-agent/src/model.rs:264`](../../../../../crates/robby-agent/src/model.rs#L264) |
+| declared at | [`crates/robby-agent/src/model.rs:212`](../../../../../crates/robby-agent/src/model.rs#L212) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 3 |
 
@@ -32,7 +32,7 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`parses_decision_and_note_json`](parses-decision-and-note-json.md) | `code.function` | 7 | `crates/robby-agent/src/model.rs:268:5` |
+| [`parses_decision_and_note_json`](parses-decision-and-note-json.md) | `code.function` | 7 | `crates/robby-agent/src/model.rs:216:5` |
 
 ## Imports
 

@@ -11,8 +11,8 @@ sequenceDiagram
     participant find as find
     participant expect as expect
     noise_short_circuits_without_note_call-->>mini_doc: mini_doc()
-    noise_short_circuits_without_note_call-->>noise_short_circuits_without_note_call: vec![ r '{'verdict':'noise','reason':'filler'}' .into(), ]
-    noise_short_circuits_without_note_call-->>FakeClient__new: FakeClient::new(vec![ r '{'verdict':'noise','reason':'filler'}' .into...
+    noise_short_circuits_without_note_call-->>noise_short_circuits_without_note_call: vec![r '{'verdict':'noise','reason':'filler'}' .into()]
+    noise_short_circuits_without_note_call-->>FakeClient__new: FakeClient::new(vec![r '{'verdict':'noise','reason':'filler'}' .into()])
     noise_short_circuits_without_note_call-->>EnrichOpts__default: EnrichOpts::default()
     noise_short_circuits_without_note_call-->>enrich_comments: enrich_comments(&mut doc, &sources, &client, &EnrichOpts::default())
     noise_short_circuits_without_note_call-->>unwrap: enrich_comments(&mut doc, &sources, &client, &EnrichOpts::default())....
@@ -22,5 +22,5 @@ sequenceDiagram
     noise_short_circuits_without_note_call-->>as_str: n.kind.as_str()
     noise_short_circuits_without_note_call-->>find: doc .nodes .values() .find(|n| n.kind.as_str() == kind::agent::DECISION)
     noise_short_circuits_without_note_call-->>expect: doc .nodes .values() .find(|n| n.kind.as_str() == kind::agent::DECISI...
-    noise_short_circuits_without_note_call-->>noise_short_circuits_without_note_call: assert_eq!( decision.annotations.get('verdict').map(|s| s.as_str()), ...
+    noise_short_circuits_without_note_call-->>noise_short_circuits_without_note_call: assert_eq!( decision .annotations .get('verdict') .map(std::string::S...
     noise_short_circuits_without_note_call-->>noise_short_circuits_without_note_call: assert!(decision.docs.is_none())

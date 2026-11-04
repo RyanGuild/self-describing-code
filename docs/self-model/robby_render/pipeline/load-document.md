@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn load_document(path: &Path) -> Result<Document>` |
-| location | [`crates/robby-render/src/pipeline.rs:49`](../../../../crates/robby-render/src/pipeline.rs#L49) |
+| location | [`crates/robby-render/src/pipeline.rs:57`](../../../../crates/robby-render/src/pipeline.rs#L57) |
 | provenance | extractor · confidence 1.00 |
 
 > Read and parse an IR document.

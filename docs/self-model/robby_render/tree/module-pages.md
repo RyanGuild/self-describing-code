@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn module_pages(     doc: &Document,     node: &Node,     crate_dir: &str,     pages: &mut Vec<Page>,     sources: Option<&BTreeMap<String, String>>,     out_rel: &str, )` |
-| location | [`crates/robby-render/src/tree.rs:66`](../../../../crates/robby-render/src/tree.rs#L66) |
+| location | [`crates/robby-render/src/tree.rs:62`](../../../../crates/robby-render/src/tree.rs#L62) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -32,14 +32,18 @@ fn module_pages(
     let slugs = item_slugs(&items);
 
     for child in &node.children {
-        let Some(child) = doc.get(child) else { continue };
+        let Some(child) = doc.get(child) else {
+            continue;
+        };
         if is_module(child) {
             module_pages(doc, child, crate_dir, pages, sources, out_rel);
         }
     }
 
     for item in items {
-        let Some(slug) = slugs.get(&item.id) else { continue };
+        let Some(slug) = slugs.get(&item.id) else {
+            continue;
+        };
         let path = module_dir.join(format!("{slug}.md"));
         pages.push(Page {
             path: path.clone(),
@@ -104,16 +108,16 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::tree::item_children`](item-children.md)
 - calls → [`robby_render::tree::item_slugs`](item-slugs.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::module_pages`](module-pages.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::item_page`](item-page.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new, push
 - calls → [`robby_render::tree`](index.md) — 6 items
 

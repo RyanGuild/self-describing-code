@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn normalize(path: &Path) -> String` |
-| location | [`crates/robby-render/tests/tree.rs:163`](../../../../crates/robby-render/tests/tree.rs#L163) |
+| location | [`crates/robby-render/tests/tree.rs:164`](../../../../crates/robby-render/tests/tree.rs#L164) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -17,9 +17,8 @@ fn normalize(path: &Path) -> String {
             Component::ParentDir => {
                 parts.pop();
             }
-            Component::CurDir => {}
             Component::Normal(part) => parts.push(part.to_string_lossy().to_string()),
-            _ => {}
+            Component::CurDir | Component::Prefix(_) | Component::RootDir => {}
         }
     }
     parts.join("/")

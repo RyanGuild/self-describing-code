@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn skip_attribute(bytes: &[u8], start: u32, end: u32) -> Option<u32>` |
-| location | [`crates/robby-ir/src/coverage.rs:382`](../../../../crates/robby-ir/src/coverage.rs#L382) |
+| location | [`crates/robby-ir/src/coverage.rs:375`](../../../../crates/robby-ir/src/coverage.rs#L375) |
 | provenance | extractor · confidence 1.00 |
 
 > Skip `#[...]` or `#![...]`, honouring nested brackets and string literals.

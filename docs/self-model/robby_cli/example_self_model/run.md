@@ -13,12 +13,11 @@
 fn run() -> Result<ExitCode> {
     let args = Args::parse();
 
-    let loaded = match &args.ir {
-        Some(ir) => pipeline::load(ir, &args.root)?,
-        None => {
-            let document = robby_extract::extract(&args.root)?;
-            pipeline::from_document(document, &args.root)
-        }
+    let loaded = if let Some(ir) = &args.ir {
+        pipeline::load(ir, &args.root)?
+    } else {
+        let document = robby_extract::extract(&args.root)?;
+        pipeline::from_document(document, &args.root)
     };
 
     println!("{}", loaded.summary());
@@ -78,10 +77,10 @@ sequenceDiagram
     participant filter as filter
     participant failures as failures
     run-->>Args__parse: Args::parse()
-    alt match &args.ir
+    alt let Some(ir) = &args.ir
     run-->>pipeline__load: pipeline::load(ir, &args.root)
     run-->>run: ? (propagate)
-    else None
+    else else
     run-->>robby_extract__extract: robby_extract::extract(&args.root)
     run-->>run: ? (propagate)
     run-->>pipeline__from_document: pipeline::from_document(document, &args.root)
@@ -122,7 +121,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_agent::model::impl Verdict::parse`](../../robby_agent/model/index.md)
+- calls → [`robby_ir::run::impl RunStatus::parse`](../../robby_ir/run/index.md)
 - calls → [`robby_render::pipeline::load`](../../robby_render/pipeline/load.md)
 - calls → [`robby_cli::extract`](../extract.md)
 - calls → [`robby_render::pipeline::from_document`](../../robby_render/pipeline/from-document.md)
@@ -134,9 +133,9 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_agent::model`](../../robby_agent/model/index.md) — parse
 - calls → [`robby_cli`](../index.md) — extract
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — failures
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — parse
 - calls → [`robby_render::pipeline`](../../robby_render/pipeline/index.md) — 6 items
 
 ## Referenced by

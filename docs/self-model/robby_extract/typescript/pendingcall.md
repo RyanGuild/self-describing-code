@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-extract/src/typescript.rs:254`](../../../../crates/robby-extract/src/typescript.rs#L254) |
+| location | [`crates/robby-extract/src/typescript.rs:251`](../../../../crates/robby-extract/src/typescript.rs#L251) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,7 +18,7 @@ struct PendingCall {
 
 **Fields and variants**
 
-- `from` — `crates/robby-extract/src/typescript.rs:255:5`
-- `name` — `crates/robby-extract/src/typescript.rs:256:5`
-- `span` — `crates/robby-extract/src/typescript.rs:257:5`
+- `from` — `crates/robby-extract/src/typescript.rs:252:5`
+- `name` — `crates/robby-extract/src/typescript.rs:253:5`
+- `span` — `crates/robby-extract/src/typescript.rs:254:5`
 

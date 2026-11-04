@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_bare_specifier(spec: &str) -> bool` |
-| location | [`crates/robby-extract/src/typescript.rs:381`](../../../../crates/robby-extract/src/typescript.rs#L381) |
+| location | [`crates/robby-extract/src/typescript.rs:373`](../../../../crates/robby-extract/src/typescript.rs#L373) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

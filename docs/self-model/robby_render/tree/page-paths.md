@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn page_paths(doc: &Document) -> Vec<PathBuf>` |
-| location | [`crates/robby-render/src/tree.rs:854`](../../../../crates/robby-render/src/tree.rs#L854) |
+| location | [`crates/robby-render/src/tree.rs:850`](../../../../crates/robby-render/src/tree.rs#L850) |
 | provenance | extractor · confidence 1.00 |
 
 > Every page path a document will produce, for tests and stale-file cleanup.

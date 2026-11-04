@@ -148,7 +148,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_agent::model::impl Verdict::parse`](../robby_agent/model/index.md)
+- calls → [`robby_ir::run::impl RunStatus::parse`](../robby_ir/run/index.md)
 - calls → [`robby_ir::schema_json`](../robby_ir/schema-json.md)
 - calls → [`robby_cli::check`](check.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../robby_ir/kind/index.md)
@@ -162,10 +162,10 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_agent::model`](../robby_agent/model/index.md) — parse
 - calls → [`robby_cli`](index.md) — 6 items
 - calls → [`robby_ir`](../robby_ir/index.md) — schema_json
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — from
+- calls → [`robby_ir::run`](../robby_ir/run/index.md) — parse
 - calls → [`robby_render::pipeline`](../robby_render/pipeline/index.md) — load, render_files
 
 ## Referenced by

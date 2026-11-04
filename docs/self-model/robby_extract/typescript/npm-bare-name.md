@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn npm_bare_name(spec: &str) -> String` |
-| location | [`crates/robby-extract/src/typescript.rs:388`](../../../../crates/robby-extract/src/typescript.rs#L388) |
+| location | [`crates/robby-extract/src/typescript.rs:380`](../../../../crates/robby-extract/src/typescript.rs#L380) |
 | provenance | extractor · confidence 1.00 |
 
 > `react/jsx-runtime` → `react`; `@scope/pkg/sub` → `@scope/pkg`.

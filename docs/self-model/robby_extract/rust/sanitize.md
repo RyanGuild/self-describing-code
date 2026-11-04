@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn sanitize(input: &str) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:843`](../../../../crates/robby-extract/src/rust.rs#L843) |
+| location | [`crates/robby-extract/src/rust.rs:852`](../../../../crates/robby-extract/src/rust.rs#L852) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

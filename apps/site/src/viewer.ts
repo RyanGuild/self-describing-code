@@ -89,7 +89,19 @@ interface Camera {
   ty: number;
 }
 
-type OrgMode = "structure" | "entrypoints" | "runs";
+const ORG_MODES = {
+  structure: {
+    file: "scene.json",
+    hint: "click a card to zoom · portals jump to related views",
+  },
+  entrypoints: {
+    file: "scene-entrypoints.json",
+    hint: "drill by call path · portals jump across shared callees",
+  },
+} as const;
+
+type SceneOrgMode = keyof typeof ORG_MODES;
+type OrgMode = SceneOrgMode | "runs";
 
 interface BuildStamp {
   rebuilt_at: number;
@@ -136,27 +148,25 @@ interface RunRecord {
   };
 }
 
-const HINT_STRUCTURE = "click a card to zoom · portals jump to related views";
-const HINT_ENTRYPOINTS = "drill by call path · portals jump across shared callees";
 const HINT_RUNS = "pipeline history · click a run for status, recipe, timing";
 const WATCH_POLL_MS = 1500;
 
-const worldEl = document.getElementById("world")!;
-const viewportEl = document.getElementById("viewport")!;
-const crumbEl = document.getElementById("crumb")!;
-const hintEl = document.getElementById("hint")!;
-const watchBadgeEl = document.getElementById("watch-badge")!;
-const zoomOutBtn = document.getElementById("zoom-out") as HTMLButtonElement;
-const orgStructureBtn = document.getElementById("org-structure") as HTMLButtonElement;
-const orgEntrypointsBtn = document.getElementById("org-entrypoints") as HTMLButtonElement;
-const orgRunsBtn = document.getElementById("org-runs") as HTMLButtonElement;
-const runsPanelEl = document.getElementById("runs-panel")!;
-const runsListEl = document.getElementById("runs-list")!;
-const runsDetailEl = document.getElementById("runs-detail")!;
+const worldEl = requireElement("world");
+const viewportEl = requireElement("viewport");
+const crumbEl = requireElement("crumb");
+const hintEl = requireElement("hint");
+const watchBadgeEl = requireElement("watch-badge");
+const zoomOutBtn = requireButton("zoom-out");
+const orgStructureBtn = requireButton("org-structure");
+const orgEntrypointsBtn = requireButton("org-entrypoints");
+const orgRunsBtn = requireButton("org-runs");
+const runsPanelEl = requireElement("runs-panel");
+const runsListEl = requireElement("runs-list");
+const runsDetailEl = requireElement("runs-detail");
 
 let scene: Scene | null = null;
 let orgMode: OrgMode = "structure";
-const sceneCache = new Map<"structure" | "entrypoints", Scene>();
+const sceneCache = new Map<SceneOrgMode, Scene>();
 let focusId = "";
 const detailCache = new Map<string, FrameDetail>();
 let flying = false;
@@ -170,7 +180,7 @@ const runDetailCache = new Map<string, RunRecord>();
 
 async function main(): Promise<void> {
   try {
-    const structure = await fetchJson<Scene>("scene.json");
+    const structure = await fetchJson<Scene>(ORG_MODES.structure.file);
     sceneCache.set("structure", structure);
     scene = structure;
   } catch (err) {
@@ -272,10 +282,12 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     detailCache.clear();
     sceneCache.clear();
     runDetailCache.clear();
-    const structure = await fetchJson<Scene>(`scene.json?t=${Date.now()}`);
+    const structure = await fetchJson<Scene>(`${ORG_MODES.structure.file}?t=${Date.now()}`);
     sceneCache.set("structure", structure);
     try {
-      const entrypoints = await fetchJson<Scene>(`scene-entrypoints.json?t=${Date.now()}`);
+      const entrypoints = await fetchJson<Scene>(
+        `${ORG_MODES.entrypoints.file}?t=${Date.now()}`,
+      );
       sceneCache.set("entrypoints", entrypoints);
     } catch (err) {
       console.error(err);
@@ -287,9 +299,7 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
       showRunsPanel();
       syncLocationHash();
     } else {
-      const next =
-        sceneCache.get(keepOrg === "entrypoints" ? "entrypoints" : "structure") ??
-        structure;
+      const next = sceneCache.get(keepOrg) ?? structure;
       applyScene(next, resolveFocusId(next, preferred));
       syncOrgChrome(keepOrg);
     }
@@ -315,12 +325,12 @@ async function prefetchEntrypoints(): Promise<void> {
     return;
   }
   try {
-    const entrypoints = await fetchJson<Scene>("scene-entrypoints.json");
+    const entrypoints = await fetchJson<Scene>(ORG_MODES.entrypoints.file);
     sceneCache.set("entrypoints", entrypoints);
   } catch (err) {
     console.error(err);
     orgEntrypointsBtn.disabled = true;
-    orgEntrypointsBtn.title = "scene-entrypoints.json missing — re-run robby web";
+    orgEntrypointsBtn.title = `${ORG_MODES.entrypoints.file} missing — re-run robby web`;
   }
 }
 
@@ -345,10 +355,8 @@ function syncOrgChrome(mode: OrgMode): void {
   orgRunsBtn.classList.toggle("is-active", mode === "runs");
   if (mode === "runs") {
     hintEl.textContent = HINT_RUNS;
-  } else if (mode === "entrypoints") {
-    hintEl.textContent = HINT_ENTRYPOINTS;
   } else {
-    hintEl.textContent = HINT_STRUCTURE;
+    hintEl.textContent = ORG_MODES[mode].hint;
   }
   viewportEl.classList.toggle("runs-open", mode === "runs");
   runsPanelEl.hidden = mode !== "runs";
@@ -405,13 +413,20 @@ function readLocationHash(): LocationHash {
     return {};
   }
   const params = new URLSearchParams(raw.includes("=") ? raw : `frame=${raw}`);
-  const frame = params.get("frame") || params.get("location") || undefined;
+  const frame = params.get("frame") || params.get("location") || "";
   const orgRaw = params.get("org");
   const org: OrgMode | undefined =
     orgRaw === "entrypoints" || orgRaw === "structure" || orgRaw === "runs"
       ? orgRaw
       : undefined;
-  return { frame: frame || undefined, org };
+  const out: LocationHash = {};
+  if (frame) {
+    out.frame = frame;
+  }
+  if (org) {
+    out.org = org;
+  }
+  return out;
 }
 
 function syncLocationHash(): void {
@@ -649,8 +664,15 @@ function formatAbsolute(ts: number): string {
   }
 }
 
+function currentScene(): Scene {
+  if (!scene) {
+    throw new Error("scene is not loaded");
+  }
+  return scene;
+}
+
 function frame(id: string): SceneFrame {
-  const f = scene!.frames[id];
+  const f = currentScene().frames[id];
   if (!f) {
     throw new Error(`missing frame ${id}`);
   }
@@ -1112,6 +1134,22 @@ async function fetchJson<T>(path: string): Promise<T> {
     throw new Error(`${path}: ${res.status}`);
   }
   return (await res.json()) as T;
+}
+
+function requireElement(id: string): HTMLElement {
+  const el = document.getElementById(id);
+  if (!(el instanceof HTMLElement)) {
+    throw new Error(`missing #${id}`);
+  }
+  return el;
+}
+
+function requireButton(id: string): HTMLButtonElement {
+  const el = document.getElementById(id);
+  if (!(el instanceof HTMLButtonElement)) {
+    throw new Error(`missing button #${id}`);
+  }
+  return el;
 }
 
 function escapeHtml(s: string): string {

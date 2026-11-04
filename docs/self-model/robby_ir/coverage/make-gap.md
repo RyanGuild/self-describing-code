@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn make_gap(file: &str, source: &str, bytes: &[u8], start: u32, end: u32) -> Gap` |
-| location | [`crates/robby-ir/src/coverage.rs:253`](../../../../crates/robby-ir/src/coverage.rs#L253) |
+| location | [`crates/robby-ir/src/coverage.rs:256`](../../../../crates/robby-ir/src/coverage.rs#L256) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

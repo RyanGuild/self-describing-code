@@ -3,19 +3,15 @@ sequenceDiagram
     participant crate_of as crate_of()
     participant split_once as split_once
     participant to_owned as to_owned
-    participant Some as Some
     participant clone as clone
     crate_of-->>split_once: fqn.split_once('::')
     alt let Some((head, _)) = fqn.split_once('::')
     crate_of-->>to_owned: head.to_owned()
-    crate_of-->>Some: Some(head.to_owned())
     crate_of-->>crate_of: return
     end
     crate_of-->>split_once: fqn.split_once('/')
     alt let Some((head, _)) = fqn.split_once('/')
     crate_of-->>to_owned: head.to_owned()
-    crate_of-->>Some: Some(head.to_owned())
     crate_of-->>crate_of: return
     end
     crate_of-->>clone: fqn.clone()
-    crate_of-->>Some: Some(fqn.clone())

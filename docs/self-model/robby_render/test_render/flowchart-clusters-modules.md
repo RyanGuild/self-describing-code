@@ -26,7 +26,10 @@ fn flowchart_clusters_modules() {
 
     let mut b = Node::new(NodeId::symbol("rust", "demo::b"), code::FUNCTION, "demo::b");
     b.parent = Some(NodeId::from("rust://demo"));
-    b.edges.push(Edge::new(NodeId::symbol("rust", "demo::a"), EdgeKind::Calls));
+    b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::a"),
+        EdgeKind::Calls,
+    ));
     doc.insert(b);
 
     let out = flowchart(&doc, &NodeId::from("rust://demo"));
@@ -69,8 +72,8 @@ sequenceDiagram
     flowchart_clusters_modules-->>NodeId__from: NodeId::from('rust://demo')
     flowchart_clusters_modules-->>Some: Some(NodeId::from('rust://demo'))
     flowchart_clusters_modules-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
-    flowchart_clusters_modules-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKind::Calls)
-    flowchart_clusters_modules-->>push: b.edges.push(Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKind::C...
+    flowchart_clusters_modules-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::a'), EdgeKind::Calls, )
+    flowchart_clusters_modules-->>push: b.edges.push(Edge::new( NodeId::symbol('rust', 'demo::a'), EdgeKind::...
     flowchart_clusters_modules-->>insert: doc.insert(b)
     flowchart_clusters_modules-->>NodeId__from: NodeId::from('rust://demo')
     flowchart_clusters_modules-->>flowchart: flowchart(&doc, &NodeId::from('rust://demo'))

@@ -16,7 +16,8 @@ fn fully_covered_file_has_no_gaps() {
     let report = file_coverage(FILE, source, &[span(source, 0, source.len() as u32)]);
 
     assert!(report.is_complete());
-    assert!(report.gaps.is_empty());
+    let no_gaps: [robby_ir::Gap; 0] = [];
+    assert_eq!(report.gaps, no_gaps);
     assert_eq!(report.covered_bytes, source.len() as u32);
     assert_eq!(report.ratio(), 1.0);
 }
@@ -33,7 +34,7 @@ sequenceDiagram
     fully_covered_file_has_no_gaps-->>span: span(source, 0, source.len() as u32)
     fully_covered_file_has_no_gaps-->>file_coverage: file_coverage(FILE, source, &[span(source, 0, source.len() as u32)])
     fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert!(report.is_complete())
-    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert!(report.gaps.is_empty())
+    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert_eq!(report.gaps, no_gaps)
     fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert_eq!(report.covered_bytes, source.len() as u32)
     fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert_eq!(report.ratio(), 1.0)
 ```

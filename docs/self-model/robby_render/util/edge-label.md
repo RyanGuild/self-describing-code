@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn edge_label(kind: EdgeKind) -> &'static str` |
-| location | [`crates/robby-render/src/util.rs:48`](../../../../crates/robby-render/src/util.rs#L48) |
+| location | [`crates/robby-render/src/util.rs:47`](../../../../crates/robby-render/src/util.rs#L47) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

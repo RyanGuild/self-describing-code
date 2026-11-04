@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-agent/src/model.rs:142`](../../../../crates/robby-agent/src/model.rs#L142) |
+| location | [`crates/robby-agent/src/model.rs:90`](../../../../crates/robby-agent/src/model.rs#L90) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -17,6 +17,6 @@ pub struct NoteModel<'a, C: ChatClient + ?Sized> {
 
 **Fields and variants**
 
-- `client` — `crates/robby-agent/src/model.rs:143:5`
-- `model` — `crates/robby-agent/src/model.rs:144:5`
+- `client` — `crates/robby-agent/src/model.rs:91:5`
+- `model` — `crates/robby-agent/src/model.rs:92:5`
 

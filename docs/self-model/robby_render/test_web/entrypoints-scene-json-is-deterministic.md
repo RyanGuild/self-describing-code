@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn entrypoints_scene_json_is_deterministic()` |
-| location | [`crates/robby-render/tests/web.rs:411`](../../../../crates/robby-render/tests/web.rs#L411) |
+| location | [`crates/robby-render/tests/web.rs:422`](../../../../crates/robby-render/tests/web.rs#L422) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

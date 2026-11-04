@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn entrypoints_demo_stores_code_paths_in_ir()` |
-| location | [`crates/robby-render/tests/web.rs:323`](../../../../crates/robby-render/tests/web.rs#L323) |
+| location | [`crates/robby-render/tests/web.rs:328`](../../../../crates/robby-render/tests/web.rs#L328) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

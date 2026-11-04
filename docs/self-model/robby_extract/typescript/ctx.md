@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-extract/src/typescript.rs:248`](../../../../crates/robby-extract/src/typescript.rs#L248) |
+| location | [`crates/robby-extract/src/typescript.rs:245`](../../../../crates/robby-extract/src/typescript.rs#L245) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,7 +18,7 @@ struct Ctx<'a> {
 
 **Fields and variants**
 
-- `file` — `crates/robby-extract/src/typescript.rs:249:5`
-- `source` — `crates/robby-extract/src/typescript.rs:250:5`
-- `module` — `crates/robby-extract/src/typescript.rs:251:5`
+- `file` — `crates/robby-extract/src/typescript.rs:246:5`
+- `source` — `crates/robby-extract/src/typescript.rs:247:5`
+- `module` — `crates/robby-extract/src/typescript.rs:248:5`
 

@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use robby_ir::{Document, Node, Source, kind};
+use robby_ir::{Document, Node, kind};
 
 use super::comments::CommentsView;
 use super::deps::DependencyViews;
@@ -108,8 +108,8 @@ pub fn collect(
         fqn: node.fqn.clone(),
         kind: node.kind.as_str().to_owned(),
         signature: node.signature.clone(),
-        location: node.span.as_ref().map(|s| s.location()),
-        provenance_source: source_name(node.provenance.source),
+        location: node.span.as_ref().map(robby_ir::Span::location),
+        provenance_source: node.provenance.source.as_str(),
         confidence: node.provenance.confidence,
         docs: node.docs.clone(),
         node_count: doc.subtree(&node.id).len(),
@@ -123,44 +123,28 @@ pub fn collect(
 
     let types = if opts.types && is_module {
         let model = TypeModel::from_module(doc, &node.id);
-        if model.is_empty() {
-            None
-        } else {
-            Some(model)
-        }
+        if model.is_empty() { None } else { Some(model) }
     } else {
         None
     };
 
     let dependencies = if opts.dependencies && is_module {
         let views = DependencyViews::from_root(doc, &node.id);
-        if views.is_empty() {
-            None
-        } else {
-            Some(views)
-        }
+        if views.is_empty() { None } else { Some(views) }
     } else {
         None
     };
 
     let externals = if opts.externals && is_module {
         let view = ExternalsView::from_root(doc, &node.id);
-        if view.is_empty() {
-            None
-        } else {
-            Some(view)
-        }
+        if view.is_empty() { None } else { Some(view) }
     } else {
         None
     };
 
     let comments = if opts.comments && is_module {
         let view = CommentsView::from_root(doc, &node.id, sources);
-        if view.is_empty() {
-            None
-        } else {
-            Some(view)
-        }
+        if view.is_empty() { None } else { Some(view) }
     } else {
         None
     };
@@ -172,17 +156,9 @@ pub fn collect(
     };
 
     let hierarchy = if opts.hierarchy {
-        let view = HierarchyView::from_node(
-            doc,
-            &node.id,
-            opts.hierarchy_depth,
-            opts.hierarchy_all,
-        );
-        if view.is_empty() {
-            None
-        } else {
-            Some(view)
-        }
+        let view =
+            HierarchyView::from_node(doc, &node.id, opts.hierarchy_depth, opts.hierarchy_all);
+        if view.is_empty() { None } else { Some(view) }
     } else {
         None
     };
@@ -195,11 +171,7 @@ pub fn collect(
 
     let sibling = if opts.sibling {
         let graph = SiblingGraph::from_root(doc, &node.id);
-        if graph.is_empty() {
-            None
-        } else {
-            Some(graph)
-        }
+        if graph.is_empty() { None } else { Some(graph) }
     } else {
         None
     };
@@ -226,9 +198,10 @@ pub fn collect(
 }
 
 pub fn is_binary_module(doc: &Document, node: &Node) -> bool {
-    node.children.iter().filter_map(|id| doc.get(id)).any(|child| {
-        child.name == "main" && child.kind.as_str() == kind::code::FUNCTION
-    })
+    node.children
+        .iter()
+        .filter_map(|id| doc.get(id))
+        .any(|child| child.name == "main" && child.kind.as_str() == kind::code::FUNCTION)
 }
 
 pub fn main_process<'a>(doc: &'a Document, node: &Node) -> Option<&'a robby_ir::Process> {
@@ -237,14 +210,4 @@ pub fn main_process<'a>(doc: &'a Document, node: &Node) -> Option<&'a robby_ir::
         .filter_map(|id| doc.get(id))
         .find(|child| child.name == "main" && child.kind.as_str() == kind::code::FUNCTION)
         .and_then(|main| main.process.as_ref())
-}
-
-fn source_name(source: Source) -> &'static str {
-    match source {
-        Source::Extractor => "extractor",
-        Source::Macro => "macro",
-        Source::Trace => "trace",
-        Source::Agent => "agent",
-        Source::Hand => "hand",
-    }
 }

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn extract_json(raw: &str) -> Result<serde_json::Value>` |
-| location | [`crates/robby-agent/src/model.rs:237`](../../../../crates/robby-agent/src/model.rs#L237) |
+| location | [`crates/robby-agent/src/model.rs:185`](../../../../crates/robby-agent/src/model.rs#L185) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -21,8 +21,8 @@ fn extract_json(raw: &str) -> Result<serde_json::Value> {
     let end = trimmed
         .rfind('}')
         .with_context(|| format!("no JSON object in response: {raw}"))?;
-    Ok(serde_json::from_str(&trimmed[start..=end])
-        .with_context(|| format!("invalid JSON in response: {raw}"))?)
+    serde_json::from_str(&trimmed[start..=end])
+        .with_context(|| format!("invalid JSON in response: {raw}"))
 }
 ```
 
@@ -54,11 +54,9 @@ sequenceDiagram
     extract_json-->>serde_json__from_str: serde_json::from_str(&trimmed[start..=end])
     extract_json-->>extract_json: format!('invalid JSON in response: {raw}')
     extract_json-->>with_context: serde_json::from_str(&trimmed[start..=end]) .with_context(|| format!(...
-    extract_json-->>extract_json: ? (propagate)
-    extract_json-->>Ok: Ok(serde_json::from_str(&trimmed[start..=end]) .with_context(|| forma...
 ```
 
-17 steps · 0 observed · 17 possible only
+15 steps · 0 observed · 15 possible only
 
 ## Referenced by
 

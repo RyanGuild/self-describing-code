@@ -168,7 +168,7 @@ flowchart TB
 
 | | rust | tests | robby_ir | robby_render |
 |---|---:|---:|---:|---:|
-| **rust** | · | | 65 | 31 |
+| **rust** | · | | 60 | 25 |
 | **tests** | | · | | |
 | **robby_ir** | | | · | |
 | **robby_render** | | | | · |
@@ -202,7 +202,7 @@ flowchart TB
       Ok(doc)
   }
   ```
-- `crates/robby-extract/src/rust.rs:432:1` (docs, `robby_extract::rust::type_text`): "Render a type just well enough to disambiguate impl blocks. `impl From<&str> for Kind` and `impl From<String> for Kind`…"
+- `crates/robby-extract/src/rust.rs:435:1` (docs, `robby_extract::rust::type_text`): "Render a type just well enough to disambiguate impl blocks. `impl From<&str> for Kind` and `impl From<String> for Kind`…"
   ```
   /// Render a type just well enough to disambiguate impl blocks.
   ///
@@ -229,19 +229,19 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/rust.rs:461:1` (docs, `robby_extract::rust::LineIndex`): "Converts proc-macro2 line/column positions into byte offsets. `proc-macro2`'s `span-locations` reports columns as chara…"
+- `crates/robby-extract/src/rust.rs:464:1` (docs, `robby_extract::rust::LineIndex`): "Converts proc-macro2 line/column positions into byte offsets. `proc-macro2`'s `span-locations` reports columns as chara…"
   ```
   /// Converts proc-macro2 line/column positions into byte offsets.
   ///
   /// `proc-macro2`'s `span-locations` reports columns as character offsets within
   /// the line, so the conversion walks chars rather than bytes. This is what makes
   /// coverage exact on files containing non-ASCII identifiers or comments.
-  pub struct LineIndex {
+  pub(crate) struct LineIndex {
       starts: Vec<u32>,
       source: String,
   }
   ```
-- `crates/robby-extract/src/rust.rs:818:1` (docs, `robby_extract::rust::callee_display`): "The readable callee, including its module path: `Document::new`."
+- `crates/robby-extract/src/rust.rs:828:1` (docs, `robby_extract::rust::callee_display`): "The readable callee, including its module path: `Document::new`."
   ```
   /// The readable callee, including its module path: `Document::new`.
   fn callee_display(func: &Expr) -> String {
@@ -251,7 +251,7 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/rust.rs:826:1` (docs, `robby_extract::rust::callee_name`): "The last segment, used to match against known items."
+- `crates/robby-extract/src/rust.rs:836:1` (docs, `robby_extract::rust::callee_name`): "The last segment, used to match against known items."
   ```
   /// The last segment, used to match against known items.
   fn callee_name(func: &Expr) -> String {
@@ -260,8 +260,7 @@ flowchart TB
               .path
               .segments
               .last()
-              .map(|s| s.ident.to_string())
-              .unwrap_or_else(|| "call".to_owned()),
+              .map_or_else(|| "call".to_owned(), |s| s.ident.to_string()),
           Expr::Field(f) => match &f.member {
               syn::Member::Named(n) => n.to_string(),
               syn::Member::Unnamed(i) => format!("field{}", i.index),
@@ -270,7 +269,7 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/rust.rs:902:1` (docs, `robby_extract::rust::pick_call_target`): "Prefer the callee in the same module as the caller; then longest shared module prefix; then shortest FQN (sibling over …"
+- `crates/robby-extract/src/rust.rs:908:1` (docs, `robby_extract::rust::pick_call_target`): "Prefer the callee in the same module as the caller; then longest shared module prefix; then shortest FQN (sibling over …"
   ```
   /// Prefer the callee in the same module as the caller; then longest shared
   /// module prefix; then shortest FQN (sibling over nested crate paths).
@@ -284,7 +283,7 @@ flowchart TB
           .map(|target| {
               let target_fqn = id_fqn(target);
               let target_mod = module_prefix(target_fqn);
-              let exact = if target_mod == caller_mod { 1 } else { 0 };
+              let exact = i32::from(target_mod == caller_mod);
               let shared = shared_module_score(caller_mod, target_mod) as i32;
               // Shorter FQN wins ties (crate::run over crate::nested::run).
               let len = target_fqn.len();
@@ -305,7 +304,7 @@ flowchart TB
       (best.clone(), confidence)
   }
   ```
-- `crates/robby-extract/src/rust.rs:956:1` (docs, `robby_extract::rust::source_file_count`): "Count of `.rs` files the extractor considers part of the workspace."
+- `crates/robby-extract/src/rust.rs:961:1` (docs, `robby_extract::rust::source_file_count`): "Count of `.rs` files the extractor considers part of the workspace."
   ```
   /// Count of `.rs` files the extractor considers part of the workspace.
   pub(crate) fn source_file_count(root: &Path) -> Result<usize> {
@@ -315,8 +314,9 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str, from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 6 items
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 5 items
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_ir::test_coverage`](../../robby_ir/test_coverage/index.md) — span
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
@@ -357,35 +357,35 @@ flowchart TB
 | [`rust_files`](rust-files.md) | `code.function` | 15 | `crates/robby-extract/src/rust.rs:72:1` |
 | [`collect_rs`](collect-rs.md) | `code.function` | 18 | `crates/robby-extract/src/rust.rs:85:1` |
 | [`module_path`](module-path.md) | `code.function` | 27 | `crates/robby-extract/src/rust.rs:103:1` |
-| [`extract_file`](extract-file.md) | `code.function` | 31 | `crates/robby-extract/src/rust.rs:132:1` |
-| [`Ctx`](ctx.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:172:1` |
-| [`walk_items`](walk-items.md) | `code.function` | 125 | `crates/robby-extract/src/rust.rs:179:1` |
-| [`item_node`](item-node.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:369:1` |
-| [`signature_of`](signature-of.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:379:1` |
-| [`docs_of`](docs-of.md) | `code.function` | 10 | `crates/robby-extract/src/rust.rs:384:1` |
-| [`path_text`](path-text.md) | `code.function` | 15 | `crates/robby-extract/src/rust.rs:407:1` |
-| [`type_text`](type-text.md) | `code.function` | 9 | `crates/robby-extract/src/rust.rs:432:1` |
-| [`LineIndex`](lineindex.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:461:1` |
-| [`impl LineIndex`](impl-lineindex.md) | `code.impl` | — | `crates/robby-extract/src/rust.rs:471:1` |
-| [`span_of`](span-of.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:502:1` |
-| [`slice`](slice.md) | `code.function` | 3 | `crates/robby-extract/src/rust.rs:509:1` |
-| [`label_of`](label-of.md) | `code.function` | 10 | `crates/robby-extract/src/rust.rs:516:1` |
-| [`PendingCall`](pendingcall.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:531:1` |
-| [`build_process`](build-process.md) | `code.function` | 1 | `crates/robby-extract/src/rust.rs:537:1` |
-| [`build_process_sig`](build-process-sig.md) | `code.function` | 13 | `crates/robby-extract/src/rust.rs:546:1` |
-| [`ProcBuilder`](procbuilder.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:572:1` |
-| [`impl ProcBuilder<'_, '_>`](impl-procbuilder.md) | `code.impl` | — | `crates/robby-extract/src/rust.rs:581:1` |
-| [`walk_stmts`](walk-stmts.md) | `code.function` | 17 | `crates/robby-extract/src/rust.rs:622:1` |
-| [`walk_expr`](walk-expr.md) | `code.function` | 105 | `crates/robby-extract/src/rust.rs:652:1` |
-| [`callee_display`](callee-display.md) | `code.function` | 2 | `crates/robby-extract/src/rust.rs:818:1` |
-| [`callee_name`](callee-name.md) | `code.function` | 8 | `crates/robby-extract/src/rust.rs:826:1` |
-| [`sanitize`](sanitize.md) | `code.function` | 13 | `crates/robby-extract/src/rust.rs:843:1` |
-| [`resolve_calls`](resolve-calls.md) | `code.function` | 24 | `crates/robby-extract/src/rust.rs:865:1` |
-| [`pick_call_target`](pick-call-target.md) | `code.function` | 13 | `crates/robby-extract/src/rust.rs:902:1` |
-| [`id_fqn`](id-fqn.md) | `code.function` | 5 | `crates/robby-extract/src/rust.rs:935:1` |
-| [`module_prefix`](module-prefix.md) | `code.function` | 3 | `crates/robby-extract/src/rust.rs:942:1` |
-| [`shared_module_score`](shared-module-score.md) | `code.function` | 9 | `crates/robby-extract/src/rust.rs:946:1` |
-| [`source_file_count`](source-file-count.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:956:1` |
+| [`extract_file`](extract-file.md) | `code.function` | 31 | `crates/robby-extract/src/rust.rs:142:1` |
+| [`Ctx`](ctx.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:188:1` |
+| [`walk_items`](walk-items.md) | `code.function` | 110 | `crates/robby-extract/src/rust.rs:195:1` |
+| [`item_node`](item-node.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:375:1` |
+| [`signature_of`](signature-of.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:385:1` |
+| [`docs_of`](docs-of.md) | `code.function` | 10 | `crates/robby-extract/src/rust.rs:390:1` |
+| [`path_text`](path-text.md) | `code.function` | 15 | `crates/robby-extract/src/rust.rs:410:1` |
+| [`type_text`](type-text.md) | `code.function` | 9 | `crates/robby-extract/src/rust.rs:435:1` |
+| [`LineIndex`](lineindex.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:464:1` |
+| [`impl LineIndex`](impl-lineindex.md) | `code.impl` | — | `crates/robby-extract/src/rust.rs:474:1` |
+| [`span_of`](span-of.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:505:1` |
+| [`slice`](slice.md) | `code.function` | 3 | `crates/robby-extract/src/rust.rs:512:1` |
+| [`label_of`](label-of.md) | `code.function` | 10 | `crates/robby-extract/src/rust.rs:519:1` |
+| [`PendingCall`](pendingcall.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:534:1` |
+| [`build_process`](build-process.md) | `code.function` | 1 | `crates/robby-extract/src/rust.rs:540:1` |
+| [`build_process_sig`](build-process-sig.md) | `code.function` | 13 | `crates/robby-extract/src/rust.rs:549:1` |
+| [`ProcBuilder`](procbuilder.md) | `code.struct` | — | `crates/robby-extract/src/rust.rs:575:1` |
+| [`impl ProcBuilder<'_, '_>`](impl-procbuilder.md) | `code.impl` | — | `crates/robby-extract/src/rust.rs:584:1` |
+| [`walk_stmts`](walk-stmts.md) | `code.function` | 14 | `crates/robby-extract/src/rust.rs:631:1` |
+| [`walk_expr`](walk-expr.md) | `code.function` | 102 | `crates/robby-extract/src/rust.rs:662:1` |
+| [`callee_display`](callee-display.md) | `code.function` | 2 | `crates/robby-extract/src/rust.rs:828:1` |
+| [`callee_name`](callee-name.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:836:1` |
+| [`sanitize`](sanitize.md) | `code.function` | 13 | `crates/robby-extract/src/rust.rs:852:1` |
+| [`resolve_calls`](resolve-calls.md) | `code.function` | 23 | `crates/robby-extract/src/rust.rs:874:1` |
+| [`pick_call_target`](pick-call-target.md) | `code.function` | 14 | `crates/robby-extract/src/rust.rs:908:1` |
+| [`id_fqn`](id-fqn.md) | `code.function` | 4 | `crates/robby-extract/src/rust.rs:941:1` |
+| [`module_prefix`](module-prefix.md) | `code.function` | 2 | `crates/robby-extract/src/rust.rs:947:1` |
+| [`shared_module_score`](shared-module-score.md) | `code.function` | 9 | `crates/robby-extract/src/rust.rs:951:1` |
+| [`source_file_count`](source-file-count.md) | `code.function` | 7 | `crates/robby-extract/src/rust.rs:961:1` |
 
 ## Imports
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String>` |
-| location | [`crates/robby-agent/src/context.rs:185`](../../../../crates/robby-agent/src/context.rs#L185) |
+| location | [`crates/robby-agent/src/context.rs:184`](../../../../crates/robby-agent/src/context.rs#L184) |
 | provenance | extractor · confidence 1.00 |
 
 > ±20 lines around the node's span.
@@ -31,11 +31,7 @@ fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String
         out.push_str(line);
         out.push('\n');
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 ```
 
@@ -84,7 +80,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_agent::enrich::impl FakeClient::new`](../enrich/tests/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::span::impl Span::is_empty`](../../robby_ir/span/index.md)
@@ -92,7 +88,7 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_agent::enrich::tests`](../enrich/tests/index.md) — new
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 

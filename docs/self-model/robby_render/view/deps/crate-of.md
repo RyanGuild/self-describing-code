@@ -6,17 +6,14 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn crate_of<'a>(doc: &'a Document, node: &'a Node) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/deps.rs:729`](../../../../../crates/robby-render/src/view/deps.rs#L729) |
+| location | [`crates/robby-render/src/view/deps.rs:712`](../../../../../crates/robby-render/src/view/deps.rs#L712) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn crate_of<'a>(doc: &'a Document, node: &'a Node) -> Option<&'a Node> {
     let mut current = Some(node);
     while let Some(n) = current {
-        if matches!(
-            n.kind.as_str(),
-            kind::code::CRATE | kind::code::PACKAGE
-        ) {
+        if matches!(n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE) {
             return Some(n);
         }
         current = n.parent.as_ref().and_then(|id| doc.get(id));
@@ -35,8 +32,8 @@ sequenceDiagram
     participant and_then as and_then
     crate_of-->>Some: Some(node)
     loop let Some(n) = current
-    crate_of-->>crate_of: matches!( n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
-    alt matches!( n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
+    crate_of-->>crate_of: matches!(n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
+    alt matches!(n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
     crate_of-->>Some: Some(n)
     crate_of-->>crate_of: return
     end
@@ -50,11 +47,11 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

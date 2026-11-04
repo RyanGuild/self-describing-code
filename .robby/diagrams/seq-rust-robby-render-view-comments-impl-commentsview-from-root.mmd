@@ -18,12 +18,12 @@ sequenceDiagram
     participant code_window as code_window
     participant as_deref as as_deref
     participant enrichment_fields as enrichment_fields
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     participant as_ref as as_ref
-    participant location as location
     participant push as push
     participant contains as contains
     participant slice_node as slice_node
+    participant unwrap_or as unwrap_or
     participant cmp as cmp
     participant sort_by as sort_by
     from_root-->>Vec__new: Vec::new()
@@ -34,9 +34,8 @@ sequenceDiagram
     from_root-->>clone: node.docs.clone()
     from_root-->>unwrap_or_default: node.docs.clone().unwrap_or_default()
     from_root-->>is_empty: text.is_empty()
-    from_root-->>get: node.annotations.get('comment_kind')
-    from_root-->>as_str: s.as_str()
-    from_root-->>map: node.annotations.get('comment_kind').map(|s| s.as_str())
+    from_root-->>get: node .annotations .get('comment_kind')
+    from_root-->>map: node .annotations .get('comment_kind') .map(std::string::String::as_str)
     from_root-->>clone: text.clone()
     from_root-->>insert: covered_docs.insert(text.clone())
     from_root-->>decision_child: decision_child(doc, node)
@@ -45,17 +44,15 @@ sequenceDiagram
     from_root-->>nearest_following_item: nearest_following_item(doc, node)
     from_root-->>code_window: code_window(s, node, owner)
     from_root-->>and_then: sources.and_then(|s| code_window(s, node, owner))
+    from_root-->>Vec__new: Vec::new()
     from_root-->>as_deref: code.as_deref()
     from_root-->>enrichment_fields: enrichment_fields(d, code.as_deref())
-    from_root-->>map: decision .map(|d| enrichment_fields(d, code.as_deref()))
-    from_root-->>Vec__new: Vec::new()
-    from_root-->>unwrap_or: decision .map(|d| enrichment_fields(d, code.as_deref())) .unwrap_or((...
+    from_root-->>map_or: decision.map_or((None, None, Vec::new()), |d| { enrichment_fields(d, ...
     from_root-->>as_ref: node.span.as_ref()
-    from_root-->>location: s.location()
-    from_root-->>map: node.span.as_ref().map(|s| s.location())
+    from_root-->>map: node.span.as_ref().map(robby_ir::Span::location)
     from_root-->>clone: n.fqn.clone()
     from_root-->>map: owner.map(|n| n.fqn.clone())
-    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(|s| s.lo...
+    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(robby_ir...
     end
     from_root-->>subtree: doc.subtree(root)
     loop doc.subtree(root)
@@ -67,18 +64,16 @@ sequenceDiagram
     from_root-->>Some: Some(Verdict::Noise)
     from_root-->>slice_node: slice_node(s, node)
     from_root-->>and_then: sources.and_then(|s| slice_node(s, node))
+    from_root-->>Vec__new: Vec::new()
     from_root-->>as_deref: code.as_deref()
     from_root-->>enrichment_fields: enrichment_fields(d, code.as_deref())
-    from_root-->>map: decision .map(|d| enrichment_fields(d, code.as_deref()))
-    from_root-->>Vec__new: Vec::new()
-    from_root-->>unwrap_or: decision .map(|d| enrichment_fields(d, code.as_deref())) .unwrap_or((...
+    from_root-->>map_or: decision.map_or((None, None, Vec::new()), |d| { enrichment_fields(d, ...
     from_root-->>as_ref: node.span.as_ref()
-    from_root-->>location: s.location()
-    from_root-->>map: node.span.as_ref().map(|s| s.location())
+    from_root-->>map: node.span.as_ref().map(robby_ir::Span::location)
     from_root-->>clone: docs.clone()
     from_root-->>clone: node.fqn.clone()
     from_root-->>Some: Some(node.fqn.clone())
-    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(|s| s.lo...
+    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(robby_ir...
     end
     from_root-->>as_deref: a.location.as_deref()
     from_root-->>unwrap_or: a.location.as_deref().unwrap_or('')

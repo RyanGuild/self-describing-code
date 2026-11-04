@@ -23,12 +23,12 @@ sequenceDiagram
     alt let Some(Expression::ArrowFunctionExpression(arrow)) = &decl.init
     emit_variable-->>emit_variable: format!('{}/{}', ctx.module, name)
     emit_variable-->>oxc_span: oxc_span(decl.span, ctx)
-    emit_variable-->>item_node: item_node( kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), pare...
+    emit_variable-->>item_node: item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent)
     emit_variable-->>Process__new: Process::new()
     emit_variable-->>sanitize: sanitize(name)
     emit_variable-->>emit_variable: format!('{name}()')
     emit_variable-->>Kind__from: Kind::from(kind::code::FUNCTION)
-    emit_variable-->>participant: process.participant(sanitize(name), format!('{name}()'), Kind::from(k...
+    emit_variable-->>participant: process.participant( sanitize(name), format!('{name}()'), Kind::from(...
     emit_variable-->>NodeId__symbol: NodeId::symbol('typescript', &fqn)
     alt match &arrow.body
     emit_variable-->>walk_stmts: walk_stmts(&body.statements, &mut process, &[], pending, &from, ctx)
@@ -44,7 +44,7 @@ sequenceDiagram
     alt let Some(Expression::FunctionExpression(f)) = &decl.init
     emit_variable-->>emit_variable: format!('{}/{}', ctx.module, name)
     emit_variable-->>oxc_span: oxc_span(decl.span, ctx)
-    emit_variable-->>item_node: item_node( kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), pare...
+    emit_variable-->>item_node: item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent)
     emit_variable-->>build_function_process: build_function_process(f, &fqn, pending, ctx)
     emit_variable-->>Some: Some(build_function_process(f, &fqn, pending, ctx))
     emit_variable-->>merge: doc.merge(node)

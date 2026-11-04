@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-extract/src/rust.rs:461`](../../../../crates/robby-extract/src/rust.rs#L461) |
+| location | [`crates/robby-extract/src/rust.rs:464`](../../../../crates/robby-extract/src/rust.rs#L464) |
 | provenance | extractor · confidence 1.00 |
 
 > Converts proc-macro2 line/column positions into byte offsets.
@@ -20,7 +20,7 @@
 /// `proc-macro2`'s `span-locations` reports columns as character offsets within
 /// the line, so the conversion walks chars rather than bytes. This is what makes
 /// coverage exact on files containing non-ASCII identifiers or comments.
-pub struct LineIndex {
+pub(crate) struct LineIndex {
     starts: Vec<u32>,
     source: String,
 }
@@ -28,6 +28,6 @@ pub struct LineIndex {
 
 **Fields and variants**
 
-- `starts` — `crates/robby-extract/src/rust.rs:467:5`
-- `source` — `crates/robby-extract/src/rust.rs:468:5`
+- `starts` — `crates/robby-extract/src/rust.rs:470:5`
+- `source` — `crates/robby-extract/src/rust.rs:471:5`
 

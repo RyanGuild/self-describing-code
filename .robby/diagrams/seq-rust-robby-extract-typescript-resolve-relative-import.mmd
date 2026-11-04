@@ -8,7 +8,6 @@ sequenceDiagram
     participant unwrap_or as unwrap_or
     participant Path__new as Path::new
     participant parent as parent
-    participant to_path_buf as to_path_buf
     participant map as map
     participant unwrap_or_default as unwrap_or_default
     participant join as join
@@ -34,10 +33,9 @@ sequenceDiagram
     resolve_relative_import-->>strip_prefix: from_module.strip_prefix(&format!('{pkg}/'))
     resolve_relative_import-->>unwrap_or: from_module.strip_prefix(&format!('{pkg}/')).unwrap_or('')
     resolve_relative_import-->>Path__new: Path::new(path)
-    resolve_relative_import-->>parent: Path::new(path).parent()
-    resolve_relative_import-->>to_path_buf: p.to_path_buf()
-    resolve_relative_import-->>map: Path::new(path).parent().map(|p| p.to_path_buf())
-    resolve_relative_import-->>unwrap_or_default: Path::new(path).parent().map(|p| p.to_path_buf()).unwrap_or_default()
+    resolve_relative_import-->>parent: Path::new(path) .parent()
+    resolve_relative_import-->>map: Path::new(path) .parent() .map(std::path::Path::to_path_buf)
+    resolve_relative_import-->>unwrap_or_default: Path::new(path) .parent() .map(std::path::Path::to_path_buf) .unwrap_...
     resolve_relative_import-->>join: from_dir.join(spec)
     resolve_relative_import-->>Vec__new: Vec::new()
     resolve_relative_import-->>components: joined.components()

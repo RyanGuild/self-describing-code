@@ -110,8 +110,7 @@ impl PackageStructure {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
 
@@ -138,12 +137,7 @@ impl PackageStructure {
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -211,8 +205,7 @@ impl CouplingGraph {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
         let package_scope: BTreeSet<NodeId> = packages.iter().map(|p| p.id.clone()).collect();
@@ -244,18 +237,22 @@ impl CouplingGraph {
 
                 let from_sid = stable_id(node.id.as_str());
                 let to_sid = stable_id(target.id.as_str());
-                participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn {
-                    id: node.id.clone(),
-                    stable_id: from_sid.clone(),
-                    name: node.name.clone(),
-                    parent_stable_id: stable_id(from_mod.id.as_str()),
-                });
-                participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn {
-                    id: target.id.clone(),
-                    stable_id: to_sid.clone(),
-                    name: target.name.clone(),
-                    parent_stable_id: stable_id(to_mod.id.as_str()),
-                });
+                participants
+                    .entry(from_sid.clone())
+                    .or_insert_with(|| CouplingFn {
+                        id: node.id.clone(),
+                        stable_id: from_sid.clone(),
+                        name: node.name.clone(),
+                        parent_stable_id: stable_id(from_mod.id.as_str()),
+                    });
+                participants
+                    .entry(to_sid.clone())
+                    .or_insert_with(|| CouplingFn {
+                        id: target.id.clone(),
+                        stable_id: to_sid.clone(),
+                        name: target.name.clone(),
+                        parent_stable_id: stable_id(to_mod.id.as_str()),
+                    });
                 if from_sid != to_sid {
                     *weights.entry((from_sid, to_sid)).or_default() += 1;
                 }
@@ -305,12 +302,7 @@ impl CouplingGraph {
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -450,10 +442,10 @@ impl CouplingGraph {
     }
 
     pub fn leaf_nodes(&self) -> &[CouplingFn] {
-        if !self.functions.is_empty() {
-            &self.functions
-        } else {
+        if self.functions.is_empty() {
             &self.module_nodes
+        } else {
+            &self.functions
         }
     }
 }
@@ -503,12 +495,7 @@ fn package_edges<'a>(
             let from_sid = stable_id(from_mod.id.as_str());
             let to_sid = stable_id(to_mod.id.as_str());
             insert_module(&mut modules, from_mod, false, doc);
-            insert_module(
-                &mut modules,
-                to_mod,
-                !scope.contains(&to_mod.id),
-                doc,
-            );
+            insert_module(&mut modules, to_mod, !scope.contains(&to_mod.id), doc);
             *weights.entry((from_sid, to_sid)).or_default() += 1;
         }
     }
@@ -518,7 +505,7 @@ fn package_edges<'a>(
         for sid in modules.keys() {
             adj.entry(sid.clone()).or_default();
         }
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             adj.entry(from.clone()).or_default().insert(to.clone());
         }
         adj
@@ -537,7 +524,7 @@ fn package_edges<'a>(
             continue;
         }
         let set: BTreeSet<_> = scc.iter().cloned().collect();
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             if set.contains(from) && set.contains(to) {
                 edge_in_cycle.insert((from.clone(), to.clone()));
             }
@@ -568,11 +555,7 @@ fn package_edges<'a>(
 
     let mut module_list: Vec<DepModule> = modules.into_values().collect();
     module_list.sort_by(|a, b| a.name.cmp(&b.name));
-    let externals: Vec<DepModule> = module_list
-        .iter()
-        .filter(|m| m.external)
-        .cloned()
-        .collect();
+    let externals: Vec<DepModule> = module_list.iter().filter(|m| m.external).cloned().collect();
 
     (edges, externals, module_list, layers, cycles)
 }
@@ -580,7 +563,7 @@ fn package_edges<'a>(
 fn finalize_edges(weights: BTreeMap<(String, String), usize>) -> Vec<WeightedEdge> {
     let adjacency: BTreeMap<String, BTreeSet<String>> = {
         let mut adj: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             adj.entry(from.clone()).or_default().insert(to.clone());
             adj.entry(to.clone()).or_default();
         }
@@ -593,7 +576,7 @@ fn finalize_edges(weights: BTreeMap<(String, String), usize>) -> Vec<WeightedEdg
             continue;
         }
         let set: BTreeSet<_> = scc.iter().cloned().collect();
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             if set.contains(from) && set.contains(to) {
                 edge_in_cycle.insert((from.clone(), to.clone()));
             }
@@ -613,7 +596,6 @@ fn finalize_edges(weights: BTreeMap<(String, String), usize>) -> Vec<WeightedEdg
 }
 
 fn build_package_tree(root: &Node, packages: &[&Node]) -> PackageNode {
-    let by_fqn: BTreeMap<&str, &Node> = packages.iter().map(|p| (p.fqn.as_str(), *p)).collect();
     fn children_of(parent_fqn: &str, by_fqn: &BTreeMap<&str, &Node>) -> Vec<PackageNode> {
         let prefix = format!("{parent_fqn}::");
         let mut kids = Vec::new();
@@ -631,13 +613,13 @@ fn build_package_tree(root: &Node, packages: &[&Node]) -> PackageNode {
         kids.sort_by(|a, b| a.name.cmp(&b.name));
         kids
     }
+    let by_fqn: BTreeMap<&str, &Node> = packages.iter().map(|p| (p.fqn.as_str(), *p)).collect();
     let mut root_node = package_leaf(root);
     root_node.children = children_of(&root.fqn, &by_fqn);
     root_node
 }
 
 fn build_coupling_tree(root: &Node, packages: &[&Node]) -> CouplingModule {
-    let tree = build_package_tree(root, packages);
     fn convert(node: PackageNode) -> CouplingModule {
         CouplingModule {
             id: node.id,
@@ -647,6 +629,7 @@ fn build_coupling_tree(root: &Node, packages: &[&Node]) -> CouplingModule {
             children: node.children.into_iter().map(convert).collect(),
         }
     }
+    let tree = build_package_tree(root, packages);
     convert(tree)
 }
 
@@ -729,10 +712,7 @@ fn container_of<'a>(doc: &'a Document, id: &NodeId) -> Option<&'a Node> {
 fn crate_of<'a>(doc: &'a Document, node: &'a Node) -> Option<&'a Node> {
     let mut current = Some(node);
     while let Some(n) = current {
-        if matches!(
-            n.kind.as_str(),
-            kind::code::CRATE | kind::code::PACKAGE
-        ) {
+        if matches!(n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE) {
             return Some(n);
         }
         current = n.parent.as_ref().and_then(|id| doc.get(id));
@@ -790,13 +770,6 @@ fn is_direct_package(root: &Node, candidate: &Node) -> bool {
 }
 
 fn tarjan(adj: &BTreeMap<String, BTreeSet<String>>) -> Vec<Vec<String>> {
-    let mut index = 0usize;
-    let mut stack: Vec<String> = Vec::new();
-    let mut on_stack: BTreeSet<String> = BTreeSet::new();
-    let mut indices: BTreeMap<String, usize> = BTreeMap::new();
-    let mut lowlink: BTreeMap<String, usize> = BTreeMap::new();
-    let mut sccs: Vec<Vec<String>> = Vec::new();
-
     fn strongconnect(
         v: &str,
         adj: &BTreeMap<String, BTreeSet<String>>,
@@ -841,6 +814,13 @@ fn tarjan(adj: &BTreeMap<String, BTreeSet<String>>) -> Vec<Vec<String>> {
             sccs.push(scc);
         }
     }
+
+    let mut index = 0usize;
+    let mut stack: Vec<String> = Vec::new();
+    let mut on_stack: BTreeSet<String> = BTreeSet::new();
+    let mut indices: BTreeMap<String, usize> = BTreeMap::new();
+    let mut lowlink: BTreeMap<String, usize> = BTreeMap::new();
+    let mut sccs: Vec<Vec<String>> = Vec::new();
 
     for v in adj.keys() {
         if !indices.contains_key(v) {

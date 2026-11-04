@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_module(node: &Node) -> bool` |
-| location | [`crates/robby-render/src/tree.rs:693`](../../../../crates/robby-render/src/tree.rs#L693) |
+| location | [`crates/robby-render/src/tree.rs:686`](../../../../crates/robby-render/src/tree.rs#L686) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -29,7 +29,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::tree::is_module_kind`](is-module-kind.md)
 
 ## References

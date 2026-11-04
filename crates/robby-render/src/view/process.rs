@@ -1,11 +1,14 @@
-//! Process interaction view: frame-diffed steps shared by Mermaid and TUI.
+//! Process interaction view: frame-diffed steps shared by Mermaid, TUI, and the site payload.
+
+use serde::Serialize;
 
 use robby_ir::{Block, Process, StepKind};
 
-use crate::util::keyword;
-
 /// Format-agnostic process diagram data.
-#[derive(Debug, Clone, PartialEq, Eq)]
+///
+/// This is also the JSON shape under `FrameDetail.process`. There is no
+/// second DTO.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ProcessView {
     pub participants: Vec<ParticipantView>,
     pub events: Vec<ProcessEvent>,
@@ -13,13 +16,14 @@ pub struct ProcessView {
     pub observed_count: usize,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ParticipantView {
     pub id: String,
     pub label: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
 pub enum ProcessEvent {
     End,
     Else {
@@ -65,10 +69,7 @@ impl ProcessView {
                 && step.blocks.len() >= common
                 && step.blocks[common - 1].branch != stack[common - 1].branch
             {
-                let branch = step.blocks[common - 1]
-                    .branch
-                    .clone()
-                    .unwrap_or_default();
+                let branch = step.blocks[common - 1].branch.clone().unwrap_or_default();
                 events.push(ProcessEvent::Else { label: branch });
             }
 
@@ -76,13 +77,13 @@ impl ProcessView {
             while opened < step.blocks.len() {
                 let block = &step.blocks[opened];
                 events.push(ProcessEvent::Begin {
-                    keyword: keyword(block.kind),
+                    keyword: block.kind.as_str(),
                     label: block.label.clone(),
                 });
                 opened += 1;
             }
 
-            stack = step.blocks.clone();
+            stack.clone_from(&step.blocks);
 
             events.push(ProcessEvent::Interaction {
                 index: index + 1,

@@ -73,7 +73,8 @@ flowchart TB
 | **robby_render** | | | · |
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::util`](../../util/index.md) — edge_label, is_container
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains, new
 - calls → [`robby_render::view::select`](../select/index.md) — collect

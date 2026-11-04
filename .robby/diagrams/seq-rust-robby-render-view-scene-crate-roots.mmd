@@ -13,10 +13,10 @@ sequenceDiagram
     participant cmp as cmp
     participant sort_by as sort_by
     crate_roots-->>values: doc .nodes .values()
-    crate_roots-->>crate_roots: matches!( node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
+    crate_roots-->>crate_roots: matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
     crate_roots-->>is_none: node.parent.is_none()
-    crate_roots-->>filter: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
-    crate_roots-->>collect: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
+    crate_roots-->>filter: doc .nodes .values() .filter(|node| { matches!(node.kind.as_str(), ki...
+    crate_roots-->>collect: doc .nodes .values() .filter(|node| { matches!(node.kind.as_str(), ki...
     crate_roots-->>is_empty: crates.is_empty()
     alt crates.is_empty()
     crate_roots-->>iter: doc .roots .iter()

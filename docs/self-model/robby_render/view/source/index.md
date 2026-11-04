@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-render/src/view/mod.rs:17`](../../../../../crates/robby-render/src/view/mod.rs#L17) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 8 |
+| nodes | 9 |
 
 ## Types
 
@@ -37,7 +37,7 @@ flowchart TB
 | **robby_ir** | | · |
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 
 ## Referenced by
 
@@ -47,11 +47,12 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`SourceSlice`](sourceslice.md) | `code.struct` | — | `crates/robby-render/src/view/source.rs:7:1` |
-| [`impl SourceSlice`](impl-sourceslice.md) | `code.impl` | — | `crates/robby-render/src/view/source.rs:13:1` |
+| [`SourceSlice`](sourceslice.md) | `code.struct` | — | `crates/robby-render/src/view/source.rs:8:1` |
+| [`impl SourceSlice`](impl-sourceslice.md) | `code.impl` | — | `crates/robby-render/src/view/source.rs:14:1` |
 
 ## Imports
 
 - `use std::collections::BTreeMap;`
 - [`use robby_ir::Node;`](../../../robby_ir/index.md)
+- `use serde::Serialize;`
 

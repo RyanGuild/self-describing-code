@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn strip_generics(name: &str) -> String` |
-| location | [`crates/robby-render/src/util.rs:96`](../../../../crates/robby-render/src/util.rs#L96) |
+| location | [`crates/robby-render/src/util.rs:95`](../../../../crates/robby-render/src/util.rs#L95) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

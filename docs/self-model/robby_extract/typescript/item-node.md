@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn item_node(kind_name: &str, fqn: &str, span: Span, parent: &NodeId) -> Node` |
-| location | [`crates/robby-extract/src/typescript.rs:1003`](../../../../crates/robby-extract/src/typescript.rs#L1003) |
+| location | [`crates/robby-extract/src/typescript.rs:996`](../../../../crates/robby-extract/src/typescript.rs#L996) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

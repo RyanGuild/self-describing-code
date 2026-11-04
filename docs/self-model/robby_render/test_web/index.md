@@ -63,13 +63,13 @@ flowchart TB
 
 | | test_web | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **test_web** | · | 46 | 59 |
+| **test_web** | · | 43 | 59 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
 ## Comments
 
-- `crates/robby-render/tests/web.rs:88:1` (docs, `robby_render::test_web::entrypoints_demo_doc`): "Two `main` entries that both call a shared callee (first parent wins)."
+- `crates/robby-render/tests/web.rs:89:1` (docs, `robby_render::test_web::entrypoints_demo_doc`): "Two `main` entries that both call a shared callee (first parent wins)."
   ```
   /// Two `main` entries that both call a shared callee (first parent wins).
   fn entrypoints_demo_doc() -> Document {
@@ -80,12 +80,14 @@ flowchart TB
           code::FUNCTION,
           "demo::bin_a::main",
       );
-      main_a
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
-      main_a
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::helper"), EdgeKind::Calls));
+      main_a.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::shared"),
+          EdgeKind::Calls,
+      ));
+      main_a.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::helper"),
+          EdgeKind::Calls,
+      ));
       doc.insert(main_a);
   
       let mut helper = Node::new(
@@ -93,9 +95,10 @@ flowchart TB
           code::FUNCTION,
           "demo::helper",
       );
-      helper
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+      helper.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::shared"),
+          EdgeKind::Calls,
+      ));
       doc.insert(helper);
   
       let shared = Node::new(
@@ -110,9 +113,10 @@ flowchart TB
           code::FUNCTION,
           "demo::bin_b::main",
       );
-      main_b
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+      main_b.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::shared"),
+          EdgeKind::Calls,
+      ));
       doc.insert(main_b);
   
       doc.rebuild_code_paths();
@@ -122,8 +126,9 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, rebuild_code_paths, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, rebuild_code_paths, symbol
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — stable_id
 - calls → [`robby_render::pipeline`](../pipeline/index.md) — from_document
 - calls → [`robby_render::report`](../report/index.md) — new, push
@@ -138,22 +143,22 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`demo_doc`](demo-doc.md) | `code.function` | 63 | `crates/robby-render/tests/web.rs:10:1` |
-| [`entrypoints_demo_doc`](entrypoints-demo-doc.md) | `code.function` | 26 | `crates/robby-render/tests/web.rs:88:1` |
-| [`scene_json_is_byte_identical_across_runs`](scene-json-is-byte-identical-across-runs.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:136:1` |
-| [`every_child_and_resolved_portal_is_a_frame`](every-child-and-resolved-portal-is-a-frame.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:144:1` |
-| [`child_world_rects_lie_inside_parent_world`](child-world-rects-lie-inside-parent-world.md) | `code.function` | 4 | `crates/robby-render/tests/web.rs:167:1` |
-| [`sibling_local_rects_do_not_overlap`](sibling-local-rects-do-not-overlap.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:186:1` |
-| [`sibling_world_rects_do_not_collapse_onto_each_other`](sibling-world-rects-do-not-collapse-onto-each-other.md) | `code.function` | 15 | `crates/robby-render/tests/web.rs:213:1` |
-| [`leaf_payload_includes_source_and_process`](leaf-payload-includes-source-and-process.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:239:1` |
-| [`unresolved_portal_has_no_zoom_target`](unresolved-portal-has-no-zoom-target.md) | `code.function` | 10 | `crates/robby-render/tests/web.rs:254:1` |
-| [`write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md) | `code.function` | 20 | `crates/robby-render/tests/web.rs:271:1` |
-| [`write_site_emits_run_records`](write-site-emits-run-records.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:292:1` |
-| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:323:1` |
-| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:335:1` |
-| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:354:1` |
-| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:411:1` |
-| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:419:1` |
+| [`demo_doc`](demo-doc.md) | `code.function` | 54 | `crates/robby-render/tests/web.rs:10:1` |
+| [`entrypoints_demo_doc`](entrypoints-demo-doc.md) | `code.function` | 26 | `crates/robby-render/tests/web.rs:89:1` |
+| [`scene_json_is_byte_identical_across_runs`](scene-json-is-byte-identical-across-runs.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:141:1` |
+| [`every_child_and_resolved_portal_is_a_frame`](every-child-and-resolved-portal-is-a-frame.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:149:1` |
+| [`child_world_rects_lie_inside_parent_world`](child-world-rects-lie-inside-parent-world.md) | `code.function` | 4 | `crates/robby-render/tests/web.rs:172:1` |
+| [`sibling_local_rects_do_not_overlap`](sibling-local-rects-do-not-overlap.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:191:1` |
+| [`sibling_world_rects_do_not_collapse_onto_each_other`](sibling-world-rects-do-not-collapse-onto-each-other.md) | `code.function` | 15 | `crates/robby-render/tests/web.rs:218:1` |
+| [`leaf_payload_includes_source_and_process`](leaf-payload-includes-source-and-process.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:244:1` |
+| [`unresolved_portal_has_no_zoom_target`](unresolved-portal-has-no-zoom-target.md) | `code.function` | 10 | `crates/robby-render/tests/web.rs:259:1` |
+| [`write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md) | `code.function` | 20 | `crates/robby-render/tests/web.rs:276:1` |
+| [`write_site_emits_run_records`](write-site-emits-run-records.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:297:1` |
+| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:328:1` |
+| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:340:1` |
+| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:362:1` |
+| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:422:1` |
+| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:430:1` |
 
 ## Imports
 

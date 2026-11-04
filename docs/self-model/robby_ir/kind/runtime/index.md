@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/kind.rs:90`](../../../../../crates/robby-ir/src/kind.rs#L90) |
+| declared at | [`crates/robby-ir/src/kind.rs:92`](../../../../../crates/robby-ir/src/kind.rs#L92) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 4 |
 
@@ -25,7 +25,7 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`TRACE`](trace.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:92:5` |
-| [`SPAN`](span.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:93:5` |
-| [`EVENT`](event.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:94:5` |
+| [`TRACE`](trace.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:94:5` |
+| [`SPAN`](span.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:95:5` |
+| [`EVENT`](event.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:96:5` |
 

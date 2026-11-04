@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn linked_import(doc: &Document, page: &Path, text: &str) -> String` |
-| location | [`crates/robby-render/src/tree.rs:624`](../../../../crates/robby-render/src/tree.rs#L624) |
+| location | [`crates/robby-render/src/tree.rs:622`](../../../../crates/robby-render/src/tree.rs#L622) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

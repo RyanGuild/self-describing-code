@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.const` |
-| location | [`crates/robby-ir/src/kind.rs:99`](../../../../../crates/robby-ir/src/kind.rs#L99) |
+| location | [`crates/robby-ir/src/kind.rs:101`](../../../../../crates/robby-ir/src/kind.rs#L101) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

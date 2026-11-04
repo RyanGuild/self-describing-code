@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn shared_module_score(a: &str, b: &str) -> usize` |
-| location | [`crates/robby-extract/src/rust.rs:946`](../../../../crates/robby-extract/src/rust.rs#L946) |
+| location | [`crates/robby-extract/src/rust.rs:951`](../../../../crates/robby-extract/src/rust.rs#L951) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

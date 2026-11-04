@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn cell(input: &str) -> String` |
-| location | [`crates/robby-render/src/markdown.rs:248`](../../../../crates/robby-render/src/markdown.rs#L248) |
+| location | [`crates/robby-render/src/markdown.rs:242`](../../../../crates/robby-render/src/markdown.rs#L242) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

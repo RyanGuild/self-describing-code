@@ -11,6 +11,6 @@ sequenceDiagram
     emit_method-->>emit_method: format!('{class_fqn}/{name}')
     emit_method-->>oxc_span: oxc_span(method.span, ctx)
     emit_method-->>item_node: item_node(kind::code::METHOD, &fqn, oxc_span(method.span, ctx), parent)
-    emit_method-->>build_function_process: build_function_process( &method.value, &fqn, pending, ctx, )
-    emit_method-->>Some: Some(build_function_process( &method.value, &fqn, pending, ctx, ))
+    emit_method-->>build_function_process: build_function_process(&method.value, &fqn, pending, ctx)
+    emit_method-->>Some: Some(build_function_process(&method.value, &fqn, pending, ctx))
     emit_method-->>merge: doc.merge(node)

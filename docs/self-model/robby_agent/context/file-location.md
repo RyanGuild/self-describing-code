@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn file_location(node: &Node) -> (String, Option<String>)` |
-| location | [`crates/robby-agent/src/context.rs:127`](../../../../crates/robby-agent/src/context.rs#L127) |
+| location | [`crates/robby-agent/src/context.rs:126`](../../../../crates/robby-agent/src/context.rs#L126) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

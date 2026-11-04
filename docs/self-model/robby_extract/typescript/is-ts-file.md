@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_ts_file(path: &Path) -> bool` |
-| location | [`crates/robby-extract/src/typescript.rs:171`](../../../../crates/robby-extract/src/typescript.rs#L171) |
+| location | [`crates/robby-extract/src/typescript.rs:168`](../../../../crates/robby-extract/src/typescript.rs#L168) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

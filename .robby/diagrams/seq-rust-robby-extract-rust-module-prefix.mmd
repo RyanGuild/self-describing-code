@@ -2,8 +2,6 @@ sequenceDiagram
     autonumber
     participant module_prefix as module_prefix()
     participant rsplit_once as rsplit_once
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     module_prefix-->>rsplit_once: fqn.rsplit_once('::')
-    module_prefix-->>map: fqn.rsplit_once('::').map(|(m, _)| m)
-    module_prefix-->>unwrap_or: fqn.rsplit_once('::').map(|(m, _)| m).unwrap_or(fqn)
+    module_prefix-->>map_or: fqn.rsplit_once('::').map_or(fqn, |(m, _)| m)

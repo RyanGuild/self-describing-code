@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn collect_ts(dir: &Path, out: &mut Vec<PathBuf>) -> Result<()>` |
-| location | [`crates/robby-extract/src/typescript.rs:149`](../../../../crates/robby-extract/src/typescript.rs#L149) |
+| location | [`crates/robby-extract/src/typescript.rs:146`](../../../../crates/robby-extract/src/typescript.rs#L146) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

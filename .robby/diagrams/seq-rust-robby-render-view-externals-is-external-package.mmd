@@ -14,8 +14,7 @@ sequenceDiagram
     end
     is_external_package-->>iter: node.tags.iter()
     is_external_package-->>any: node.tags.iter().any(|t| t == 'external')
-    is_external_package-->>get: node.annotations.get('external')
-    is_external_package-->>as_str: v.as_str()
-    is_external_package-->>map: node.annotations.get('external').map(|v| v.as_str())
+    is_external_package-->>get: node .annotations .get('external')
+    is_external_package-->>map: node .annotations .get('external') .map(std::string::String::as_str)
     is_external_package-->>Some: Some('true')
     is_external_package-->>starts_with: node.fqn.starts_with('npm/')

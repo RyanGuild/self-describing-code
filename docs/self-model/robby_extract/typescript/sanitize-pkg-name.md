@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn sanitize_pkg_name(name: &str) -> String` |
-| location | [`crates/robby-extract/src/typescript.rs:132`](../../../../crates/robby-extract/src/typescript.rs#L132) |
+| location | [`crates/robby-extract/src/typescript.rs:129`](../../../../crates/robby-extract/src/typescript.rs#L129) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

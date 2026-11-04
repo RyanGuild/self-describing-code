@@ -81,15 +81,17 @@ flowchart TB
       let mut entries: Vec<&crate::Node> = doc
           .nodes
           .values()
-          .filter(|node| {
-              node.name == "main" && node.kind.as_str() == kind::code::FUNCTION
-          })
+          .filter(|node| node.name == "main" && node.kind.as_str() == kind::code::FUNCTION)
           .collect();
-      entries.sort_by(|a, b| a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().cmp(b.id.as_str())));
+      entries.sort_by(|a, b| {
+          a.fqn
+              .cmp(&b.fqn)
+              .then_with(|| a.id.as_str().cmp(b.id.as_str()))
+      });
       entries.into_iter().map(|n| n.id.clone()).collect()
   }
   ```
-- `crates/robby-ir/src/codepath.rs:121:1` (docs, `robby_ir::codepath::build_code_paths`): "Build a [`CodePath`] for every discovered entrypoint."
+- `crates/robby-ir/src/codepath.rs:123:1` (docs, `robby_ir::codepath::build_code_paths`): "Build a [`CodePath`] for every discovered entrypoint."
   ```
   /// Build a [`CodePath`] for every discovered entrypoint.
   pub fn build_code_paths(doc: &Document, max_depth: u32) -> Vec<CodePath> {
@@ -112,7 +114,7 @@ flowchart TB
       pub confidence: f32,
   }
   ```
-- `crates/robby-ir/src/codepath.rs:38:1` (docs, `robby_ir::codepath::CodePath`): "Reachability tree rooted at one entrypoint function."
+- `crates/robby-ir/src/codepath.rs:40:1` (docs, `robby_ir::codepath::CodePath`): "Reachability tree rooted at one entrypoint function."
   ```
   /// Reachability tree rooted at one entrypoint function.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -125,13 +127,11 @@ flowchart TB
       pub max_depth: u32,
   }
   ```
-- `crates/robby-ir/src/codepath.rs:50:5` (docs, `robby_ir::codepath::impl CodePath::from_entry`): "Build one path from `entry` over resolved `Calls` edges."
+- `crates/robby-ir/src/codepath.rs:52:5` (docs, `robby_ir::codepath::impl CodePath::from_entry`): "Build one path from `entry` over resolved `Calls` edges."
   ```
   /// Build one path from `entry` over resolved `Calls` edges.
       pub fn from_entry(doc: &Document, entry: &NodeId, max_depth: u32) -> Option<Self> {
-          if doc.get(entry).is_none() {
-              return None;
-          }
+          doc.get(entry)?;
   
           let mut edges = Vec::new();
           let mut placed = BTreeSet::new();
@@ -156,8 +156,8 @@ flowchart TB
                   .map(|e| (e.to.clone(), e.confidence))
                   .collect();
               callees.sort_by(|(a, _), (b, _)| {
-                  let fa = doc.get(a).map(|n| n.fqn.as_str()).unwrap_or("");
-                  let fb = doc.get(b).map(|n| n.fqn.as_str()).unwrap_or("");
+                  let fa = doc.get(a).map_or("", |n| n.fqn.as_str());
+                  let fb = doc.get(b).map_or("", |n| n.fqn.as_str());
                   fa.cmp(fb).then_with(|| a.as_str().cmp(b.as_str()))
               });
               callees.dedup_by(|(a, _), (b, _)| a == b);
@@ -187,7 +187,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../kind/index.md) — as_str, new
-- calls → [`robby_ir::model`](../model/index.md) — get, insert, symbol
+- calls → [`robby_ir::model`](../model/index.md) — insert, symbol
+- calls → [`robby_ir::run`](../run/index.md) — get
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 
@@ -209,11 +210,11 @@ flowchart TB
 | [`DEFAULT_MAX_DEPTH`](default-max-depth.md) | `code.const` | — | `crates/robby-ir/src/codepath.rs:16:1` |
 | [`CodePathEdge`](codepathedge.md) | `code.struct` | — | `crates/robby-ir/src/codepath.rs:19:1` |
 | [`default_confidence`](default-confidence.md) | `code.function` | 0 | `crates/robby-ir/src/codepath.rs:30:1` |
-| [`is_one`](is-one.md) | `code.function` | 1 | `crates/robby-ir/src/codepath.rs:34:1` |
-| [`CodePath`](codepath.md) | `code.struct` | — | `crates/robby-ir/src/codepath.rs:38:1` |
-| [`impl CodePath`](impl-codepath.md) | `code.impl` | — | `crates/robby-ir/src/codepath.rs:49:1` |
+| [`is_one`](is-one.md) | `code.function` | 1 | `crates/robby-ir/src/codepath.rs:35:1` |
+| [`CodePath`](codepath.md) | `code.struct` | — | `crates/robby-ir/src/codepath.rs:40:1` |
+| [`impl CodePath`](impl-codepath.md) | `code.impl` | — | `crates/robby-ir/src/codepath.rs:51:1` |
 | [`find_entrypoints`](find-entrypoints.md) | `code.function` | 14 | `crates/robby-ir/src/codepath.rs:108:1` |
-| [`build_code_paths`](build-code-paths.md) | `code.function` | 5 | `crates/robby-ir/src/codepath.rs:121:1` |
+| [`build_code_paths`](build-code-paths.md) | `code.function` | 5 | `crates/robby-ir/src/codepath.rs:123:1` |
 
 ## Imports
 

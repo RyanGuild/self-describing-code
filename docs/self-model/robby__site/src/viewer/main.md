@@ -5,13 +5,13 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:170`](../../../../../apps/site/src/viewer.ts#L170) |
+| location | [`apps/site/src/viewer.ts:180`](../../../../../apps/site/src/viewer.ts#L180) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 async function main(): Promise<void> {
   try {
-    const structure = await fetchJson<Scene>("scene.json");
+    const structure = await fetchJson<Scene>(ORG_MODES.structure.file);
     sceneCache.set("structure", structure);
     scene = structure;
   } catch (err) {

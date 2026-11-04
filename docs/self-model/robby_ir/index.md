@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 351 |
+| nodes | 493 |
 
 ## Package diagram
 
@@ -18,6 +18,10 @@ flowchart TB
             direction TB
             n_80d65b5ca6c1ad28["tests"]
         end
+        subgraph n_6c585ca85c30235f["contract"]
+            direction TB
+            n_f7bcc3c389d98b48["tests"]
+        end
         n_965af55f4081b03f["coverage"]
         subgraph n_611ba0cee1ac191f["kind"]
             direction TB
@@ -25,12 +29,28 @@ flowchart TB
             n_78c8f62748bb21ee["code"]
             n_9bd6a0786f266df1["runtime"]
         end
-        n_48c15551e2e91996["model"]
-        n_f5e61214f719e7ae["process"]
+        subgraph n_48c15551e2e91996["model"]
+            direction TB
+            n_7a7533aa2a3d72ab["tests"]
+        end
+        subgraph n_f5e61214f719e7ae["process"]
+            direction TB
+            n_ff7a0f92d7ba8793["tests"]
+        end
+        subgraph n_2296d5d51a43a6ae["run"]
+            direction TB
+            n_f31bf83055f6c119["recipes"]
+            n_8f0848a0981eec93["tests"]
+        end
         n_9053aa1513b08ea5["span"]
         n_46b0c6f667b1fb40["test_coverage"]
+        subgraph n_3ab04153eeb89900["vocab"]
+            direction TB
+            n_f036ac7d2543ad31["tests"]
+        end
     end
     n_9c636b098ca4450e(["robby_render"])
+    n_46b0c6f667b1fb40 --> n_2296d5d51a43a6ae
     n_46b0c6f667b1fb40 --> n_48c15551e2e91996
     n_46b0c6f667b1fb40 --> n_611ba0cee1ac191f
     n_46b0c6f667b1fb40 --> n_965af55f4081b03f
@@ -38,11 +58,17 @@ flowchart TB
     n_48c15551e2e91996 --> n_611ba0cee1ac191f
     n_48c15551e2e91996 --> n_9c636b098ca4450e
     n_48c15551e2e91996 -.-> n_c28bfd08cdfce4bf
-    n_965af55f4081b03f --> n_48c15551e2e91996
-    n_965af55f4081b03f --> n_611ba0cee1ac191f
+    n_611ba0cee1ac191f -.-> n_6c585ca85c30235f
+    n_6c585ca85c30235f -.-> n_611ba0cee1ac191f
+    n_6c585ca85c30235f -.-> n_965af55f4081b03f
+    n_6c585ca85c30235f --> n_9c636b098ca4450e
+    n_6c585ca85c30235f --> n_f5e61214f719e7ae
+    n_965af55f4081b03f --> n_2296d5d51a43a6ae
+    n_965af55f4081b03f -.-> n_611ba0cee1ac191f
     n_965af55f4081b03f --> n_9053aa1513b08ea5
     n_965af55f4081b03f --> n_9c636b098ca4450e
     n_965af55f4081b03f --> n_f5e61214f719e7ae
+    n_c28bfd08cdfce4bf --> n_2296d5d51a43a6ae
     n_c28bfd08cdfce4bf -.-> n_48c15551e2e91996
     n_c28bfd08cdfce4bf --> n_611ba0cee1ac191f
     n_c28bfd08cdfce4bf --> n_80d65b5ca6c1ad28
@@ -64,6 +90,16 @@ flowchart TB
             n_b2cbb53c41a04542["from_entry"]
             n_9810aa25daf31a47["respects_max_depth"]
             n_e9bb0634e2177808["sample_doc"]
+        end
+        subgraph n_6c585ca85c30235f["contract"]
+            direction TB
+            n_6ec8959c3301846b["absorb"]
+            n_a58b00def736d38f["absorb_trait_marks_matching_steps_observed"]
+            n_e5263e8091cdf0c3["failing_gaps"]
+            n_d38e798b0619cf78["is_known_namespace"]
+            n_9ecd67c52b9b67d3["kind_namespace_helpers"]
+            n_0ad994605e60d7d2["namespace"]
+            n_ee75dc465096fea2["passes"]
         end
         subgraph n_965af55f4081b03f["coverage"]
             direction TB
@@ -96,8 +132,13 @@ flowchart TB
         subgraph n_48c15551e2e91996["model"]
             direction TB
             n_e546d71fa4f69654["about"]
+            n_ddc9818664b59506["adopt_parent"]
+            n_317d9bbb461fd85d["as_str"]
+            n_ff1fbfa917a1654a["child_inserted_before_its_parent_is_linked"]
+            n_e5604f2828b34961["declared_children_set_the_child_parent"]
             n_ec2e46958b5dc892["default"]
             n_b3489a259ec30e17["error"]
+            n_286e217fcb95c453["from"]
             n_80b75adcd8002383["get"]
             n_8a5415d7daf6e60c["insert"]
             n_6311e7084b287418["leaf_name"]
@@ -105,18 +146,35 @@ flowchart TB
             n_4d88a60cf9d4a01e["new"]
             n_ccd6dcdd0298397d["new"]
             n_d5fd1809d274d7a9["new"]
+            n_a3e20cf4c683a862["parent_pointer_builds_the_child_index"]
             n_523b5c88ab07476f["rebuild_code_paths"]
+            n_212a1b1aafdbc6f5["record_child"]
             n_e246ceacf9164349["subtree"]
             n_192ee09539008dbd["symbol"]
             n_ea6373866a29c8d4["validate"]
             n_3f94f0bb1c5a653c["walk"]
             n_ba675cd10b655ae1["warning"]
+            n_266e66de4d980727["wire"]
             n_0e9544ad390cedd5["with_lang"]
         end
         subgraph n_f5e61214f719e7ae["process"]
             direction TB
+            n_da37358bec483440["absorb"]
+            n_e7a741a6cec5a5a8["as_str"]
             n_043f1293c7ad8c3c["default"]
             n_9aae883b9b569ac9["new"]
+            n_70fdf20b8489b406["participant"]
+            n_a066491f9867b007["step"]
+            n_09b9bef2ec7f54ef["wire"]
+        end
+        subgraph n_2296d5d51a43a6ae["run"]
+            direction TB
+            n_7bd0352c5d026b38["get"]
+            n_c7b698f248a51fa9["get"]
+            n_c763d00117e8a343["new"]
+            n_ec9f734df51ab386["new"]
+            n_e4ef1ad66dca8028["run_record_serializes_recipe_string"]
+            n_9279e22dad59a8d7["with_subject"]
         end
         subgraph n_9053aa1513b08ea5["span"]
             direction TB
@@ -144,10 +202,16 @@ flowchart TB
             n_d248e92311a4cff7["unreferenced_files_appear_fully_uncovered"]
             n_1e530833babc36c3["whitespace_and_comments_are_classified_not_failed"]
         end
+        subgraph n_3ab04153eeb89900["vocab"]
+            direction TB
+            n_0cecd087dcb9ec1b["as_str"]
+            n_b1d0fe01f12e1e71["wire"]
+        end
         n_7f203267d92a1682["schema"]
         n_ca6f58cffa1dcfd5["schema_json"]
     end
     n_043f1293c7ad8c3c --> n_9aae883b9b569ac9
+    n_09b9bef2ec7f54ef --> n_e7a741a6cec5a5a8
     n_0b193972a1983a06 --> n_514c7e46850aa6a4
     n_0b193972a1983a06 --> n_74e4ff10a7dfc268
     n_0b8e21007960b596 --> n_fa11223399ba4180
@@ -160,6 +224,8 @@ flowchart TB
     n_1a9a05bb45ea296c --> n_9ad7a7d7cfd84f45
     n_1e530833babc36c3 --> n_514c7e46850aa6a4
     n_1e530833babc36c3 --> n_74e4ff10a7dfc268
+    n_212a1b1aafdbc6f5 --> n_80b75adcd8002383
+    n_266e66de4d980727 --> n_317d9bbb461fd85d
     n_298b37ed3e660088 --> n_fa11223399ba4180
     n_310844e14983c9bc -->|"3"| n_46a6d3ecefce14cd
     n_3f94f0bb1c5a653c --> n_80b75adcd8002383
@@ -181,10 +247,10 @@ flowchart TB
     n_63a652301eb25a29 --> n_192ee09539008dbd
     n_6e5287b66b2ff142 --> n_192ee09539008dbd
     n_6e5287b66b2ff142 --> n_1a9a05bb45ea296c
-    n_6e5287b66b2ff142 --> n_80b75adcd8002383
     n_6e5287b66b2ff142 -->|"2"| n_8a5415d7daf6e60c
     n_6e5287b66b2ff142 -->|"5"| n_9ad7a7d7cfd84f45
     n_6e5287b66b2ff142 -->|"2"| n_ae0eeff51ed67edd
+    n_6e5287b66b2ff142 --> n_c7b698f248a51fa9
     n_7235be4ea824b149 --> n_514c7e46850aa6a4
     n_7235be4ea824b149 --> n_74e4ff10a7dfc268
     n_74e4ff10a7dfc268 --> n_313d8a1618b10871
@@ -195,19 +261,32 @@ flowchart TB
     n_80b1b25edb807166 --> n_514c7e46850aa6a4
     n_80b1b25edb807166 --> n_74e4ff10a7dfc268
     n_80b1b25edb807166 --> n_fa11223399ba4180
+    n_8a5415d7daf6e60c -.->|"1 circular"| n_9655ec8c7f78876b
     n_9181bfbdbc16c75c --> n_043f1293c7ad8c3c
     n_9181bfbdbc16c75c --> n_9b74c92d5feaa2bb
-    n_9655ec8c7f78876b --> n_8a5415d7daf6e60c
+    n_9655ec8c7f78876b -->|"3"| n_212a1b1aafdbc6f5
+    n_9655ec8c7f78876b --> n_80b75adcd8002383
+    n_9655ec8c7f78876b -.->|"1 circular"| n_8a5415d7daf6e60c
+    n_9655ec8c7f78876b --> n_ddc9818664b59506
     n_9810aa25daf31a47 --> n_192ee09539008dbd
     n_9810aa25daf31a47 --> n_b2cbb53c41a04542
     n_9810aa25daf31a47 --> n_e9bb0634e2177808
-    n_99b47e2d08834c4c -->|"2"| n_80b75adcd8002383
+    n_99b47e2d08834c4c -->|"2"| n_c7b698f248a51fa9
+    n_9ecd67c52b9b67d3 -->|"2"| n_9ad7a7d7cfd84f45
     n_9f3013b2ce6a2db0 --> n_310844e14983c9bc
     n_9f3013b2ce6a2db0 --> n_b2cbb53c41a04542
+    n_a3e20cf4c683a862 --> n_286e217fcb95c453
+    n_a3e20cf4c683a862 -->|"2"| n_8a5415d7daf6e60c
+    n_a3e20cf4c683a862 -->|"3"| n_d5fd1809d274d7a9
+    n_a58b00def736d38f --> n_6ec8959c3301846b
+    n_a58b00def736d38f -->|"4"| n_70fdf20b8489b406
+    n_a58b00def736d38f -->|"8"| n_9ad7a7d7cfd84f45
+    n_a58b00def736d38f -->|"2"| n_a066491f9867b007
+    n_b1d0fe01f12e1e71 --> n_0cecd087dcb9ec1b
     n_b2cbb53c41a04542 -->|"4"| n_46a6d3ecefce14cd
-    n_b2cbb53c41a04542 -->|"5"| n_80b75adcd8002383
     n_b2cbb53c41a04542 -->|"2"| n_8a5415d7daf6e60c
     n_b2cbb53c41a04542 -->|"3"| n_9ad7a7d7cfd84f45
+    n_b2cbb53c41a04542 -->|"5"| n_c7b698f248a51fa9
     n_c3d3b0c6d7792dc9 --> n_74e4ff10a7dfc268
     n_c83f7c789f6b13f6 --> n_514c7e46850aa6a4
     n_c83f7c789f6b13f6 --> n_74e4ff10a7dfc268
@@ -222,29 +301,42 @@ flowchart TB
     n_d248e92311a4cff7 --> n_e68b2f1462104869
     n_ddb2a12ff2308547 --> n_74e4ff10a7dfc268
     n_ddb2a12ff2308547 --> n_9ad7a7d7cfd84f45
+    n_ddc9818664b59506 --> n_212a1b1aafdbc6f5
+    n_ddc9818664b59506 --> n_80b75adcd8002383
     n_e246ceacf9164349 --> n_3f94f0bb1c5a653c
     n_e246ceacf9164349 --> n_ccd6dcdd0298397d
     n_e47c1c1aa0db0c40 --> n_74e4ff10a7dfc268
     n_e47c1c1aa0db0c40 --> n_9ad7a7d7cfd84f45
+    n_e4ef1ad66dca8028 --> n_9279e22dad59a8d7
+    n_e4ef1ad66dca8028 --> n_c763d00117e8a343
+    n_e5263e8091cdf0c3 --> n_298b37ed3e660088
+    n_e5604f2828b34961 --> n_286e217fcb95c453
+    n_e5604f2828b34961 --> n_80b75adcd8002383
+    n_e5604f2828b34961 -->|"2"| n_8a5415d7daf6e60c
+    n_e5604f2828b34961 -->|"3"| n_d5fd1809d274d7a9
     n_e5db91665baa2d8d -->|"2"| n_f96a2aa959c836db
+    n_e5fa024fa4386033 --> n_d38e798b0619cf78
     n_e68b2f1462104869 --> n_1539d79370dab438
     n_e68b2f1462104869 --> n_46a6d3ecefce14cd
     n_e68b2f1462104869 --> n_74e4ff10a7dfc268
-    n_e68b2f1462104869 --> n_80b75adcd8002383
     n_e68b2f1462104869 --> n_9ad7a7d7cfd84f45
+    n_e68b2f1462104869 --> n_c7b698f248a51fa9
     n_e9bb0634e2177808 -->|"5"| n_192ee09539008dbd
     n_e9bb0634e2177808 -->|"3"| n_8a5415d7daf6e60c
     n_e9bb0634e2177808 -->|"6"| n_9ad7a7d7cfd84f45
-    n_ea6373866a29c8d4 -->|"7"| n_b3489a259ec30e17
+    n_ea6373866a29c8d4 -->|"2"| n_80b75adcd8002383
+    n_ea6373866a29c8d4 -->|"9"| n_b3489a259ec30e17
     n_ea6373866a29c8d4 -->|"2"| n_ba675cd10b655ae1
     n_ea6373866a29c8d4 --> n_d5fd1809d274d7a9
-    n_ea6373866a29c8d4 -->|"8"| n_e546d71fa4f69654
+    n_ea6373866a29c8d4 -->|"10"| n_e546d71fa4f69654
     n_ea6373866a29c8d4 --> n_e5fa024fa4386033
     n_ec2e46958b5dc892 --> n_d5fd1809d274d7a9
+    n_ee75dc465096fea2 --> n_fa28cd347d0d2d3f
     n_eee4ab9af74a2168 -->|"2"| n_8a5415d7daf6e60c
     n_eee4ab9af74a2168 -->|"4"| n_9ad7a7d7cfd84f45
     n_eee4ab9af74a2168 --> n_ae0eeff51ed67edd
     n_eee4ab9af74a2168 --> n_e68b2f1462104869
+    n_f23ddd4acf61487b --> n_9ad7a7d7cfd84f45
     n_f916c261571f423f --> n_192ee09539008dbd
     n_f916c261571f423f --> n_4391b29df8f6f837
     n_f916c261571f423f --> n_46a6d3ecefce14cd
@@ -252,27 +344,39 @@ flowchart TB
     n_f916c261571f423f -->|"4"| n_9ad7a7d7cfd84f45
     n_f916c261571f423f --> n_e68b2f1462104869
     n_fa28cd347d0d2d3f --> n_fa11223399ba4180
+    n_ff1fbfa917a1654a --> n_286e217fcb95c453
+    n_ff1fbfa917a1654a -->|"2"| n_8a5415d7daf6e60c
+    n_ff1fbfa917a1654a -->|"3"| n_d5fd1809d274d7a9
 ```
 
 ## Dependency matrix
 
-| | robby_ir | test_coverage | code | runtime | codepath | agent | tests | coverage | model | span | process | kind | robby_render |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **robby_ir** | · | | | | | | | | | | | | |
-| **test_coverage** | | · | | | | | | 19 | 16 | | | 24 | 1 |
-| **code** | | | · | | | | | | | | | | |
-| **runtime** | | | | · | | | | | | | | | |
-| **codepath** | | | | | · | | 2 | | 16⇄ | | | 16 | 7 |
-| **agent** | | | | | | · | | | | | | | |
-| **tests** | | | | | | | · | | | | | | |
-| **coverage** | | | | | | | | · | 3 | 2 | 1 | 6 | 10 |
-| **model** | | | | | 1⇄ | | | | · | | | 1 | 21 |
-| **span** | | | | | | | | | | · | | | |
-| **process** | | | | | | | | | | | · | | 4 |
-| **kind** | | | | | | | | | | | | · | |
-| **robby_render** | | | | | | | | | | | | | · |
+| | robby_ir | vocab | test_coverage | contract | code | tests | tests | runtime | codepath | agent | tests | recipes | tests | tests | model | kind | tests | coverage | run | span | process | robby_render |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **robby_ir** | · | | | | | | | | | | | | | | | | | | | | | |
+| **vocab** | | · | | | | | | | | | | | | | | | | | | | | |
+| **test_coverage** | | | · | | | | | | | | | | | | 15 | 24 | | 19 | 1 | | | 1 |
+| **contract** | | | | · | | | | | | | | | | | | 10⇄ | | 2⇄ | | | 6 | 3 |
+| **code** | | | | | · | | | | | | | | | | | | | | | | | |
+| **tests** | | | | | | · | | | | | | | | | | | | | | | | |
+| **tests** | | | | | | | · | | | | | | | | | | | | | | | |
+| **runtime** | | | | | | | | · | | | | | | | | | | | | | | |
+| **codepath** | | | | | | | | | · | | | | | | 11⇄ | 16 | 2 | | 5 | | | 7 |
+| **agent** | | | | | | | | | | · | | | | | | | | | | | | |
+| **tests** | | | | | | | | | | | · | | | | | | | | | | | |
+| **recipes** | | | | | | | | | | | | · | | | | | | | | | | |
+| **tests** | | | | | | | | | | | | | · | | | | | | | | | |
+| **tests** | | | | | | | | | | | | | | · | | | | | | | | |
+| **model** | | | | | | | | | 1⇄ | | | | | | · | 1 | | | | | | 24 |
+| **kind** | | | | 1⇄ | | | | | | | | | | | | · | | | | | | |
+| **tests** | | | | | | | | | | | | | | | | | · | | | | | |
+| **coverage** | | | | | | | | | | | | | | | | 7⇄ | | · | 3 | 2 | 1 | 10 |
+| **run** | | | | | | | | | | | | | | | | | | | · | | | |
+| **span** | | | | | | | | | | | | | | | | | | | | · | | |
+| **process** | | | | | | | | | | | | | | | | | | | | | · | 2 |
+| **robby_render** | | | | | | | | | | | | | | | | | | | | | | · |
 
-Cycles: model ↔ codepath
+Cycles: kind ↔ contract ↔ coverage; model ↔ codepath
 
 ## Comments
 
@@ -283,15 +387,17 @@ Cycles: model ↔ codepath
       let mut entries: Vec<&crate::Node> = doc
           .nodes
           .values()
-          .filter(|node| {
-              node.name == "main" && node.kind.as_str() == kind::code::FUNCTION
-          })
+          .filter(|node| node.name == "main" && node.kind.as_str() == kind::code::FUNCTION)
           .collect();
-      entries.sort_by(|a, b| a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().cmp(b.id.as_str())));
+      entries.sort_by(|a, b| {
+          a.fqn
+              .cmp(&b.fqn)
+              .then_with(|| a.id.as_str().cmp(b.id.as_str()))
+      });
       entries.into_iter().map(|n| n.id.clone()).collect()
   }
   ```
-- `crates/robby-ir/src/codepath.rs:121:1` (docs, `robby_ir::codepath::build_code_paths`): "Build a [`CodePath`] for every discovered entrypoint."
+- `crates/robby-ir/src/codepath.rs:123:1` (docs, `robby_ir::codepath::build_code_paths`): "Build a [`CodePath`] for every discovered entrypoint."
   ```
   /// Build a [`CodePath`] for every discovered entrypoint.
   pub fn build_code_paths(doc: &Document, max_depth: u32) -> Vec<CodePath> {
@@ -314,7 +420,7 @@ Cycles: model ↔ codepath
       pub confidence: f32,
   }
   ```
-- `crates/robby-ir/src/codepath.rs:38:1` (docs, `robby_ir::codepath::CodePath`): "Reachability tree rooted at one entrypoint function."
+- `crates/robby-ir/src/codepath.rs:40:1` (docs, `robby_ir::codepath::CodePath`): "Reachability tree rooted at one entrypoint function."
   ```
   /// Reachability tree rooted at one entrypoint function.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -327,13 +433,11 @@ Cycles: model ↔ codepath
       pub max_depth: u32,
   }
   ```
-- `crates/robby-ir/src/codepath.rs:50:5` (docs, `robby_ir::codepath::impl CodePath::from_entry`): "Build one path from `entry` over resolved `Calls` edges."
+- `crates/robby-ir/src/codepath.rs:52:5` (docs, `robby_ir::codepath::impl CodePath::from_entry`): "Build one path from `entry` over resolved `Calls` edges."
   ```
   /// Build one path from `entry` over resolved `Calls` edges.
       pub fn from_entry(doc: &Document, entry: &NodeId, max_depth: u32) -> Option<Self> {
-          if doc.get(entry).is_none() {
-              return None;
-          }
+          doc.get(entry)?;
   
           let mut edges = Vec::new();
           let mut placed = BTreeSet::new();
@@ -358,8 +462,8 @@ Cycles: model ↔ codepath
                   .map(|e| (e.to.clone(), e.confidence))
                   .collect();
               callees.sort_by(|(a, _), (b, _)| {
-                  let fa = doc.get(a).map(|n| n.fqn.as_str()).unwrap_or("");
-                  let fb = doc.get(b).map(|n| n.fqn.as_str()).unwrap_or("");
+                  let fa = doc.get(a).map_or("", |n| n.fqn.as_str());
+                  let fb = doc.get(b).map_or("", |n| n.fqn.as_str());
                   fa.cmp(fb).then_with(|| a.as_str().cmp(b.as_str()))
               });
               callees.dedup_by(|(a, _), (b, _)| a == b);
@@ -385,6 +489,50 @@ Cycles: model ↔ codepath
               max_depth,
           })
       }
+  ```
+- `crates/robby-ir/src/contract.rs:11:1` (docs, `robby_ir::contract::Absorb`): "Merge an observed value into a static (or earlier) one without dropping prior structure. For [`Process`], matching is b…"
+  ```
+  /// Merge an observed value into a static (or earlier) one without dropping prior
+  /// structure.
+  ///
+  /// For [`Process`], matching is by `(from, to, label)`: observed steps mark
+  /// matches; unmatched observed steps append; static-only steps stay dashed.
+  pub trait Absorb {
+      fn absorb(&mut self, observed: &Self);
+  }
+  ```
+- `crates/robby-ir/src/contract.rs:47:1` (docs, `robby_ir::contract::KindNamespace`): "Open-kind namespace queries. Unknown namespaces must still round-trip."
+  ```
+  /// Open-kind namespace queries. Unknown namespaces must still round-trip.
+  pub trait KindNamespace {
+      fn namespace(&self) -> &str;
+  
+      fn is_code(&self) -> bool {
+          self.namespace() == "code"
+      }
+  
+      fn is_runtime(&self) -> bool {
+          self.namespace() == "runtime"
+      }
+  
+      fn is_agent(&self) -> bool {
+          self.namespace() == "agent"
+      }
+  
+      /// `code` | `runtime` | `agent` — soft gap otherwise, never a hard error.
+      fn is_known_namespace(&self) -> bool {
+          matches!(self.namespace(), "code" | "runtime" | "agent")
+      }
+  }
+  ```
+- `crates/robby-ir/src/contract.rs:75:1` (docs, `robby_ir::contract::CoverageGate`): "Coverage completeness gate: unknown gaps fail; trivia does not."
+  ```
+  /// Coverage completeness gate: unknown gaps fail; trivia does not.
+  pub trait CoverageGate {
+      fn passes(&self) -> bool;
+  
+      fn failing_gaps(&self) -> Vec<(&FileCoverage, &Gap)>;
+  }
   ```
 - `crates/robby-ir/src/coverage.rs:103:5` (docs, `robby_ir::coverage::impl FileCoverage::trivia_bytes`): "Bytes classified as trivia rather than claimed by a node."
   ```
@@ -471,7 +619,10 @@ Cycles: model ↔ codepath
   
       let mut files = Vec::new();
       for (path, source) in sources {
-          let spans = spans_by_file.get(path.as_str()).cloned().unwrap_or_default();
+          let spans = spans_by_file
+              .get(path.as_str())
+              .cloned()
+              .unwrap_or_default();
           files.push(file_coverage(path, source, &spans));
       }
       files.sort_by(|a, b| a.file.cmp(&b.file));
@@ -479,7 +630,7 @@ Cycles: model ↔ codepath
       CoverageReport { files }
   }
   ```
-- `crates/robby-ir/src/coverage.rs:209:1` (docs, `robby_ir::coverage::all_spans`): "Every span in the document, per file. This is the default claim set: a byte is represented when *some* node owns it, at…"
+- `crates/robby-ir/src/coverage.rs:212:1` (docs, `robby_ir::coverage::all_spans`): "Every span in the document, per file. This is the default claim set: a byte is represented when *some* node owns it, at…"
   ```
   /// Every span in the document, per file.
   ///
@@ -498,7 +649,7 @@ Cycles: model ↔ codepath
       out
   }
   ```
-- `crates/robby-ir/src/coverage.rs:226:1` (docs, `robby_ir::coverage::frontier_spans`): "The spans that actually claim source, per file. A node is a **frontier** node when no descendant carries a span. Only f…"
+- `crates/robby-ir/src/coverage.rs:229:1` (docs, `robby_ir::coverage::frontier_spans`): "The spans that actually claim source, per file. A node is a **frontier** node when no descendant carries a span. Only f…"
   ```
   /// The spans that actually claim source, per file.
   ///
@@ -518,23 +669,19 @@ Cycles: model ↔ codepath
       out
   }
   ```
-- `crates/robby-ir/src/coverage.rs:322:1` (docs, `robby_ir::coverage::scan_trivia`): "Walk a byte range, accepting only whitespace, comments and (Rust) attributes. Returns the byte offset of the first toke…"
+- `crates/robby-ir/src/coverage.rs:316:1` (docs, `robby_ir::coverage::scan_trivia`): "Walk a byte range, accepting only whitespace, comments and (Rust) attributes. Returns the byte offset of the first toke…"
   ```
   /// Walk a byte range, accepting only whitespace, comments and (Rust) attributes.
   ///
   /// Returns the byte offset of the first token that is none of those, which is
   /// what makes the gap report actionable: it points at the exact byte that is
   /// missing from the map.
-  fn scan_trivia(
-      bytes: &[u8],
-      start: u32,
-      end: u32,
-      mode: TriviaMode,
-  ) -> Result<TriviaFlags, u32> {
+  fn scan_trivia(bytes: &[u8], start: u32, end: u32, mode: TriviaMode) -> Result<TriviaFlags, u32> {
       let mut flags = TriviaFlags::default();
       let mut i = start;
       // TypeScript shebang is trivia when it opens the file.
-      if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!' {
+      if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!'
+      {
           flags.comment = true;
           while i < end && bytes[i as usize] != b'\n' {
               i += 1;
@@ -558,7 +705,10 @@ Cycles: model ↔ codepath
                   if i + 1 < end && bytes[i as usize] == b'/' && bytes[(i + 1) as usize] == b'*' {
                       depth += 1;
                       i += 2;
-                  } else if i + 1 < end && bytes[i as usize] == b'*' && bytes[(i + 1) as usize] == b'/' {
+                  } else if i + 1 < end
+                      && bytes[i as usize] == b'*'
+                      && bytes[(i + 1) as usize] == b'/'
+                  {
                       depth -= 1;
                       i += 2;
                   } else {
@@ -580,7 +730,7 @@ Cycles: model ↔ codepath
       Ok(flags)
   }
   ```
-- `crates/robby-ir/src/coverage.rs:382:1` (docs, `robby_ir::coverage::skip_attribute`): "Skip `#[...]` or `#![...]`, honouring nested brackets and string literals."
+- `crates/robby-ir/src/coverage.rs:375:1` (docs, `robby_ir::coverage::skip_attribute`): "Skip `#[...]` or `#![...]`, honouring nested brackets and string literals."
   ```
   /// Skip `#[...]` or `#![...]`, honouring nested brackets and string literals.
   fn skip_attribute(bytes: &[u8], start: u32, end: u32) -> Option<u32> {
@@ -675,31 +825,34 @@ Cycles: model ↔ codepath
           }
       }
   ```
-- `crates/robby-ir/src/kind.rs:104:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
+- `crates/robby-ir/src/kind.rs:110:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
   ```
   /// True when `kind` is understood by the current version of the tool.
   ///
   /// Unknown kinds are never an error — they are rendered generically and
   /// reported as a soft gap, so an older viewer can still display a newer graph.
   pub fn is_known(kind: &Kind) -> bool {
-      matches!(kind.namespace(), "code" | "runtime" | "agent")
+      use crate::contract::KindNamespace;
+      kind.is_known_namespace()
   }
   ```
 - `crates/robby-ir/src/kind.rs:17:1` (docs, `robby_ir::kind::Kind`): "A namespaced, open-ended kind tag."
   ```
   /// A namespaced, open-ended kind tag.
-  #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]
+  #[derive(
+      Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+  )]
   #[serde(transparent)]
   pub struct Kind(String);
   ```
-- `crates/robby-ir/src/kind.rs:31:5` (docs, `robby_ir::kind::impl Kind::namespace`): "The namespace prefix, e.g. `code` in `code.function`."
+- `crates/robby-ir/src/kind.rs:33:5` (docs, `robby_ir::kind::impl Kind::namespace`): "The namespace prefix, e.g. `code` in `code.function`."
   ```
   /// The namespace prefix, e.g. `code` in `code.function`.
       pub fn namespace(&self) -> &str {
           self.0.split('.').next().unwrap_or(&self.0)
       }
   ```
-- `crates/robby-ir/src/lib.rs:39:1` (docs, `robby_ir::schema`): "The JSON Schema for [`Document`], derived from the Rust types. This is the single source of truth for the contract. Typ…"
+- `crates/robby-ir/src/lib.rs:43:1` (docs, `robby_ir::schema`): "The JSON Schema for [`Document`], derived from the Rust types. This is the single source of truth for the contract. Typ…"
   ```
   /// The JSON Schema for [`Document`], derived from the Rust types.
   ///
@@ -709,14 +862,28 @@ Cycles: model ↔ codepath
       schemars::schema_for!(Document)
   }
   ```
-- `crates/robby-ir/src/lib.rs:47:1` (docs, `robby_ir::schema_json`): "Pretty-printed JSON Schema."
+- `crates/robby-ir/src/lib.rs:51:1` (docs, `robby_ir::schema_json`): "Pretty-printed JSON Schema."
   ```
   /// Pretty-printed JSON Schema.
   pub fn schema_json() -> String {
       serde_json::to_string_pretty(&schema()).expect("schema is always serializable")
   }
   ```
-- `crates/robby-ir/src/model.rs:135:1` (docs, `robby_ir::model::Edge`): "A directed relationship between nodes."
+- `crates/robby-ir/src/model.rs:107:1` (docs, `robby_ir::model::Provenance`): "Where a fact came from and how much to trust it."
+  ```
+  /// Where a fact came from and how much to trust it.
+  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+  pub struct Provenance {
+      pub source: Source,
+      /// Unix milliseconds. `None` means the fact is timeless (static analysis).
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub observed_at: Option<i64>,
+      /// `0.0..=1.0`. Static resolution that could not disambiguate a path
+      /// records its uncertainty here rather than dropping the edge.
+      pub confidence: f32,
+  }
+  ```
+- `crates/robby-ir/src/model.rs:148:1` (docs, `robby_ir::model::Edge`): "A directed relationship between nodes."
   ```
   /// A directed relationship between nodes.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -743,11 +910,30 @@ Cycles: model ↔ codepath
   /// use `parent#ordinal`. Ordinal-based ids are stable within a run but shift
   /// when earlier siblings change; that is documented and accepted, because
   /// byte-offset ids would shift on every edit above them instead.
-  #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]
+  #[derive(
+      Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+  )]
   #[serde(transparent)]
   pub struct NodeId(String);
   ```
-- `crates/robby-ir/src/model.rs:186:1` (docs, `robby_ir::model::Node`): "A single described thing: a crate, a function, a statement, an observation."
+- `crates/robby-ir/src/model.rs:204:5` (docs, `robby_ir::model::impl EdgeKind::as_str`): "Serde name (`references`, not the short diagram label)."
+  ```
+  /// Serde name (`references`, not the short diagram label).
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Contains => "contains",
+              Self::Calls => "calls",
+              Self::Uses => "uses",
+              Self::Imports => "imports",
+              Self::Implements => "implements",
+              Self::Extends => "extends",
+              Self::Returns => "returns",
+              Self::Field => "field",
+              Self::References => "references",
+          }
+      }
+  ```
+- `crates/robby-ir/src/model.rs:220:1` (docs, `robby_ir::model::Node`): "A single described thing: a crate, a function, a statement, an observation."
   ```
   /// A single described thing: a crate, a function, a statement, an observation.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -765,8 +951,11 @@ Cycles: model ↔ codepath
       #[serde(default, skip_serializing_if = "Option::is_none")]
       pub docs: Option<String>,
       pub provenance: Provenance,
+      /// Parent in the containment tree. This is the link callers set.
+      /// [`Document::merge`] maintains [`Self::children`] from it.
       #[serde(default, skip_serializing_if = "Option::is_none")]
       pub parent: Option<NodeId>,
+      /// Child ids in insertion order. Written only by [`Document::merge`].
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
       pub children: Vec<NodeId>,
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -779,7 +968,7 @@ Cycles: model ↔ codepath
       pub tags: Vec<String>,
   }
   ```
-- `crates/robby-ir/src/model.rs:221:5` (docs, `robby_ir::model::impl Node::with_lang`): "Like [`Node::new`], with an explicit language tag."
+- `crates/robby-ir/src/model.rs:258:5` (docs, `robby_ir::model::impl Node::with_lang`): "Like [`Node::new`], with an explicit language tag."
   ```
   /// Like [`Node::new`], with an explicit language tag.
       pub fn with_lang(
@@ -809,7 +998,7 @@ Cycles: model ↔ codepath
           }
       }
   ```
-- `crates/robby-ir/src/model.rs:280:1` (docs, `robby_ir::model::leaf_name`): "Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms."
+- `crates/robby-ir/src/model.rs:317:1` (docs, `robby_ir::model::leaf_name`): "Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms."
   ```
   /// Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms.
   pub fn leaf_name(fqn: &str) -> String {
@@ -822,7 +1011,7 @@ Cycles: model ↔ codepath
           .to_owned()
   }
   ```
-- `crates/robby-ir/src/model.rs:291:1` (docs, `robby_ir::model::Document`): "The whole graph for one workspace snapshot."
+- `crates/robby-ir/src/model.rs:328:1` (docs, `robby_ir::model::Document`): "The whole graph for one workspace snapshot."
   ```
   /// The whole graph for one workspace snapshot.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -843,16 +1032,27 @@ Cycles: model ↔ codepath
       /// Entrypoint-rooted call trees derived from resolved `Calls` edges.
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
       pub code_paths: Vec<CodePath>,
+      /// Children whose parent node is not in the document yet.
+      ///
+      /// Not part of the schema. Flushed when the parent is inserted so a child
+      /// can be recorded before its parent without a second writer.
+      #[serde(skip)]
+      #[schemars(skip)]
+      pending_children: BTreeMap<NodeId, Vec<NodeId>>,
+      /// Parent declared for a child node that has not been inserted yet.
+      #[serde(skip)]
+      #[schemars(skip)]
+      pending_parents: BTreeMap<NodeId, NodeId>,
   }
   ```
-- `crates/robby-ir/src/model.rs:324:5` (docs, `robby_ir::model::impl Document::rebuild_code_paths`): "Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries."
+- `crates/robby-ir/src/model.rs:374:5` (docs, `robby_ir::model::impl Document::rebuild_code_paths`): "Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries."
   ```
   /// Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries.
       pub fn rebuild_code_paths(&mut self) {
           self.code_paths = build_code_paths(self, DEFAULT_MAX_DEPTH);
       }
   ```
-- `crates/robby-ir/src/model.rs:329:5` (docs, `robby_ir::model::impl Document::declare_file`): "Record a source file as part of the map."
+- `crates/robby-ir/src/model.rs:379:5` (docs, `robby_ir::model::impl Document::declare_file`): "Record a source file as part of the map."
   ```
   /// Record a source file as part of the map.
       pub fn declare_file(&mut self, path: impl Into<String>) {
@@ -863,23 +1063,29 @@ Cycles: model ↔ codepath
           }
       }
   ```
-- `crates/robby-ir/src/model.rs:352:5` (docs, `robby_ir::model::impl Document::merge`): "Insert, or merge into an existing node with the same id. Merging matters for modules: a `mod foo;` declaration and the …"
+- `crates/robby-ir/src/model.rs:392:5` (docs, `robby_ir::model::impl Document::merge`): "Insert, or merge into an existing node with the same id. Merging matters for modules: a `mod foo;` declaration and the …"
   ```
   /// Insert, or merge into an existing node with the same id.
       ///
       /// Merging matters for modules: a `mod foo;` declaration and the file
       /// `foo.rs` both describe `crate::foo`. The declaration carries the span,
       /// the file carries the contents, and they must not overwrite each other.
-      pub fn merge(&mut self, node: Node) {
+      ///
+      /// Containment has one writer: this method. Set [`Node::parent`] on the
+      /// child. A `children` list passed in is normalized into that same index,
+      /// including when the child node arrives later.
+      pub fn merge(&mut self, mut node: Node) {
           let id = node.id.clone();
-          if let Some(existing) = self.nodes.get_mut(&id) {
+          let declared_children = std::mem::take(&mut node.children);
+          let incoming_parent = node.parent.clone();
+  
+          let adopted_parent = if let Some(existing) = self.nodes.get_mut(&id) {
               if existing.span.is_none() {
                   existing.span = node.span;
               }
-              for child in node.children {
-                  if !existing.children.contains(&child) {
-                      existing.children.push(child);
-                  }
+              let adopted = existing.parent.is_none() && incoming_parent.is_some();
+              if adopted {
+                  existing.parent = incoming_parent;
               }
               for edge in node.edges {
                   if !existing.edges.contains(&edge) {
@@ -894,12 +1100,91 @@ Cycles: model ↔ codepath
                       existing.tags.push(tag);
                   }
               }
-              return;
+              adopted
+          } else {
+              if node.parent.is_none()
+                  && let Some(parent) = self.pending_parents.remove(&id)
+              {
+                  node.parent = Some(parent);
+              }
+              if node.parent.is_none() {
+                  self.roots.push(id.clone());
+              }
+              self.nodes.insert(id.clone(), node);
+              if let Some(waiting) = self.pending_children.remove(&id) {
+                  for child in waiting {
+                      self.record_child(&id, &child);
+                  }
+              }
+              false
+          };
+  
+          if let Some(parent) = self.nodes.get(&id).and_then(|n| n.parent.clone()) {
+              self.record_child(&parent, &id);
           }
-          self.insert(node);
+          if adopted_parent {
+              self.roots.retain(|root| root != &id);
+          }
+          for child in declared_children {
+              self.record_child(&id, &child);
+          }
+          // A children list can name a node that is inserted later, with no parent
+          // of its own. Point that node back so the two fields cannot diverge.
+          self.adopt_parent(&id);
       }
   ```
-- `crates/robby-ir/src/model.rs:390:5` (docs, `robby_ir::model::impl Document::subtree`): "All nodes under `root`, depth-first, deterministic order."
+- `crates/robby-ir/src/model.rs:460:5` (docs, `robby_ir::model::impl Document::adopt_parent`): "If some node already lists `id` and `id` has no parent, adopt that link."
+  ```
+  /// If some node already lists `id` and `id` has no parent, adopt that link.
+      fn adopt_parent(&mut self, id: &NodeId) {
+          if self.nodes.get(id).is_some_and(|node| node.parent.is_some()) {
+              return;
+          }
+          let listed = self
+              .nodes
+              .iter()
+              .find(|(parent_id, node)| *parent_id != id && node.children.contains(id))
+              .map(|(parent_id, _)| parent_id.clone());
+          if let Some(parent) = listed {
+              self.record_child(&parent, id);
+          }
+      }
+  ```
+- `crates/robby-ir/src/model.rs:475:5` (docs, `robby_ir::model::impl Document::record_child`): "Record `child` under `parent`, and point the child back if it has no parent yet."
+  ```
+  /// Record `child` under `parent`, and point the child back if it has no parent yet.
+      fn record_child(&mut self, parent: &NodeId, child: &NodeId) {
+          if parent == child {
+              return;
+          }
+          if let Some(parent_node) = self.nodes.get_mut(parent) {
+              if !parent_node.children.contains(child) {
+                  parent_node.children.push(child.clone());
+              }
+          } else {
+              let pending = self.pending_children.entry(parent.clone()).or_default();
+              if !pending.contains(child) {
+                  pending.push(child.clone());
+              }
+          }
+          if !self.nodes.contains_key(child) {
+              self.pending_parents
+                  .entry(child.clone())
+                  .or_insert_with(|| parent.clone());
+          }
+          let needs_parent = self
+              .nodes
+              .get(child)
+              .is_some_and(|node| node.parent.is_none());
+          if needs_parent {
+              if let Some(node) = self.nodes.get_mut(child) {
+                  node.parent = Some(parent.clone());
+              }
+              self.roots.retain(|root| root != child);
+          }
+      }
+  ```
+- `crates/robby-ir/src/model.rs:511:5` (docs, `robby_ir::model::impl Document::subtree`): "All nodes under `root`, depth-first, deterministic order."
   ```
   /// All nodes under `root`, depth-first, deterministic order.
       pub fn subtree(&self, root: &NodeId) -> Vec<&Node> {
@@ -908,7 +1193,7 @@ Cycles: model ↔ codepath
           out
       }
   ```
-- `crates/robby-ir/src/model.rs:450:1` (docs, `robby_ir::model::validate`): "Structural checks that do not depend on source text. Returns diagnostics rather than a `Result`: a graph with warnings …"
+- `crates/robby-ir/src/model.rs:571:1` (docs, `robby_ir::model::validate`): "Structural checks that do not depend on source text. Returns diagnostics rather than a `Result`: a graph with warnings …"
   ```
   /// Structural checks that do not depend on source text.
   ///
@@ -928,16 +1213,28 @@ Cycles: model ↔ codepath
       }
   
       for (id, node) in &doc.nodes {
-          if let Some(parent) = &node.parent {
-              if !doc.nodes.contains_key(parent) {
-                  out.push(
-                      Diagnostic::error(
-                          "node/parent-missing",
-                          format!("parent {parent} is not in the document"),
-                      )
-                      .about(id.clone()),
-                  );
-              }
+          if let Some(parent) = &node.parent
+              && !doc.nodes.contains_key(parent)
+          {
+              out.push(
+                  Diagnostic::error(
+                      "node/parent-missing",
+                      format!("parent {parent} is not in the document"),
+                  )
+                  .about(id.clone()),
+              );
+          }
+          if let Some(parent) = &node.parent
+              && let Some(parent_node) = doc.nodes.get(parent)
+              && !parent_node.children.iter().any(|child| child == id)
+          {
+              out.push(
+                  Diagnostic::error(
+                      "node/parent-link",
+                      format!("parent {parent} does not list this node"),
+                  )
+                  .about(id.clone()),
+              );
           }
           for child in &node.children {
               if !doc.nodes.contains_key(child) {
@@ -945,6 +1242,14 @@ Cycles: model ↔ codepath
                       Diagnostic::error(
                           "node/child-missing",
                           format!("child {child} is not in the document"),
+                      )
+                      .about(id.clone()),
+                  );
+              } else if doc.nodes.get(child).and_then(|n| n.parent.as_ref()) != Some(id) {
+                  out.push(
+                      Diagnostic::error(
+                          "node/child-link",
+                          format!("child {child} does not point at this parent"),
                       )
                       .about(id.clone()),
                   );
@@ -1016,7 +1321,7 @@ Cycles: model ↔ codepath
       out
   }
   ```
-- `crates/robby-ir/src/model.rs:62:1` (docs, `robby_ir::model::Source`): "Which producer contributed a fact."
+- `crates/robby-ir/src/model.rs:64:1` (docs, `robby_ir::model::Source`): "Which producer contributed a fact."
   ```
   /// Which producer contributed a fact.
   #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -1034,7 +1339,7 @@ Cycles: model ↔ codepath
       Hand,
   }
   ```
-- `crates/robby-ir/src/model.rs:79:5` (docs, `robby_ir::model::impl Source::precedence`): "Lower numbers win when two producers disagree about the same fact. Runtime beats static because observation is ground t…"
+- `crates/robby-ir/src/model.rs:81:5` (docs, `robby_ir::model::impl Source::precedence`): "Lower numbers win when two producers disagree about the same fact. Runtime beats static because observation is ground t…"
   ```
   /// Lower numbers win when two producers disagree about the same fact.
       ///
@@ -1050,24 +1355,37 @@ Cycles: model ↔ codepath
           }
       }
   ```
-- `crates/robby-ir/src/model.rs:94:1` (docs, `robby_ir::model::Provenance`): "Where a fact came from and how much to trust it."
+- `crates/robby-ir/src/model.rs:95:5` (docs, `robby_ir::model::impl Source::as_str`): "Serde name. Views display this rather than keeping a second match."
   ```
-  /// Where a fact came from and how much to trust it.
-  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
-  pub struct Provenance {
-      pub source: Source,
-      /// Unix milliseconds. `None` means the fact is timeless (static analysis).
-      #[serde(default, skip_serializing_if = "Option::is_none")]
-      pub observed_at: Option<i64>,
-      /// `0.0..=1.0`. Static resolution that could not disambiguate a path
-      /// records its uncertainty here rather than dropping the edge.
-      pub confidence: f32,
+  /// Serde name. Views display this rather than keeping a second match.
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Extractor => "extractor",
+              Self::Macro => "macro",
+              Self::Trace => "trace",
+              Self::Agent => "agent",
+              Self::Hand => "hand",
+          }
+      }
+  ```
+- `crates/robby-ir/src/process.rs:111:1` (docs, `robby_ir::process::Process`): "The process a node performs, or the process a trace recorded."
+  ```
+  /// The process a node performs, or the process a trace recorded.
+  #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+  pub struct Process {
+      pub participants: Vec<Participant>,
+      pub steps: Vec<Step>,
   }
   ```
-- `crates/robby-ir/src/process.rs:100:5` (docs, `robby_ir::process::impl Process::participant`): "Add a participant, returning its index. Duplicate ids are ignored."
+- `crates/robby-ir/src/process.rs:126:5` (docs, `robby_ir::process::impl Process::participant`): "Add a participant, returning its index. Duplicate ids are ignored."
   ```
   /// Add a participant, returning its index. Duplicate ids are ignored.
-      pub fn participant(&mut self, id: impl Into<String>, label: impl Into<String>, kind: Kind) -> usize {
+      pub fn participant(
+          &mut self,
+          id: impl Into<String>,
+          label: impl Into<String>,
+          kind: Kind,
+      ) -> usize {
           let id = id.into();
           if let Some(idx) = self.participants.iter().position(|p| p.id == id) {
               return idx;
@@ -1080,7 +1398,7 @@ Cycles: model ↔ codepath
           self.participants.len() - 1
       }
   ```
-- `crates/robby-ir/src/process.rs:118:5` (docs, `robby_ir::process::impl Process::absorb`): "Merge an observed process into this (static) one. Matching is by `(from, to, label)`. Steps seen at runtime are marked …"
+- `crates/robby-ir/src/process.rs:149:5` (docs, `robby_ir::process::impl Process::absorb`): "Merge an observed process into this (static) one. Matching is by `(from, to, label)`. Steps seen at runtime are marked …"
   ```
   /// Merge an observed process into this (static) one.
       ///
@@ -1088,27 +1406,10 @@ Cycles: model ↔ codepath
       /// observed; steps known statically but never seen stay dashed. Observed
       /// steps not present statically are appended, because runtime is the
       /// ground truth for what actually happened.
+      ///
+      /// Canonical implementation: [`crate::contract::Absorb`].
       pub fn absorb(&mut self, observed: &Process) {
-          for p in &observed.participants {
-              if !self.participants.iter().any(|q| q.id == p.id) {
-                  self.participants.push(p.clone());
-              }
-          }
-  
-          let mut matched = vec![false; observed.steps.len()];
-          for step in &mut self.steps {
-              if let Some(idx) = observed.steps.iter().position(|o| {
-                  o.from == step.from && o.to == step.to && o.label == step.label
-              }) {
-                  step.observed = true;
-                  matched[idx] = true;
-              }
-          }
-          for (idx, step) in observed.steps.iter().enumerate() {
-              if !matched[idx] {
-                  self.steps.push(step.clone());
-              }
-          }
+          <Self as crate::contract::Absorb>::absorb(self, observed);
       }
   ```
 - `crates/robby-ir/src/process.rs:18:1` (docs, `robby_ir::process::Participant`): "One lifeline in a sequence diagram. Today a participant is a module, scope, or type. The field set is deliberately acto…"
@@ -1127,7 +1428,20 @@ Cycles: model ↔ codepath
       pub kind: Kind,
   }
   ```
-- `crates/robby-ir/src/process.rs:42:1` (docs, `robby_ir::process::Block`): "A control-flow frame enclosing a step. Frames form a stack per step. The renderer diffs consecutive stacks and emits `a…"
+- `crates/robby-ir/src/process.rs:43:5` (docs, `robby_ir::process::impl StepKind::as_str`): "Serde / display name. One mapping, shared by every renderer."
+  ```
+  /// Serde / display name. One mapping, shared by every renderer.
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Call => "call",
+              Self::Return => "return",
+              Self::Signal => "signal",
+              Self::Decision => "decision",
+              Self::Note => "note",
+          }
+      }
+  ```
+- `crates/robby-ir/src/process.rs:55:1` (docs, `robby_ir::process::Block`): "A control-flow frame enclosing a step. Frames form a stack per step. The renderer diffs consecutive stacks and emits `a…"
   ```
   /// A control-flow frame enclosing a step.
   ///
@@ -1143,7 +1457,20 @@ Cycles: model ↔ codepath
       pub branch: Option<String>,
   }
   ```
-- `crates/robby-ir/src/process.rs:66:1` (docs, `robby_ir::process::Step`): "A single ordered interaction."
+- `crates/robby-ir/src/process.rs:80:5` (docs, `robby_ir::process::impl BlockKind::as_str`): "Mermaid block keyword. Matches the serde name."
+  ```
+  /// Mermaid block keyword. Matches the serde name.
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Alt => "alt",
+              Self::Opt => "opt",
+              Self::Loop => "loop",
+              Self::Par => "par",
+              Self::Break => "break",
+          }
+      }
+  ```
+- `crates/robby-ir/src/process.rs:92:1` (docs, `robby_ir::process::Step`): "A single ordered interaction."
   ```
   /// A single ordered interaction.
   #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -1164,19 +1491,102 @@ Cycles: model ↔ codepath
       pub blocks: Vec<Block>,
   }
   ```
-- `crates/robby-ir/src/process.rs:85:1` (docs, `robby_ir::process::Process`): "The process a node performs, or the process a trace recorded."
+- `crates/robby-ir/src/run.rs:108:1` (docs, `robby_ir::run::RunRecord`): "One invocation: past, live, or queued. Persist the same shape as an `agent.run` node payload and/or `runs/<run_id>.json…"
   ```
-  /// The process a node performs, or the process a trace recorded.
+  /// One invocation: past, live, or queued.
+  ///
+  /// Persist the same shape as an `agent.run` node payload and/or
+  /// `runs/<run_id>.json`. Optional [`Process`] is the **run** stage timeline
+  /// (extract → check → write), not the subject function body.
+  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+  pub struct RunRecord {
+      pub run_id: String,
+      pub recipe: RecipeId,
+      /// Subject node id or stable id (tests).
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub subject: Option<String>,
+      pub status: RunStatus,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub started_at: Option<i64>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub finished_at: Option<i64>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub exit_code: Option<i32>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub stdout_tail: Option<String>,
+      #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+      pub stats: BTreeMap<String, String>,
+      #[serde(default, skip_serializing_if = "Vec::is_empty")]
+      pub products: Vec<String>,
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub process: Option<Process>,
+  }
+  ```
+- `crates/robby-ir/src/run.rs:13:1` (docs, `robby_ir::run::RecipeId`): "Stable recipe identifier, e.g. `robby.extract` or `cargo.test`."
+  ```
+  /// Stable recipe identifier, e.g. `robby.extract` or `cargo.test`.
+  #[derive(
+      Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+  )]
+  #[serde(transparent)]
+  pub struct RecipeId(String);
+  ```
+- `crates/robby-ir/src/run.rs:175:1` (docs, `robby_ir::run::RecipeCatalog`): "Lookup over a recipe catalog (pipelines.json, in-memory, …)."
+  ```
+  /// Lookup over a recipe catalog (pipelines.json, in-memory, …).
+  pub trait RecipeCatalog {
+      fn get(&self, id: &RecipeId) -> Option<&Recipe>;
+  }
+  ```
+- `crates/robby-ir/src/run.rs:48:1` (docs, `robby_ir::run::RunStatus`): "Shared status for tests, extract, enrich, and future trace runs."
+  ```
+  /// Shared status for tests, extract, enrich, and future trace runs.
+  #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+  #[serde(rename_all = "snake_case")]
+  pub enum RunStatus {
+      Queued,
+      Running,
+      Pass,
+      Fail,
+      Error,
+      Cancelled,
+  }
+  ```
+- `crates/robby-ir/src/run.rs:84:5` (docs, `robby_ir::run::impl RunStatus::is_success`): "Terminal success (gate / runner completed ok)."
+  ```
+  /// Terminal success (gate / runner completed ok).
+      pub fn is_success(self) -> bool {
+          matches!(self, Self::Pass)
+      }
+  ```
+- `crates/robby-ir/src/run.rs:89:5` (docs, `robby_ir::run::impl RunStatus::is_terminal`): "Terminal outcome (success or failure), not in-flight."
+  ```
+  /// Terminal outcome (success or failure), not in-flight.
+      pub fn is_terminal(self) -> bool {
+          matches!(
+              self,
+              Self::Pass | Self::Fail | Self::Error | Self::Cancelled
+          )
+      }
+  ```
+- `crates/robby-ir/src/run.rs:98:1` (docs, `robby_ir::run::Recipe`): "Catalog entry for an invokable procedure."
+  ```
+  /// Catalog entry for an invokable procedure.
   #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-  pub struct Process {
-      pub participants: Vec<Participant>,
-      pub steps: Vec<Step>,
+  pub struct Recipe {
+      pub id: RecipeId,
+      pub label: String,
+      /// Policy / allowlist key for local invoke (optional).
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub allowlist: Option<String>,
   }
   ```
 - `crates/robby-ir/src/span.rs:10:1` (docs, `robby_ir::span::Position`): "A single point in a source file."
   ```
   /// A single point in a source file.
-  #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
+  #[derive(
+      Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+  )]
   pub struct Position {
       /// 1-based line number.
       pub line: u32,
@@ -1186,7 +1596,7 @@ Cycles: model ↔ codepath
       pub byte: u32,
   }
   ```
-- `crates/robby-ir/src/span.rs:26:5` (docs, `robby_ir::span::impl Position::at`): "Resolve a byte offset to a line/column position. Out-of-range offsets clamp to the end of the source rather than panick…"
+- `crates/robby-ir/src/span.rs:28:5` (docs, `robby_ir::span::impl Position::at`): "Resolve a byte offset to a line/column position. Out-of-range offsets clamp to the end of the source rather than panick…"
   ```
   /// Resolve a byte offset to a line/column position.
       ///
@@ -1196,12 +1606,12 @@ Cycles: model ↔ codepath
           let byte = byte.min(source.len() as u32);
           let prefix = &source[..byte as usize];
           let line = prefix.matches('\n').count() as u32 + 1;
-          let line_start = prefix.rfind('\n').map(|i| i + 1).unwrap_or(0);
+          let line_start = prefix.rfind('\n').map_or(0, |i| i + 1);
           let column = prefix[line_start..].chars().count() as u32 + 1;
           Self { line, column, byte }
       }
   ```
-- `crates/robby-ir/src/span.rs:40:1` (docs, `robby_ir::span::Span`): "A half-open byte range within one file."
+- `crates/robby-ir/src/span.rs:42:1` (docs, `robby_ir::span::Span`): "A half-open byte range within one file."
   ```
   /// A half-open byte range within one file.
   #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -1212,12 +1622,31 @@ Cycles: model ↔ codepath
       pub end: Position,
   }
   ```
-- `crates/robby-ir/src/span.rs:67:5` (docs, `robby_ir::span::impl Span::location`): "`file:line:column`, suitable for editor links."
+- `crates/robby-ir/src/span.rs:69:5` (docs, `robby_ir::span::impl Span::location`): "`file:line:column`, suitable for editor links."
   ```
   /// `file:line:column`, suitable for editor links.
       pub fn location(&self) -> String {
           format!("{}:{}:{}", self.file, self.start.line, self.start.column)
       }
+  ```
+- `crates/robby-ir/src/vocab.rs:57:5` (docs, `robby_ir::vocab::impl NoteKind::label`): "Prose label for Markdown and the terminal report."
+  ```
+  /// Prose label for Markdown and the terminal report.
+      pub fn label(self) -> &'static str {
+          match self {
+              Self::UsageExample => "usage example",
+              Self::ImplementationNote => "implementation note",
+          }
+      }
+  ```
+- `crates/robby-ir/src/vocab.rs:66:1` (docs, `robby_ir::vocab::Highlight`): "Byte range into a code window. Offsets are UTF-8 bytes."
+  ```
+  /// Byte range into a code window. Offsets are UTF-8 bytes.
+  #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+  pub struct Highlight {
+      pub start: u32,
+      pub end: u32,
+  }
   ```
 ## References
 
@@ -1237,8 +1666,11 @@ Cycles: model ↔ codepath
 - calls ← [`robby_agent::enrich::impl ChatClient for FakeClient::chat`](../robby_agent/enrich/tests/index.md)
 - calls ← [`robby_agent::enrich::insert_decision`](../robby_agent/enrich/insert-decision.md)
 - calls ← [`robby_agent::enrich::mini_doc`](../robby_agent/enrich/tests/mini-doc.md)
+- calls ← [`robby_agent::enrich::noise_short_circuits_without_note_call`](../robby_agent/enrich/tests/noise-short-circuits-without-note-call.md)
+- calls ← [`robby_agent::enrich::relevant_writes_note_and_highlights`](../robby_agent/enrich/tests/relevant-writes-note-and-highlights.md)
 - calls ← [`robby_agent::model::parse_decision`](../robby_agent/model/parse-decision.md)
 - calls ← [`robby_agent::model::parse_note`](../robby_agent/model/parse-note.md)
+- calls ← [`robby_agent::openrouter::impl ChatClient for OpenRouterClient::chat`](../robby_agent/openrouter/index.md)
 - calls ← [`robby_agent::openrouter::impl OpenRouterClient::from_env`](../robby_agent/openrouter/index.md)
 - calls ← [`robby_cli::build::main`](../robby_cli/build/main.md)
 - calls ← [`robby_cli::default_ir`](../robby_cli/default-ir.md)
@@ -1256,6 +1688,7 @@ Cycles: model ↔ codepath
 - calls ← [`robby_extract::rust::id_fqn`](../robby_extract/rust/id-fqn.md)
 - calls ← [`robby_extract::rust::impl ProcBuilder<'_, '_>::emit`](../robby_extract/rust/index.md)
 - calls ← [`robby_extract::rust::item_node`](../robby_extract/rust/item-node.md)
+- calls ← [`robby_extract::rust::pick_call_target`](../robby_extract/rust/pick-call-target.md)
 - calls ← [`robby_extract::rust::resolve_calls`](../robby_extract/rust/resolve-calls.md)
 - calls ← [`robby_extract::rust::sanitize`](../robby_extract/rust/sanitize.md)
 - calls ← [`robby_extract::rust::slice`](../robby_extract/rust/slice.md)
@@ -1307,7 +1740,6 @@ Cycles: model ↔ codepath
 - calls ← [`robby_render::markdown::report`](../robby_render/markdown/report.md)
 - calls ← [`robby_render::pipeline::from_document`](../robby_render/pipeline/from-document.md)
 - calls ← [`robby_render::pipeline::impl Loaded::is_ok`](../robby_render/pipeline/index.md)
-- calls ← [`robby_render::pipeline::impl Loaded::summary`](../robby_render/pipeline/index.md)
 - calls ← [`robby_render::pipeline::load_sources`](../robby_render/pipeline/load-sources.md)
 - calls ← [`robby_render::render::markdown::impl MarkdownRenderer::fence`](../robby_render/render/markdown/index.md)
 - calls ← [`robby_render::render::markdown::impl Renderer for MarkdownRenderer::source`](../robby_render/render/markdown/index.md)
@@ -1415,32 +1847,37 @@ Cycles: model ↔ codepath
 - calls ← [`robby_render::view::types::class_from_node`](../robby_render/view/types/class-from-node.md)
 - calls ← [`robby_render::view::types::impl TypeModel::from_module`](../robby_render/view/types/index.md)
 - calls ← [`robby_render::view::types::impl_methods`](../robby_render/view/types/impl-methods.md)
-- calls ← [`robby_render::web::impl FrameDetail::from_node_in_doc`](../robby_render/web/index.md)
 - calls ← [`robby_render::web::write_site`](../robby_render/web/write-site.md)
 
 ## Modules
 
 - [`codepath`](codepath/index.md) — 28 nodes
+- [`contract`](contract/index.md) — 28 nodes
 - [`coverage`](coverage/index.md) — 55 nodes
-- [`kind`](kind/index.md) — 54 nodes
-- [`model`](model/index.md) — 118 nodes
-- [`process`](process/index.md) — 43 nodes
+- [`kind`](kind/index.md) — 56 nodes
+- [`model`](model/index.md) — 132 nodes
+- [`process`](process/index.md) — 51 nodes
+- [`run`](run/index.md) — 64 nodes
 - [`span`](span/index.md) — 19 nodes
+- [`vocab`](vocab/index.md) — 23 nodes
 - [`test_coverage`](test_coverage/index.md) — 25 nodes
 
 ## Items
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`schema`](schema.md) | `code.function` | 1 | `crates/robby-ir/src/lib.rs:39:1` |
-| [`schema_json`](schema-json.md) | `code.function` | 3 | `crates/robby-ir/src/lib.rs:47:1` |
+| [`schema`](schema.md) | `code.function` | 1 | `crates/robby-ir/src/lib.rs:43:1` |
+| [`schema_json`](schema-json.md) | `code.function` | 3 | `crates/robby-ir/src/lib.rs:51:1` |
 
 ## Imports
 
-- `pub use codepath::{`
+- `pub use codepath::{CodePath, CodePathEdge, DEFAULT_MAX_DEPTH, build_code_paths, find_entrypoints};`
+- `pub use contract::{Absorb, CoverageGate, KindNamespace};`
 - `pub use coverage::{`
 - `pub use kind::Kind;`
 - `pub use model::{`
 - `pub use process::{Block, BlockKind, Participant, Process, Step, StepKind};`
+- `pub use run::{Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus};`
 - `pub use span::{Position, Span};`
+- `pub use vocab::{Highlight, NoteKind, Verdict};`
 

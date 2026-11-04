@@ -46,10 +46,7 @@ pub(crate) fn extract(root: &Path) -> Result<Document> {
 }
 
 pub(crate) fn source_file_count(root: &Path) -> Result<usize> {
-    Ok(discover_packages(root)?
-        .iter()
-        .map(|p| p.files.len())
-        .sum())
+    Ok(discover_packages(root)?.iter().map(|p| p.files.len()).sum())
 }
 
 struct Package {
@@ -121,8 +118,8 @@ fn package_at(extract_root: &Path, dir: &Path) -> Result<Option<Package>> {
 
 fn read_package_name(path: &Path) -> Result<Option<String>> {
     let text = fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
-    let value: Value = serde_json::from_str(&text)
-        .with_context(|| format!("parsing {}", path.display()))?;
+    let value: Value =
+        serde_json::from_str(&text).with_context(|| format!("parsing {}", path.display()))?;
     Ok(value
         .get("name")
         .and_then(|v| v.as_str())
@@ -257,9 +254,9 @@ struct PendingCall {
     span: Span,
 }
 
-fn walk_statements<'a>(
+fn walk_statements(
     doc: &mut Document,
-    stmts: &[Statement<'a>],
+    stmts: &[Statement<'_>],
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,
@@ -312,9 +309,9 @@ fn walk_statements<'a>(
     }
 }
 
-fn walk_declaration<'a>(
+fn walk_declaration(
     doc: &mut Document,
-    decl: &Declaration<'a>,
+    decl: &Declaration<'_>,
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,
@@ -344,19 +341,14 @@ fn walk_declaration<'a>(
     }
 }
 
-fn emit_import(
-    doc: &mut Document,
-    imp: &ImportDeclaration<'_>,
-    parent: &NodeId,
-    ctx: &Ctx<'_>,
-) {
+fn emit_import(doc: &mut Document, imp: &ImportDeclaration<'_>, parent: &NodeId, ctx: &Ctx<'_>) {
     let source = js_str(&imp.source.value);
     let fqn = format!("{}/import:{}", ctx.module, source);
     let mut node = item_node(kind::code::IMPORT, &fqn, oxc_span(imp.span, ctx), parent);
     // Resolve relative imports to a module FQN under the same package prefix.
     if let Some(target) = resolve_relative_import(&ctx.module, source) {
         let mut edge = Edge::new(NodeId::symbol("typescript", &target), EdgeKind::Imports);
-        edge.span = node.span.clone();
+        edge.span.clone_from(&node.span);
         node.edges.push(edge);
     } else if is_bare_specifier(source) {
         let stub_fqn = format!("npm/{}", npm_bare_name(source));
@@ -372,7 +364,7 @@ fn emit_import(
         stub.annotations.insert("external".into(), "true".into());
         doc.merge(stub);
         let mut edge = Edge::new(stub_id, EdgeKind::Imports);
-        edge.span = node.span.clone();
+        edge.span.clone_from(&node.span);
         node.edges.push(edge);
     }
     doc.merge(node);
@@ -488,12 +480,11 @@ fn attach_leading_docs(
             }
         }
 
-        if let Some((_, id)) = best {
-            if let Some(child) = doc.nodes.get_mut(&id) {
-                if child.docs.is_none() {
-                    child.docs = Some(raw.to_owned());
-                }
-            }
+        if let Some((_, id)) = best
+            && let Some(child) = doc.nodes.get_mut(&id)
+            && child.docs.is_none()
+        {
+            child.docs = Some(raw.to_owned());
         }
     }
 }
@@ -505,9 +496,8 @@ fn gap_is_attachable(source: &str, from: u32, to: u32) -> bool {
         return false;
     }
     let gap = source.get(from as usize..to as usize).unwrap_or("");
-    gap.split_whitespace().all(|tok| {
-        matches!(tok, "export" | "default" | "async" | "declare")
-    })
+    gap.split_whitespace()
+        .all(|tok| matches!(tok, "export" | "default" | "async" | "declare"))
 }
 
 fn resolve_relative_import(from_module: &str, spec: &str) -> Option<String> {
@@ -517,7 +507,10 @@ fn resolve_relative_import(from_module: &str, spec: &str) -> Option<String> {
     let pkg = from_module.split('/').next()?;
     let from_dir = {
         let path = from_module.strip_prefix(&format!("{pkg}/")).unwrap_or("");
-        Path::new(path).parent().map(|p| p.to_path_buf()).unwrap_or_default()
+        Path::new(path)
+            .parent()
+            .map(std::path::Path::to_path_buf)
+            .unwrap_or_default()
     };
     let joined = from_dir.join(spec);
     let mut parts = Vec::new();
@@ -539,9 +532,9 @@ fn resolve_relative_import(from_module: &str, spec: &str) -> Option<String> {
     }
 }
 
-fn emit_variable<'a>(
+fn emit_variable(
     doc: &mut Document,
-    decl: &VariableDeclarator<'a>,
+    decl: &VariableDeclarator<'_>,
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,
@@ -554,14 +547,13 @@ fn emit_variable<'a>(
     // Arrow / function expressions assigned to const.
     if let Some(Expression::ArrowFunctionExpression(arrow)) = &decl.init {
         let fqn = format!("{}/{}", ctx.module, name);
-        let mut node = item_node(
-            kind::code::FUNCTION,
-            &fqn,
-            oxc_span(decl.span, ctx),
-            parent,
-        );
+        let mut node = item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent);
         let mut process = Process::new();
-        process.participant(sanitize(name), format!("{name}()"), Kind::from(kind::code::FUNCTION));
+        process.participant(
+            sanitize(name),
+            format!("{name}()"),
+            Kind::from(kind::code::FUNCTION),
+        );
         let from = NodeId::symbol("typescript", &fqn);
         match &arrow.body {
             ArrowFunctionBody::FunctionBody(body) => {
@@ -577,20 +569,15 @@ fn emit_variable<'a>(
         doc.merge(node);
     } else if let Some(Expression::FunctionExpression(f)) = &decl.init {
         let fqn = format!("{}/{}", ctx.module, name);
-        let mut node = item_node(
-            kind::code::FUNCTION,
-            &fqn,
-            oxc_span(decl.span, ctx),
-            parent,
-        );
+        let mut node = item_node(kind::code::FUNCTION, &fqn, oxc_span(decl.span, ctx), parent);
         node.process = Some(build_function_process(f, &fqn, pending, ctx));
         doc.merge(node);
     }
 }
 
-fn emit_function<'a>(
+fn emit_function(
     doc: &mut Document,
-    f: &Function<'a>,
+    f: &Function<'_>,
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,
@@ -613,7 +600,12 @@ fn emit_interface(
 ) {
     let name = iface.id.name.as_str();
     let fqn = format!("{}/{}", ctx.module, name);
-    let mut node = item_node(kind::code::INTERFACE, &fqn, oxc_span(iface.span, ctx), parent);
+    let mut node = item_node(
+        kind::code::INTERFACE,
+        &fqn,
+        oxc_span(iface.span, ctx),
+        parent,
+    );
     for ext in &iface.extends {
         if let Some(n) = type_name(&ext.type_name) {
             let target = format!("{}/{}", ctx.module, n);
@@ -626,9 +618,9 @@ fn emit_interface(
     doc.merge(node);
 }
 
-fn emit_class<'a>(
+fn emit_class(
     doc: &mut Document,
-    class: &Class<'a>,
+    class: &Class<'_>,
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,
@@ -641,13 +633,13 @@ fn emit_class<'a>(
     let class_id = NodeId::symbol("typescript", &fqn);
     let mut node = item_node(kind::code::CLASS, &fqn, oxc_span(class.span, ctx), parent);
 
-    if let Some(heritage) = &class.heritage {
-        if let Some(super_name) = type_name_expr(&heritage.expression) {
-            node.edges.push(Edge::new(
-                NodeId::symbol("typescript", &format!("{}/{}", ctx.module, super_name)),
-                EdgeKind::Extends,
-            ));
-        }
+    if let Some(heritage) = &class.heritage
+        && let Some(super_name) = type_name_expr(&heritage.expression)
+    {
+        node.edges.push(Edge::new(
+            NodeId::symbol("typescript", &format!("{}/{}", ctx.module, super_name)),
+            EdgeKind::Extends,
+        ));
     }
     for impls in &class.implements {
         if let Some(n) = type_name(&impls.expression) {
@@ -676,9 +668,9 @@ fn emit_class<'a>(
     }
 }
 
-fn emit_method<'a>(
+fn emit_method(
     doc: &mut Document,
-    method: &MethodDefinition<'a>,
+    method: &MethodDefinition<'_>,
     parent: &NodeId,
     class_fqn: &str,
     ctx: &Ctx<'_>,
@@ -689,12 +681,7 @@ fn emit_method<'a>(
     };
     let fqn = format!("{class_fqn}/{name}");
     let mut node = item_node(kind::code::METHOD, &fqn, oxc_span(method.span, ctx), parent);
-    node.process = Some(build_function_process(
-        &method.value,
-        &fqn,
-        pending,
-        ctx,
-    ));
+    node.process = Some(build_function_process(&method.value, &fqn, pending, ctx));
     doc.merge(node);
 }
 
@@ -729,17 +716,16 @@ fn type_name(name: &TSTypeName<'_>) -> Option<String> {
     }
 }
 
-fn build_function_process<'a>(
-    f: &Function<'a>,
+fn build_function_process(
+    f: &Function<'_>,
     fqn: &str,
     pending: &mut Vec<PendingCall>,
     ctx: &Ctx<'_>,
 ) -> Process {
-    let name = f
-        .id
-        .as_ref()
-        .map(|i| i.name.as_str())
-        .unwrap_or_else(|| fqn.rsplit('/').next().unwrap_or(fqn));
+    let name = f.id.as_ref().map_or_else(
+        || fqn.rsplit('/').next().unwrap_or(fqn),
+        |i| i.name.as_str(),
+    );
     let mut process = Process::new();
     process.participant(
         sanitize(name),
@@ -761,8 +747,8 @@ fn frame(kind: BlockKind, label: &str) -> Block {
     }
 }
 
-fn walk_stmts<'a>(
-    stmts: &[Statement<'a>],
+fn walk_stmts(
+    stmts: &[Statement<'_>],
     process: &mut Process,
     frames: &[Block],
     pending: &mut Vec<PendingCall>,
@@ -855,19 +841,26 @@ fn walk_stmts<'a>(
     }
 }
 
-fn walk_stmt<'a>(
-    stmt: &Statement<'a>,
+fn walk_stmt(
+    stmt: &Statement<'_>,
     process: &mut Process,
     frames: &[Block],
     pending: &mut Vec<PendingCall>,
     from: &NodeId,
     ctx: &Ctx<'_>,
 ) {
-    walk_stmts(std::slice::from_ref(stmt), process, frames, pending, from, ctx);
+    walk_stmts(
+        std::slice::from_ref(stmt),
+        process,
+        frames,
+        pending,
+        from,
+        ctx,
+    );
 }
 
-fn walk_expr<'a>(
-    expr: &Expression<'a>,
+fn walk_expr(
+    expr: &Expression<'_>,
     process: &mut Process,
     frames: &[Block],
     pending: &mut Vec<PendingCall>,

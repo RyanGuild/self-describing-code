@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-agent/src/model.rs:11`](../../../../crates/robby-agent/src/model.rs#L11) |
+| location | [`crates/robby-agent/src/model.rs:13`](../../../../crates/robby-agent/src/model.rs#L13) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,7 +19,7 @@ pub enum Role {
 
 **Fields and variants**
 
-- `System` — `crates/robby-agent/src/model.rs:13:5`
-- `User` — `crates/robby-agent/src/model.rs:14:5`
-- `Assistant` — `crates/robby-agent/src/model.rs:15:5`
+- `System` — `crates/robby-agent/src/model.rs:15:5`
+- `User` — `crates/robby-agent/src/model.rs:16:5`
+- `Assistant` — `crates/robby-agent/src/model.rs:17:5`
 

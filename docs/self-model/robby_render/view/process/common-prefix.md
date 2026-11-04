@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn common_prefix(a: &[Block], b: &[Block]) -> usize` |
-| location | [`crates/robby-render/src/view/process.rs:114`](../../../../../crates/robby-render/src/view/process.rs#L114) |
+| location | [`crates/robby-render/src/view/process.rs:115`](../../../../../crates/robby-render/src/view/process.rs#L115) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn sample() -> Document` |
-| location | [`crates/robby-render/src/view/execution.rs:119`](../../../../../../crates/robby-render/src/view/execution.rs#L119) |
+| location | [`crates/robby-render/src/view/execution.rs:111`](../../../../../../crates/robby-render/src/view/execution.rs#L111) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -17,8 +17,10 @@ fn sample() -> Document {
             kind::code::FUNCTION,
             "demo::main",
         );
-        main.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::run"), EdgeKind::Calls));
+        main.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::run"),
+            EdgeKind::Calls,
+        ));
         doc.insert(main);
 
         let mut run = Node::new(
@@ -69,8 +71,8 @@ sequenceDiagram
     sample-->>NodeId__symbol: NodeId::symbol('rust', 'demo::main')
     sample-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::main'), kind::code::FUNCTION...
     sample-->>NodeId__symbol: NodeId::symbol('rust', 'demo::run')
-    sample-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::run'), EdgeKind::Calls)
-    sample-->>push: main.edges .push(Edge::new(NodeId::symbol('rust', 'demo::run'), EdgeK...
+    sample-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::run'), EdgeKind::Calls, )
+    sample-->>push: main.edges.push(Edge::new( NodeId::symbol('rust', 'demo::run'), EdgeK...
     sample-->>insert: doc.insert(main)
     sample-->>NodeId__symbol: NodeId::symbol('rust', 'demo::run')
     sample-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::run'), kind::code::FUNCTION,...

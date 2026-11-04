@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn pick_call_prefers_same_module()` |
-| location | [`crates/robby-extract/src/rust.rs:965`](../../../../../crates/robby-extract/src/rust.rs#L965) |
+| location | [`crates/robby-extract/src/rust.rs:970`](../../../../../crates/robby-extract/src/rust.rs#L970) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

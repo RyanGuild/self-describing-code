@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 
 use robby_ir::{CoverageReport, Document, Node, NodeId, kind};
 
-use crate::markdown::{cell, coverage_section, edge_name, source_name};
+use crate::markdown::{cell, coverage_section};
 use crate::render::{MarkdownRenderer, Renderer};
 use crate::report::Report;
 use crate::view::{LinkGraph, SelectOpts, collect};
@@ -44,11 +44,7 @@ pub fn tree(
 ) -> Vec<Page> {
     let mut pages = Vec::new();
 
-    let crates: Vec<&Node> = doc
-        .nodes
-        .values()
-        .filter(|node| is_crate(node))
-        .collect();
+    let crates: Vec<&Node> = doc.nodes.values().filter(|node| is_crate(node)).collect();
 
     pages.push(Page {
         path: PathBuf::from("README.md"),
@@ -85,14 +81,18 @@ fn module_pages(
     let slugs = item_slugs(&items);
 
     for child in &node.children {
-        let Some(child) = doc.get(child) else { continue };
+        let Some(child) = doc.get(child) else {
+            continue;
+        };
         if is_module(child) {
             module_pages(doc, child, crate_dir, pages, sources, out_rel);
         }
     }
 
     for item in items {
-        let Some(slug) = slugs.get(&item.id) else { continue };
+        let Some(slug) = slugs.get(&item.id) else {
+            continue;
+        };
         let path = module_dir.join(format!("{slug}.md"));
         pages.push(Page {
             path: path.clone(),
@@ -106,9 +106,7 @@ fn item_children<'a>(doc: &'a Document, node: &Node) -> Vec<&'a Node> {
     node.children
         .iter()
         .filter_map(|child| doc.get(child))
-        .filter(|child| {
-            !is_module(child) && !is_compact(child.kind.as_str())
-        })
+        .filter(|child| !is_module(child) && !is_compact(child.kind.as_str()))
         .collect()
 }
 
@@ -185,13 +183,7 @@ fn global_index(doc: &Document, coverage: Option<&CoverageReport>, crates: &[&No
     out
 }
 
-fn module_tree_line(
-    doc: &Document,
-    node: &Node,
-    crate_dir: &str,
-    depth: usize,
-    out: &mut String,
-) {
+fn module_tree_line(doc: &Document, node: &Node, crate_dir: &str, depth: usize, out: &mut String) {
     let Some(index) = module_index_path(node, crate_dir) else {
         return;
     };
@@ -204,7 +196,9 @@ fn module_tree_line(
         doc.subtree(&node.id).len()
     );
     for child in &node.children {
-        let Some(child) = doc.get(child) else { continue };
+        let Some(child) = doc.get(child) else {
+            continue;
+        };
         if is_module(child) {
             module_tree_line(doc, child, crate_dir, depth + 1, out);
         }
@@ -229,12 +223,16 @@ fn module_page(
     let _ = writeln!(out, "|---|---|");
     let _ = writeln!(out, "| kind | `{}` |", node.kind);
     if let Some(span) = &node.span {
-        let _ = writeln!(out, "| declared at | {} |", source_link(&page, out_rel, span));
+        let _ = writeln!(
+            out,
+            "| declared at | {} |",
+            source_link(&page, out_rel, span)
+        );
     }
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     let _ = writeln!(out, "| nodes | {} |", doc.subtree(&node.id).len());
@@ -329,18 +327,18 @@ fn module_page(
         out.push_str("## Items\n\n");
         out.push_str("| Item | Kind | Steps | Location |\n|---|---|---:|---|\n");
         for item in items {
-            let Some(slug) = slugs.get(&item.id) else { continue };
+            let Some(slug) = slugs.get(&item.id) else {
+                continue;
+            };
             let target = module_dir.join(format!("{slug}.md"));
             let location = item
                 .span
                 .as_ref()
-                .map(|span| span.location())
-                .unwrap_or_else(|| "—".to_owned());
+                .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
             let steps = item
                 .process
                 .as_ref()
-                .map(|process| process.steps.len().to_string())
-                .unwrap_or_else(|| "—".to_owned());
+                .map_or_else(|| "—".to_owned(), |process| process.steps.len().to_string());
             let _ = writeln!(
                 out,
                 "| [`{}`]({}) | `{}` | {} | `{}` |",
@@ -359,8 +357,7 @@ fn module_page(
         for import in imports {
             let text = sources
                 .and_then(|s| import.span.as_ref().and_then(|span| slice(s, span)))
-                .map(|text| first_line(&text))
-                .unwrap_or_else(|| import.name.clone());
+                .map_or_else(|| import.name.clone(), first_line);
             let _ = writeln!(out, "- {}", linked_import(doc, &page, &text));
         }
         out.push('\n');
@@ -386,9 +383,13 @@ fn item_page(
 
 fn nav(doc: &Document, node: &Node, page: &Path, item: bool) -> String {
     let mut out = String::new();
-    let _ = write!(out, "[Self-model]({})", rel_link(page, Path::new("README.md")));
+    let _ = write!(
+        out,
+        "[Self-model]({})",
+        rel_link(page, Path::new("README.md"))
+    );
 
-    let crate_dir = crate_of(node).unwrap_or_default();
+    let crate_dir = crate_of(node);
 
     let parent_target = if item {
         node.parent
@@ -416,11 +417,10 @@ fn nav(doc: &Document, node: &Node, page: &Path, item: bool) -> String {
                 .map(|parent| short_fqn(parent, &crate_dir))
                 .unwrap_or_default()
         } else {
-            node.parent
-                .as_ref()
-                .and_then(|id| doc.get(id))
-                .map(|parent| short_fqn(parent, &crate_dir))
-                .unwrap_or_else(|| "crate".to_owned())
+            node.parent.as_ref().and_then(|id| doc.get(id)).map_or_else(
+                || "crate".to_owned(),
+                |parent| short_fqn(parent, &crate_dir),
+            )
         };
         let _ = write!(out, " · [{}]({})", label, rel_link(page, &target));
     }
@@ -461,7 +461,7 @@ fn render_node(
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     out.push('\n');
@@ -473,12 +473,12 @@ fn render_node(
         out.push('\n');
     }
 
-    if let (Some(span), Some(sources)) = (&node.span, sources) {
-        if let Some(text) = slice(sources, span) {
-            out.push_str("```rust\n");
-            out.push_str(text.trim_end());
-            out.push_str("\n```\n\n");
-        }
+    if let (Some(span), Some(sources)) = (&node.span, sources)
+        && let Some(text) = slice(sources, span)
+    {
+        out.push_str("```rust\n");
+        out.push_str(text.trim_end());
+        out.push_str("\n```\n\n");
     }
 
     if let Some(process) = &node.process {
@@ -506,18 +506,13 @@ fn render_node(
                     let _ = writeln!(
                         out,
                         "- {} → [`{}`]({}){marker}",
-                        edge_name(edge.kind),
-                        target.map(|t| t.fqn.as_str()).unwrap_or(edge.to.as_str()),
+                        edge.kind.as_str(),
+                        target.map_or(edge.to.as_str(), |t| t.fqn.as_str()),
                         rel_link(page, &target_page)
                     );
                 }
                 None => {
-                    let _ = writeln!(
-                        out,
-                        "- {} → `{}`{marker}",
-                        edge_name(edge.kind),
-                        edge.to
-                    );
+                    let _ = writeln!(out, "- {} → `{}`{marker}", edge.kind.as_str(), edge.to);
                 }
             }
         }
@@ -535,14 +530,17 @@ fn render_node(
         .filter_map(|child| doc.get(child))
         .collect();
 
-    let compact: Vec<&&Node> = children.iter().filter(|c| is_compact(c.kind.as_str())).collect();
+    let compact: Vec<&&Node> = children
+        .iter()
+        .filter(|c| is_compact(c.kind.as_str()))
+        .collect();
     if !compact.is_empty() {
         out.push_str("**Fields and variants**\n\n");
         for child in compact {
             let location = child
                 .span
                 .as_ref()
-                .map(|span| span.location())
+                .map(robby_ir::Span::location)
                 .unwrap_or_default();
             let _ = writeln!(out, "- `{}` — `{}`", child.name, location);
         }
@@ -637,11 +635,9 @@ fn resolve_use_path<'a>(doc: &'a Document, text: &str) -> Option<&'a Node> {
         .trim();
     let path = path
         .split_once('{')
-        .map(|(prefix, _)| prefix)
-        .unwrap_or(path)
+        .map_or(path, |(prefix, _)| prefix)
         .split_once(" as ")
-        .map(|(prefix, _)| prefix)
-        .unwrap_or(path)
+        .map_or(path, |(prefix, _)| prefix)
         .trim()
         .trim_end_matches("::")
         .trim();
@@ -658,10 +654,10 @@ fn resolve_use_path<'a>(doc: &'a Document, text: &str) -> Option<&'a Node> {
 
     for candidate in candidates {
         let id = NodeId::symbol("rust", &candidate);
-        if let Some(node) = doc.get(&id) {
-            if is_module(node) {
-                return Some(node);
-            }
+        if let Some(node) = doc.get(&id)
+            && is_module(node)
+        {
+            return Some(node);
         }
     }
     None
@@ -671,23 +667,20 @@ fn resolve_use_path<'a>(doc: &'a Document, text: &str) -> Option<&'a Node> {
 // Paths and links
 // ---------------------------------------------------------------------------
 
-fn crate_of(node: &Node) -> Option<String> {
+fn crate_of(node: &Node) -> String {
     // Rust FQNs use `::`; TypeScript packages use `/` after the package name.
     let fqn = &node.fqn;
     if let Some((head, _)) = fqn.split_once("::") {
-        return Some(head.to_owned());
+        return head.to_owned();
     }
     if let Some((head, _)) = fqn.split_once('/') {
-        return Some(head.to_owned());
+        return head.to_owned();
     }
-    Some(fqn.clone())
+    fqn.clone()
 }
 
 fn is_crate(node: &Node) -> bool {
-    matches!(
-        node.kind.as_str(),
-        kind::code::CRATE | kind::code::PACKAGE
-    )
+    matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
 }
 
 fn is_module(node: &Node) -> bool {
@@ -729,20 +722,19 @@ fn module_index_path(node: &Node, crate_dir: &str) -> Option<PathBuf> {
 
 /// The most specific page for a node: its item page if it has one.
 fn page_of_node(doc: &Document, node: &Node) -> Option<PathBuf> {
-    let crate_dir = crate_of(node)?;
+    let crate_dir = crate_of(node);
 
-    if !is_module(node) && !is_compact(node.kind.as_str()) {
-        if let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id)) {
-            if is_module(parent) {
-                if let Some(index) = module_index_path(parent, &crate_dir) {
-                    let module_dir = index.parent().unwrap_or(Path::new("."));
-                    let items = item_children(doc, parent);
-                    let slugs = item_slugs(&items);
-                    if let Some(slug) = slugs.get(&node.id) {
-                        return Some(module_dir.join(format!("{slug}.md")));
-                    }
-                }
-            }
+    if !is_module(node)
+        && !is_compact(node.kind.as_str())
+        && let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id))
+        && is_module(parent)
+        && let Some(index) = module_index_path(parent, &crate_dir)
+    {
+        let module_dir = index.parent().unwrap_or(Path::new("."));
+        let items = item_children(doc, parent);
+        let slugs = item_slugs(&items);
+        if let Some(slug) = slugs.get(&node.id) {
+            return Some(module_dir.join(format!("{slug}.md")));
         }
     }
 
@@ -752,7 +744,11 @@ fn page_of_node(doc: &Document, node: &Node) -> Option<PathBuf> {
         if is_module(candidate) {
             return module_index_path(candidate, &crate_dir);
         }
-        current = candidate.parent.clone();
+        // `while let` moves `current`, so this has to be a fresh assignment.
+        #[allow(clippy::assigning_clones)]
+        {
+            current = candidate.parent.clone();
+        }
     }
     None
 }
@@ -792,7 +788,7 @@ fn rel_link(from: &Path, to: &Path) -> String {
 /// A link from a generated page back to the exact source span.
 fn source_link(page: &Path, out_rel: &str, span: &robby_ir::Span) -> String {
     let out_depth = out_rel.split('/').filter(|s| !s.is_empty()).count();
-    let page_depth = page.parent().map(|p| p.components().count()).unwrap_or(0);
+    let page_depth = page.parent().map_or(0, |p| p.components().count());
     let prefix = "../".repeat(out_depth + page_depth);
     format!(
         "[`{}:{}`]({}{}#L{})",

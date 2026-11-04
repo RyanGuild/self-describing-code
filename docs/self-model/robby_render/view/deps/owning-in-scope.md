@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn owning_in_scope<'a>(     doc: &'a Document,     id: &NodeId,     scope: &BTreeSet<NodeId>, ) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/deps.rs:695`](../../../../../crates/robby-render/src/view/deps.rs#L695) |
+| location | [`crates/robby-render/src/view/deps.rs:678`](../../../../../crates/robby-render/src/view/deps.rs#L678) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -64,14 +64,14 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::deps::best_scope_prefix`](best-scope-prefix.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::view::deps`](index.md) — best_scope_prefix
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains
 

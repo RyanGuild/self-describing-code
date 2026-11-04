@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/codepath.rs:38`](../../../../crates/robby-ir/src/codepath.rs#L38) |
+| location | [`crates/robby-ir/src/codepath.rs:40`](../../../../crates/robby-ir/src/codepath.rs#L40) |
 | provenance | extractor · confidence 1.00 |
 
 > Reachability tree rooted at one entrypoint function.
@@ -25,7 +25,7 @@ pub struct CodePath {
 
 **Fields and variants**
 
-- `entry` — `crates/robby-ir/src/codepath.rs:41:5`
-- `edges` — `crates/robby-ir/src/codepath.rs:43:5`
-- `max_depth` — `crates/robby-ir/src/codepath.rs:46:5`
+- `entry` — `crates/robby-ir/src/codepath.rs:43:5`
+- `edges` — `crates/robby-ir/src/codepath.rs:45:5`
+- `max_depth` — `crates/robby-ir/src/codepath.rs:48:5`
 

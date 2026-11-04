@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn unclaimed_code_fails_with_the_exact_byte()` |
-| location | [`crates/robby-ir/tests/coverage.rs:67`](../../../../crates/robby-ir/tests/coverage.rs#L67) |
+| location | [`crates/robby-ir/tests/coverage.rs:68`](../../../../crates/robby-ir/tests/coverage.rs#L68) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

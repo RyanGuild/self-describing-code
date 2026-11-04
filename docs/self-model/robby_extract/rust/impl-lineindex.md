@@ -5,12 +5,12 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-extract/src/rust.rs:471`](../../../../crates/robby-extract/src/rust.rs#L471) |
+| location | [`crates/robby-extract/src/rust.rs:474`](../../../../crates/robby-extract/src/rust.rs#L474) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 impl LineIndex {
-    pub fn new(source: &str) -> Self {
+    pub(crate) fn new(source: &str) -> Self {
         let mut starts = vec![0u32];
         for (i, b) in source.bytes().enumerate() {
             if b == b'\n' {
@@ -23,7 +23,7 @@ impl LineIndex {
         }
     }
 
-    pub fn byte(&self, lc: LineColumn) -> u32 {
+    pub(crate) fn byte(&self, lc: LineColumn) -> u32 {
         let line = lc.line.saturating_sub(1).min(self.starts.len() - 1);
         let start = self.starts[line] as usize;
         let rest = &self.source[start..];
@@ -80,11 +80,11 @@ impl LineIndex {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(1)` |
-| location | [`crates/robby-extract/src/rust.rs:472`](../../../../crates/robby-extract/src/rust.rs#L472) |
+| location | [`crates/robby-extract/src/rust.rs:475`](../../../../crates/robby-extract/src/rust.rs#L475) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-pub fn new(source: &str) -> Self {
+pub(crate) fn new(source: &str) -> Self {
         let mut starts = vec![0u32];
         for (i, b) in source.bytes().enumerate() {
             if b == b'\n' {
@@ -129,11 +129,11 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn byte(2)` |
-| location | [`crates/robby-extract/src/rust.rs:485`](../../../../crates/robby-extract/src/rust.rs#L485) |
+| location | [`crates/robby-extract/src/rust.rs:488`](../../../../crates/robby-extract/src/rust.rs#L488) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-pub fn byte(&self, lc: LineColumn) -> u32 {
+pub(crate) fn byte(&self, lc: LineColumn) -> u32 {
         let line = lc.line.saturating_sub(1).min(self.starts.len() - 1);
         let start = self.starts[line] as usize;
         let rest = &self.source[start..];

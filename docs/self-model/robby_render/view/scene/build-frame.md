@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn build_frame(     doc: &Document,     node: &Node,     parent: Option<String>,     local_in_parent: Rect,     world: WorldRect,     frames: &mut BTreeMap<String, Frame>, ) -> String` |
-| location | [`crates/robby-render/src/view/scene.rs:248`](../../../../../crates/robby-render/src/view/scene.rs#L248) |
+| location | [`crates/robby-render/src/view/scene.rs:246`](../../../../../crates/robby-render/src/view/scene.rs#L246) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -59,14 +59,7 @@ fn build_frame(
     for (i, child) in visible.iter().enumerate() {
         let local = placements[i];
         let child_world = map_local_to_world(&world, &local);
-        let child_sid = build_frame(
-            doc,
-            child,
-            Some(sid.clone()),
-            local,
-            child_world,
-            frames,
-        );
+        let child_sid = build_frame(doc, child, Some(sid.clone()), local, child_world, frames);
         frame.children.push(child_sid);
     }
 
@@ -137,7 +130,7 @@ sequenceDiagram
     build_frame-->>map_local_to_world: map_local_to_world(&world, &local)
     build_frame-->>clone: sid.clone()
     build_frame-->>Some: Some(sid.clone())
-    build_frame-->>build_frame: build_frame( doc, child, Some(sid.clone()), local, child_world, frame...
+    build_frame-->>build_frame: build_frame(doc, child, Some(sid.clone()), local, child_world, frames)
     build_frame-->>push: frame.children.push(child_sid)
     end
     build_frame-->>clone: sid.clone()
@@ -148,17 +141,17 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::is_structural`](../../util/is-structural.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::scene::is_scene_skipped`](is-scene-skipped.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::deps::impl CouplingGraph::from_root`](../deps/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::scene::portals_for`](portals-for.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::util::short_kind`](../../util/short-kind.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](index.md)
 - calls → [`robby_render::view::scene::layout_grid`](layout-grid.md)
@@ -169,7 +162,8 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — is_structural, short_kind

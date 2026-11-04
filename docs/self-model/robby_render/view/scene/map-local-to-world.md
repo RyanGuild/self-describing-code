@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn map_local_to_world(parent_world: &WorldRect, local: &Rect) -> WorldRect` |
-| location | [`crates/robby-render/src/view/scene.rs:559`](../../../../../crates/robby-render/src/view/scene.rs#L559) |
+| location | [`crates/robby-render/src/view/scene.rs:544`](../../../../../crates/robby-render/src/view/scene.rs#L544) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

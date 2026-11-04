@@ -36,14 +36,12 @@ classDiagram
 ```mermaid
 flowchart TB
     n_65efc424c4086ad0["typescript"]
-    n_f3e9f97d91a4f4af(["robby_agent"])
     n_ea78dce2fbcbf64f(["robby_extract"])
     n_356bf2c23da68961(["robby_ir"])
     n_9c636b098ca4450e(["robby_render"])
     n_65efc424c4086ad0 --> n_356bf2c23da68961
     n_65efc424c4086ad0 --> n_9c636b098ca4450e
     n_65efc424c4086ad0 --> n_ea78dce2fbcbf64f
-    n_65efc424c4086ad0 --> n_f3e9f97d91a4f4af
 ```
 
 ## Module coupling
@@ -173,13 +171,12 @@ flowchart TB
 
 ## Dependency matrix
 
-| | typescript | robby_ir | robby_render | robby_extract | robby_agent |
-|---|---:|---:|---:|---:|---:|
-| **typescript** | · | 76 | 31 | 23 | 1 |
-| **robby_ir** | | · | | | |
-| **robby_render** | | | · | | |
-| **robby_extract** | | | | · | |
-| **robby_agent** | | | | | · |
+| | typescript | robby_ir | robby_render | robby_extract |
+|---|---:|---:|---:|---:|
+| **typescript** | · | 77 | 31 | 23 |
+| **robby_ir** | | · | | |
+| **robby_render** | | | · | |
+| **robby_extract** | | | | · |
 
 ## Comments
 
@@ -210,7 +207,7 @@ flowchart TB
       Ok(doc)
   }
   ```
-- `crates/robby-extract/src/typescript.rs:388:1` (docs, `robby_extract::typescript::npm_bare_name`): "`react/jsx-runtime` → `react`; `@scope/pkg/sub` → `@scope/pkg`."
+- `crates/robby-extract/src/typescript.rs:380:1` (docs, `robby_extract::typescript::npm_bare_name`): "`react/jsx-runtime` → `react`; `@scope/pkg/sub` → `@scope/pkg`."
   ```
   /// `react/jsx-runtime` → `react`; `@scope/pkg/sub` → `@scope/pkg`.
   fn npm_bare_name(spec: &str) -> String {
@@ -226,7 +223,7 @@ flowchart TB
       }
   }
   ```
-- `crates/robby-extract/src/typescript.rs:429:1` (docs, `robby_extract::typescript::attach_leading_docs`): "Attach leading comments (JSDoc-style) onto the following item's `docs`. Oxc's `attached_to` is the start of the next *t…"
+- `crates/robby-extract/src/typescript.rs:421:1` (docs, `robby_extract::typescript::attach_leading_docs`): "Attach leading comments (JSDoc-style) onto the following item's `docs`. Oxc's `attached_to` is the start of the next *t…"
   ```
   /// Attach leading comments (JSDoc-style) onto the following item's `docs`.
   ///
@@ -290,17 +287,16 @@ flowchart TB
               }
           }
   
-          if let Some((_, id)) = best {
-              if let Some(child) = doc.nodes.get_mut(&id) {
-                  if child.docs.is_none() {
-                      child.docs = Some(raw.to_owned());
-                  }
-              }
+          if let Some((_, id)) = best
+              && let Some(child) = doc.nodes.get_mut(&id)
+              && child.docs.is_none()
+          {
+              child.docs = Some(raw.to_owned());
           }
       }
   }
   ```
-- `crates/robby-extract/src/typescript.rs:501:1` (docs, `robby_extract::typescript::gap_is_attachable`): "True when the bytes between a comment and an item are only whitespace or declaration prefixes (`export` / `default` / `…"
+- `crates/robby-extract/src/typescript.rs:492:1` (docs, `robby_extract::typescript::gap_is_attachable`): "True when the bytes between a comment and an item are only whitespace or declaration prefixes (`export` / `default` / `…"
   ```
   /// True when the bytes between a comment and an item are only whitespace or
   /// declaration prefixes (`export` / `default` / `async`).
@@ -309,19 +305,18 @@ flowchart TB
           return false;
       }
       let gap = source.get(from as usize..to as usize).unwrap_or("");
-      gap.split_whitespace().all(|tok| {
-          matches!(tok, "export" | "default" | "async" | "declare")
-      })
+      gap.split_whitespace()
+          .all(|tok| matches!(tok, "export" | "default" | "async" | "declare"))
   }
   ```
 ## References
 
-- calls → [`robby_agent::model`](../../robby_agent/model/index.md) — parse
 - calls → [`robby_extract::rust`](../rust/index.md) — new
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — from_path
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str, from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 7 items
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 6 items
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — default, participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get, parse
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 - calls → [`robby_render::test_render`](../../robby_render/test_render/index.md) — step
@@ -334,49 +329,49 @@ flowchart TB
 |---|---|---:|---|
 | [`extract`](extract.md) | `code.function` | 14 | `crates/robby-extract/src/typescript.rs:23:1` |
 | [`source_file_count`](source-file-count.md) | `code.function` | 7 | `crates/robby-extract/src/typescript.rs:48:1` |
-| [`Package`](package.md) | `code.struct` | — | `crates/robby-extract/src/typescript.rs:55:1` |
-| [`discover_packages`](discover-packages.md) | `code.function` | 32 | `crates/robby-extract/src/typescript.rs:63:1` |
-| [`package_at`](package-at.md) | `code.function` | 21 | `crates/robby-extract/src/typescript.rs:100:1` |
-| [`read_package_name`](read-package-name.md) | `code.function` | 15 | `crates/robby-extract/src/typescript.rs:122:1` |
-| [`sanitize_pkg_name`](sanitize-pkg-name.md) | `code.function` | 1 | `crates/robby-extract/src/typescript.rs:132:1` |
-| [`ts_files`](ts-files.md) | `code.function` | 9 | `crates/robby-extract/src/typescript.rs:136:1` |
-| [`collect_ts`](collect-ts.md) | `code.function` | 23 | `crates/robby-extract/src/typescript.rs:149:1` |
-| [`is_ts_file`](is-ts-file.md) | `code.function` | 5 | `crates/robby-extract/src/typescript.rs:171:1` |
-| [`module_fqn`](module-fqn.md) | `code.function` | 8 | `crates/robby-extract/src/typescript.rs:177:1` |
-| [`strip_ts_ext`](strip-ts-ext.md) | `code.function` | 4 | `crates/robby-extract/src/typescript.rs:190:1` |
-| [`extract_file`](extract-file.md) | `code.function` | 33 | `crates/robby-extract/src/typescript.rs:199:1` |
-| [`Ctx`](ctx.md) | `code.struct` | — | `crates/robby-extract/src/typescript.rs:248:1` |
-| [`PendingCall`](pendingcall.md) | `code.struct` | — | `crates/robby-extract/src/typescript.rs:254:1` |
-| [`walk_statements`](walk-statements.md) | `code.function` | 19 | `crates/robby-extract/src/typescript.rs:260:1` |
-| [`walk_declaration`](walk-declaration.md) | `code.function` | 14 | `crates/robby-extract/src/typescript.rs:315:1` |
-| [`emit_import`](emit-import.md) | `code.function` | 26 | `crates/robby-extract/src/typescript.rs:347:1` |
-| [`is_bare_specifier`](is-bare-specifier.md) | `code.function` | 4 | `crates/robby-extract/src/typescript.rs:381:1` |
-| [`npm_bare_name`](npm-bare-name.md) | `code.function` | 11 | `crates/robby-extract/src/typescript.rs:388:1` |
-| [`emit_comments`](emit-comments.md) | `code.function` | 18 | `crates/robby-extract/src/typescript.rs:402:1` |
-| [`attach_leading_docs`](attach-leading-docs.md) | `code.function` | 18 | `crates/robby-extract/src/typescript.rs:429:1` |
-| [`gap_is_attachable`](gap-is-attachable.md) | `code.function` | 6 | `crates/robby-extract/src/typescript.rs:501:1` |
-| [`resolve_relative_import`](resolve-relative-import.md) | `code.function` | 28 | `crates/robby-extract/src/typescript.rs:513:1` |
-| [`emit_variable`](emit-variable.md) | `code.function` | 23 | `crates/robby-extract/src/typescript.rs:542:1` |
-| [`emit_function`](emit-function.md) | `code.function` | 7 | `crates/robby-extract/src/typescript.rs:591:1` |
-| [`emit_interface`](emit-interface.md) | `code.function` | 10 | `crates/robby-extract/src/typescript.rs:608:1` |
-| [`emit_class`](emit-class.md) | `code.function` | 22 | `crates/robby-extract/src/typescript.rs:629:1` |
-| [`emit_method`](emit-method.md) | `code.function` | 7 | `crates/robby-extract/src/typescript.rs:679:1` |
-| [`property_key_name`](property-key-name.md) | `code.function` | 9 | `crates/robby-extract/src/typescript.rs:701:1` |
-| [`type_name_expr`](type-name-expr.md) | `code.function` | 7 | `crates/robby-extract/src/typescript.rs:710:1` |
-| [`type_name`](type-name.md) | `code.function` | 9 | `crates/robby-extract/src/typescript.rs:721:1` |
-| [`build_function_process`](build-function-process.md) | `code.function` | 14 | `crates/robby-extract/src/typescript.rs:732:1` |
-| [`frame`](frame.md) | `code.function` | 1 | `crates/robby-extract/src/typescript.rs:756:1` |
-| [`walk_stmts`](walk-stmts.md) | `code.function` | 43 | `crates/robby-extract/src/typescript.rs:764:1` |
-| [`walk_stmt`](walk-stmt.md) | `code.function` | 2 | `crates/robby-extract/src/typescript.rs:858:1` |
-| [`walk_expr`](walk-expr.md) | `code.function` | 48 | `crates/robby-extract/src/typescript.rs:869:1` |
-| [`callee_name`](callee-name.md) | `code.function` | 10 | `crates/robby-extract/src/typescript.rs:964:1` |
-| [`push_step`](push-step.md) | `code.function` | 5 | `crates/robby-extract/src/typescript.rs:979:1` |
-| [`ensure_participant`](ensure-participant.md) | `code.function` | 4 | `crates/robby-extract/src/typescript.rs:991:1` |
-| [`js_str`](js-str.md) | `code.function` | 2 | `crates/robby-extract/src/typescript.rs:999:1` |
-| [`item_node`](item-node.md) | `code.function` | 6 | `crates/robby-extract/src/typescript.rs:1003:1` |
-| [`oxc_span`](oxc-span.md) | `code.function` | 1 | `crates/robby-extract/src/typescript.rs:1016:1` |
-| [`sanitize`](sanitize.md) | `code.function` | 13 | `crates/robby-extract/src/typescript.rs:1020:1` |
-| [`resolve_calls`](resolve-calls.md) | `code.function` | 16 | `crates/robby-extract/src/typescript.rs:1038:1` |
+| [`Package`](package.md) | `code.struct` | — | `crates/robby-extract/src/typescript.rs:52:1` |
+| [`discover_packages`](discover-packages.md) | `code.function` | 32 | `crates/robby-extract/src/typescript.rs:60:1` |
+| [`package_at`](package-at.md) | `code.function` | 21 | `crates/robby-extract/src/typescript.rs:97:1` |
+| [`read_package_name`](read-package-name.md) | `code.function` | 15 | `crates/robby-extract/src/typescript.rs:119:1` |
+| [`sanitize_pkg_name`](sanitize-pkg-name.md) | `code.function` | 1 | `crates/robby-extract/src/typescript.rs:129:1` |
+| [`ts_files`](ts-files.md) | `code.function` | 9 | `crates/robby-extract/src/typescript.rs:133:1` |
+| [`collect_ts`](collect-ts.md) | `code.function` | 23 | `crates/robby-extract/src/typescript.rs:146:1` |
+| [`is_ts_file`](is-ts-file.md) | `code.function` | 5 | `crates/robby-extract/src/typescript.rs:168:1` |
+| [`module_fqn`](module-fqn.md) | `code.function` | 8 | `crates/robby-extract/src/typescript.rs:174:1` |
+| [`strip_ts_ext`](strip-ts-ext.md) | `code.function` | 4 | `crates/robby-extract/src/typescript.rs:187:1` |
+| [`extract_file`](extract-file.md) | `code.function` | 33 | `crates/robby-extract/src/typescript.rs:196:1` |
+| [`Ctx`](ctx.md) | `code.struct` | — | `crates/robby-extract/src/typescript.rs:245:1` |
+| [`PendingCall`](pendingcall.md) | `code.struct` | — | `crates/robby-extract/src/typescript.rs:251:1` |
+| [`walk_statements`](walk-statements.md) | `code.function` | 19 | `crates/robby-extract/src/typescript.rs:257:1` |
+| [`walk_declaration`](walk-declaration.md) | `code.function` | 14 | `crates/robby-extract/src/typescript.rs:312:1` |
+| [`emit_import`](emit-import.md) | `code.function` | 26 | `crates/robby-extract/src/typescript.rs:344:1` |
+| [`is_bare_specifier`](is-bare-specifier.md) | `code.function` | 4 | `crates/robby-extract/src/typescript.rs:373:1` |
+| [`npm_bare_name`](npm-bare-name.md) | `code.function` | 11 | `crates/robby-extract/src/typescript.rs:380:1` |
+| [`emit_comments`](emit-comments.md) | `code.function` | 18 | `crates/robby-extract/src/typescript.rs:394:1` |
+| [`attach_leading_docs`](attach-leading-docs.md) | `code.function` | 18 | `crates/robby-extract/src/typescript.rs:421:1` |
+| [`gap_is_attachable`](gap-is-attachable.md) | `code.function` | 6 | `crates/robby-extract/src/typescript.rs:492:1` |
+| [`resolve_relative_import`](resolve-relative-import.md) | `code.function` | 27 | `crates/robby-extract/src/typescript.rs:503:1` |
+| [`emit_variable`](emit-variable.md) | `code.function` | 23 | `crates/robby-extract/src/typescript.rs:535:1` |
+| [`emit_function`](emit-function.md) | `code.function` | 7 | `crates/robby-extract/src/typescript.rs:578:1` |
+| [`emit_interface`](emit-interface.md) | `code.function` | 10 | `crates/robby-extract/src/typescript.rs:595:1` |
+| [`emit_class`](emit-class.md) | `code.function` | 22 | `crates/robby-extract/src/typescript.rs:621:1` |
+| [`emit_method`](emit-method.md) | `code.function` | 7 | `crates/robby-extract/src/typescript.rs:671:1` |
+| [`property_key_name`](property-key-name.md) | `code.function` | 9 | `crates/robby-extract/src/typescript.rs:688:1` |
+| [`type_name_expr`](type-name-expr.md) | `code.function` | 7 | `crates/robby-extract/src/typescript.rs:697:1` |
+| [`type_name`](type-name.md) | `code.function` | 9 | `crates/robby-extract/src/typescript.rs:708:1` |
+| [`build_function_process`](build-function-process.md) | `code.function` | 13 | `crates/robby-extract/src/typescript.rs:719:1` |
+| [`frame`](frame.md) | `code.function` | 1 | `crates/robby-extract/src/typescript.rs:742:1` |
+| [`walk_stmts`](walk-stmts.md) | `code.function` | 43 | `crates/robby-extract/src/typescript.rs:750:1` |
+| [`walk_stmt`](walk-stmt.md) | `code.function` | 2 | `crates/robby-extract/src/typescript.rs:844:1` |
+| [`walk_expr`](walk-expr.md) | `code.function` | 48 | `crates/robby-extract/src/typescript.rs:862:1` |
+| [`callee_name`](callee-name.md) | `code.function` | 10 | `crates/robby-extract/src/typescript.rs:957:1` |
+| [`push_step`](push-step.md) | `code.function` | 5 | `crates/robby-extract/src/typescript.rs:972:1` |
+| [`ensure_participant`](ensure-participant.md) | `code.function` | 4 | `crates/robby-extract/src/typescript.rs:984:1` |
+| [`js_str`](js-str.md) | `code.function` | 2 | `crates/robby-extract/src/typescript.rs:992:1` |
+| [`item_node`](item-node.md) | `code.function` | 6 | `crates/robby-extract/src/typescript.rs:996:1` |
+| [`oxc_span`](oxc-span.md) | `code.function` | 1 | `crates/robby-extract/src/typescript.rs:1009:1` |
+| [`sanitize`](sanitize.md) | `code.function` | 13 | `crates/robby-extract/src/typescript.rs:1013:1` |
+| [`resolve_calls`](resolve-calls.md) | `code.function` | 16 | `crates/robby-extract/src/typescript.rs:1031:1` |
 
 ## Imports
 

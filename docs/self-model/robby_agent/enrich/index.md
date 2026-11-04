@@ -85,7 +85,7 @@ flowchart TB
 
 | | enrich | tests | robby_ir | robby_agent |
 |---|---:|---:|---:|---:|
-| **enrich** | · | 17 | 26 | 8 |
+| **enrich** | · | 17 | 30 | 3 |
 | **tests** | | · | | |
 | **robby_ir** | | | · | |
 | **robby_agent** | | | | · |
@@ -147,8 +147,10 @@ flowchart TB
 ## References
 
 - calls → [`robby_agent::context`](../context/index.md) — collect_comment_contexts
-- calls → [`robby_agent::model`](../model/index.md) — as_str, decide, write_note
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 5 items
+- calls → [`robby_agent::model`](../model/index.md) — decide, write_note
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, merge, symbol, with_lang
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 
 ## Referenced by
@@ -169,7 +171,7 @@ flowchart TB
 | [`impl Default for EnrichOpts`](impl-default-for-enrichopts.md) | `code.impl` | — | `crates/robby-agent/src/enrich.rs:21:1` |
 | [`EnrichStats`](enrichstats.md) | `code.struct` | — | `crates/robby-agent/src/enrich.rs:33:1` |
 | [`enrich_comments`](enrich-comments.md) | `code.function` | 18 | `crates/robby-agent/src/enrich.rs:43:1` |
-| [`insert_decision`](insert-decision.md) | `code.function` | 36 | `crates/robby-agent/src/enrich.rs:93:1` |
+| [`insert_decision`](insert-decision.md) | `code.function` | 35 | `crates/robby-agent/src/enrich.rs:93:1` |
 
 ## Imports
 

@@ -23,7 +23,6 @@ sequenceDiagram
     participant as_str as as_str
     participant is_compact as is_compact
     participant as_ref as as_ref
-    participant location as location
     participant map as map
     participant unwrap_or_default as unwrap_or_default
     participant is_module as is_module
@@ -41,7 +40,7 @@ sequenceDiagram
     alt let Some(span) = &node.span
     render_node-->>render_node: writeln!(out, '| location | {} |', source_link(page, out_rel, span))
     end
-    render_node-->>render_node: writeln!( out, '| provenance | {} · confidence {:.2} |', source_name(...
+    render_node-->>render_node: writeln!( out, '| provenance | {} · confidence {:.2} |', node.provena...
     render_node-->>push: out.push('\n')
     alt let Some(docs) = &node.docs
     render_node-->>lines: docs.lines()
@@ -50,14 +49,12 @@ sequenceDiagram
     end
     render_node-->>push: out.push('\n')
     end
-    alt let (Some(span), Some(sources)) = (&node.span, sources)
     render_node-->>slice: slice(sources, span)
-    alt let Some(text) = slice(sources, span)
+    alt let (Some(span), Some(sources)) = (&node.span, sources) && let Some(t...
     render_node-->>push_str: out.push_str('```rust\n')
     render_node-->>trim_end: text.trim_end()
     render_node-->>push_str: out.push_str(text.trim_end())
     render_node-->>push_str: out.push_str('\n```\n\n')
-    end
     end
     alt let Some(process) = &node.process
     render_node-->>push_str: out.push_str('```mermaid\n')
@@ -77,9 +74,9 @@ sequenceDiagram
     render_node-->>page_of_node: page_of_node(doc, t)
     render_node-->>and_then: target.and_then(|t| page_of_node(doc, t))
     alt match target.and_then(|t| page_of_node(doc, t))
-    render_node-->>render_node: writeln!( out, '- {} → [`{}`]({}){marker}', edge_name(edge.kind), tar...
+    render_node-->>render_node: writeln!( out, '- {} → [`{}`]({}){marker}', edge.kind.as_str(), targe...
     else None
-    render_node-->>render_node: writeln!( out, '- {} → `{}`{marker}', edge_name(edge.kind), edge.to )
+    render_node-->>render_node: writeln!(out, '- {} → `{}`{marker}', edge.kind.as_str(), edge.to)
     end
     end
     render_node-->>push: out.push('\n')
@@ -93,19 +90,18 @@ sequenceDiagram
     render_node-->>get: doc.get(child)
     render_node-->>filter_map: node .children .iter() .filter_map(|child| doc.get(child))
     render_node-->>collect: node .children .iter() .filter_map(|child| doc.get(child)) .collect()
-    render_node-->>iter: children.iter()
+    render_node-->>iter: children .iter()
     render_node-->>as_str: c.kind.as_str()
     render_node-->>is_compact: is_compact(c.kind.as_str())
-    render_node-->>filter: children.iter().filter(|c| is_compact(c.kind.as_str()))
-    render_node-->>collect: children.iter().filter(|c| is_compact(c.kind.as_str())).collect()
+    render_node-->>filter: children .iter() .filter(|c| is_compact(c.kind.as_str()))
+    render_node-->>collect: children .iter() .filter(|c| is_compact(c.kind.as_str())) .collect()
     render_node-->>is_empty: compact.is_empty()
     alt !compact.is_empty()
     render_node-->>push_str: out.push_str('**Fields and variants**\n\n')
     loop compact
     render_node-->>as_ref: child .span .as_ref()
-    render_node-->>location: span.location()
-    render_node-->>map: child .span .as_ref() .map(|span| span.location())
-    render_node-->>unwrap_or_default: child .span .as_ref() .map(|span| span.location()) .unwrap_or_default()
+    render_node-->>map: child .span .as_ref() .map(robby_ir::Span::location)
+    render_node-->>unwrap_or_default: child .span .as_ref() .map(robby_ir::Span::location) .unwrap_or_defau...
     render_node-->>render_node: writeln!(out, '- `{}` — `{}`', child.name, location)
     end
     render_node-->>push: out.push('\n')

@@ -151,7 +151,8 @@ impl TypeModel {
             }
         }
 
-        relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
+        relations
+            .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
         relations.dedup();
 
         Self { classes, relations }

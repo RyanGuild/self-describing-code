@@ -6,14 +6,14 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn dsm_markdown_table(view: &PackageStructure) -> String` |
-| location | [`crates/robby-render/src/render/mermaid.rs:284`](../../../../../crates/robby-render/src/render/mermaid.rs#L284) |
+| location | [`crates/robby-render/src/render/mermaid.rs:279`](../../../../../crates/robby-render/src/render/mermaid.rs#L279) |
 | provenance | extractor · confidence 1.00 |
 
 > Markdown DSM table (row depends on column). Shared by Markdown/TUI.
 
 ```rust
 /// Markdown DSM table (row depends on column). Shared by Markdown/TUI.
-pub fn dsm_markdown_table(view: &PackageStructure) -> String {
+pub(super) fn dsm_markdown_table(view: &PackageStructure) -> String {
     if view.modules.is_empty() {
         return String::new();
     }
@@ -24,10 +24,10 @@ pub fn dsm_markdown_table(view: &PackageStructure) -> String {
         let mut ordered = Vec::new();
         for layer in &view.layers {
             for sid in layer {
-                if let Some(m) = view.module_by_stable(sid) {
-                    if seen.insert(sid.clone()) {
-                        ordered.push(m);
-                    }
+                if let Some(m) = view.module_by_stable(sid)
+                    && seen.insert(sid.clone())
+                {
+                    ordered.push(m);
                 }
             }
         }
@@ -139,12 +139,10 @@ sequenceDiagram
     loop &view.layers
     loop layer
     dsm_markdown_table-->>module_by_stable: view.module_by_stable(sid)
-    alt let Some(m) = view.module_by_stable(sid)
     dsm_markdown_table-->>clone: sid.clone()
     dsm_markdown_table-->>insert: seen.insert(sid.clone())
-    alt seen.insert(sid.clone())
+    alt let Some(m) = view.module_by_stable(sid) && seen.insert(sid.clone())
     dsm_markdown_table-->>push: ordered.push(m)
-    end
     end
     end
     end
@@ -235,26 +233,27 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](../tui/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../../view/links/index.md)
 - calls → [`robby_render::view::deps::impl PackageStructure::module_by_stable`](../../view/deps/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::render::tui`](../tui/index.md) — new
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](../../view/comments/index.md) — as_str

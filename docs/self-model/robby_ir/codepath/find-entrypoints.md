@@ -17,11 +17,13 @@ pub fn find_entrypoints(doc: &Document) -> Vec<NodeId> {
     let mut entries: Vec<&crate::Node> = doc
         .nodes
         .values()
-        .filter(|node| {
-            node.name == "main" && node.kind.as_str() == kind::code::FUNCTION
-        })
+        .filter(|node| node.name == "main" && node.kind.as_str() == kind::code::FUNCTION)
         .collect();
-    entries.sort_by(|a, b| a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().cmp(b.id.as_str())));
+    entries.sort_by(|a, b| {
+        a.fqn
+            .cmp(&b.fqn)
+            .then_with(|| a.id.as_str().cmp(b.id.as_str()))
+    });
     entries.into_iter().map(|n| n.id.clone()).collect()
 }
 ```
@@ -42,14 +44,14 @@ sequenceDiagram
     participant map as map
     find_entrypoints-->>values: doc .nodes .values()
     find_entrypoints-->>as_str: node.kind.as_str()
-    find_entrypoints-->>filter: doc .nodes .values() .filter(|node| { node.name == 'main' && node.kin...
-    find_entrypoints-->>collect: doc .nodes .values() .filter(|node| { node.name == 'main' && node.kin...
-    find_entrypoints-->>cmp: a.fqn.cmp(&b.fqn)
+    find_entrypoints-->>filter: doc .nodes .values() .filter(|node| node.name == 'main' && node.kind....
+    find_entrypoints-->>collect: doc .nodes .values() .filter(|node| node.name == 'main' && node.kind....
+    find_entrypoints-->>cmp: a.fqn .cmp(&b.fqn)
     find_entrypoints-->>as_str: a.id.as_str()
     find_entrypoints-->>as_str: b.id.as_str()
     find_entrypoints-->>cmp: a.id.as_str().cmp(b.id.as_str())
-    find_entrypoints-->>then_with: a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().cmp(b.id.as_str()))
-    find_entrypoints-->>sort_by: entries.sort_by(|a, b| a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().c...
+    find_entrypoints-->>then_with: a.fqn .cmp(&b.fqn) .then_with(|| a.id.as_str().cmp(b.id.as_str()))
+    find_entrypoints-->>sort_by: entries.sort_by(|a, b| { a.fqn .cmp(&b.fqn) .then_with(|| a.id.as_str...
     find_entrypoints-->>into_iter: entries.into_iter()
     find_entrypoints-->>clone: n.id.clone()
     find_entrypoints-->>map: entries.into_iter().map(|n| n.id.clone())

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn module_fqn(package: &Package, file: &Path) -> String` |
-| location | [`crates/robby-extract/src/typescript.rs:177`](../../../../crates/robby-extract/src/typescript.rs#L177) |
+| location | [`crates/robby-extract/src/typescript.rs:174`](../../../../crates/robby-extract/src/typescript.rs#L174) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

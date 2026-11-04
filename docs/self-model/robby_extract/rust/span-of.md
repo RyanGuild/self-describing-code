@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn span_of<T: Spanned>(node: &T, ctx: &Ctx<'_>) -> Span` |
-| location | [`crates/robby-extract/src/rust.rs:502`](../../../../crates/robby-extract/src/rust.rs#L502) |
+| location | [`crates/robby-extract/src/rust.rs:505`](../../../../crates/robby-extract/src/rust.rs#L505) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

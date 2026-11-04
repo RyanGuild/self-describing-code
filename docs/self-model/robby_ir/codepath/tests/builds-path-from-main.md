@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn builds_path_from_main()` |
-| location | [`crates/robby-ir/src/codepath.rs:162`](../../../../../crates/robby-ir/src/codepath.rs#L162) |
+| location | [`crates/robby-ir/src/codepath.rs:168`](../../../../../crates/robby-ir/src/codepath.rs#L168) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

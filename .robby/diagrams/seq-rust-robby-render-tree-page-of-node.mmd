@@ -18,19 +18,15 @@ sequenceDiagram
     participant Some as Some
     participant clone as clone
     page_of_node-->>crate_of: crate_of(node)
-    page_of_node-->>page_of_node: ? (propagate)
     page_of_node-->>is_module: is_module(node)
     page_of_node-->>as_str: node.kind.as_str()
     page_of_node-->>is_compact: is_compact(node.kind.as_str())
-    alt !is_module(node) && !is_compact(node.kind.as_str())
     page_of_node-->>as_ref: node.parent.as_ref()
     page_of_node-->>get: doc.get(id)
     page_of_node-->>and_then: node.parent.as_ref().and_then(|id| doc.get(id))
-    alt let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id))
     page_of_node-->>is_module: is_module(parent)
-    alt is_module(parent)
     page_of_node-->>module_index_path: module_index_path(parent, &crate_dir)
-    alt let Some(index) = module_index_path(parent, &crate_dir)
+    alt !is_module(node) && !is_compact(node.kind.as_str()) && let Some(paren...
     page_of_node-->>parent: index.parent()
     page_of_node-->>Path__new: Path::new('.')
     page_of_node-->>unwrap_or: index.parent().unwrap_or(Path::new('.'))
@@ -42,9 +38,6 @@ sequenceDiagram
     page_of_node-->>join: module_dir.join(format!('{slug}.md'))
     page_of_node-->>Some: Some(module_dir.join(format!('{slug}.md')))
     page_of_node-->>page_of_node: return
-    end
-    end
-    end
     end
     end
     page_of_node-->>clone: node.id.clone()

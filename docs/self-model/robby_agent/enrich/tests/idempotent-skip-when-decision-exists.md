@@ -6,16 +6,14 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn idempotent_skip_when_decision_exists()` |
-| location | [`crates/robby-agent/src/enrich.rs:287`](../../../../../crates/robby-agent/src/enrich.rs#L287) |
+| location | [`crates/robby-agent/src/enrich.rs:286`](../../../../../crates/robby-agent/src/enrich.rs#L286) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 #[test]
     fn idempotent_skip_when_decision_exists() {
         let (mut doc, sources) = mini_doc();
-        let client = FakeClient::new(vec![
-            r#"{"verdict":"noise","reason":"x"}"#.into(),
-        ]);
+        let client = FakeClient::new(vec![r#"{"verdict":"noise","reason":"x"}"#.into()]);
         enrich_comments(&mut doc, &sources, &client, &EnrichOpts::default()).unwrap();
         let client2 = FakeClient::new(vec![]);
         let stats = enrich_comments(&mut doc, &sources, &client2, &EnrichOpts::default()).unwrap();
@@ -34,8 +32,8 @@ sequenceDiagram
     participant enrich_comments as enrich_comments
     participant unwrap as unwrap
     idempotent_skip_when_decision_exists-->>mini_doc: mini_doc()
-    idempotent_skip_when_decision_exists-->>idempotent_skip_when_decision_exists: vec![ r '{'verdict':'noise','reason':'x'}' .into(), ]
-    idempotent_skip_when_decision_exists-->>FakeClient__new: FakeClient::new(vec![ r '{'verdict':'noise','reason':'x'}' .into(), ])
+    idempotent_skip_when_decision_exists-->>idempotent_skip_when_decision_exists: vec![r '{'verdict':'noise','reason':'x'}' .into()]
+    idempotent_skip_when_decision_exists-->>FakeClient__new: FakeClient::new(vec![r '{'verdict':'noise','reason':'x'}' .into()])
     idempotent_skip_when_decision_exists-->>EnrichOpts__default: EnrichOpts::default()
     idempotent_skip_when_decision_exists-->>enrich_comments: enrich_comments(&mut doc, &sources, &client, &EnrichOpts::default())
     idempotent_skip_when_decision_exists-->>unwrap: enrich_comments(&mut doc, &sources, &client, &EnrichOpts::default())....

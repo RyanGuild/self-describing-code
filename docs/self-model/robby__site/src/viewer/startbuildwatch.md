@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:210`](../../../../../apps/site/src/viewer.ts#L210) |
+| location | [`apps/site/src/viewer.ts:220`](../../../../../apps/site/src/viewer.ts#L220) |
 | provenance | extractor · confidence 1.00 |
 
 > * Poll `build.json` written by `robby web` / `--watch`; remount when IR site rebuilds.

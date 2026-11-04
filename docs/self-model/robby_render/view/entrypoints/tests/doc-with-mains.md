@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn doc_with_mains() -> Document` |
-| location | [`crates/robby-render/src/view/entrypoints.rs:136`](../../../../../../crates/robby-render/src/view/entrypoints.rs#L136) |
+| location | [`crates/robby-render/src/view/entrypoints.rs:131`](../../../../../../crates/robby-render/src/view/entrypoints.rs#L131) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -17,8 +17,10 @@ fn doc_with_mains() -> Document {
             kind::code::FUNCTION,
             "demo::main",
         );
-        main.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::a"), EdgeKind::Calls));
+        main.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::a"),
+            EdgeKind::Calls,
+        ));
         doc.insert(main);
 
         let mut a = Node::new(
@@ -26,8 +28,10 @@ fn doc_with_mains() -> Document {
             kind::code::FUNCTION,
             "demo::a",
         );
-        a.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::b"), EdgeKind::Calls));
+        a.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::b"),
+            EdgeKind::Calls,
+        ));
         doc.insert(a);
 
         doc.insert(Node::new(
@@ -41,9 +45,10 @@ fn doc_with_mains() -> Document {
             kind::code::FUNCTION,
             "demo::other",
         );
-        other
-            .edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::b"), EdgeKind::Calls));
+        other.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::b"),
+            EdgeKind::Calls,
+        ));
         doc.insert(other);
 
         doc.rebuild_code_paths();
@@ -66,14 +71,14 @@ sequenceDiagram
     doc_with_mains-->>NodeId__symbol: NodeId::symbol('rust', 'demo::main')
     doc_with_mains-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::main'), kind::code::FUNCTION...
     doc_with_mains-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
-    doc_with_mains-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKind::Calls)
-    doc_with_mains-->>push: main.edges .push(Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKin...
+    doc_with_mains-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::a'), EdgeKind::Calls, )
+    doc_with_mains-->>push: main.edges.push(Edge::new( NodeId::symbol('rust', 'demo::a'), EdgeKin...
     doc_with_mains-->>insert: doc.insert(main)
     doc_with_mains-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
     doc_with_mains-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::a'), kind::code::FUNCTION, '...
     doc_with_mains-->>NodeId__symbol: NodeId::symbol('rust', 'demo::b')
-    doc_with_mains-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeKind::Calls)
-    doc_with_mains-->>push: a.edges .push(Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeKind::...
+    doc_with_mains-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::b'), EdgeKind::Calls, )
+    doc_with_mains-->>push: a.edges.push(Edge::new( NodeId::symbol('rust', 'demo::b'), EdgeKind::...
     doc_with_mains-->>insert: doc.insert(a)
     doc_with_mains-->>NodeId__symbol: NodeId::symbol('rust', 'demo::b')
     doc_with_mains-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::b'), kind::code::FUNCTION, '...
@@ -81,8 +86,8 @@ sequenceDiagram
     doc_with_mains-->>NodeId__symbol: NodeId::symbol('rust', 'demo::other')
     doc_with_mains-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::other'), kind::code::FUNCTIO...
     doc_with_mains-->>NodeId__symbol: NodeId::symbol('rust', 'demo::b')
-    doc_with_mains-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeKind::Calls)
-    doc_with_mains-->>push: other .edges .push(Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeK...
+    doc_with_mains-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::b'), EdgeKind::Calls, )
+    doc_with_mains-->>push: other.edges.push(Edge::new( NodeId::symbol('rust', 'demo::b'), EdgeKi...
     doc_with_mains-->>insert: doc.insert(other)
     doc_with_mains-->>rebuild_code_paths: doc.rebuild_code_paths()
 ```

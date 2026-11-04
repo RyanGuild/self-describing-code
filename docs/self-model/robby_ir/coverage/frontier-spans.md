@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn frontier_spans(doc: &Document) -> BTreeMap<String, Vec<Span>>` |
-| location | [`crates/robby-ir/src/coverage.rs:226`](../../../../crates/robby-ir/src/coverage.rs#L226) |
+| location | [`crates/robby-ir/src/coverage.rs:229`](../../../../crates/robby-ir/src/coverage.rs#L229) |
 | provenance | extractor · confidence 1.00 |
 
 > The spans that actually claim source, per file.

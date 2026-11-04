@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn best_scope_prefix<'a>(     doc: &'a Document,     node: &Node,     scope: &BTreeSet<NodeId>, ) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/deps.rs:761`](../../../../../crates/robby-render/src/view/deps.rs#L761) |
+| location | [`crates/robby-render/src/view/deps.rs:741`](../../../../../crates/robby-render/src/view/deps.rs#L741) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -62,11 +62,11 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

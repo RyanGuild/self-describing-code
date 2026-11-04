@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant source_file_count as source_file_count()
+    participant rust__source_file_count as rust::source_file_count
+    source_file_count-->>rust__source_file_count: rust::source_file_count(root)

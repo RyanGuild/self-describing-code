@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-ir/src/process.rs:56`](../../../../crates/robby-ir/src/process.rs#L56) |
+| location | [`crates/robby-ir/src/process.rs:69`](../../../../crates/robby-ir/src/process.rs#L69) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,9 +22,9 @@ pub enum BlockKind {
 
 **Fields and variants**
 
-- `Alt` — `crates/robby-ir/src/process.rs:59:5`
-- `Opt` — `crates/robby-ir/src/process.rs:60:5`
-- `Loop` — `crates/robby-ir/src/process.rs:61:5`
-- `Par` — `crates/robby-ir/src/process.rs:62:5`
-- `Break` — `crates/robby-ir/src/process.rs:63:5`
+- `Alt` — `crates/robby-ir/src/process.rs:72:5`
+- `Opt` — `crates/robby-ir/src/process.rs:73:5`
+- `Loop` — `crates/robby-ir/src/process.rs:74:5`
+- `Par` — `crates/robby-ir/src/process.rs:75:5`
+- `Break` — `crates/robby-ir/src/process.rs:76:5`
 

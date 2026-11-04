@@ -17,8 +17,7 @@ pub fn text(input: &str) -> String {
     let mut out = String::with_capacity(input.len());
     for ch in input.chars() {
         match ch {
-            '\n' | '\r' | '\t' => out.push(' '),
-            ';' | '#' => out.push(' '),
+            '\n' | '\r' | '\t' | ';' | '#' => out.push(' '),
             '"' => out.push('\''),
             _ => out.push(ch),
         }
@@ -44,8 +43,6 @@ sequenceDiagram
     loop input.chars()
     alt match ch
     text-->>push: out.push(' ')
-    else ' ' | ' '
-    text-->>push: out.push(' ')
     else '''
     text-->>push: out.push('\'')
     else _
@@ -57,11 +54,10 @@ sequenceDiagram
     text-->>join: out.split_whitespace().collect::<Vec<_>>().join(' ')
 ```
 
-10 steps · 0 observed · 10 possible only
+9 steps · 0 observed · 9 possible only
 
 **Edges**
 
-- calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)

@@ -66,9 +66,9 @@ flowchart TB
 | [`fixture`](fixture.md) | `code.function` | 3 | `crates/robby-extract/tests/typescript.rs:8:1` |
 | [`extracts_typescript_package_with_lang_tag`](extracts-typescript-package-with-lang-tag.md) | `code.function` | 10 | `crates/robby-extract/tests/typescript.rs:12:1` |
 | [`resolves_calls_and_imports`](resolves-calls-and-imports.md) | `code.function` | 27 | `crates/robby-extract/tests/typescript.rs:37:1` |
-| [`bare_import_creates_external_npm_stub`](bare-import-creates-external-npm-stub.md) | `code.function` | 16 | `crates/robby-extract/tests/typescript.rs:86:1` |
-| [`emits_comment_nodes_and_attaches_docs`](emits-comment-nodes-and-attaches-docs.md) | `code.function` | 15 | `crates/robby-extract/tests/typescript.rs:119:1` |
-| [`typescript_fixture_is_fully_covered`](typescript-fixture-is-fully-covered.md) | `code.function` | 16 | `crates/robby-extract/tests/typescript.rs:162:1` |
+| [`bare_import_creates_external_npm_stub`](bare-import-creates-external-npm-stub.md) | `code.function` | 16 | `crates/robby-extract/tests/typescript.rs:83:1` |
+| [`emits_comment_nodes_and_attaches_docs`](emits-comment-nodes-and-attaches-docs.md) | `code.function` | 15 | `crates/robby-extract/tests/typescript.rs:116:1` |
+| [`typescript_fixture_is_fully_covered`](typescript-fixture-is-fully-covered.md) | `code.function` | 16 | `crates/robby-extract/tests/typescript.rs:165:1` |
 
 ## Imports
 

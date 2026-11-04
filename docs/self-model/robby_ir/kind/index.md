@@ -5,9 +5,9 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/lib.rs:20`](../../../../crates/robby-ir/src/lib.rs#L20) |
+| declared at | [`crates/robby-ir/src/lib.rs:21`](../../../../crates/robby-ir/src/lib.rs#L21) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 54 |
+| nodes | 56 |
 
 ## Types
 
@@ -38,45 +38,63 @@ flowchart TB
         n_78c8f62748bb21ee["code"]
         n_9bd6a0786f266df1["runtime"]
     end
+    n_356bf2c23da68961(["robby_ir"])
+    n_611ba0cee1ac191f --> n_356bf2c23da68961
 ```
 
 ## Dependency matrix
 
-| | kind | code | runtime | agent |
-|---|---:|---:|---:|---:|
-| **kind** | · | | | |
-| **code** | | · | | |
-| **runtime** | | | · | |
-| **agent** | | | | · |
+| | kind | code | runtime | agent | robby_ir |
+|---|---:|---:|---:|---:|---:|
+| **kind** | · | | | | 1 |
+| **code** | | · | | | |
+| **runtime** | | | · | | |
+| **agent** | | | | · | |
+| **robby_ir** | | | | | · |
 
 ## Comments
 
-- `crates/robby-ir/src/kind.rs:104:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
+- `crates/robby-ir/src/kind.rs:110:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
   ```
   /// True when `kind` is understood by the current version of the tool.
   ///
   /// Unknown kinds are never an error — they are rendered generically and
   /// reported as a soft gap, so an older viewer can still display a newer graph.
   pub fn is_known(kind: &Kind) -> bool {
-      matches!(kind.namespace(), "code" | "runtime" | "agent")
+      use crate::contract::KindNamespace;
+      kind.is_known_namespace()
   }
   ```
 - `crates/robby-ir/src/kind.rs:17:1` (docs, `robby_ir::kind::Kind`): "A namespaced, open-ended kind tag."
   ```
   /// A namespaced, open-ended kind tag.
-  #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]
+  #[derive(
+      Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+  )]
   #[serde(transparent)]
   pub struct Kind(String);
   ```
-- `crates/robby-ir/src/kind.rs:31:5` (docs, `robby_ir::kind::impl Kind::namespace`): "The namespace prefix, e.g. `code` in `code.function`."
+- `crates/robby-ir/src/kind.rs:33:5` (docs, `robby_ir::kind::impl Kind::namespace`): "The namespace prefix, e.g. `code` in `code.function`."
   ```
   /// The namespace prefix, e.g. `code` in `code.function`.
       pub fn namespace(&self) -> &str {
           self.0.split('.').next().unwrap_or(&self.0)
       }
   ```
+## References
+
+- calls → [`robby_ir::contract`](../contract/index.md) — is_known_namespace
+
 ## Referenced by
 
+- calls ← [`robby_agent::context::collect_comment_contexts`](../../robby_agent/context/collect-comment-contexts.md)
+- calls ← [`robby_agent::context::has_decision_child`](../../robby_agent/context/has-decision-child.md)
+- calls ← [`robby_agent::context::parent_has_comment_with_text`](../../robby_agent/context/parent-has-comment-with-text.md)
+- calls ← [`robby_agent::enrich::insert_decision`](../../robby_agent/enrich/insert-decision.md)
+- calls ← [`robby_agent::enrich::noise_short_circuits_without_note_call`](../../robby_agent/enrich/tests/noise-short-circuits-without-note-call.md)
+- calls ← [`robby_agent::enrich::relevant_writes_note_and_highlights`](../../robby_agent/enrich/tests/relevant-writes-note-and-highlights.md)
+- calls ← [`robby_agent::model::parse_decision`](../../robby_agent/model/parse-decision.md)
+- calls ← [`robby_agent::model::parse_note`](../../robby_agent/model/parse-note.md)
 - calls ← [`robby_cli::build::main`](../../robby_cli/build/main.md)
 - calls ← [`robby_cli::default_ir`](../../robby_cli/default-ir.md)
 - calls ← [`robby_cli::resolve`](../../robby_cli/resolve.md)
@@ -86,6 +104,7 @@ flowchart TB
 - calls ← [`robby_extract::rust::id_fqn`](../../robby_extract/rust/id-fqn.md)
 - calls ← [`robby_extract::rust::impl ProcBuilder<'_, '_>::emit`](../../robby_extract/rust/index.md)
 - calls ← [`robby_extract::rust::item_node`](../../robby_extract/rust/item-node.md)
+- calls ← [`robby_extract::rust::pick_call_target`](../../robby_extract/rust/pick-call-target.md)
 - calls ← [`robby_extract::rust::resolve_calls`](../../robby_extract/rust/resolve-calls.md)
 - calls ← [`robby_extract::test_extract::root`](../../robby_extract/test_extract/root.md)
 - calls ← [`robby_extract::test_typescript::bare_import_creates_external_npm_stub`](../../robby_extract/test_typescript/bare-import-creates-external-npm-stub.md)
@@ -110,10 +129,13 @@ flowchart TB
 - calls ← [`robby_ir::codepath::find_entrypoints`](../codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../codepath/index.md)
 - calls ← [`robby_ir::codepath::sample_doc`](../codepath/tests/sample-doc.md)
+- calls ← [`robby_ir::contract::absorb_trait_marks_matching_steps_observed`](../contract/tests/absorb-trait-marks-matching-steps-observed.md)
+- calls ← [`robby_ir::contract::kind_namespace_helpers`](../contract/tests/kind-namespace-helpers.md)
 - calls ← [`robby_ir::coverage::all_spans`](../coverage/all-spans.md)
 - calls ← [`robby_ir::coverage::document_coverage`](../coverage/document-coverage.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
 - calls ← [`robby_ir::coverage::frontier_spans`](../coverage/frontier-spans.md)
+- calls ← [`robby_ir::coverage::impl TriviaMode::from_path`](../coverage/index.md)
 - calls ← [`robby_ir::coverage::make_gap`](../coverage/make-gap.md)
 - calls ← [`robby_ir::model::validate`](../model/validate.md)
 - calls ← [`robby_ir::test_coverage::document_coverage_is_union_at_any_depth`](../test_coverage/document-coverage-is-union-at-any-depth.md)
@@ -164,18 +186,18 @@ flowchart TB
 
 - [`kind::code`](code/index.md) — 31 nodes
 - [`kind::runtime`](runtime/index.md) — 4 nodes
-- [`kind::agent`](agent/index.md) — 4 nodes
+- [`kind::agent`](agent/index.md) — 6 nodes
 
 ## Items
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
 | [`Kind`](kind.md) | `code.struct` | — | `crates/robby-ir/src/kind.rs:17:1` |
-| [`impl Kind`](impl-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:22:1` |
-| [`Display for Kind`](display-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:37:1` |
-| [`impl From<&str> for Kind`](impl-from-str-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:43:1` |
-| [`impl From<String> for Kind`](impl-from-string-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:49:1` |
-| [`is_known`](is-known.md) | `code.function` | 1 | `crates/robby-ir/src/kind.rs:104:1` |
+| [`impl Kind`](impl-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:24:1` |
+| [`Display for Kind`](display-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:39:1` |
+| [`impl From<&str> for Kind`](impl-from-str-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:45:1` |
+| [`impl From<String> for Kind`](impl-from-string-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:51:1` |
+| [`is_known`](is-known.md) | `code.function` | 2 | `crates/robby-ir/src/kind.rs:110:1` |
 
 ## Imports
 

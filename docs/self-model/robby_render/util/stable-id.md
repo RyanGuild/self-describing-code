@@ -14,10 +14,10 @@
 ```rust
 /// FNV-1a stable id for Mermaid / layout keys.
 pub fn stable_id(input: &str) -> String {
-    let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
+    let mut hash: u64 = 0xCBF2_9CE4_8422_2325;
     for byte in input.as_bytes() {
         hash ^= u64::from(*byte);
-        hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
+        hash = hash.wrapping_mul(0x0000_0100_0000_01B3);
     }
     format!("n_{hash:016x}")
 }
@@ -33,7 +33,7 @@ sequenceDiagram
     stable_id-->>as_bytes: input.as_bytes()
     loop input.as_bytes()
     stable_id-->>u64__from: u64::from(*byte)
-    stable_id-->>wrapping_mul: hash.wrapping_mul(0x0000_0100_0000_01b3)
+    stable_id-->>wrapping_mul: hash.wrapping_mul(0x0000_0100_0000_01B3)
     end
     stable_id-->>stable_id: format!('n_{hash:016x}')
 ```
