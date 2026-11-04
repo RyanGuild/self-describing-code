@@ -9,6 +9,7 @@
 
 pub mod ingest;
 pub mod markdown;
+pub mod metric_test;
 pub mod pipeline;
 pub mod render;
 pub mod report;
@@ -20,6 +21,9 @@ pub mod view;
 pub mod web;
 
 pub use ingest::{CursorAgentStub, CursorEvent, ingest_cursor_agents, ingest_cursor_json};
+pub use metric_test::{
+    MetricTestRequest, allow_and_spawn_metric_test, build_metric_test_run, write_metric_test_run,
+};
 pub use render::{MarkdownRenderer, MermaidRenderer, Renderer, ShowOptions, TuiRenderer};
 pub use report::{Report, Section};
 pub use robby_ir::RunRecord;
