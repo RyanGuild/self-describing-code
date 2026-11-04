@@ -3,7 +3,8 @@
  *
  * Loads `scene.json` and lazy `frames/<id>.json` payloads written by
  * `robby web`. Click a card to zoom in; portals jump to related frames;
- * Escape / back zooms out.
+ * Escape / back zooms out. Focus (and org mode) live in the URL hash as
+ * `#frame=<stable_id>&org=…` so reload and watch remount keep the camera.
  *
  * Frames stay laid out at full canvas resolution (1600×1000). A single
  * screen-space transform per frame (camera × world placement) avoids the
@@ -133,8 +134,24 @@ async function main(): Promise<void> {
     return;
   }
 
-  applyScene(scene);
-  void prefetchEntrypoints();
+  const saved = readLocationHash();
+  let initialOrg: OrgMode = saved.org ?? "structure";
+  if (initialOrg === "entrypoints") {
+    await prefetchEntrypoints();
+    if (!sceneCache.has("entrypoints")) {
+      initialOrg = "structure";
+    }
+  } else {
+    void prefetchEntrypoints();
+  }
+
+  orgMode = initialOrg;
+  orgStructureBtn.classList.toggle("is-active", initialOrg === "structure");
+  orgEntrypointsBtn.classList.toggle("is-active", initialOrg === "entrypoints");
+  hintEl.textContent = initialOrg === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
+
+  const initialScene = sceneCache.get(initialOrg) ?? scene;
+  applyScene(initialScene, resolveFocusId(initialScene, saved.frame));
   void startBuildWatch();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
@@ -149,6 +166,9 @@ async function main(): Promise<void> {
       e.preventDefault();
       zoomOut();
     }
+  });
+  window.addEventListener("hashchange", () => {
+    void applyLocationFromHash();
   });
 }
 
@@ -181,6 +201,11 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
   reloading = true;
   const keepFocus = focusId;
   const keepOrg = orgMode;
+  const hash = readLocationHash();
+  // Prefer in-memory focus when it still matches the hash (watch remount);
+  // otherwise honor the hash so a mid-reload deep link is not lost.
+  const preferred =
+    keepFocus && (!hash.frame || hash.frame === keepFocus) ? keepFocus : hash.frame;
   try {
     detailCache.clear();
     sceneCache.clear();
@@ -197,13 +222,7 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     orgEntrypointsBtn.classList.toggle("is-active", keepOrg === "entrypoints");
     hintEl.textContent = keepOrg === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
     const next = sceneCache.get(keepOrg) ?? structure;
-    applyScene(next);
-    if (keepFocus && next.frames[keepFocus]) {
-      focusId = keepFocus;
-      camera = cameraForFocus(focusId);
-      remount();
-      void loadDetail(focusId);
-    }
+    applyScene(next, resolveFocusId(next, preferred));
     showWatchBadge(stamp, true);
   } catch (err) {
     console.error(err);
@@ -256,14 +275,99 @@ async function setOrgMode(next: OrgMode): Promise<void> {
   applyScene(cached);
 }
 
-function applyScene(next: Scene): void {
-  scene = next;
-  flying = false;
-  window.cancelAnimationFrame(cameraRaf);
-  focusId = next.root;
+/**
+ * URL hash: `#frame=<stable_id>` and optional `&org=structure|entrypoints`.
+ * Updated with replaceState so navigation does not spam history.
+ */
+interface LocationHash {
+  frame?: string;
+  org?: OrgMode;
+}
+
+function readLocationHash(): LocationHash {
+  const raw = window.location.hash.replace(/^#/, "").trim();
+  if (!raw) {
+    return {};
+  }
+  const params = new URLSearchParams(raw.includes("=") ? raw : `frame=${raw}`);
+  const frame = params.get("frame") || params.get("location") || undefined;
+  const orgRaw = params.get("org");
+  const org: OrgMode | undefined =
+    orgRaw === "entrypoints" || orgRaw === "structure" ? orgRaw : undefined;
+  return { frame: frame || undefined, org };
+}
+
+function locationHashFor(focus: string, org: OrgMode): string {
+  const params = new URLSearchParams();
+  params.set("frame", focus);
+  if (org !== "structure") {
+    params.set("org", org);
+  }
+  return `#${params.toString()}`;
+}
+
+function syncLocationHash(): void {
+  if (!focusId) {
+    return;
+  }
+  const next = locationHashFor(focusId, orgMode);
+  if (window.location.hash === next) {
+    return;
+  }
+  const url = `${window.location.pathname}${window.location.search}${next}`;
+  history.replaceState(null, "", url);
+}
+
+function resolveFocusId(next: Scene, preferred?: string | null): string {
+  if (preferred && next.frames[preferred]) {
+    return preferred;
+  }
+  return next.root;
+}
+
+/** Apply hash when the user edits the URL (back/forward on hash alone). */
+async function applyLocationFromHash(): Promise<void> {
+  if (!scene || flying || reloading) {
+    return;
+  }
+  const saved = readLocationHash();
+  const wantOrg = saved.org ?? "structure";
+  if (wantOrg !== orgMode) {
+    if (wantOrg === "entrypoints" && !sceneCache.has("entrypoints")) {
+      await prefetchEntrypoints();
+    }
+    const cached = sceneCache.get(wantOrg);
+    if (!cached) {
+      return;
+    }
+    orgMode = wantOrg;
+    orgStructureBtn.classList.toggle("is-active", wantOrg === "structure");
+    orgEntrypointsBtn.classList.toggle("is-active", wantOrg === "entrypoints");
+    hintEl.textContent = wantOrg === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
+    applyScene(cached, resolveFocusId(cached, saved.frame));
+    return;
+  }
+  const target = resolveFocusId(scene, saved.frame);
+  if (target === focusId) {
+    syncLocationHash();
+    return;
+  }
+  focusId = target;
   camera = cameraForFocus(focusId);
   remount();
   void loadDetail(focusId);
+  syncLocationHash();
+}
+
+function applyScene(next: Scene, preferredFocus?: string | null): void {
+  scene = next;
+  flying = false;
+  window.cancelAnimationFrame(cameraRaf);
+  focusId = resolveFocusId(next, preferredFocus);
+  camera = cameraForFocus(focusId);
+  remount();
+  void loadDetail(focusId);
+  syncLocationHash();
 }
 
 function frame(id: string): SceneFrame {
@@ -504,6 +608,7 @@ function flyTo(id: string): void {
   }
   flying = true;
   focusId = id;
+  syncLocationHash();
   remount();
   const dest = cameraForFocus(focusId);
   tweenCamera(dest, () => {
@@ -513,6 +618,7 @@ function flyTo(id: string): void {
     remount();
     flying = false;
     void loadDetail(focusId);
+    syncLocationHash();
   });
 }
 
