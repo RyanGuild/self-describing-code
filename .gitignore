@@ -8,3 +8,6 @@ dist
 *.svg.tmp
 apps/site/public/scene.json
 apps/site/public/frames/
+apps/site/public/runs/*.json
+!apps/site/public/runs/index.json
+!apps/site/public/runs/.gitkeep

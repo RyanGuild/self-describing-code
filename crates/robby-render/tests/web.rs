@@ -284,6 +284,10 @@ fn write_site_emits_scene_and_frames() {
     assert!(dir.join("frames").is_dir());
     let workspace = dir.join(format!("frames/{}.json", stable_id(WORKSPACE_ID)));
     assert!(workspace.is_file());
+    // Shared RunRecord index for Runs / Reviews (empty until invoke).
+    assert!(dir.join("runs/index.json").is_file());
+    let index_raw = std::fs::read_to_string(dir.join("runs/index.json")).unwrap();
+    assert!(index_raw.contains("\"runs\""));
     // No JavaScript in the site data output.
     assert!(!dir.join("viewer.js").exists());
 }

@@ -1,0 +1,349 @@
+//! Site `runs/` persistence for shared [`RunRecord`] values.
+//!
+//! One JSON shape for extract / tests / reviews / external agents. Writers put
+//! `runs/<run_id>.json` and maintain `runs/index.json`; the Mac-local viewer
+//! polls the same files.
+
+use std::fs;
+use std::path::{Path, PathBuf};
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use anyhow::{Context, Result, bail};
+use serde::{Deserialize, Serialize};
+
+use robby_ir::run::{RecipeId, RunRecord, RunStatus, recipes};
+
+/// Thin index row so the dock can list without fetching every record.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RunIndexEntry {
+    pub run_id: String,
+    pub recipe: String,
+    pub status: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub subject: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub started_at: Option<i64>,
+}
+
+impl From<&RunRecord> for RunIndexEntry {
+    fn from(record: &RunRecord) -> Self {
+        Self {
+            run_id: record.run_id.clone(),
+            recipe: record.recipe.as_str().to_owned(),
+            status: record.status.as_str().to_owned(),
+            subject: record.subject.clone(),
+            started_at: record.started_at,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct RunsIndex {
+    #[serde(default)]
+    pub runs: Vec<RunIndexEntry>,
+}
+
+/// Filesystem-backed store under a site `public/` (or any out) directory.
+#[derive(Debug, Clone)]
+pub struct SiteRunsStore {
+    root: PathBuf,
+}
+
+impl SiteRunsStore {
+    pub fn new(site_out: impl Into<PathBuf>) -> Self {
+        Self {
+            root: site_out.into(),
+        }
+    }
+
+    pub fn runs_dir(&self) -> PathBuf {
+        self.root.join("runs")
+    }
+
+    pub fn index_path(&self) -> PathBuf {
+        self.runs_dir().join("index.json")
+    }
+
+    pub fn record_path(&self, run_id: &str) -> PathBuf {
+        self.runs_dir().join(format!("{run_id}.json"))
+    }
+
+    /// Ensure `runs/` + empty index exist (idempotent; does not wipe records).
+    pub fn ensure_layout(&self) -> Result<()> {
+        fs::create_dir_all(self.runs_dir()).context("create runs/")?;
+        let index_path = self.index_path();
+        if !index_path.exists() {
+            self.write_index(&RunsIndex::default())?;
+        }
+        Ok(())
+    }
+
+    pub fn read_index(&self) -> Result<RunsIndex> {
+        let path = self.index_path();
+        if !path.exists() {
+            return Ok(RunsIndex::default());
+        }
+        let raw = fs::read_to_string(&path).with_context(|| format!("read {}", path.display()))?;
+        serde_json::from_str(&raw).with_context(|| format!("parse {}", path.display()))
+    }
+
+    pub fn write_index(&self, index: &RunsIndex) -> Result<()> {
+        fs::create_dir_all(self.runs_dir())?;
+        let raw = serde_json::to_string_pretty(index)?;
+        fs::write(self.index_path(), format!("{raw}\n"))?;
+        Ok(())
+    }
+
+    pub fn read(&self, run_id: &str) -> Result<RunRecord> {
+        let path = self.record_path(run_id);
+        let raw = fs::read_to_string(&path).with_context(|| format!("read {}", path.display()))?;
+        serde_json::from_str(&raw).with_context(|| format!("parse {}", path.display()))
+    }
+
+    pub fn put(&self, record: &RunRecord) -> Result<()> {
+        self.ensure_layout()?;
+        let path = self.record_path(&record.run_id);
+        let raw = serde_json::to_string_pretty(record)?;
+        fs::write(&path, format!("{raw}\n"))
+            .with_context(|| format!("write {}", path.display()))?;
+
+        let mut index = self.read_index()?;
+        let entry = RunIndexEntry::from(record);
+        if let Some(slot) = index.runs.iter_mut().find(|e| e.run_id == record.run_id) {
+            *slot = entry;
+        } else {
+            index.runs.insert(0, entry);
+        }
+        self.write_index(&index)?;
+        Ok(())
+    }
+
+    /// Soft-queue a `robby.review_view` for `subject` (one pending per subject).
+    ///
+    /// If a queued review already exists for the subject, refreshes `started_at`
+    /// and trigger annotations instead of minting a second run.
+    pub fn queue_review_view(
+        &self,
+        subject: &str,
+        trigger: &str,
+        subject_name: Option<&str>,
+    ) -> Result<RunRecord> {
+        self.ensure_layout()?;
+        let index = self.read_index()?;
+        for entry in &index.runs {
+            if entry.recipe != recipes::REVIEW_VIEW {
+                continue;
+            }
+            if entry.subject.as_deref() != Some(subject) {
+                continue;
+            }
+            if entry.status != RunStatus::Queued.as_str() {
+                continue;
+            }
+            let mut existing = self.read(&entry.run_id)?;
+            let now = now_ms();
+            existing.started_at = Some(now);
+            existing
+                .stats
+                .insert("trigger".to_owned(), trigger.to_owned());
+            existing
+                .stats
+                .insert("ui_gate".to_owned(), "awaiting_allow".to_owned());
+            if let Some(name) = subject_name {
+                existing
+                    .stats
+                    .insert("subject_name".to_owned(), name.to_owned());
+            }
+            self.put(&existing)?;
+            return Ok(existing);
+        }
+
+        let run_id = mint_run_id("review");
+        let mut record = RunRecord::new(run_id, RecipeId::from(recipes::REVIEW_VIEW), RunStatus::Queued)
+            .with_subject(subject.to_owned());
+        record.started_at = Some(now_ms());
+        record
+            .stats
+            .insert("trigger".to_owned(), trigger.to_owned());
+        record
+            .stats
+            .insert("ui_gate".to_owned(), "awaiting_allow".to_owned());
+        if let Some(name) = subject_name {
+            record
+                .stats
+                .insert("subject_name".to_owned(), name.to_owned());
+        }
+        // Slice-1 stage HUD: gate awaits UI; later stages stay unobserved.
+        record.process = Some(review_view_process(false));
+        self.put(&record)?;
+        Ok(record)
+    }
+
+    /// User Allow / Continue: `queued` → `running` (LLM/score may be a no-op).
+    pub fn allow(&self, run_id: &str) -> Result<RunRecord> {
+        let mut record = self.read(run_id)?;
+        if record.status == RunStatus::Cancelled {
+            bail!("run {run_id} is cancelled");
+        }
+        if record.status.is_terminal() {
+            bail!(
+                "run {run_id} is already terminal ({})",
+                record.status.as_str()
+            );
+        }
+        record.status = RunStatus::Running;
+        record
+            .stats
+            .insert("ui_gate".to_owned(), "allowed".to_owned());
+        if let Some(process) = record.process.as_mut() {
+            *process = review_view_process(true);
+        }
+        // Slice 1: no metric_test child, no decision products.
+        self.put(&record)?;
+        Ok(record)
+    }
+
+    /// User Cancel: terminal `cancelled`; never spawn metric_test / enrich.
+    pub fn cancel(&self, run_id: &str) -> Result<RunRecord> {
+        let mut record = self.read(run_id)?;
+        if record.status == RunStatus::Cancelled {
+            return Ok(record);
+        }
+        if record.status.is_terminal() {
+            bail!(
+                "run {run_id} is already terminal ({})",
+                record.status.as_str()
+            );
+        }
+        record.status = RunStatus::Cancelled;
+        record.finished_at = Some(now_ms());
+        record
+            .stats
+            .insert("ui_gate".to_owned(), "cancelled".to_owned());
+        // Drop any speculative product links; cancel blocks downstream.
+        record.products.clear();
+        self.put(&record)?;
+        Ok(record)
+    }
+
+    /// True when this review must not start `robby.metric_test` / enrich-like work.
+    pub fn blocks_downstream(record: &RunRecord) -> bool {
+        matches!(
+            record.status,
+            RunStatus::Queued | RunStatus::Cancelled | RunStatus::Error
+        ) || record
+            .stats
+            .get("ui_gate")
+            .is_some_and(|g| g == "awaiting_allow" || g == "paused" || g == "cancelled")
+    }
+}
+
+fn now_ms() -> i64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_millis() as i64)
+        .unwrap_or(0)
+}
+
+fn mint_run_id(prefix: &str) -> String {
+    format!("{prefix}-{}", now_ms())
+}
+
+fn review_view_process(observed_gate: bool) -> robby_ir::Process {
+    use robby_ir::kind::agent;
+    use robby_ir::{Kind, Process, Step, StepKind};
+
+    let mut process = Process::new();
+    process.participant("review", "review_view", Kind::from(agent::ACTION));
+    process.participant("ui", "ui_gate", Kind::from(agent::ACTION));
+    let stages = [
+        ("queue", false),
+        ("await_ui_gate", observed_gate),
+        ("bind_subjects", false),
+        ("score_metrics", false),
+        ("emit_decisions", false),
+    ];
+    for (label, observed) in stages {
+        process.step(Step {
+            from: "review".to_owned(),
+            to: "ui".to_owned(),
+            label: label.to_owned(),
+            kind: StepKind::Call,
+            observed,
+            span: None,
+            blocks: vec![],
+        });
+    }
+    process
+}
+
+/// Ensure empty `runs/index.json` beside scene payloads.
+pub fn ensure_runs_layout(site_out: &Path) -> Result<()> {
+    SiteRunsStore::new(site_out).ensure_layout()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use robby_ir::run::recipes;
+
+    fn temp_store() -> SiteRunsStore {
+        let dir = std::env::temp_dir().join(format!(
+            "robby-runs-test-{}",
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        SiteRunsStore::new(dir)
+    }
+
+    #[test]
+    fn queue_dedupes_pending_subject() {
+        let store = temp_store();
+        let a = store
+            .queue_review_view("sid-a", "frame_focus", Some("Alpha"))
+            .unwrap();
+        let b = store
+            .queue_review_view("sid-a", "frame_focus", Some("Alpha"))
+            .unwrap();
+        assert_eq!(a.run_id, b.run_id);
+        assert_eq!(b.status, RunStatus::Queued);
+        assert_eq!(b.recipe.as_str(), recipes::REVIEW_VIEW);
+        let index = store.read_index().unwrap();
+        assert_eq!(index.runs.len(), 1);
+    }
+
+    #[test]
+    fn cancel_blocks_metric_test_products() {
+        let store = temp_store();
+        let queued = store
+            .queue_review_view("sid-b", "frame_focus", None)
+            .unwrap();
+        let cancelled = store.cancel(&queued.run_id).unwrap();
+        assert_eq!(cancelled.status, RunStatus::Cancelled);
+        assert!(cancelled.products.is_empty());
+        assert!(SiteRunsStore::blocks_downstream(&cancelled));
+        assert!(!cancelled
+            .products
+            .iter()
+            .any(|p| p.contains(recipes::METRIC_TEST)));
+    }
+
+    #[test]
+    fn allow_moves_queued_to_running_without_metric_test() {
+        let store = temp_store();
+        let queued = store
+            .queue_review_view("sid-c", "user", Some("Charlie"))
+            .unwrap();
+        let running = store.allow(&queued.run_id).unwrap();
+        assert_eq!(running.status, RunStatus::Running);
+        assert_eq!(
+            running.stats.get("ui_gate").map(String::as_str),
+            Some("allowed")
+        );
+        assert!(running.products.is_empty());
+        assert!(!SiteRunsStore::blocks_downstream(&running));
+    }
+}

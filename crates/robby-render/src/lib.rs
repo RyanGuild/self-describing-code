@@ -11,6 +11,7 @@ pub mod markdown;
 pub mod pipeline;
 pub mod render;
 pub mod report;
+pub mod runs;
 pub mod tree;
 pub mod tui;
 pub mod util;
@@ -19,6 +20,7 @@ pub mod web;
 
 pub use render::{MarkdownRenderer, MermaidRenderer, Renderer, ShowOptions, TuiRenderer};
 pub use report::{Report, Section};
+pub use runs::{RunIndexEntry, RunsIndex, SiteRunsStore, ensure_runs_layout};
 pub use view::{
     CouplingGraph, DependencyViews, LinkGraph, NodeViews, PackageStructure, ProcessView, Scene,
     SelectOpts, SiblingGraph, TypeModel, collect, is_binary_module, main_process,

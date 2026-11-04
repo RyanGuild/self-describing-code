@@ -8,9 +8,22 @@
  * Frames stay laid out in the scene canvas. A single
  * screen-space transform per frame (camera × world placement) avoids the
  * downscale-then-upscale rasterization that keeps text pixelated after zoom.
+ *
+ * Soft-queues `robby.review_view` RunRecords on frame focus (Mac-local Vite
+ * API → `public/runs/`). Runs/Reviews dock can Allow or Cancel.
  */
 
+import {
+  RECIPE_REVIEW_VIEW,
+  type RunIndexEntry,
+  type RunRecord,
+  type RunsIndex,
+} from "./runRecord";
+
 const TWEEN_MS = 500;
+/** Soft auto-queue on focus; skip workspace root and cancelled cooldown. */
+const REVIEW_CANCEL_COOLDOWN_MS = 8_000;
+const RUNS_POLL_MS = 1_500;
 
 /**
  * Fields this file reads. The JSON is whatever `Scene` and `FrameDetail`
@@ -85,6 +98,12 @@ const hintEl = requireElement("hint");
 const zoomOutBtn = requireButton("zoom-out");
 const orgStructureBtn = requireButton("org-structure");
 const orgEntrypointsBtn = requireButton("org-entrypoints");
+const orgRunsBtn = requireButton("org-runs");
+const runsDock = requireElement("runs-dock");
+const runsPendingEl = requireElement("runs-pending");
+const runsActiveEl = requireElement("runs-active");
+const runsRecentEl = requireElement("runs-recent");
+const runsDockCloseBtn = requireButton("runs-dock-close");
 
 let scene: Scene | null = null;
 let orgMode: OrgMode = "structure";
@@ -94,6 +113,11 @@ const detailCache = new Map<string, FrameDetail>();
 let flying = false;
 let camera: Camera = { scale: 1, tx: 0, ty: 0 };
 let cameraRaf = 0;
+let runsDockOpen = false;
+let runsFilter: "reviews" | "all" = "reviews";
+let runsIndex: RunsIndex = { runs: [] };
+const cancelCooldownUntil = new Map<string, number>();
+let runsPollTimer = 0;
 
 async function main() {
   try {
@@ -108,10 +132,13 @@ async function main() {
 
   applyScene(scene);
   void prefetchEntrypoints();
+  initRunsDock();
+  startRunsPoll();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));
   orgEntrypointsBtn.addEventListener("click", () => void setOrgMode("entrypoints"));
+  orgRunsBtn.addEventListener("click", () => toggleRunsDock());
   window.addEventListener("resize", () => {
     camera = cameraForFocus(focusId);
     placeAllFrames();
@@ -155,6 +182,7 @@ async function setOrgMode(next: OrgMode) {
   orgMode = next;
   orgStructureBtn.classList.toggle("is-active", next === "structure");
   orgEntrypointsBtn.classList.toggle("is-active", next === "entrypoints");
+  orgRunsBtn.classList.toggle("is-active", false);
   hintEl.textContent = ORG_MODES[next].hint;
   applyScene(cached);
 }
@@ -167,6 +195,7 @@ function applyScene(next: Scene) {
   camera = cameraForFocus(focusId);
   remount();
   void loadDetail(focusId);
+  // Soft-queue only when the user focuses a non-root frame (not initial mount).
 }
 
 function currentScene(): Scene {
@@ -412,6 +441,7 @@ function flyTo(id: string) {
     remount();
     flying = false;
     void loadDetail(focusId);
+    void maybeQueueReviewForFocus(focusId);
   });
 }
 
@@ -646,6 +676,228 @@ function cssEscape(s: string) {
     return CSS.escape(s);
   }
   return s.replace(/"/g, '\\"');
+}
+
+/* ── Runs / Reviews dock (shared RunRecord) ─────────────────────────── */
+
+function initRunsDock() {
+  runsDockCloseBtn.addEventListener("click", () => setRunsDockOpen(false));
+  for (const btn of runsDock.querySelectorAll<HTMLButtonElement>(".runs-filter")) {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter;
+      if (filter !== "reviews" && filter !== "all") {
+        return;
+      }
+      runsFilter = filter;
+      for (const other of runsDock.querySelectorAll(".runs-filter")) {
+        other.classList.toggle("is-active", other === btn);
+      }
+      renderRunsDock();
+    });
+  }
+}
+
+function toggleRunsDock() {
+  setRunsDockOpen(!runsDockOpen);
+}
+
+function setRunsDockOpen(open: boolean) {
+  runsDockOpen = open;
+  runsDock.hidden = !open;
+  orgRunsBtn.classList.toggle("is-active", open);
+  if (open) {
+    void refreshRunsIndex();
+  }
+}
+
+function startRunsPoll() {
+  window.clearInterval(runsPollTimer);
+  runsPollTimer = window.setInterval(() => {
+    void refreshRunsIndex();
+  }, RUNS_POLL_MS);
+  void refreshRunsIndex();
+}
+
+async function refreshRunsIndex() {
+  try {
+    runsIndex = await fetchJson<RunsIndex>("/api/runs");
+  } catch {
+    try {
+      runsIndex = await fetchJson<RunsIndex>("runs/index.json");
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+  }
+  if (runsDockOpen) {
+    renderRunsDock();
+  }
+}
+
+function filteredRuns(): RunIndexEntry[] {
+  if (runsFilter === "all") {
+    return runsIndex.runs;
+  }
+  return runsIndex.runs.filter((r) => r.recipe === RECIPE_REVIEW_VIEW);
+}
+
+function renderRunsDock() {
+  const rows = filteredRuns();
+  const pending = rows.filter((r) => r.status === "queued");
+  const active = rows.filter((r) => r.status === "running");
+  const recent = rows.filter(
+    (r) => r.status !== "queued" && r.status !== "running",
+  ).slice(0, 12);
+  fillRunsList(runsPendingEl, pending, true);
+  fillRunsList(runsActiveEl, active, true);
+  fillRunsList(runsRecentEl, recent, false);
+}
+
+function fillRunsList(host: HTMLElement, entries: RunIndexEntry[], actionable: boolean) {
+  host.innerHTML = "";
+  for (const entry of entries) {
+    host.appendChild(makeRunsRow(entry, actionable));
+  }
+}
+
+function makeRunsRow(entry: RunIndexEntry, actionable: boolean): HTMLLIElement {
+  const li = document.createElement("li");
+  li.className = "runs-row";
+  li.dataset.runId = entry.run_id;
+
+  const subjectFrame = entry.subject ? scene?.frames[entry.subject] : undefined;
+  const name = subjectFrame?.name ?? entry.subject ?? entry.run_id;
+  const main = document.createElement("div");
+  main.className = "runs-row-main";
+  main.innerHTML =
+    `<div class="runs-row-title">${escapeHtml(name)}</div>` +
+    `<div class="runs-row-meta">` +
+    `<span class="status-chip ${escapeHtml(entry.status)}">${escapeHtml(entry.status)}</span>` +
+    ` · ${escapeHtml(shortRecipe(entry.recipe))}` +
+    (entry.started_at ? ` · ${relativeTime(entry.started_at)}` : "") +
+    `</div>`;
+  li.appendChild(main);
+
+  if (actionable && entry.recipe === RECIPE_REVIEW_VIEW) {
+    const actions = document.createElement("div");
+    actions.className = "runs-row-actions";
+    if (entry.status === "queued") {
+      const allow = document.createElement("button");
+      allow.type = "button";
+      allow.textContent = "Allow";
+      allow.title = "Continue review (stub in this slice)";
+      allow.addEventListener("click", (e) => {
+        e.stopPropagation();
+        void postRunAction(entry.run_id, "allow");
+      });
+      actions.appendChild(allow);
+
+      const cancel = document.createElement("button");
+      cancel.type = "button";
+      cancel.className = "danger";
+      cancel.textContent = "Cancel";
+      cancel.addEventListener("click", (e) => {
+        e.stopPropagation();
+        void postRunAction(entry.run_id, "cancel");
+      });
+      actions.appendChild(cancel);
+    } else if (entry.status === "running") {
+      const cancel = document.createElement("button");
+      cancel.type = "button";
+      cancel.className = "danger";
+      cancel.textContent = "Cancel";
+      cancel.addEventListener("click", (e) => {
+        e.stopPropagation();
+        void postRunAction(entry.run_id, "cancel");
+      });
+      actions.appendChild(cancel);
+    }
+    li.appendChild(actions);
+  }
+
+  if (entry.subject && scene?.frames[entry.subject]) {
+    li.style.cursor = "pointer";
+    li.title = "Fly to subject";
+    li.addEventListener("click", () => {
+      flyTo(entry.subject!);
+    });
+  }
+
+  return li;
+}
+
+function shortRecipe(recipe: string): string {
+  if (recipe === RECIPE_REVIEW_VIEW) {
+    return "review_view";
+  }
+  const parts = recipe.split(".");
+  return parts[parts.length - 1] ?? recipe;
+}
+
+function relativeTime(ms: number): string {
+  const delta = Math.max(0, Date.now() - ms);
+  if (delta < 60_000) {
+    return `${Math.round(delta / 1000)}s ago`;
+  }
+  if (delta < 3_600_000) {
+    return `${Math.round(delta / 60_000)}m ago`;
+  }
+  return `${Math.round(delta / 3_600_000)}h ago`;
+}
+
+async function postRunAction(runId: string, action: "allow" | "cancel") {
+  try {
+    const res = await fetch(`/api/runs/${encodeURIComponent(runId)}/${action}`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(body?.error ?? `${action} failed: ${res.status}`);
+    }
+    const record = (await res.json()) as RunRecord;
+    if (action === "cancel" && record.subject) {
+      cancelCooldownUntil.set(record.subject, Date.now() + REVIEW_CANCEL_COOLDOWN_MS);
+    }
+    await refreshRunsIndex();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function maybeQueueReviewForFocus(id: string) {
+  if (!scene || !scene.frames[id]) {
+    return;
+  }
+  if (id === scene.root) {
+    return;
+  }
+  const until = cancelCooldownUntil.get(id) ?? 0;
+  if (Date.now() < until) {
+    return;
+  }
+  const f = frame(id);
+  try {
+    const res = await fetch("/api/reviews/queue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject: id,
+        trigger: "frame_focus",
+        subject_name: f.name,
+      }),
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(body?.error ?? `queue failed: ${res.status}`);
+    }
+    await refreshRunsIndex();
+    if (!runsDockOpen) {
+      // Nudge: open dock so the pending review is visible.
+      setRunsDockOpen(true);
+    }
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 void main();

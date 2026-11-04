@@ -126,6 +126,8 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
     fs::create_dir_all(out)?;
     let frames_dir = out.join("frames");
     fs::create_dir_all(&frames_dir)?;
+    // Shared RunRecord layout for Runs / Reviews docks (empty until invoke).
+    crate::runs::ensure_runs_layout(out)?;
 
     let structure = Scene::from_document(doc);
     let entrypoints = Scene::from_entrypoints(doc);

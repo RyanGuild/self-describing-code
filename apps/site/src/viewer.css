@@ -418,3 +418,189 @@ body {
   font-size: 15px;
   padding: 16px 0;
 }
+
+/* Runs / Reviews dock (shared RunRecord list) */
+#runs-dock {
+  position: fixed;
+  z-index: 30;
+  top: 56px;
+  right: 16px;
+  width: min(360px, calc(100vw - 24px));
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  background: rgba(20, 26, 38, 0.96);
+  border: 1px solid var(--frame-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  color: var(--text);
+  overflow: hidden;
+}
+
+#runs-dock[hidden] {
+  display: none;
+}
+
+.runs-dock-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--frame-border);
+  font-size: 13px;
+}
+
+.runs-dock-filters {
+  display: inline-flex;
+  margin-left: auto;
+  border: 1px solid var(--frame-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.runs-filter {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 3px 8px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.runs-filter + .runs-filter {
+  border-left: 1px solid var(--frame-border);
+}
+
+.runs-filter.is-active {
+  background: var(--frame);
+  color: var(--text);
+}
+
+#runs-dock-close {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+#runs-dock-body {
+  overflow: auto;
+  padding: 8px 0 12px;
+}
+
+.runs-section {
+  padding: 4px 12px 8px;
+}
+
+.runs-section h3 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.runs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.runs-list:empty::after {
+  content: "None";
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.runs-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--frame-border);
+  border-radius: 8px;
+  background: var(--frame);
+  font-size: 12px;
+}
+
+.runs-row-main {
+  min-width: 0;
+}
+
+.runs-row-title {
+  font-weight: 560;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.runs-row-meta {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.runs-row-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.runs-row-actions button {
+  border: 1px solid var(--portal-border);
+  background: var(--portal);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.runs-row-actions button.danger {
+  border-color: #744;
+  color: #f0c0c0;
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: var(--chip);
+  color: var(--muted);
+}
+
+.status-chip.queued {
+  color: #e6c87a;
+}
+
+.status-chip.running {
+  color: var(--accent);
+}
+
+.status-chip.cancelled {
+  color: var(--danger);
+}
+
+.status-chip.pass {
+  color: #8dcf8d;
+}
+
+.status-chip.fail,
+.status-chip.error {
+  color: var(--danger);
+}
