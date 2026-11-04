@@ -66,15 +66,14 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::vocab::impl Verdict::parse`](../../../robby_ir/vocab/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::impl RunStatus::parse`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
-- calls → [`robby_ir::vocab`](../../../robby_ir/vocab/index.md) — parse
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get, parse
 - calls → [`robby_render::view::select`](../select/index.md) — collect
 
 ## Referenced by

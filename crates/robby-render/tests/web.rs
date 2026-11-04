@@ -282,14 +282,53 @@ fn write_site_emits_scene_and_frames() {
     assert!(dir.join("scene.json").is_file());
     assert!(dir.join("scene-entrypoints.json").is_file());
     assert!(dir.join("frames").is_dir());
+    let build_path = dir.join("build.json");
+    assert!(build_path.is_file());
+    let build: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&build_path).unwrap()).unwrap();
+    assert_eq!(build["frames"], count);
+    assert!(build["rebuilt_at"].as_u64().is_some());
     let workspace = dir.join(format!("frames/{}.json", stable_id(WORKSPACE_ID)));
     assert!(workspace.is_file());
-    // Shared RunRecord index for Runs / Reviews (empty until invoke).
+    // Shared RunRecord index for Runs / Reviews (extract + web from write_site).
     assert!(dir.join("runs/index.json").is_file());
     let index_raw = std::fs::read_to_string(dir.join("runs/index.json")).unwrap();
     assert!(index_raw.contains("\"runs\""));
     // No JavaScript in the site data output.
     assert!(!dir.join("viewer.js").exists());
+}
+
+#[test]
+fn write_site_emits_run_records() {
+    let (doc, sources) = demo_doc();
+    let dir = tempfile_dir();
+    write_site(&doc, &sources, &dir).expect("write_site");
+    let index_path = dir.join("runs/index.json");
+    assert!(index_path.is_file());
+    let index: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&index_path).unwrap()).unwrap();
+    let runs = index["runs"].as_array().expect("runs array");
+    assert!(
+        runs.len() >= 2,
+        "expected extract + web runs, got {runs:?}"
+    );
+    let recipes: Vec<_> = runs
+        .iter()
+        .filter_map(|r| r["recipe"].as_str())
+        .collect();
+    assert!(recipes.contains(&"robby.extract"));
+    assert!(recipes.contains(&"robby.web"));
+    assert!(dir.join("runs/synthetic-extract.json").is_file());
+    assert!(dir.join("runs/latest-web.json").is_file());
+    let extract: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(dir.join("runs/synthetic-extract.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(extract["status"], "pass");
+    assert_eq!(extract["recipe"], "robby.extract");
+    // Shared RunRecord stats are stringly (BTreeMap<String, String>).
+    let nodes = extract["stats"]["nodes"].as_str().unwrap_or("");
+    assert!(nodes.parse::<u64>().unwrap_or(0) >= 1);
 }
 
 #[test]

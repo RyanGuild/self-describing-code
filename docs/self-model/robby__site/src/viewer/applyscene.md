@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:162`](../../../../../apps/site/src/viewer.ts#L162) |
+| location | [`apps/site/src/viewer.ts:372`](../../../../../apps/site/src/viewer.ts#L372) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function applyScene(next: Scene) {
+function applyScene(next: Scene): void {
   scene = next;
   flying = false;
   window.cancelAnimationFrame(cameraRaf);
@@ -46,5 +46,6 @@ sequenceDiagram
 ## Referenced by
 
 - calls ← [`robby__site/src/viewer/main`](main.md)
+- calls ← [`robby__site/src/viewer/reloadFromDisk`](reloadfromdisk.md)
 - calls ← [`robby__site/src/viewer/setOrgMode`](setorgmode.md)
 

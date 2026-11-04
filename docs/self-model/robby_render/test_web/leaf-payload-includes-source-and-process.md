@@ -56,12 +56,13 @@ sequenceDiagram
 
 - calls → [`robby_render::test_web::demo_doc`](demo-doc.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::web::impl FrameDetail::from_node`](../web/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — symbol
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::test_web`](index.md) — demo_doc
 - calls → [`robby_render::web`](../web/index.md) — from_node
 

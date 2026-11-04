@@ -275,7 +275,8 @@ flowchart TB
   ```
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::deps`](../deps/index.md) — from_root
 - calls → [`robby_render::view::links`](../links/index.md) — for_node, is_empty, is_module_kind
@@ -301,6 +302,7 @@ flowchart TB
 - calls ← [`robby_ir::codepath::build_code_paths`](../../../robby_ir/codepath/build-code-paths.md)
 - calls ← [`robby_ir::codepath::find_entrypoints`](../../../robby_ir/codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../../../robby_ir/codepath/index.md)
+- calls ← [`robby_ir::contract::impl CoverageGate for CoverageReport::failing_gaps`](../../../robby_ir/contract/index.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../../../robby_ir/coverage/file-coverage.md)
 - calls ← [`robby_ir::coverage::impl CoverageReport::worst_first`](../../../robby_ir/coverage/index.md)
 - calls ← [`robby_ir::coverage::preview`](../../../robby_ir/coverage/preview.md)
@@ -317,6 +319,7 @@ flowchart TB
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::process`](../../render/tui/index.md)
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::sibling_graph`](../../render/tui/index.md)
 - calls ← [`robby_render::render::tui::impl TuiRenderer::show`](../../render/tui/index.md)
+- calls ← [`robby_render::runs::stage_process`](../../runs/stage-process.md)
 - calls ← [`robby_render::test_render::externals_and_comments_sections_render`](../../test_render/externals-and-comments-sections-render.md)
 - calls ← [`robby_render::test_tree::every_internal_link_resolves`](../../test_tree/every-internal-link-resolves.md)
 - calls ← [`robby_render::test_tree::modules_link_out_and_back`](../../test_tree/modules-link-out-and-back.md)
@@ -324,6 +327,7 @@ flowchart TB
 - calls ← [`robby_render::test_web::sibling_local_rects_do_not_overlap`](../../test_web/sibling-local-rects-do-not-overlap.md)
 - calls ← [`robby_render::test_web::sibling_world_rects_do_not_collapse_onto_each_other`](../../test_web/sibling-world-rects-do-not-collapse-onto-each-other.md)
 - calls ← [`robby_render::test_web::unresolved_portal_has_no_zoom_target`](../../test_web/unresolved-portal-has-no-zoom-target.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](../../test_web/write-site-emits-run-records.md)
 - calls ← [`robby_render::tree::item_children`](../../tree/item-children.md)
 - calls ← [`robby_render::tree::module_page`](../../tree/module-page.md)
 - calls ← [`robby_render::tree::page_paths`](../../tree/page-paths.md)

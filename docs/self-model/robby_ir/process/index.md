@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/lib.rs:22`](../../../../crates/robby-ir/src/lib.rs#L22) |
+| declared at | [`crates/robby-ir/src/lib.rs:23`](../../../../crates/robby-ir/src/lib.rs#L23) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 51 |
 
@@ -82,6 +82,7 @@ flowchart TB
 flowchart TB
     subgraph n_f5e61214f719e7ae["process"]
         direction TB
+        n_da37358bec483440["absorb"]
         n_e7a741a6cec5a5a8["as_str"]
         n_043f1293c7ad8c3c["default"]
         n_9aae883b9b569ac9["new"]
@@ -95,7 +96,7 @@ flowchart TB
 
 | | process | tests | robby_render |
 |---|---:|---:|---:|
-| **process** | · | | 4 |
+| **process** | · | | 2 |
 | **tests** | | · | |
 | **robby_render** | | | · |
 
@@ -139,29 +140,10 @@ flowchart TB
       /// observed; steps known statically but never seen stay dashed. Observed
       /// steps not present statically are appended, because runtime is the
       /// ground truth for what actually happened.
+      ///
+      /// Canonical implementation: [`crate::contract::Absorb`].
       pub fn absorb(&mut self, observed: &Process) {
-          for p in &observed.participants {
-              if !self.participants.iter().any(|q| q.id == p.id) {
-                  self.participants.push(p.clone());
-              }
-          }
-  
-          let mut matched = vec![false; observed.steps.len()];
-          for step in &mut self.steps {
-              if let Some(idx) = observed
-                  .steps
-                  .iter()
-                  .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
-              {
-                  step.observed = true;
-                  matched[idx] = true;
-              }
-          }
-          for (idx, step) in observed.steps.iter().enumerate() {
-              if !matched[idx] {
-                  self.steps.push(step.clone());
-              }
-          }
+          <Self as crate::contract::Absorb>::absorb(self, observed);
       }
   ```
 - `crates/robby-ir/src/process.rs:18:1` (docs, `robby_ir::process::Participant`): "One lifeline in a sequence diagram. Today a participant is a module, scope, or type. The field set is deliberately acto…"
@@ -256,6 +238,7 @@ flowchart TB
 - calls ← [`robby_extract::typescript::emit_variable`](../../robby_extract/typescript/emit-variable.md)
 - calls ← [`robby_extract::typescript::ensure_participant`](../../robby_extract/typescript/ensure-participant.md)
 - calls ← [`robby_extract::typescript::extract_file`](../../robby_extract/typescript/extract-file.md)
+- calls ← [`robby_ir::contract::absorb_trait_marks_matching_steps_observed`](../contract/tests/absorb-trait-marks-matching-steps-observed.md)
 - calls ← [`robby_ir::coverage::scan_trivia`](../coverage/scan-trivia.md)
 - calls ← [`robby_render::test_markdown::fixture`](../../robby_render/test_markdown/fixture.md)
 - calls ← [`robby_render::test_render::process`](../../robby_render/test_render/process.md)
@@ -280,7 +263,7 @@ flowchart TB
 | [`Step`](step.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:92:1` |
 | [`Process`](process.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:111:1` |
 | [`impl Process`](impl-process.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:118:1` |
-| [`impl Default for Process`](impl-default-for-process.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:181:1` |
+| [`impl Default for Process`](impl-default-for-process.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:162:1` |
 
 ## Imports
 

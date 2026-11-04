@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant run_record_serializes_recipe_string as run_record_serializes_recipe_string()
+    participant RunRecord__new as RunRecord::new
+    participant with_subject as with_subject
+    participant serde_json__to_value as serde_json::to_value
+    participant unwrap as unwrap
+    run_record_serializes_recipe_string-->>RunRecord__new: RunRecord::new('01TEST', recipes::EXTRACT, RunStatus::Pass)
+    run_record_serializes_recipe_string-->>with_subject: RunRecord::new('01TEST', recipes::EXTRACT, RunStatus::Pass) .with_sub...
+    run_record_serializes_recipe_string-->>serde_json__to_value: serde_json::to_value(&record)
+    run_record_serializes_recipe_string-->>unwrap: serde_json::to_value(&record).unwrap()
+    run_record_serializes_recipe_string-->>run_record_serializes_recipe_string: assert_eq!(json['recipe'], recipes::EXTRACT)
+    run_record_serializes_recipe_string-->>run_record_serializes_recipe_string: assert_eq!(json['status'], 'pass')
+    run_record_serializes_recipe_string-->>run_record_serializes_recipe_string: assert_eq!(json['subject'], 'rust://robby_ir')

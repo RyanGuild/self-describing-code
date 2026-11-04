@@ -191,7 +191,7 @@ flowchart TB
 
 - calls → [`robby_agent::enrich::tests`](../enrich/tests/index.md) — new
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty, location
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 

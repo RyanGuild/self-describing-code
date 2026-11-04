@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn load_sources(doc: &Document, root: &Path) -> BTreeMap<String, String>` |
-| location | [`crates/robby-render/src/pipeline.rs:58`](../../../../crates/robby-render/src/pipeline.rs#L58) |
+| location | [`crates/robby-render/src/pipeline.rs:63`](../../../../crates/robby-render/src/pipeline.rs#L63) |
 | provenance | extractor · confidence 1.00 |
 
 > Read every source file the document references.

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.module` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 21 |
+| nodes | 22 |
 
 ## Package diagram
 
@@ -39,11 +39,14 @@ flowchart TB
         n_eff1ef85ab0370f2["sibling_world_rects_do_not_collapse_onto_each_other"]
         n_707a7b55bf4d7e1f["tempfile_dir"]
         n_cc261f5078ecd444["unresolved_portal_has_no_zoom_target"]
+        n_6f6c7d107c7d9cf0["write_site_emits_run_records"]
         n_a7f44ae87911cf31["write_site_emits_scene_and_frames"]
     end
     n_0572a55b97877ef3 --> n_5d64ffe3865383a1
     n_0ccee746718d0bcc --> n_5d18d5212c5cf3a9
     n_6c39fec40a174770 --> n_5d64ffe3865383a1
+    n_6f6c7d107c7d9cf0 --> n_5d64ffe3865383a1
+    n_6f6c7d107c7d9cf0 --> n_707a7b55bf4d7e1f
     n_7f6f7186631adb12 --> n_5d18d5212c5cf3a9
     n_8a5da80d612a110c --> n_5d18d5212c5cf3a9
     n_9ca9be67b573c9bf --> n_5d64ffe3865383a1
@@ -60,7 +63,7 @@ flowchart TB
 
 | | test_web | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **test_web** | · | 43 | 56 |
+| **test_web** | · | 43 | 59 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
@@ -123,16 +126,18 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, rebuild_code_paths, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, rebuild_code_paths, symbol
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — stable_id
 - calls → [`robby_render::pipeline`](../pipeline/index.md) — from_document
 - calls → [`robby_render::report`](../report/index.md) — new, push
+- calls → [`robby_render::runs`](../runs/index.md) — to_json
 - calls → [`robby_render::test_render`](../test_render/index.md) — step
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::scene`](../view/scene/index.md) — contains, from_entrypoints
 - calls → [`robby_render::view::select`](../view/select/index.md) — collect
-- calls → [`robby_render::web`](../web/index.md) — from_node, from_node_in_doc, to_json, write_site
+- calls → [`robby_render::web`](../web/index.md) — from_node, from_node_in_doc, write_site
 
 ## Items
 
@@ -147,12 +152,13 @@ flowchart TB
 | [`sibling_world_rects_do_not_collapse_onto_each_other`](sibling-world-rects-do-not-collapse-onto-each-other.md) | `code.function` | 15 | `crates/robby-render/tests/web.rs:218:1` |
 | [`leaf_payload_includes_source_and_process`](leaf-payload-includes-source-and-process.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:244:1` |
 | [`unresolved_portal_has_no_zoom_target`](unresolved-portal-has-no-zoom-target.md) | `code.function` | 10 | `crates/robby-render/tests/web.rs:259:1` |
-| [`write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md) | `code.function` | 12 | `crates/robby-render/tests/web.rs:276:1` |
-| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:291:1` |
-| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:303:1` |
-| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:325:1` |
-| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:385:1` |
-| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:393:1` |
+| [`write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md) | `code.function` | 20 | `crates/robby-render/tests/web.rs:276:1` |
+| [`write_site_emits_run_records`](write-site-emits-run-records.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:297:1` |
+| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:328:1` |
+| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:340:1` |
+| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:362:1` |
+| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:422:1` |
+| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:430:1` |
 
 ## Imports
 

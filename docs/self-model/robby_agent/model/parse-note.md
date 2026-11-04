@@ -113,21 +113,21 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_agent::model::extract_json`](extract-json.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::span::impl Span::is_empty`](../../robby_ir/span/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../../robby_render/view/select/collect.md)
 
 ## References
 
 - calls → [`robby_agent::model`](index.md) — extract_json
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 

@@ -5,11 +5,15 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:562`](../../../../../apps/site/src/viewer.ts#L562) |
+| location | [`apps/site/src/viewer.ts:933`](../../../../../apps/site/src/viewer.ts#L933) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function appendExecution(panel: HTMLElement, mermaidSrc: string, frameId: string) {
+function appendExecution(
+  panel: HTMLElement,
+  mermaidSrc: string,
+  frameId: string,
+): void {
   const proc = document.createElement("div");
   proc.className = "process process-execution";
   const heading = document.createElement("h2");

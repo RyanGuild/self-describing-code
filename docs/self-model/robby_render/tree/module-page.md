@@ -349,7 +349,7 @@ sequenceDiagram
 - calls → [`robby_render::tree::nav`](nav.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
@@ -379,7 +379,7 @@ sequenceDiagram
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::tree::item_slugs`](item-slugs.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::tree::slice`](slice.md)
@@ -388,7 +388,7 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::render`](../render/index.md) — comments, dependency_sections, externals, types
 - calls → [`robby_render::report`](../report/index.md) — new, push, push_titled, to_markdown
 - calls → [`robby_render::test_render`](../test_render/index.md) — process

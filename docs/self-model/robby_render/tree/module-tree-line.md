@@ -58,13 +58,13 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_render::tree::module_index_path`](module-index-path.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::module_tree_line`](module-tree-line.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::tree`](index.md) — is_module, module_index_path
 
 ## Referenced by

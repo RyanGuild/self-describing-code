@@ -355,7 +355,7 @@ impl Renderer for TuiRenderer {
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::render::mermaid`](../mermaid/index.md) — dsm_markdown_table
 - calls → [`robby_render::render::tui`](index.md) — ascii_coupling, ascii_package_structure, clip, new
 - calls → [`robby_render::report`](../../report/index.md) — push
@@ -662,7 +662,7 @@ sequenceDiagram
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::render::tui::clip`](clip.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
@@ -1273,9 +1273,9 @@ sequenceDiagram
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 
 ### `source`

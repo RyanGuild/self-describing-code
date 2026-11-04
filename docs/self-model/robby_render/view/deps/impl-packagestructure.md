@@ -107,7 +107,8 @@ impl PackageStructure {
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::util`](../../util/index.md) — is_container
 - calls → [`robby_render::view::deps`](index.md) — build_package_tree, is_under_fqn, package_edges, package_leaf
@@ -206,7 +207,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::is_container`](../../util/is-container.md)
 - calls → [`robby_render::view::deps::is_under_fqn`](is-under-fqn.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)

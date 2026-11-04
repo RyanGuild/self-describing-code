@@ -63,7 +63,8 @@ impl ExternalsView {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::externals`](index.md) — import_spec, is_external_package, owning_container_fqn
 - calls → [`robby_render::view::scene`](../scene/index.md) — new
@@ -190,7 +191,7 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::externals::import_spec`](import-spec.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::externals::is_external_package`](is-external-package.md)
 - calls → [`robby_render::view::externals::owning_container_fqn`](owning-container-fqn.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)

@@ -64,7 +64,7 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-render/src/pipeline.rs:105:1` (docs, `robby_render::pipeline::render_files`): "Write one `.mmd` file per process and per root graph."
+- `crates/robby-render/src/pipeline.rs:110:1` (docs, `robby_render::pipeline::render_files`): "Write one `.mmd` file per process and per root graph."
   ```
   /// Write one `.mmd` file per process and per root graph.
   pub fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize> {
@@ -87,7 +87,7 @@ flowchart TB
       Ok(count)
   }
   ```
-- `crates/robby-render/src/pipeline.rs:126:1` (docs, `robby_render::pipeline::write_document`): "Write the IR document itself as a committed artifact."
+- `crates/robby-render/src/pipeline.rs:131:1` (docs, `robby_render::pipeline::write_document`): "Write the IR document itself as a committed artifact."
   ```
   /// Write the IR document itself as a committed artifact.
   pub fn write_document(doc: &Document, out: &Path) -> Result<()> {
@@ -98,7 +98,7 @@ flowchart TB
       Ok(())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:135:1` (docs, `robby_render::pipeline::write_report`): "Render the self-model as a linked tree of Markdown pages. Returns the number of pages written. Stale pages are removed …"
+- `crates/robby-render/src/pipeline.rs:140:1` (docs, `robby_render::pipeline::write_report`): "Render the self-model as a linked tree of Markdown pages. Returns the number of pages written. Stale pages are removed …"
   ```
   /// Render the self-model as a linked tree of Markdown pages.
   ///
@@ -132,19 +132,7 @@ flowchart TB
       Ok(pages.len())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:15:1` (docs, `robby_render::pipeline::Loaded`): "A document plus everything derived from it."
-  ```
-  /// A document plus everything derived from it.
-  pub struct Loaded {
-      pub document: Document,
-      pub sources: BTreeMap<String, String>,
-      pub coverage: CoverageReport,
-      pub diagnostics: Vec<Diagnostic>,
-      /// Workspace root the source paths are relative to.
-      pub root: PathBuf,
-  }
-  ```
-- `crates/robby-render/src/pipeline.rs:167:1` (docs, `robby_render::pipeline::remove_markdown`): "Delete generated Markdown so removed modules do not linger."
+- `crates/robby-render/src/pipeline.rs:172:1` (docs, `robby_render::pipeline::remove_markdown`): "Delete generated Markdown so removed modules do not linger."
   ```
   /// Delete generated Markdown so removed modules do not linger.
   fn remove_markdown(dir: &Path) -> std::io::Result<()> {
@@ -164,25 +152,40 @@ flowchart TB
       Ok(())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:185:1` (docs, `robby_render::pipeline::watched_files`): "Files whose change must invalidate a cached build."
+- `crates/robby-render/src/pipeline.rs:17:1` (docs, `robby_render::pipeline::Loaded`): "A document plus everything derived from it. This is the checked snapshot between extract and render: coverage and struc…"
+  ```
+  /// A document plus everything derived from it.
+  ///
+  /// This is the checked snapshot between extract and render: coverage and
+  /// structural diagnostics are always computed here so write paths share one gate.
+  pub struct Loaded {
+      pub document: Document,
+      pub sources: BTreeMap<String, String>,
+      pub coverage: CoverageReport,
+      pub diagnostics: Vec<Diagnostic>,
+      /// Workspace root the source paths are relative to.
+      pub root: PathBuf,
+  }
+  ```
+- `crates/robby-render/src/pipeline.rs:190:1` (docs, `robby_render::pipeline::watched_files`): "Files whose change must invalidate a cached build."
   ```
   /// Files whose change must invalidate a cached build.
   pub fn watched_files(loaded: &Loaded) -> Vec<PathBuf> {
       loaded.sources.keys().map(PathBuf::from).collect::<Vec<_>>()
   }
   ```
-- `crates/robby-render/src/pipeline.rs:26:5` (docs, `robby_render::pipeline::impl Loaded::is_ok`): "True when the coverage gate passes and there are no error diagnostics."
+- `crates/robby-render/src/pipeline.rs:31:5` (docs, `robby_render::pipeline::impl Loaded::is_ok`): "True when the coverage gate passes and there are no error diagnostics."
   ```
   /// True when the coverage gate passes and there are no error diagnostics.
       pub fn is_ok(&self) -> bool {
-          self.coverage.is_complete()
+          CoverageGate::passes(&self.coverage)
               && !self
                   .diagnostics
                   .iter()
                   .any(|d| d.severity == Severity::Error)
       }
   ```
-- `crates/robby-render/src/pipeline.rs:35:5` (docs, `robby_render::pipeline::impl Loaded::summary`): "One-line summary for build output and CI logs."
+- `crates/robby-render/src/pipeline.rs:40:5` (docs, `robby_render::pipeline::impl Loaded::summary`): "One-line summary for build output and CI logs."
   ```
   /// One-line summary for build output and CI logs.
       pub fn summary(&self) -> String {
@@ -200,7 +203,7 @@ flowchart TB
           )
       }
   ```
-- `crates/robby-render/src/pipeline.rs:52:1` (docs, `robby_render::pipeline::load_document`): "Read and parse an IR document."
+- `crates/robby-render/src/pipeline.rs:57:1` (docs, `robby_render::pipeline::load_document`): "Read and parse an IR document."
   ```
   /// Read and parse an IR document.
   pub fn load_document(path: &Path) -> Result<Document> {
@@ -208,7 +211,7 @@ flowchart TB
       Ok(serde_json::from_str(&text)?)
   }
   ```
-- `crates/robby-render/src/pipeline.rs:58:1` (docs, `robby_render::pipeline::load_sources`): "Read every source file the document references. A missing file is not an error here: the coverage report will show it a…"
+- `crates/robby-render/src/pipeline.rs:63:1` (docs, `robby_render::pipeline::load_sources`): "Read every source file the document references. A missing file is not an error here: the coverage report will show it a…"
   ```
   /// Read every source file the document references.
   ///
@@ -234,7 +237,7 @@ flowchart TB
       sources
   }
   ```
-- `crates/robby-render/src/pipeline.rs:82:1` (docs, `robby_render::pipeline::load`): "Load a document and everything derived from it."
+- `crates/robby-render/src/pipeline.rs:87:1` (docs, `robby_render::pipeline::load`): "Load a document and everything derived from it."
   ```
   /// Load a document and everything derived from it.
   pub fn load(ir: &Path, root: &Path) -> Result<Loaded> {
@@ -242,7 +245,7 @@ flowchart TB
       Ok(from_document(document, root))
   }
   ```
-- `crates/robby-render/src/pipeline.rs:88:1` (docs, `robby_render::pipeline::from_document`): "Compute everything derived from an in-memory document."
+- `crates/robby-render/src/pipeline.rs:93:1` (docs, `robby_render::pipeline::from_document`): "Compute everything derived from an in-memory document."
   ```
   /// Compute everything derived from an in-memory document.
   pub fn from_document(mut document: Document, root: &Path) -> Loaded {
@@ -263,7 +266,8 @@ flowchart TB
   ```
 ## References
 
-- calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — all_spans, document_coverage, is_complete
+- calls → [`robby_ir::contract`](../../robby_ir/contract/index.md) — passes
+- calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — all_spans, document_coverage
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, rebuild_code_paths, validate
 - calls → [`robby_render`](../index.md) — all_sequences, flowchart, stable_id
 - calls → [`robby_render::report`](../report/index.md) — new, push
@@ -281,7 +285,7 @@ flowchart TB
 - calls ← [`robby_cli::report`](../../robby_cli/report.md)
 - calls ← [`robby_cli::run`](../../robby_cli/run.md)
 - calls ← [`robby_cli::show`](../../robby_cli/show.md)
-- calls ← [`robby_cli::web`](../../robby_cli/web.md)
+- calls ← [`robby_cli::write_web`](../../robby_cli/write-web.md)
 - calls ← [`robby_render::test_web::child_world_rects_lie_inside_parent_world`](../test_web/child-world-rects-lie-inside-parent-world.md)
 - calls ← [`robby_render::test_web::every_child_and_resolved_portal_is_a_frame`](../test_web/every-child-and-resolved-portal-is-a-frame.md)
 - calls ← [`robby_render::test_web::scene_json_is_byte_identical_across_runs`](../test_web/scene-json-is-byte-identical-across-runs.md)
@@ -294,18 +298,18 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`Loaded`](loaded.md) | `code.struct` | — | `crates/robby-render/src/pipeline.rs:15:1` |
-| [`impl Loaded`](impl-loaded.md) | `code.impl` | — | `crates/robby-render/src/pipeline.rs:25:1` |
-| [`load_document`](load-document.md) | `code.function` | 5 | `crates/robby-render/src/pipeline.rs:52:1` |
-| [`load_sources`](load-sources.md) | `code.function` | 10 | `crates/robby-render/src/pipeline.rs:58:1` |
-| [`load`](load.md) | `code.function` | 4 | `crates/robby-render/src/pipeline.rs:82:1` |
-| [`from_document`](from-document.md) | `code.function` | 5 | `crates/robby-render/src/pipeline.rs:88:1` |
-| [`render_files`](render-files.md) | `code.function` | 13 | `crates/robby-render/src/pipeline.rs:105:1` |
-| [`write_document`](write-document.md) | `code.function` | 8 | `crates/robby-render/src/pipeline.rs:126:1` |
-| [`write_report`](write-report.md) | `code.function` | 19 | `crates/robby-render/src/pipeline.rs:135:1` |
-| [`remove_markdown`](remove-markdown.md) | `code.function` | 16 | `crates/robby-render/src/pipeline.rs:167:1` |
-| [`watched_files`](watched-files.md) | `code.function` | 3 | `crates/robby-render/src/pipeline.rs:185:1` |
-| [`slug`](slug.md) | `code.function` | 12 | `crates/robby-render/src/pipeline.rs:190:1` |
+| [`Loaded`](loaded.md) | `code.struct` | — | `crates/robby-render/src/pipeline.rs:17:1` |
+| [`impl Loaded`](impl-loaded.md) | `code.impl` | — | `crates/robby-render/src/pipeline.rs:30:1` |
+| [`load_document`](load-document.md) | `code.function` | 5 | `crates/robby-render/src/pipeline.rs:57:1` |
+| [`load_sources`](load-sources.md) | `code.function` | 10 | `crates/robby-render/src/pipeline.rs:63:1` |
+| [`load`](load.md) | `code.function` | 4 | `crates/robby-render/src/pipeline.rs:87:1` |
+| [`from_document`](from-document.md) | `code.function` | 5 | `crates/robby-render/src/pipeline.rs:93:1` |
+| [`render_files`](render-files.md) | `code.function` | 13 | `crates/robby-render/src/pipeline.rs:110:1` |
+| [`write_document`](write-document.md) | `code.function` | 8 | `crates/robby-render/src/pipeline.rs:131:1` |
+| [`write_report`](write-report.md) | `code.function` | 19 | `crates/robby-render/src/pipeline.rs:140:1` |
+| [`remove_markdown`](remove-markdown.md) | `code.function` | 16 | `crates/robby-render/src/pipeline.rs:172:1` |
+| [`watched_files`](watched-files.md) | `code.function` | 3 | `crates/robby-render/src/pipeline.rs:190:1` |
+| [`slug`](slug.md) | `code.function` | 12 | `crates/robby-render/src/pipeline.rs:195:1` |
 
 ## Imports
 
@@ -313,5 +317,5 @@ flowchart TB
 - `use std::fs;`
 - `use std::path::{Path, PathBuf};`
 - `use anyhow::Result;`
-- [`use robby_ir::{CoverageReport, Diagnostic, Document, Severity, coverage, validate};`](../../robby_ir/index.md)
+- [`use robby_ir::{`](../../robby_ir/index.md)
 

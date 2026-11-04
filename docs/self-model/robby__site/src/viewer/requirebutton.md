@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:628`](../../../../../apps/site/src/viewer.ts#L628) |
+| location | [`apps/site/src/viewer.ts:1007`](../../../../../apps/site/src/viewer.ts#L1007) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function requireButton(id: string) {
+function requireButton(id: string): HTMLButtonElement {
   const el = document.getElementById(id);
   if (!(el instanceof HTMLButtonElement)) {
     throw new Error(`missing button #${id}`);

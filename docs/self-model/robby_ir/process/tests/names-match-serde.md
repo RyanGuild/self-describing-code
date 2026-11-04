@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn names_match_serde()` |
-| location | [`crates/robby-ir/src/process.rs:199`](../../../../../crates/robby-ir/src/process.rs#L199) |
+| location | [`crates/robby-ir/src/process.rs:180`](../../../../../crates/robby-ir/src/process.rs#L180) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

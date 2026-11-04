@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:455`](../../../../../apps/site/src/viewer.ts#L455) |
+| location | [`apps/site/src/viewer.ts:823`](../../../../../apps/site/src/viewer.ts#L823) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function updateChrome() {
+function updateChrome(): void {
   crumbEl.textContent = ancestors(focusId)
     .map((id) => frame(id).name)
     .join(" / ");

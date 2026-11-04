@@ -53,8 +53,9 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, symbol
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — 6 items
 - calls → [`robby_render::markdown`](../markdown/index.md) — report
 - calls → [`robby_render::render`](../render/index.md) — comments, externals

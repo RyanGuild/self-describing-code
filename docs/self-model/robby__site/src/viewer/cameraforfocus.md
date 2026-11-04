@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:197`](../../../../../apps/site/src/viewer.ts#L197) |
+| location | [`apps/site/src/viewer.ts:554`](../../../../../apps/site/src/viewer.ts#L554) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function cameraForFocus(id: string) {
+function cameraForFocus(id: string): Camera {
   const f = frame(id);
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -50,4 +50,5 @@ sequenceDiagram
 
 - calls ← [`robby__site/src/viewer/applyScene`](applyscene.md)
 - calls ← [`robby__site/src/viewer/flyTo`](flyto.md)
+- calls ← [`robby__site/src/viewer/reloadFromDisk`](reloadfromdisk.md)
 

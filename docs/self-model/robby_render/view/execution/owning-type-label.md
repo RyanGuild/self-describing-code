@@ -88,7 +88,7 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../links/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../links/index.md)
@@ -96,7 +96,7 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::links`](../links/index.md) — is_empty
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains

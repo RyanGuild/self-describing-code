@@ -62,11 +62,12 @@ flowchart TB
 
 | | openrouter | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **openrouter** | · | 1 | 3 |
+| **openrouter** | · | 2 | 3 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 ## References
 
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — is_success
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_render::util`](../../robby_render/util/index.md) — text
 - calls → [`robby_render::view::hierarchy`](../../robby_render/view/hierarchy/index.md) — build

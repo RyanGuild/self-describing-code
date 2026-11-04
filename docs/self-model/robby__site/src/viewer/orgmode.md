@@ -5,10 +5,10 @@
 | | |
 |---|---|
 | kind | `code.type_alias` |
-| location | [`apps/site/src/viewer.ts:80`](../../../../../apps/site/src/viewer.ts#L80) |
+| location | [`apps/site/src/viewer.ts:103`](../../../../../apps/site/src/viewer.ts#L103) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-type OrgMode = keyof typeof ORG_MODES;
+type OrgMode = SceneOrgMode | "runs";
 ```
 

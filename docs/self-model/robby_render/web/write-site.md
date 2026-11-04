@@ -63,6 +63,23 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
         }
     }
 
+    // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
+    let rebuilt_at = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as u64)
+        .unwrap_or(0);
+    let build = serde_json::json!({
+        "rebuilt_at": rebuilt_at,
+        "frames": count,
+        "nodes": doc.nodes.len(),
+        "files": doc.files.len(),
+        "generator": doc.generator,
+    });
+    fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+
+    // Completed pipeline history for Runs mode (synthetic extract + this web build).
+    crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
+
     Ok(count)
 }
 ```
@@ -87,6 +104,13 @@ sequenceDiagram
     participant get as get
     participant Some as Some
     participant FrameDetail__from_node_in_doc as FrameDetail::from_node_in_doc
+    participant std__time__SystemTime__now as std::time::SystemTime::now
+    participant duration_since as duration_since
+    participant as_millis as as_millis
+    participant map as map
+    participant unwrap_or as unwrap_or
+    participant serde_json__to_string_pretty as serde_json::to_string_pretty
+    participant crate__runs__write_site_runs as crate::runs::write_site_runs
     participant Ok as Ok
     write_site-->>fs__create_dir_all: fs::create_dir_all(out)
     write_site-->>write_site: ? (propagate)
@@ -129,10 +153,23 @@ sequenceDiagram
     write_site-->>write_site: ? (propagate)
     end
     end
+    write_site-->>std__time__SystemTime__now: std::time::SystemTime::now()
+    write_site-->>duration_since: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH)
+    write_site-->>as_millis: d.as_millis()
+    write_site-->>map: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH) ....
+    write_site-->>unwrap_or: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH) ....
+    write_site-->>write_site: serde_json::json!({ 'rebuilt_at': rebuilt_at, 'frames': count, 'nodes...
+    write_site-->>join: out.join('build.json')
+    write_site-->>serde_json__to_string_pretty: serde_json::to_string_pretty(&build)
+    write_site-->>write_site: ? (propagate)
+    write_site-->>fs__write: fs::write(out.join('build.json'), serde_json::to_string_pretty(&build)?)
+    write_site-->>write_site: ? (propagate)
+    write_site-->>crate__runs__write_site_runs: crate::runs::write_site_runs(doc, out, count, rebuilt_at)
+    write_site-->>write_site: ? (propagate)
     write_site-->>Ok: Ok(count)
 ```
 
-38 steps · 0 observed · 38 possible only
+51 steps · 0 observed · 51 possible only
 
 **Edges**
 
@@ -147,22 +184,26 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::web::impl FrameDetail::from_node_in_doc`](index.md)
 - calls → [`robby_render::web::impl FrameDetail::to_json`](index.md)
+- calls → [`robby_render::runs::write_site_runs`](../runs/write-site-runs.md)
 
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::pipeline`](../pipeline/index.md) — from_document
 - calls → [`robby_render::report`](../report/index.md) — new
+- calls → [`robby_render::runs`](../runs/index.md) — write_site_runs
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::scene`](../view/scene/index.md) — from_entrypoints
 - calls → [`robby_render::web`](index.md) — for_workspace, from_node_in_doc, to_json
 
 ## Referenced by
 
-- calls ← [`robby_cli::web`](../../robby_cli/web.md)
+- calls ← [`robby_cli::write_web`](../../robby_cli/write-web.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](../test_web/write-site-emits-run-records.md)
 - calls ← [`robby_render::test_web::write_site_emits_scene_and_frames`](../test_web/write-site-emits-scene-and-frames.md)
 

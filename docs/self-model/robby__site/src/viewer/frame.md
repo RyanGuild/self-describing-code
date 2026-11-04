@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:179`](../../../../../apps/site/src/viewer.ts#L179) |
+| location | [`apps/site/src/viewer.ts:536`](../../../../../apps/site/src/viewer.ts#L536) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function frame(id: string) {
+function frame(id: string): SceneFrame {
   const f = currentScene().frames[id];
   if (!f) {
     throw new Error(`missing frame ${id}`);
@@ -41,6 +41,7 @@ sequenceDiagram
 
 - calls ← [`robby__site/src/viewer/ancestors`](ancestors.md)
 - calls ← [`robby__site/src/viewer/cameraForFocus`](cameraforfocus.md)
+- calls ← [`robby__site/src/viewer/frameSafeParent`](framesafeparent.md)
 - calls ← [`robby__site/src/viewer/loadDetail`](loaddetail.md)
 - calls ← [`robby__site/src/viewer/makeFrameEl`](makeframeel.md)
 - calls ← [`robby__site/src/viewer/placeAllFrames`](placeallframes.md)

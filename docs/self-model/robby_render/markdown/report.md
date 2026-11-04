@@ -190,7 +190,7 @@ sequenceDiagram
 - calls → [`robby_render::markdown::coverage_section`](coverage-section.md)
 - calls → [`robby_render::report::impl Report::push_body`](../report/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 - calls → [`robby_render::test_render::process`](../test_render/process.md)
 - calls → [`robby_render::report::impl Report::push_titled`](../report/index.md)
@@ -211,7 +211,8 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, subtree
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — subtree
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::markdown`](index.md) — coverage_section, node_section
 - calls → [`robby_render::render`](../render/index.md) — comments, dependency_sections, externals, types
 - calls → [`robby_render::report`](../report/index.md) — new, push_body, push_titled, to_markdown

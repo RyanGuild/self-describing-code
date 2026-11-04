@@ -236,9 +236,9 @@ sequenceDiagram
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](../tui/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
@@ -252,7 +252,8 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::render::tui`](../tui/index.md) — new
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](../../view/comments/index.md) — as_str

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn show(     path: Option<&str>,     ir: Option<&std::path::Path>,     source_root: &std::path::Path,     depth: usize,     width: usize,     all: bool,     view: ViewKind,     no_source: bool, ) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:386`](../../../crates/robby-cli/src/main.rs#L386) |
+| location | [`crates/robby-cli/src/main.rs:413`](../../../crates/robby-cli/src/main.rs#L413) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -21,7 +21,7 @@ fn show(
     view: ViewKind,
     no_source: bool,
 ) -> Result<ExitCode> {
-    let ir = ir.map_or_else(default_ir, PathBuf::from);
+    let ir = ir.map(PathBuf::from).unwrap_or_else(default_ir);
     if !ir.exists() {
         bail!(
             "{} does not exist; run `cargo run -p robby-cli -- extract --out {}` first",
@@ -66,12 +66,14 @@ fn show(
 sequenceDiagram
     autonumber
     participant show as show()
-    participant map_or_else as map_or_else
+    participant map as map
+    participant unwrap_or_else as unwrap_or_else
     participant exists as exists
     participant pipeline__load as pipeline::load
     participant resolve as resolve
     participant Ok as Ok
-    show-->>map_or_else: ir.map_or_else(default_ir, PathBuf::from)
+    show-->>map: ir.map(PathBuf::from)
+    show-->>unwrap_or_else: ir.map(PathBuf::from).unwrap_or_else(default_ir)
     show-->>exists: ir.exists()
     alt !ir.exists()
     show-->>show: bail!( '{} does not exist run `cargo run -p robby-cli -- extract --o...
@@ -98,7 +100,7 @@ sequenceDiagram
     show-->>Ok: Ok(ExitCode::SUCCESS)
 ```
 
-20 steps · 0 observed · 20 possible only
+21 steps · 0 observed · 21 possible only
 
 **Edges**
 

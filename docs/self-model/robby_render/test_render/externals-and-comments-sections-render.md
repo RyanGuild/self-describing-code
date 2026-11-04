@@ -391,7 +391,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::render::Renderer::externals`](../render/index.md)
 - calls → [`robby_render::render::Renderer::comments`](../render/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::impl SelectOpts::markdown`](../view/select/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 - calls → [`robby_render::markdown::report`](../markdown/report.md)
@@ -399,7 +399,8 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, symbol
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::markdown`](../markdown/index.md) — report
 - calls → [`robby_render::render`](../render/index.md) — comments, externals
 - calls → [`robby_render::report`](../report/index.md) — new, push, to_markdown

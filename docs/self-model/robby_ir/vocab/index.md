@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/lib.rs:24`](../../../../crates/robby-ir/src/lib.rs#L24) |
+| declared at | [`crates/robby-ir/src/lib.rs:26`](../../../../crates/robby-ir/src/lib.rs#L26) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 23 |
 
@@ -84,14 +84,6 @@ flowchart TB
       pub end: u32,
   }
   ```
-## Referenced by
-
-- calls ← [`robby_cli::example_self_model::run`](../../robby_cli/example_self_model/run.md)
-- calls ← [`robby_cli::run`](../../robby_cli/run.md)
-- calls ← [`robby_extract::typescript::extract_file`](../../robby_extract/typescript/extract-file.md)
-- calls ← [`robby_render::view::comments::enrichment_fields`](../../robby_render/view/comments/enrichment-fields.md)
-- calls ← [`robby_render::view::comments::parse_verdict`](../../robby_render/view/comments/parse-verdict.md)
-
 ## Modules
 
 - [`vocab::tests`](tests/index.md) — 4 nodes

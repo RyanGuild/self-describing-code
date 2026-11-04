@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn main() -> ExitCode` |
-| location | [`crates/robby-cli/src/main.rs:143`](../../../crates/robby-cli/src/main.rs#L143) |
+| location | [`crates/robby-cli/src/main.rs:149`](../../../crates/robby-cli/src/main.rs#L149) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

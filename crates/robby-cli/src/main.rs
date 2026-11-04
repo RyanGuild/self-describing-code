@@ -124,6 +124,12 @@ enum Command {
         /// Directory for `scene.json` and `frames/` (default: `apps/site/public`).
         #[arg(long, default_value = "apps/site/public")]
         out: PathBuf,
+        /// Rebuild when `--ir` changes; keep watching until Ctrl-C.
+        #[arg(long)]
+        watch: bool,
+        /// Poll interval for `--watch` (milliseconds).
+        #[arg(long, default_value_t = 750)]
+        watch_interval_ms: u64,
     },
 }
 
@@ -210,19 +216,14 @@ fn run() -> Result<ExitCode> {
             decision_model,
             note_model,
             limit,
-        } => enrich_comments(
-            &ir,
-            &source_root,
-            out.as_deref(),
-            decision_model,
-            note_model,
-            limit,
-        ),
+        } => enrich_comments(&ir, &source_root, out.as_deref(), decision_model, note_model, limit),
         Command::Web {
             ir,
             source_root,
             out,
-        } => web(&ir, &source_root, &out),
+            watch,
+            watch_interval_ms,
+        } => web(&ir, &source_root, &out, watch, watch_interval_ms),
     }
 }
 
@@ -230,14 +231,48 @@ fn web(
     ir: &std::path::Path,
     source_root: &std::path::Path,
     out: &std::path::Path,
+    watch: bool,
+    watch_interval_ms: u64,
 ) -> Result<ExitCode> {
-    let loaded = pipeline::load(ir, source_root)?;
-    let count = robby_render::write_site(&loaded.document, &loaded.sources, out)?;
+    let count = write_web(ir, source_root, out)?;
     println!(
         "wrote {count} frame(s) to {}\nserve with: cd apps/site && npm install && npm run dev",
         out.display()
     );
-    Ok(ExitCode::SUCCESS)
+    if !watch {
+        return Ok(ExitCode::SUCCESS);
+    }
+
+    let mut last_mtime = ir_mtime(ir);
+    println!(
+        "watching {} every {watch_interval_ms}ms (Ctrl-C to stop)",
+        ir.display()
+    );
+    loop {
+        std::thread::sleep(std::time::Duration::from_millis(watch_interval_ms));
+        let mtime = ir_mtime(ir);
+        if mtime == last_mtime {
+            continue;
+        }
+        last_mtime = mtime;
+        match write_web(ir, source_root, out) {
+            Ok(count) => println!("rebuilt {count} frame(s) → {}", out.display()),
+            Err(err) => eprintln!("watch rebuild failed: {err:#}"),
+        }
+    }
+}
+
+fn write_web(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    out: &std::path::Path,
+) -> Result<usize> {
+    let loaded = pipeline::load(ir, source_root)?;
+    robby_render::write_site(&loaded.document, &loaded.sources, out)
+}
+
+fn ir_mtime(ir: &std::path::Path) -> Option<std::time::SystemTime> {
+    std::fs::metadata(ir).and_then(|m| m.modified()).ok()
 }
 
 fn enrich_comments(
@@ -259,17 +294,12 @@ fn enrich_comments(
     }
     opts.limit = limit;
 
-    let stats =
-        robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
+    let stats = robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
     let out_path = out.unwrap_or(ir);
     pipeline::write_document(&loaded.document, out_path)?;
     println!(
         "enriched {} comment(s): {} relevant, {} noise, {} noted → {}",
-        stats.decided,
-        stats.relevant,
-        stats.noise,
-        stats.noted,
-        out_path.display()
+        stats.decided, stats.relevant, stats.noise, stats.noted, out_path.display()
     );
     Ok(ExitCode::SUCCESS)
 }
@@ -303,10 +333,7 @@ fn print_human(loaded: &pipeline::Loaded) {
             Severity::Info => "info ",
         };
         match &diagnostic.node {
-            Some(node) => println!(
-                "{tag} [{}] {} ({})",
-                diagnostic.code, diagnostic.message, node
-            ),
+            Some(node) => println!("{tag} [{}] {} ({})", diagnostic.code, diagnostic.message, node),
             None => println!("{tag} [{}] {}", diagnostic.code, diagnostic.message),
         }
     }
@@ -394,7 +421,7 @@ fn show(
     view: ViewKind,
     no_source: bool,
 ) -> Result<ExitCode> {
-    let ir = ir.map_or_else(default_ir, PathBuf::from);
+    let ir = ir.map(PathBuf::from).unwrap_or_else(default_ir);
     if !ir.exists() {
         bail!(
             "{} does not exist; run `cargo run -p robby-cli -- extract --out {}` first",

@@ -113,7 +113,8 @@ impl CommentsView {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](index.md) — 6 items
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains, new
@@ -330,7 +331,7 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](index.md)
 - calls → [`robby_render::view::comments::impl CommentsView::is_empty`](index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::comments::decision_child`](decision-child.md)
 - calls → [`robby_render::view::comments::nearest_following_item`](nearest-following-item.md)

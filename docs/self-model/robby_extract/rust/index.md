@@ -314,8 +314,9 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str, from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 6 items
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 5 items
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_ir::test_coverage`](../../robby_ir/test_coverage/index.md) — span
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push

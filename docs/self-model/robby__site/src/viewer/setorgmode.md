@@ -5,12 +5,19 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:141`](../../../../../apps/site/src/viewer.ts#L141) |
+| location | [`apps/site/src/viewer.ts:346`](../../../../../apps/site/src/viewer.ts#L346) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-async function setOrgMode(next: OrgMode) {
+async function setOrgMode(next: OrgMode): Promise<void> {
   if (next === orgMode || flying) {
+    return;
+  }
+  if (next === "runs") {
+    await prefetchRuns();
+    orgMode = "runs";
+    syncOrgChrome("runs");
+    showRunsPanel();
     return;
   }
   let cached = sceneCache.get(next);
@@ -24,9 +31,7 @@ async function setOrgMode(next: OrgMode) {
     }
   }
   orgMode = next;
-  orgStructureBtn.classList.toggle("is-active", next === "structure");
-  orgEntrypointsBtn.classList.toggle("is-active", next === "entrypoints");
-  hintEl.textContent = ORG_MODES[next].hint;
+  syncOrgChrome(next);
   applyScene(cached);
 }
 ```
@@ -35,11 +40,18 @@ async function setOrgMode(next: OrgMode) {
 sequenceDiagram
     autonumber
     participant setOrgMode as setOrgMode()
+    participant prefetchRuns as prefetchRuns
+    participant syncOrgChrome as syncOrgChrome
+    participant showRunsPanel as showRunsPanel
     participant get as get
     participant prefetchEntrypoints as prefetchEntrypoints
-    participant toggle as toggle
     participant applyScene as applyScene
     alt if
+    return-->>caller: 
+    self-->>prefetchRuns: 
+    self-->>await: 
+    self-->>syncOrgChrome: 
+    self-->>showRunsPanel: 
     return-->>caller: 
     end
     self-->>get: 
@@ -51,19 +63,22 @@ sequenceDiagram
     return-->>caller: 
     end
     end
-    self-->>toggle: 
-    self-->>toggle: 
+    self-->>syncOrgChrome: 
     self-->>applyScene: 
 ```
 
-9 steps · 0 observed · 9 possible only
+13 steps · 0 observed · 13 possible only
 
 **Edges**
 
+- calls → [`robby__site/src/viewer/prefetchRuns`](prefetchruns.md)
+- calls → [`robby__site/src/viewer/syncOrgChrome`](syncorgchrome.md)
+- calls → [`robby__site/src/viewer/showRunsPanel`](showrunspanel.md)
 - calls → [`robby__site/src/viewer/prefetchEntrypoints`](prefetchentrypoints.md)
+- calls → [`robby__site/src/viewer/syncOrgChrome`](syncorgchrome.md)
 - calls → [`robby__site/src/viewer/applyScene`](applyscene.md)
 
 ## References
 
-- calls → [`robby__site/src/viewer`](index.md) — applyScene, prefetchEntrypoints
+- calls → [`robby__site/src/viewer`](index.md) — 5 items
 

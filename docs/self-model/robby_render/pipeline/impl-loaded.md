@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/pipeline.rs:25`](../../../../crates/robby-render/src/pipeline.rs#L25) |
+| location | [`crates/robby-render/src/pipeline.rs:30`](../../../../crates/robby-render/src/pipeline.rs#L30) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 impl Loaded {
     /// True when the coverage gate passes and there are no error diagnostics.
     pub fn is_ok(&self) -> bool {
-        self.coverage.is_complete()
+        CoverageGate::passes(&self.coverage)
             && !self
                 .diagnostics
                 .iter()
@@ -39,7 +39,7 @@ impl Loaded {
 
 ## References
 
-- calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — is_complete
+- calls → [`robby_ir::contract`](../../robby_ir/contract/index.md) — passes
 
 ## Referenced by
 
@@ -54,7 +54,7 @@ impl Loaded {
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_ok(1)` |
-| location | [`crates/robby-render/src/pipeline.rs:26`](../../../../crates/robby-render/src/pipeline.rs#L26) |
+| location | [`crates/robby-render/src/pipeline.rs:31`](../../../../crates/robby-render/src/pipeline.rs#L31) |
 | provenance | extractor · confidence 1.00 |
 
 > True when the coverage gate passes and there are no error diagnostics.
@@ -62,7 +62,7 @@ impl Loaded {
 ```rust
 /// True when the coverage gate passes and there are no error diagnostics.
     pub fn is_ok(&self) -> bool {
-        self.coverage.is_complete()
+        CoverageGate::passes(&self.coverage)
             && !self
                 .diagnostics
                 .iter()
@@ -74,10 +74,10 @@ impl Loaded {
 sequenceDiagram
     autonumber
     participant is_ok as is_ok()
-    participant is_complete as is_complete
+    participant CoverageGate__passes as CoverageGate::passes
     participant iter as iter
     participant any as any
-    is_ok-->>is_complete: self.coverage.is_complete()
+    is_ok-->>CoverageGate__passes: CoverageGate::passes(&self.coverage)
     is_ok-->>iter: self .diagnostics .iter()
     is_ok-->>any: self .diagnostics .iter() .any(|d| d.severity == Severity::Error)
 ```
@@ -86,7 +86,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::coverage::impl FileCoverage::is_complete`](../../robby_ir/coverage/index.md)
+- calls → [`robby_ir::contract::CoverageGate::passes`](../../robby_ir/contract/index.md)
 
 ### `summary`
 
@@ -94,7 +94,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn summary(1)` |
-| location | [`crates/robby-render/src/pipeline.rs:35`](../../../../crates/robby-render/src/pipeline.rs#L35) |
+| location | [`crates/robby-render/src/pipeline.rs:40`](../../../../crates/robby-render/src/pipeline.rs#L40) |
 | provenance | extractor · confidence 1.00 |
 
 > One-line summary for build output and CI logs.

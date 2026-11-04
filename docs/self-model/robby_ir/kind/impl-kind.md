@@ -59,6 +59,8 @@ impl Kind {
 - calls ← [`robby_ir::codepath::find_entrypoints`](../codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../codepath/index.md)
 - calls ← [`robby_ir::codepath::sample_doc`](../codepath/tests/sample-doc.md)
+- calls ← [`robby_ir::contract::absorb_trait_marks_matching_steps_observed`](../contract/tests/absorb-trait-marks-matching-steps-observed.md)
+- calls ← [`robby_ir::contract::kind_namespace_helpers`](../contract/tests/kind-namespace-helpers.md)
 - calls ← [`robby_ir::coverage::all_spans`](../coverage/all-spans.md)
 - calls ← [`robby_ir::coverage::document_coverage`](../coverage/document-coverage.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)

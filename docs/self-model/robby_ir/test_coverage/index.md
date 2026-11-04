@@ -54,7 +54,8 @@ flowchart TB
 
 - calls → [`robby_ir::coverage`](../coverage/index.md) — 5 items
 - calls → [`robby_ir::kind`](../kind/index.md) — as_str, from, new
-- calls → [`robby_ir::model`](../model/index.md) — get, insert, symbol, with_lang
+- calls → [`robby_ir::model`](../model/index.md) — insert, symbol, with_lang
+- calls → [`robby_ir::run`](../run/index.md) — get
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 
 ## Referenced by

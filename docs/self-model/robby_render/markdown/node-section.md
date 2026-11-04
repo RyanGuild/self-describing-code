@@ -194,18 +194,18 @@ sequenceDiagram
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::sequence`](../sequence.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — sequence
 - calls → [`robby_render::markdown`](index.md) — heading_depth
 - calls → [`robby_render::report`](../report/index.md) — push

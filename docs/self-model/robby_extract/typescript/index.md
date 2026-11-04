@@ -314,10 +314,10 @@ flowchart TB
 - calls → [`robby_extract::rust`](../rust/index.md) — new
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — from_path
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str, from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 7 items
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 6 items
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — default, participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get, parse
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
-- calls → [`robby_ir::vocab`](../../robby_ir/vocab/index.md) — parse
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 - calls → [`robby_render::test_render`](../../robby_render/test_render/index.md) — step
 - calls → [`robby_render::view::scene`](../../robby_render/view/scene/index.md) — contains

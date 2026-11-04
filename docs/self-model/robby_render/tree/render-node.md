@@ -259,12 +259,12 @@ sequenceDiagram
 - calls → [`robby_render::tree::slice`](slice.md)
 - calls → [`robby_render::sequence`](../sequence.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::page_of_node`](page-of-node.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::for_node`](../view/links/index.md)
 - calls → [`robby_render::tree::render_links`](render-links.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 - calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::tree::is_compact`](is-compact.md)
@@ -278,7 +278,7 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — sequence
 - calls → [`robby_render::report`](../report/index.md) — push
 - calls → [`robby_render::tree`](index.md) — 5 items

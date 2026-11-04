@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn remove_markdown(dir: &Path) -> std::io::Result<()>` |
-| location | [`crates/robby-render/src/pipeline.rs:167`](../../../../crates/robby-render/src/pipeline.rs#L167) |
+| location | [`crates/robby-render/src/pipeline.rs:172`](../../../../crates/robby-render/src/pipeline.rs#L172) |
 | provenance | extractor · confidence 1.00 |
 
 > Delete generated Markdown so removed modules do not linger.

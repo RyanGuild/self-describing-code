@@ -128,7 +128,8 @@ impl TypeModel {
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — class_id, is_type, strip_generics
 - calls → [`robby_render::view::comments`](../comments/index.md) — as_str
@@ -376,8 +377,8 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::util::is_type`](../../util/is-type.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
@@ -394,7 +395,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::view::types::parse_impl_target`](parse-impl-target.md)
 - calls → [`robby_render::util::strip_generics`](../../util/strip-generics.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::class_id`](../../util/class-id.md)
 - calls → [`robby_render::view::types::impl_methods`](impl-methods.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
@@ -405,7 +406,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::util::class_id`](../../util/class-id.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::class_id`](../../util/class-id.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::types::class_from_node`](class-from-node.md)

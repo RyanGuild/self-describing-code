@@ -59,7 +59,7 @@ flowchart TB
 
 - calls → [`robby_cli`](../../robby_cli/index.md) — extract
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new, push
 - calls → [`robby_render::tui`](../tui/index.md) — tree
 - calls → [`robby_render::view::scene`](../view/scene/index.md) — contains

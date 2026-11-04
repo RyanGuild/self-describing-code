@@ -68,6 +68,9 @@ function indexEntryFrom(record: RunRecord): RunIndexEntry {
   if (record.started_at !== undefined) {
     entry.started_at = record.started_at;
   }
+  if (record.finished_at !== undefined) {
+    entry.finished_at = record.finished_at;
+  }
   return entry;
 }
 

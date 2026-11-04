@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn coupling(doc: &Document, root: &NodeId) -> String` |
-| location | [`crates/robby-render/src/lib.rs:60`](../../../crates/robby-render/src/lib.rs#L60) |
+| location | [`crates/robby-render/src/lib.rs:62`](../../../crates/robby-render/src/lib.rs#L62) |
 | provenance | extractor · confidence 1.00 |
 
 > Internal call-coupling digraph (Mermaid) for a module/crate root.

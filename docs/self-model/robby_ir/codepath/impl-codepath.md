@@ -70,7 +70,8 @@ impl CodePath {
 ## References
 
 - calls → [`robby_ir::kind`](../kind/index.md) — as_str, new
-- calls → [`robby_ir::model`](../model/index.md) — get, insert
+- calls → [`robby_ir::model`](../model/index.md) — insert
+- calls → [`robby_ir::run`](../run/index.md) — get
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 
@@ -224,17 +225,17 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
 - calls → [`robby_ir::kind::impl Kind::new`](../kind/index.md)
 - calls → [`robby_ir::kind::impl Kind::new`](../kind/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../model/index.md)
 - calls → [`robby_ir::kind::impl Kind::new`](../kind/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
 - calls → [`robby_render::view::select::collect`](../../robby_render/view/select/collect.md)
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../kind/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../kind/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../kind/index.md)
 - calls → [`robby_ir::kind::impl Kind::as_str`](../kind/index.md)

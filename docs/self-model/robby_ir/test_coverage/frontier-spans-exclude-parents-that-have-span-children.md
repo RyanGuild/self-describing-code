@@ -85,11 +85,12 @@ sequenceDiagram
 - calls → [`robby_ir::kind::impl Kind::new`](../kind/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../model/index.md)
 - calls → [`robby_ir::coverage::frontier_spans`](../coverage/frontier-spans.md)
-- calls → [`robby_ir::model::impl Document::get`](../model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../run/index.md)
 
 ## References
 
 - calls → [`robby_ir::coverage`](../coverage/index.md) — frontier_spans
 - calls → [`robby_ir::kind`](../kind/index.md) — from, new
-- calls → [`robby_ir::model`](../model/index.md) — get, insert, symbol
+- calls → [`robby_ir::model`](../model/index.md) — insert, symbol
+- calls → [`robby_ir::run`](../run/index.md) — get
 

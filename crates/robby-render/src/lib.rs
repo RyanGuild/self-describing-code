@@ -20,7 +20,11 @@ pub mod web;
 
 pub use render::{MarkdownRenderer, MermaidRenderer, Renderer, ShowOptions, TuiRenderer};
 pub use report::{Report, Section};
-pub use runs::{RunIndexEntry, RunsIndex, SiteRunsStore, ensure_runs_layout};
+pub use robby_ir::RunRecord;
+pub use runs::{
+    RunIndexEntry, RunsIndex, SiteRunsStore, ensure_runs_layout, synthetic_extract_run,
+    web_build_run, write_runs, write_site_runs,
+};
 pub use view::{
     CouplingGraph, DependencyViews, LinkGraph, NodeViews, PackageStructure, ProcessView, Scene,
     SelectOpts, SiblingGraph, TypeModel, collect, is_binary_module, main_process,

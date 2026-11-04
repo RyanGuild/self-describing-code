@@ -189,7 +189,7 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
@@ -205,15 +205,16 @@ sequenceDiagram
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, symbol
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — insert, symbol
 - calls → [`robby_ir::process`](../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new, push
 - calls → [`robby_render::test_render`](../test_render/index.md) — step
 
@@ -226,5 +227,6 @@ sequenceDiagram
 - calls ← [`robby_render::test_web::sibling_local_rects_do_not_overlap`](sibling-local-rects-do-not-overlap.md)
 - calls ← [`robby_render::test_web::sibling_world_rects_do_not_collapse_onto_each_other`](sibling-world-rects-do-not-collapse-onto-each-other.md)
 - calls ← [`robby_render::test_web::unresolved_portal_has_no_zoom_target`](unresolved-portal-has-no-zoom-target.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](write-site-emits-run-records.md)
 - calls ← [`robby_render::test_web::write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md)
 

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-cli/src/main.rs:130`](../../../crates/robby-cli/src/main.rs#L130) |
+| location | [`crates/robby-cli/src/main.rs:136`](../../../crates/robby-cli/src/main.rs#L136) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -25,13 +25,13 @@ enum ViewKind {
 
 **Fields and variants**
 
-- `All` — `crates/robby-cli/src/main.rs:132:5`
-- `Entry` — `crates/robby-cli/src/main.rs:133:5`
-- `Types` — `crates/robby-cli/src/main.rs:134:5`
-- `Dependencies` — `crates/robby-cli/src/main.rs:135:5`
-- `References` — `crates/robby-cli/src/main.rs:136:5`
-- `Tree` — `crates/robby-cli/src/main.rs:137:5`
-- `Graph` — `crates/robby-cli/src/main.rs:138:5`
-- `Process` — `crates/robby-cli/src/main.rs:139:5`
-- `Source` — `crates/robby-cli/src/main.rs:140:5`
+- `All` — `crates/robby-cli/src/main.rs:138:5`
+- `Entry` — `crates/robby-cli/src/main.rs:139:5`
+- `Types` — `crates/robby-cli/src/main.rs:140:5`
+- `Dependencies` — `crates/robby-cli/src/main.rs:141:5`
+- `References` — `crates/robby-cli/src/main.rs:142:5`
+- `Tree` — `crates/robby-cli/src/main.rs:143:5`
+- `Graph` — `crates/robby-cli/src/main.rs:144:5`
+- `Process` — `crates/robby-cli/src/main.rs:145:5`
+- `Source` — `crates/robby-cli/src/main.rs:146:5`
 

@@ -1,9 +1,10 @@
-//! Site `runs/` persistence for shared [`RunRecord`] values.
+//! Site `runs/` persistence for shared [`robby_ir::RunRecord`] values.
 //!
-//! One JSON shape for extract / tests / reviews / external agents. Writers put
-//! `runs/<run_id>.json` and maintain `runs/index.json`; the Mac-local viewer
-//! polls the same files.
+//! One JSON shape for extract / web / tests / reviews / external agents.
+//! Writers put `runs/<run_id>.json` and maintain `runs/index.json`; the
+//! Mac-local viewer polls the same files. Do **not** invent a parallel DTO.
 
+use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -12,6 +13,7 @@ use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 
 use robby_ir::run::{RecipeId, RunRecord, RunStatus, recipes};
+use robby_ir::{Document, Kind, Process, Step, StepKind, kind::agent};
 
 /// Thin index row so the dock can list without fetching every record.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -23,6 +25,8 @@ pub struct RunIndexEntry {
     pub subject: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub started_at: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub finished_at: Option<i64>,
 }
 
 impl From<&RunRecord> for RunIndexEntry {
@@ -33,6 +37,7 @@ impl From<&RunRecord> for RunIndexEntry {
             status: record.status.as_str().to_owned(),
             subject: record.subject.clone(),
             started_at: record.started_at,
+            finished_at: record.finished_at,
         }
     }
 }
@@ -41,6 +46,12 @@ impl From<&RunRecord> for RunIndexEntry {
 pub struct RunsIndex {
     #[serde(default)]
     pub runs: Vec<RunIndexEntry>,
+}
+
+impl RunsIndex {
+    pub fn to_json(&self) -> String {
+        serde_json::to_string_pretty(self).expect("runs index serializes")
+    }
 }
 
 /// Filesystem-backed store under a site `public/` (or any out) directory.
@@ -114,14 +125,12 @@ impl SiteRunsStore {
         } else {
             index.runs.insert(0, entry);
         }
+        sort_index_newest_first(&mut index);
         self.write_index(&index)?;
         Ok(())
     }
 
     /// Soft-queue a `robby.review_view` for `subject` (one pending per subject).
-    ///
-    /// If a queued review already exists for the subject, refreshes `started_at`
-    /// and trigger annotations instead of minting a second run.
     pub fn queue_review_view(
         &self,
         subject: &str,
@@ -159,8 +168,9 @@ impl SiteRunsStore {
         }
 
         let run_id = mint_run_id("review");
-        let mut record = RunRecord::new(run_id, RecipeId::from(recipes::REVIEW_VIEW), RunStatus::Queued)
-            .with_subject(subject.to_owned());
+        let mut record =
+            RunRecord::new(run_id, RecipeId::from(recipes::REVIEW_VIEW), RunStatus::Queued)
+                .with_subject(subject.to_owned());
         record.started_at = Some(now_ms());
         record
             .stats
@@ -173,7 +183,6 @@ impl SiteRunsStore {
                 .stats
                 .insert("subject_name".to_owned(), name.to_owned());
         }
-        // Slice-1 stage HUD: gate awaits UI; later stages stay unobserved.
         record.process = Some(review_view_process(false));
         self.put(&record)?;
         Ok(record)
@@ -198,7 +207,6 @@ impl SiteRunsStore {
         if let Some(process) = record.process.as_mut() {
             *process = review_view_process(true);
         }
-        // Slice 1: no metric_test child, no decision products.
         self.put(&record)?;
         Ok(record)
     }
@@ -220,7 +228,6 @@ impl SiteRunsStore {
         record
             .stats
             .insert("ui_gate".to_owned(), "cancelled".to_owned());
-        // Drop any speculative product links; cancel blocks downstream.
         record.products.clear();
         self.put(&record)?;
         Ok(record)
@@ -249,10 +256,15 @@ fn mint_run_id(prefix: &str) -> String {
     format!("{prefix}-{}", now_ms())
 }
 
-fn review_view_process(observed_gate: bool) -> robby_ir::Process {
-    use robby_ir::kind::agent;
-    use robby_ir::{Kind, Process, Step, StepKind};
+fn sort_index_newest_first(index: &mut RunsIndex) {
+    index.runs.sort_by(|a, b| {
+        let a_t = a.finished_at.or(a.started_at).unwrap_or(0);
+        let b_t = b.finished_at.or(b.started_at).unwrap_or(0);
+        b_t.cmp(&a_t)
+    });
+}
 
+fn review_view_process(observed_gate: bool) -> Process {
     let mut process = Process::new();
     process.participant("review", "review_view", Kind::from(agent::ACTION));
     process.participant("ui", "ui_gate", Kind::from(agent::ACTION));
@@ -277,21 +289,131 @@ fn review_view_process(observed_gate: bool) -> robby_ir::Process {
     process
 }
 
+fn stage_process(stages: &[&str]) -> Process {
+    let mut process = Process::new();
+    for stage in stages {
+        process.participant(*stage, *stage, Kind::from(agent::ACTION));
+    }
+    for window in stages.windows(2) {
+        process.step(Step {
+            from: window[0].to_owned(),
+            to: window[1].to_owned(),
+            label: window[1].to_owned(),
+            kind: StepKind::Call,
+            observed: true,
+            span: None,
+            blocks: vec![],
+        });
+    }
+    process
+}
+
 /// Ensure empty `runs/index.json` beside scene payloads.
 pub fn ensure_runs_layout(site_out: &Path) -> Result<()> {
     SiteRunsStore::new(site_out).ensure_layout()
 }
 
+/// Synthetic completed extract from the loaded Document (retrospective history).
+pub fn synthetic_extract_run(doc: &Document, finished_at: i64) -> RunRecord {
+    let started_at = finished_at.saturating_sub(5_000);
+    let mut stats = BTreeMap::new();
+    stats.insert("nodes".to_owned(), doc.nodes.len().to_string());
+    stats.insert("files".to_owned(), doc.files.len().to_string());
+    stats.insert("roots".to_owned(), doc.roots.len().to_string());
+    stats.insert("generator".to_owned(), doc.generator.clone());
+    stats.insert("synthetic".to_owned(), "true".to_owned());
+
+    let mut record = RunRecord::new(
+        "synthetic-extract",
+        RecipeId::from(recipes::EXTRACT),
+        RunStatus::Pass,
+    )
+    .with_subject("workspace:")
+    .with_process(stage_process(&["extract", "validate", "write_document"]));
+    record.started_at = Some(started_at);
+    record.finished_at = Some(finished_at);
+    record.exit_code = Some(0);
+    record.stdout_tail = Some(format!(
+        "synthetic robby.extract from {} · {} nodes · {} files",
+        doc.generator,
+        doc.nodes.len(),
+        doc.files.len()
+    ));
+    record.stats = stats;
+    record.products = vec!["path:.robby/robby.ir.json".to_owned()];
+    record
+}
+
+/// Completed `robby.web` run for this site write.
+pub fn web_build_run(doc: &Document, frames: usize, finished_at: i64) -> RunRecord {
+    let started_at = finished_at.saturating_sub(500);
+    let mut stats = BTreeMap::new();
+    stats.insert("frames".to_owned(), frames.to_string());
+    stats.insert("nodes".to_owned(), doc.nodes.len().to_string());
+    stats.insert("files".to_owned(), doc.files.len().to_string());
+
+    let mut record = RunRecord::new("latest-web", RecipeId::from(recipes::WEB), RunStatus::Pass)
+        .with_subject("workspace:")
+        .with_process(stage_process(&["load_ir", "scene", "frames", "runs"]));
+    record.started_at = Some(started_at);
+    record.finished_at = Some(finished_at);
+    record.exit_code = Some(0);
+    record.stdout_tail = Some(format!("wrote {frames} frame(s) to site public/"));
+    record.stats = stats;
+    record.products = vec![
+        "path:apps/site/public/scene.json".to_owned(),
+        "path:apps/site/public/build.json".to_owned(),
+        "path:apps/site/public/runs/index.json".to_owned(),
+    ];
+    record
+}
+
+/// Write `runs/<id>.json` for each record and refresh those index rows.
+///
+/// Existing index entries whose `run_id` is not in `records` are preserved
+/// (so a site rebuild does not wipe queued reviews).
+pub fn write_runs(out: &Path, records: &[RunRecord]) -> Result<()> {
+    let store = SiteRunsStore::new(out);
+    store.ensure_layout()?;
+    let keep_ids: std::collections::BTreeSet<&str> =
+        records.iter().map(|r| r.run_id.as_str()).collect();
+
+    let mut index = store.read_index()?;
+    index.runs.retain(|e| !keep_ids.contains(e.run_id.as_str()));
+
+    for record in records {
+        let path = store.record_path(&record.run_id);
+        let raw = serde_json::to_string_pretty(record)?;
+        fs::write(&path, format!("{raw}\n"))
+            .with_context(|| format!("write {}", path.display()))?;
+        index.runs.push(RunIndexEntry::from(record));
+    }
+    sort_index_newest_first(&mut index);
+    store.write_index(&index)?;
+    Ok(())
+}
+
+/// Emit extract + web RunRecords under `out/runs` for a site rebuild.
+pub fn write_site_runs(doc: &Document, out: &Path, frames: usize, rebuilt_at: u64) -> Result<()> {
+    let finished = if rebuilt_at == 0 {
+        now_ms()
+    } else {
+        rebuilt_at as i64
+    };
+    let extract = synthetic_extract_run(doc, finished.saturating_sub(1_000));
+    let web = web_build_run(doc, frames, finished);
+    write_runs(out, &[extract, web])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
-    use robby_ir::run::recipes;
 
     fn temp_store() -> SiteRunsStore {
         let dir = std::env::temp_dir().join(format!(
             "robby-runs-test-{}",
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
                 .unwrap()
                 .as_nanos()
         ));
@@ -345,5 +467,33 @@ mod tests {
         );
         assert!(running.products.is_empty());
         assert!(!SiteRunsStore::blocks_downstream(&running));
+    }
+
+    #[test]
+    fn write_site_runs_preserves_other_reviews() {
+        let dir = std::env::temp_dir().join(format!(
+            "robby-runs-preserve-{}",
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&dir).unwrap();
+        let store = SiteRunsStore::new(&dir);
+        let review = store
+            .queue_review_view("sid-keep", "frame_focus", None)
+            .unwrap();
+
+        let doc = Document::new("test");
+        write_site_runs(&doc, &dir, 3, 1_000).unwrap();
+
+        let index = store.read_index().unwrap();
+        assert!(
+            index.runs.iter().any(|e| e.run_id == review.run_id),
+            "review should survive site rebuild, got {:?}",
+            index.runs
+        );
+        assert!(index.runs.iter().any(|e| e.run_id == "synthetic-extract"));
+        assert!(index.runs.iter().any(|e| e.run_id == "latest-web"));
     }
 }

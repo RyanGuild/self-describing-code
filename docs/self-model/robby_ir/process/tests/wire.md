@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn wire<T: serde::Serialize>(value: T) -> String` |
-| location | [`crates/robby-ir/src/process.rs:191`](../../../../../crates/robby-ir/src/process.rs#L191) |
+| location | [`crates/robby-ir/src/process.rs:172`](../../../../../crates/robby-ir/src/process.rs#L172) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

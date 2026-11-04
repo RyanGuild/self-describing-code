@@ -149,7 +149,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, walk
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — walk
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::render`](../index.md) — report
 - calls → [`robby_render::render::mermaid`](../mermaid/index.md) — dsm_markdown_table
 - calls → [`robby_render::report`](../../report/index.md) — push, to_terminal

@@ -126,8 +126,6 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
     fs::create_dir_all(out)?;
     let frames_dir = out.join("frames");
     fs::create_dir_all(&frames_dir)?;
-    // Shared RunRecord layout for Runs / Reviews docks (empty until invoke).
-    crate::runs::ensure_runs_layout(out)?;
 
     let structure = Scene::from_document(doc);
     let entrypoints = Scene::from_entrypoints(doc);
@@ -165,6 +163,23 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
             count += 1;
         }
     }
+
+    // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
+    let rebuilt_at = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as u64)
+        .unwrap_or(0);
+    let build = serde_json::json!({
+        "rebuilt_at": rebuilt_at,
+        "frames": count,
+        "nodes": doc.nodes.len(),
+        "files": doc.files.len(),
+        "generator": doc.generator,
+    });
+    fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+
+    // Completed pipeline history for Runs mode (synthetic extract + this web build).
+    crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
 
     Ok(count)
 }

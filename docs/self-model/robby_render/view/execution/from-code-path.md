@@ -133,14 +133,14 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 - calls → [`robby_render::view::execution::add_callable`](add-callable.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../links/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../links/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::view::execution::add_callable`](add-callable.md)
 - calls → [`robby_render::view::execution::participant_id`](participant-id.md)
 - calls → [`robby_render::view::execution::owning_type_label`](owning-type-label.md)
@@ -158,8 +158,8 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
 - calls → [`robby_ir::process`](../../../robby_ir/process/index.md) — participant
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::test_render`](../../test_render/index.md) — step
 - calls → [`robby_render::util`](../../util/index.md) — alias
 - calls → [`robby_render::view::execution`](index.md) — add_callable, owning_type_label, participant_id

@@ -187,7 +187,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../kind/index.md) — as_str, new
-- calls → [`robby_ir::model`](../model/index.md) — get, insert, symbol
+- calls → [`robby_ir::model`](../model/index.md) — insert, symbol
+- calls → [`robby_ir::run`](../run/index.md) — get
 - calls → [`robby_render::report`](../../robby_render/report/index.md) — push
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 

@@ -37,7 +37,7 @@ flowchart TB
 | **robby_ir** | | · |
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 
 ## Referenced by
 

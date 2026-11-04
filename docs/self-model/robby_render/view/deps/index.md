@@ -449,7 +449,8 @@ flowchart TB
 ## References
 
 - calls → [`robby_ir::kind`](../../../robby_ir/kind/index.md) — from
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
+- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — insert, subtree
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../../index.md) — stable_id
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::util`](../../util/index.md) — is_container, text

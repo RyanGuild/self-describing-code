@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn print_human(loaded: &pipeline::Loaded)` |
-| location | [`crates/robby-cli/src/main.rs:298`](../../../crates/robby-cli/src/main.rs#L298) |
+| location | [`crates/robby-cli/src/main.rs:328`](../../../crates/robby-cli/src/main.rs#L328) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,10 +18,7 @@ fn print_human(loaded: &pipeline::Loaded) {
             Severity::Info => "info ",
         };
         match &diagnostic.node {
-            Some(node) => println!(
-                "{tag} [{}] {} ({})",
-                diagnostic.code, diagnostic.message, node
-            ),
+            Some(node) => println!("{tag} [{}] {} ({})", diagnostic.code, diagnostic.message, node),
             None => println!("{tag} [{}] {}", diagnostic.code, diagnostic.message),
         }
     }
@@ -66,7 +63,7 @@ sequenceDiagram
     participant is_ok as is_ok
     loop &loaded.diagnostics
     alt match &diagnostic.node
-    print_human-->>print_human: println!( '{tag} [{}] {} ({})', diagnostic.code, diagnostic.message, ...
+    print_human-->>print_human: println!('{tag} [{}] {} ({})', diagnostic.code, diagnostic.message, n...
     else None
     print_human-->>print_human: println!('{tag} [{}] {}', diagnostic.code, diagnostic.message)
     end

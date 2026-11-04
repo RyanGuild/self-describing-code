@@ -43,6 +43,7 @@ export interface RunIndexEntry {
   status: string;
   subject?: string;
   started_at?: number;
+  finished_at?: number;
 }
 
 export interface RunsIndex {

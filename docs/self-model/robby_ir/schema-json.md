@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn schema_json() -> String` |
-| location | [`crates/robby-ir/src/lib.rs:47`](../../../crates/robby-ir/src/lib.rs#L47) |
+| location | [`crates/robby-ir/src/lib.rs:51`](../../../crates/robby-ir/src/lib.rs#L51) |
 | provenance | extractor · confidence 1.00 |
 
 > Pretty-printed JSON Schema.

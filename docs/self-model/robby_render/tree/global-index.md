@@ -132,14 +132,14 @@ sequenceDiagram
 - calls → [`robby_render::workspace_dependencies`](../workspace-dependencies.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::module_tree_line`](module-tree-line.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render`](../index.md) — workspace_dependencies
 - calls → [`robby_render::markdown`](../markdown/index.md) — coverage_section
 - calls → [`robby_render::report`](../report/index.md) — new, push

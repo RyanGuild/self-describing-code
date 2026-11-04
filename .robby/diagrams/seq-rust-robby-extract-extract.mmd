@@ -1,13 +1,11 @@
 sequenceDiagram
     autonumber
     participant extract as extract()
-    participant rust__extract as rust::extract
-    participant typescript__extract as typescript::extract
     participant merge_documents as merge_documents
     participant Ok as Ok
-    extract-->>rust__extract: rust::extract(root)
+    extract-->>extract: RustExtractor.extract(root)
     extract-->>extract: ? (propagate)
-    extract-->>typescript__extract: typescript::extract(root)
+    extract-->>extract: TypeScriptExtractor.extract(root)
     extract-->>extract: ? (propagate)
     extract-->>merge_documents: merge_documents(&mut doc, ts)
     extract-->>Ok: Ok(doc)

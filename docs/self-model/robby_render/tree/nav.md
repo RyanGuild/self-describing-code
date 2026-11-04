@@ -127,20 +127,20 @@ sequenceDiagram
 
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::tree::crate_of`](crate-of.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::module_index_path`](module-index-path.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::is_crate`](is-crate.md)
 - calls → [`robby_render::tree::crate_index_path`](crate-index-path.md)
 - calls → [`robby_render::tree::module_index_path`](module-index-path.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::short_fqn`](short-fqn.md)
-- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../robby_ir/run/index.md)
 - calls → [`robby_render::tree::short_fqn`](short-fqn.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../robby_ir/run/index.md) — get
 - calls → [`robby_render::report`](../report/index.md) — new
 - calls → [`robby_render::tree`](index.md) — 5 items
 

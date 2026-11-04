@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn workspace(doc: &Document, opts: &tui::ShowOptions) -> String` |
-| location | [`crates/robby-cli/src/main.rs:441`](../../../crates/robby-cli/src/main.rs#L441) |
+| location | [`crates/robby-cli/src/main.rs:468`](../../../crates/robby-cli/src/main.rs#L468) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

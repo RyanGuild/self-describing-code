@@ -7,7 +7,7 @@ sequenceDiagram
     participant fetchJson as fetchJson
     participant set as set
     participant error as error
-    participant remove as remove
+    participant forEach as forEach
     participant createElement as createElement
     participant appendExecution as appendExecution
     participant insertBefore as insertBefore
@@ -28,9 +28,8 @@ sequenceDiagram
     self-->>error: 
     return-->>caller: 
     end
-    loop for-of
-    self-->>remove: 
-    end
+    self-->>forEach: 
+    self-->>fn: 
     alt if
     self-->>createElement: 
     self-->>appendExecution: 

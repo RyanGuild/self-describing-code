@@ -46,29 +46,10 @@ impl Process {
     /// observed; steps known statically but never seen stay dashed. Observed
     /// steps not present statically are appended, because runtime is the
     /// ground truth for what actually happened.
+    ///
+    /// Canonical implementation: [`crate::contract::Absorb`].
     pub fn absorb(&mut self, observed: &Process) {
-        for p in &observed.participants {
-            if !self.participants.iter().any(|q| q.id == p.id) {
-                self.participants.push(p.clone());
-            }
-        }
-
-        let mut matched = vec![false; observed.steps.len()];
-        for step in &mut self.steps {
-            if let Some(idx) = observed
-                .steps
-                .iter()
-                .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
-            {
-                step.observed = true;
-                matched[idx] = true;
-            }
-        }
-        for (idx, step) in observed.steps.iter().enumerate() {
-            if !matched[idx] {
-                self.steps.push(step.clone());
-            }
-        }
+        <Self as crate::contract::Absorb>::absorb(self, observed);
     }
 }
 ```
@@ -84,6 +65,7 @@ impl Process {
 - calls ← [`robby_extract::typescript::build_function_process`](../../robby_extract/typescript/build-function-process.md)
 - calls ← [`robby_extract::typescript::emit_variable`](../../robby_extract/typescript/emit-variable.md)
 - calls ← [`robby_extract::typescript::ensure_participant`](../../robby_extract/typescript/ensure-participant.md)
+- calls ← [`robby_ir::contract::absorb_trait_marks_matching_steps_observed`](../contract/tests/absorb-trait-marks-matching-steps-observed.md)
 - calls ← [`robby_ir::process::impl Default for Process::default`](index.md)
 - calls ← [`robby_render::test_markdown::fixture`](../../robby_render/test_markdown/fixture.md)
 - calls ← [`robby_render::test_render::process`](../../robby_render/test_render/process.md)
@@ -227,6 +209,8 @@ sequenceDiagram
 > observed; steps known statically but never seen stay dashed. Observed
 > steps not present statically are appended, because runtime is the
 > ground truth for what actually happened.
+> 
+> Canonical implementation: [`crate::contract::Absorb`].
 
 ```rust
 /// Merge an observed process into this (static) one.
@@ -235,29 +219,10 @@ sequenceDiagram
     /// observed; steps known statically but never seen stay dashed. Observed
     /// steps not present statically are appended, because runtime is the
     /// ground truth for what actually happened.
+    ///
+    /// Canonical implementation: [`crate::contract::Absorb`].
     pub fn absorb(&mut self, observed: &Process) {
-        for p in &observed.participants {
-            if !self.participants.iter().any(|q| q.id == p.id) {
-                self.participants.push(p.clone());
-            }
-        }
-
-        let mut matched = vec![false; observed.steps.len()];
-        for step in &mut self.steps {
-            if let Some(idx) = observed
-                .steps
-                .iter()
-                .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
-            {
-                step.observed = true;
-                matched[idx] = true;
-            }
-        }
-        for (idx, step) in observed.steps.iter().enumerate() {
-            if !matched[idx] {
-                self.steps.push(step.clone());
-            }
-        }
+        <Self as crate::contract::Absorb>::absorb(self, observed);
     }
 ```
 
@@ -265,39 +230,13 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant absorb as absorb()
-    participant iter as iter
-    participant any as any
-    participant clone as clone
-    participant push as push
-    participant position as position
-    participant enumerate as enumerate
-    loop &observed.participants
-    absorb-->>iter: self.participants.iter()
-    absorb-->>any: self.participants.iter().any(|q| q.id == p.id)
-    alt !self.participants.iter().any(|q| q.id == p.id)
-    absorb-->>clone: p.clone()
-    absorb-->>push: self.participants.push(p.clone())
-    end
-    end
-    absorb-->>absorb: vec![false observed.steps.len()]
-    loop &mut self.steps
-    absorb-->>iter: observed .steps .iter()
-    absorb-->>position: observed .steps .iter() .position(|o| o.from == step.from && o.to == ...
-    end
-    absorb-->>iter: observed.steps.iter()
-    absorb-->>enumerate: observed.steps.iter().enumerate()
-    loop observed.steps.iter().enumerate()
-    alt !matched[idx]
-    absorb-->>clone: step.clone()
-    absorb-->>push: self.steps.push(step.clone())
-    end
-    end
+    participant crate__contract__Absorb__absorb as crate::contract::Absorb::absorb
+    absorb-->>crate__contract__Absorb__absorb: <Self as crate::contract::Absorb>::absorb(self, observed)
 ```
 
-11 steps · 0 observed · 11 possible only
+1 steps · 0 observed · 1 possible only
 
 **Edges**
 
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+- calls → [`robby_ir::process::impl Process::absorb`](index.md)
 

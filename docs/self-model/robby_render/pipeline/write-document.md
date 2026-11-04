@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn write_document(doc: &Document, out: &Path) -> Result<()>` |
-| location | [`crates/robby-render/src/pipeline.rs:126`](../../../../crates/robby-render/src/pipeline.rs#L126) |
+| location | [`crates/robby-render/src/pipeline.rs:131`](../../../../crates/robby-render/src/pipeline.rs#L131) |
 | provenance | extractor · confidence 1.00 |
 
 > Write the IR document itself as a committed artifact.

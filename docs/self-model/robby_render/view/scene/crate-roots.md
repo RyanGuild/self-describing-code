@@ -71,13 +71,13 @@ sequenceDiagram
 
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../links/index.md)
-- calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
+- calls → [`robby_ir::run::RecipeCatalog::get`](../../../robby_ir/run/index.md)
 - calls → [`robby_render::util::is_structural`](../../util/is-structural.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 
 ## References
 
-- calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::run`](../../../robby_ir/run/index.md) — get
 - calls → [`robby_render::util`](../../util/index.md) — is_structural
 - calls → [`robby_render::view::links`](../links/index.md) — is_empty
 - calls → [`robby_render::view::select`](../select/index.md) — collect

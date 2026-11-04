@@ -6,7 +6,25 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 164 |
+| nodes | 180 |
+
+## Types
+
+```mermaid
+classDiagram
+    class LanguageExtractor {
+        <<interface>>
+        +language()
+        +extract()
+        +source_file_count()
+    }
+    class RustExtractor {
+    }
+    class TypeScriptExtractor {
+    }
+    RustExtractor ..|> LanguageExtractor : implements
+    TypeScriptExtractor ..|> LanguageExtractor : implements
+```
 
 ## Package diagram
 
@@ -146,9 +164,15 @@ flowchart TB
             n_9823549b185de270["walk_stmt"]
             n_e1eac68a67870b19["walk_stmts"]
         end
+        n_11f6e0e69955e302["extract"]
+        n_8814203572f08297["extract"]
         n_9a097a01ca297a4c["extract"]
+        n_a2836e8fda63021d["extract_with"]
         n_6b8440ffa3a2e7c0["merge_documents"]
         n_0478cf609a402211["source_file_count"]
+        n_7f2aabf60f4c3937["source_file_count"]
+        n_e766dd16f7f14c9a["source_file_count"]
+        n_eb327c4de66cd1f6["source_file_count_with"]
     end
     n_04598dcdf47019ad --> n_18d198c74ea04d46
     n_04598dcdf47019ad --> n_359f9b30d43ad0b3
@@ -248,6 +272,8 @@ flowchart TB
     n_96f42359af8dd731 --> n_e15579d20b9b2edd
     n_9823549b185de270 -.->|"1 circular"| n_e1eac68a67870b19
     n_9a097a01ca297a4c --> n_6b8440ffa3a2e7c0
+    n_a2836e8fda63021d --> n_6b8440ffa3a2e7c0
+    n_a2836e8fda63021d -->|"2"| n_9a097a01ca297a4c
     n_aad6691009267c88 --> n_1c1c14a8e043f39b
     n_b0a6b64e43c0a4f9 --> n_1b53af5a44fa5068
     n_b0a6b64e43c0a4f9 --> n_3d45ae7c14c050a5
@@ -301,6 +327,7 @@ flowchart TB
     n_e2da56648b8aafaa -->|"5"| n_bd9191c7b36f1f58
     n_e2da56648b8aafaa --> n_e0aff4d7ad1207be
     n_e2da56648b8aafaa -.->|"9 circular"| n_e0f46f8e875851fc
+    n_eb327c4de66cd1f6 --> n_0478cf609a402211
     n_ef635844bddcf7e1 -->|"3"| n_3d45ae7c14c050a5
     n_ef635844bddcf7e1 --> n_494ba2a3fa438ab3
     n_ef635844bddcf7e1 --> n_be96122d6baee981
@@ -334,22 +361,62 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-extract/src/lib.rs:18:1` (docs, `robby_extract::extract`): "Extract a document describing Rust crates and TypeScript packages under `root`."
+- `crates/robby-extract/src/lib.rs:18:1` (docs, `robby_extract::LanguageExtractor`): "One language's producer. Future crates (`robby-extract-rust`, `robby-extract-typescript`) should keep this signature."
+  ```
+  /// One language's producer. Future crates (`robby-extract-rust`,
+  /// `robby-extract-typescript`) should keep this signature.
+  pub trait LanguageExtractor {
+      fn language(&self) -> Lang;
+      fn extract(&self, root: &Path) -> Result<Document>;
+      fn source_file_count(&self, root: &Path) -> Result<usize>;
+  }
+  ```
+- `crates/robby-extract/src/lib.rs:26:1` (docs, `robby_extract::RustExtractor`): "Syn-based Rust extractor."
+  ```
+  /// Syn-based Rust extractor.
+  #[derive(Debug, Default, Clone, Copy)]
+  pub struct RustExtractor;
+  ```
+- `crates/robby-extract/src/lib.rs:44:1` (docs, `robby_extract::TypeScriptExtractor`): "Oxc-based TypeScript / JS extractor."
+  ```
+  /// Oxc-based TypeScript / JS extractor.
+  #[derive(Debug, Default, Clone, Copy)]
+  pub struct TypeScriptExtractor;
+  ```
+- `crates/robby-extract/src/lib.rs:62:1` (docs, `robby_extract::extract`): "Extract a document describing Rust crates and TypeScript packages under `root`."
   ```
   /// Extract a document describing Rust crates and TypeScript packages under `root`.
   pub fn extract(root: &Path) -> Result<Document> {
-      let mut doc = rust::extract(root)?;
-      let ts = typescript::extract(root)?;
+      let mut doc = RustExtractor.extract(root)?;
+      let ts = TypeScriptExtractor.extract(root)?;
       merge_documents(&mut doc, ts);
       Ok(doc)
   }
   ```
-- `crates/robby-extract/src/lib.rs:26:1` (docs, `robby_extract::source_file_count`): "Count of source files (`.rs` + TypeScript) the extractor considers part of the workspace."
+- `crates/robby-extract/src/lib.rs:70:1` (docs, `robby_extract::extract_with`): "Merge language extractors in order (first is the base document)."
+  ```
+  /// Merge language extractors in order (first is the base document).
+  pub fn extract_with<'a>(
+      root: &Path,
+      extractors: impl IntoIterator<Item = &'a dyn LanguageExtractor>,
+  ) -> Result<Document> {
+      let mut iter = extractors.into_iter();
+      let Some(first) = iter.next() else {
+          return Ok(Document::new("robby-extract"));
+      };
+      let mut doc = first.extract(root)?;
+      for extractor in iter {
+          merge_documents(&mut doc, extractor.extract(root)?);
+      }
+      Ok(doc)
+  }
+  ```
+- `crates/robby-extract/src/lib.rs:86:1` (docs, `robby_extract::source_file_count`): "Count of source files (`.rs` + TypeScript) the extractor considers part of the workspace."
   ```
   /// Count of source files (`.rs` + TypeScript) the extractor considers part of
   /// the workspace.
   pub fn source_file_count(root: &Path) -> Result<usize> {
-      Ok(rust::source_file_count(root)? + typescript::source_file_count(root)?)
+      Ok(RustExtractor.source_file_count(root)? + TypeScriptExtractor.source_file_count(root)?)
   }
   ```
 - `crates/robby-extract/src/rust.rs:16:1` (docs, `robby_extract::rust::extract`): "Extract a document describing every Rust crate under `<root>/crates`."
@@ -621,11 +688,11 @@ flowchart TB
 
 - calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — document_coverage, failures, from_path
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — as_str, from
-- calls → [`robby_ir::model`](../robby_ir/model/index.md) — 7 items
+- calls → [`robby_ir::model`](../robby_ir/model/index.md) — 6 items
 - calls → [`robby_ir::process`](../robby_ir/process/index.md) — default, participant
+- calls → [`robby_ir::run`](../robby_ir/run/index.md) — get, parse
 - calls → [`robby_ir::span`](../robby_ir/span/index.md) — is_empty
 - calls → [`robby_ir::test_coverage`](../robby_ir/test_coverage/index.md) — span
-- calls → [`robby_ir::vocab`](../robby_ir/vocab/index.md) — parse
 - calls → [`robby_render::report`](../robby_render/report/index.md) — push
 - calls → [`robby_render::test_render`](../robby_render/test_render/index.md) — step
 - calls → [`robby_render::view::scene`](../robby_render/view/scene/index.md) — contains
@@ -642,13 +709,20 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`extract`](extract.md) | `code.function` | 6 | `crates/robby-extract/src/lib.rs:18:1` |
-| [`source_file_count`](source-file-count.md) | `code.function` | 5 | `crates/robby-extract/src/lib.rs:26:1` |
-| [`merge_documents`](merge-documents.md) | `code.function` | 3 | `crates/robby-extract/src/lib.rs:32:1` |
+| [`LanguageExtractor`](languageextractor.md) | `code.trait` | — | `crates/robby-extract/src/lib.rs:18:1` |
+| [`RustExtractor`](rustextractor.md) | `code.struct` | — | `crates/robby-extract/src/lib.rs:26:1` |
+| [`impl LanguageExtractor for RustExtractor`](impl-languageextractor-for-rustextractor.md) | `code.impl` | — | `crates/robby-extract/src/lib.rs:30:1` |
+| [`TypeScriptExtractor`](typescriptextractor.md) | `code.struct` | — | `crates/robby-extract/src/lib.rs:44:1` |
+| [`impl LanguageExtractor for TypeScriptExtractor`](impl-languageextractor-for-typescriptextractor.md) | `code.impl` | — | `crates/robby-extract/src/lib.rs:48:1` |
+| [`extract`](extract.md) | `code.function` | 6 | `crates/robby-extract/src/lib.rs:62:1` |
+| [`extract_with`](extract-with.md) | `code.function` | 8 | `crates/robby-extract/src/lib.rs:70:1` |
+| [`source_file_count`](source-file-count.md) | `code.function` | 5 | `crates/robby-extract/src/lib.rs:86:1` |
+| [`source_file_count_with`](source-file-count-with.md) | `code.function` | 3 | `crates/robby-extract/src/lib.rs:92:1` |
+| [`merge_documents`](merge-documents.md) | `code.function` | 3 | `crates/robby-extract/src/lib.rs:103:1` |
 
 ## Imports
 
 - `use std::path::Path;`
 - `use anyhow::Result;`
-- [`use robby_ir::Document;`](../robby_ir/index.md)
+- [`use robby_ir::{Document, Lang};`](../robby_ir/index.md)
 

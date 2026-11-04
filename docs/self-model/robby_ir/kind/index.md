@@ -5,9 +5,9 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/lib.rs:20`](../../../../crates/robby-ir/src/lib.rs#L20) |
+| declared at | [`crates/robby-ir/src/lib.rs:21`](../../../../crates/robby-ir/src/lib.rs#L21) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 54 |
+| nodes | 56 |
 
 ## Types
 
@@ -38,27 +38,31 @@ flowchart TB
         n_78c8f62748bb21ee["code"]
         n_9bd6a0786f266df1["runtime"]
     end
+    n_356bf2c23da68961(["robby_ir"])
+    n_611ba0cee1ac191f --> n_356bf2c23da68961
 ```
 
 ## Dependency matrix
 
-| | kind | code | runtime | agent |
-|---|---:|---:|---:|---:|
-| **kind** | · | | | |
-| **code** | | · | | |
-| **runtime** | | | · | |
-| **agent** | | | | · |
+| | kind | code | runtime | agent | robby_ir |
+|---|---:|---:|---:|---:|---:|
+| **kind** | · | | | | 1 |
+| **code** | | · | | | |
+| **runtime** | | | · | | |
+| **agent** | | | | · | |
+| **robby_ir** | | | | | · |
 
 ## Comments
 
-- `crates/robby-ir/src/kind.rs:106:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
+- `crates/robby-ir/src/kind.rs:110:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
   ```
   /// True when `kind` is understood by the current version of the tool.
   ///
   /// Unknown kinds are never an error — they are rendered generically and
   /// reported as a soft gap, so an older viewer can still display a newer graph.
   pub fn is_known(kind: &Kind) -> bool {
-      matches!(kind.namespace(), "code" | "runtime" | "agent")
+      use crate::contract::KindNamespace;
+      kind.is_known_namespace()
   }
   ```
 - `crates/robby-ir/src/kind.rs:17:1` (docs, `robby_ir::kind::Kind`): "A namespaced, open-ended kind tag."
@@ -77,6 +81,10 @@ flowchart TB
           self.0.split('.').next().unwrap_or(&self.0)
       }
   ```
+## References
+
+- calls → [`robby_ir::contract`](../contract/index.md) — is_known_namespace
+
 ## Referenced by
 
 - calls ← [`robby_agent::context::collect_comment_contexts`](../../robby_agent/context/collect-comment-contexts.md)
@@ -121,6 +129,8 @@ flowchart TB
 - calls ← [`robby_ir::codepath::find_entrypoints`](../codepath/find-entrypoints.md)
 - calls ← [`robby_ir::codepath::impl CodePath::from_entry`](../codepath/index.md)
 - calls ← [`robby_ir::codepath::sample_doc`](../codepath/tests/sample-doc.md)
+- calls ← [`robby_ir::contract::absorb_trait_marks_matching_steps_observed`](../contract/tests/absorb-trait-marks-matching-steps-observed.md)
+- calls ← [`robby_ir::contract::kind_namespace_helpers`](../contract/tests/kind-namespace-helpers.md)
 - calls ← [`robby_ir::coverage::all_spans`](../coverage/all-spans.md)
 - calls ← [`robby_ir::coverage::document_coverage`](../coverage/document-coverage.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
@@ -176,7 +186,7 @@ flowchart TB
 
 - [`kind::code`](code/index.md) — 31 nodes
 - [`kind::runtime`](runtime/index.md) — 4 nodes
-- [`kind::agent`](agent/index.md) — 4 nodes
+- [`kind::agent`](agent/index.md) — 6 nodes
 
 ## Items
 
@@ -187,7 +197,7 @@ flowchart TB
 | [`Display for Kind`](display-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:39:1` |
 | [`impl From<&str> for Kind`](impl-from-str-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:45:1` |
 | [`impl From<String> for Kind`](impl-from-string-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:51:1` |
-| [`is_known`](is-known.md) | `code.function` | 1 | `crates/robby-ir/src/kind.rs:106:1` |
+| [`is_known`](is-known.md) | `code.function` | 2 | `crates/robby-ir/src/kind.rs:110:1` |
 
 ## Imports
 

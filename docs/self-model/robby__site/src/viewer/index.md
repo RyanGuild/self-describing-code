@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`apps/site/src/viewer.ts:1`](../../../../../apps/site/src/viewer.ts#L1) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 50 |
+| nodes | 75 |
 
 ## Entry
 
@@ -38,6 +38,8 @@ sequenceDiagram
     self-->>fn: 
     self-->>addEventListener: 
     self-->>fn: 
+    self-->>addEventListener: 
+    self-->>fn: 
 ```
 
 ## Types
@@ -56,10 +58,31 @@ classDiagram
     class Scene {
         <<interface>>
     }
+    class ProcessEvent {
+        <<interface>>
+    }
     class FrameDetail {
         <<interface>>
     }
     class Camera {
+        <<interface>>
+    }
+    class BuildStamp {
+        <<interface>>
+    }
+    class RunIndexEntry {
+        <<interface>>
+    }
+    class RunsIndex {
+        <<interface>>
+    }
+    class RunStep {
+        <<interface>>
+    }
+    class RunRecord {
+        <<interface>>
+    }
+    class ScreenRect {
         <<interface>>
     }
 ```
@@ -79,15 +102,6 @@ flowchart TB
 
 ## Comments
 
-- `apps/site/src/viewer.ts:15:1` (block, `robby__site/src/viewer/Rect`): "* * Fields this file reads. The JSON is whatever `Scene` and `FrameDetail` * in robby-render serialize; unused fields s…"
-  ```
-  interface Rect {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-  }
-  ```
 - `apps/site/src/viewer.ts:1:1` (block, `robby__site/src/viewer/Rect`): "* * Prezi-style camera over the Robby scene (flat world coordinates). * * Loads `scene.json` and lazy `frames/<id>.json…"
   ```
   interface Rect {
@@ -97,9 +111,79 @@ flowchart TB
     h: number;
   }
   ```
-- `apps/site/src/viewer.ts:212:1` (block, `robby__site/src/viewer/screenRectFromWorld`): "* Absolute screen rect for a frame from its world coordinates + camera."
+- `apps/site/src/viewer.ts:219:1` (block, `robby__site/src/viewer/startBuildWatch`): "* Poll `build.json` written by `robby web` / `--watch`; remount when IR site rebuilds."
   ```
-  function screenRectFromWorld(f: SceneFrame, cam: Camera) {
+  async function startBuildWatch(): Promise<void> {
+    const tick = async () => {
+      try {
+        const stamp = await fetchJson<BuildStamp>(`build.json?t=${Date.now()}`);
+        if (lastBuildAt === null) {
+          lastBuildAt = stamp.rebuilt_at;
+          showWatchBadge(stamp, false);
+        } else if (stamp.rebuilt_at !== lastBuildAt) {
+          lastBuildAt = stamp.rebuilt_at;
+          await reloadFromDisk(stamp);
+        }
+      } catch {
+        // build.json optional until first `robby web` with stamp support
+      }
+    };
+    await tick();
+    window.setInterval(() => {
+      void tick();
+    }, WATCH_POLL_MS);
+  }
+  ```
+- `apps/site/src/viewer.ts:232:7` (line, `robby__site/src/viewer/reloadFromDisk`): "build.json optional until first `robby web` with stamp support"
+  ```
+  async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
+    if (reloading || flying) {
+      return;
+    }
+    reloading = true;
+    const keepFocus = focusId;
+    const keepOrg = orgMode;
+    try {
+      detailCache.clear();
+      sceneCache.clear();
+      runDetailCache.clear();
+      const structure = await fetchJson<Scene>(`${ORG_MODES.structure.file}?t=${Date.now()}`);
+      sceneCache.set("structure", structure);
+      try {
+        const entrypoints = await fetchJson<Scene>(
+          `${ORG_MODES.entrypoints.file}?t=${Date.now()}`,
+        );
+        sceneCache.set("entrypoints", entrypoints);
+      } catch (err) {
+        console.error(err);
+      }
+      await prefetchRuns(true);
+      orgMode = keepOrg;
+      syncOrgChrome(keepOrg);
+      if (keepOrg === "runs") {
+        showRunsPanel();
+      } else {
+        const next = sceneCache.get(keepOrg) ?? structure;
+        applyScene(next);
+        syncOrgChrome(keepOrg);
+        if (keepFocus && next.frames[keepFocus]) {
+          focusId = keepFocus;
+          camera = cameraForFocus(focusId);
+          remount();
+          void loadDetail(focusId);
+        }
+      }
+      showWatchBadge(stamp, true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      reloading = false;
+    }
+  }
+  ```
+- `apps/site/src/viewer.ts:576:1` (block, `robby__site/src/viewer/screenRectFromWorld`): "* Absolute screen rect for a frame from its world coordinates + camera."
+  ```
+  function screenRectFromWorld(f: SceneFrame, cam: Camera): ScreenRect {
     return {
       x: cam.tx + f.world.x * cam.scale,
       y: cam.ty + f.world.y * cam.scale,
@@ -108,26 +192,25 @@ flowchart TB
     };
   }
   ```
-- `apps/site/src/viewer.ts:222:1` (block, `robby__site/src/viewer/screenRectFor`): "* * Children of the focused frame are placed from `local_in_parent` into the * parent's screen box. Nested world intege…"
+- `apps/site/src/viewer.ts:586:1` (block, `robby__site/src/viewer/screenRectFor`): "* * Children of the focused frame are placed from `local_in_parent` into the * parent's screen box. Nested world intege…"
   ```
-  function screenRectFor(f: SceneFrame, cam: Camera) {
-    if (f.parent === focusId && f.local_in_parent && scene) {
+  function screenRectFor(f: SceneFrame, cam: Camera): ScreenRect {
+    if (f.parent === focusId && f.local_in_parent) {
       const parent = screenRectFromWorld(frame(focusId), cam);
       const loc = f.local_in_parent;
-      const { w, h } = scene.canvas;
       return {
-        x: parent.x + (loc.x / w) * parent.w,
-        y: parent.y + (loc.y / h) * parent.h,
-        w: Math.max((loc.w / w) * parent.w, 1),
-        h: Math.max((loc.h / h) * parent.h, 1),
+        x: parent.x + (loc.x / CANVAS_W) * parent.w,
+        y: parent.y + (loc.y / CANVAS_H) * parent.h,
+        w: Math.max((loc.w / CANVAS_W) * parent.w, 1),
+        h: Math.max((loc.h / CANVAS_H) * parent.h, 1),
       };
     }
     return screenRectFromWorld(f, cam);
   }
   ```
-- `apps/site/src/viewer.ts:252:3` (line, `robby__site/src/viewer/remount`): "Only top-level world cards (the focus). Children live in the body's grid."
+- `apps/site/src/viewer.ts:615:3` (line, `robby__site/src/viewer/remount`): "Only top-level world cards (the focus). Children live in the body's grid."
   ```
-  function remount() {
+  function remount(): void {
     worldEl.innerHTML = "";
     const focus = frame(focusId);
     const focusEl = makeFrameEl(focusId, true, false);
@@ -151,13 +234,15 @@ flowchart TB
     updateChrome();
   }
   ```
-- `apps/site/src/viewer.ts:268:3` (line, `robby__site/src/viewer/portalButton`): "Contained nodes sit in a scrollable grid inside the focus body so they can"
+- `apps/site/src/viewer.ts:629:3` (line, `robby__site/src/viewer/portalButton`): "Contained nodes sit in a scrollable grid inside the focus body so they can"
   ```
-  function portalButton(portal: Portal) {
+  function portalButton(portal: Portal): HTMLButtonElement {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = `portal${portal.target ? "" : " unresolved"}`;
-    btn.innerHTML = `<span class="pk">${escapeHtml(portal.kind_label)}</span>${escapeHtml(portal.label)}`;
+    btn.className = "portal" + (portal.target ? "" : " unresolved");
+    btn.innerHTML =
+      `<span class="pk">${escapeHtml(portal.kind_label)}</span>` +
+      escapeHtml(portal.label);
     btn.title = portal.target_name || portal.label;
     if (portal.target) {
       const target = portal.target;
@@ -169,13 +254,15 @@ flowchart TB
     return btn;
   }
   ```
-- `apps/site/src/viewer.ts:269:3` (line, `robby__site/src/viewer/portalButton`): "keep a readable minimum size instead of shrinking to fit."
+- `apps/site/src/viewer.ts:630:3` (line, `robby__site/src/viewer/portalButton`): "keep a readable minimum size instead of shrinking to fit."
   ```
-  function portalButton(portal: Portal) {
+  function portalButton(portal: Portal): HTMLButtonElement {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = `portal${portal.target ? "" : " unresolved"}`;
-    btn.innerHTML = `<span class="pk">${escapeHtml(portal.kind_label)}</span>${escapeHtml(portal.label)}`;
+    btn.className = "portal" + (portal.target ? "" : " unresolved");
+    btn.innerHTML =
+      `<span class="pk">${escapeHtml(portal.kind_label)}</span>` +
+      escapeHtml(portal.label);
     btn.title = portal.target_name || portal.label;
     if (portal.target) {
       const target = portal.target;
@@ -187,10 +274,10 @@ flowchart TB
     return btn;
   }
   ```
-- `apps/site/src/viewer.ts:382:3` (line, `robby__site/src/viewer/flyTo`): "Portals only on the focused frame. Child previews stay as clean cards so"
+- `apps/site/src/viewer.ts:750:3` (line, `robby__site/src/viewer/flyTo`): "Portals only on the focused frame. Child previews stay as clean cards so"
   ```
-  function flyTo(id: string) {
-    if (!currentScene().frames[id] || id === focusId || flying) {
+  function flyTo(id: string): void {
+    if (!scene!.frames[id] || id === focusId || flying) {
       return;
     }
     flying = true;
@@ -207,10 +294,10 @@ flowchart TB
     });
   }
   ```
-- `apps/site/src/viewer.ts:383:3` (line, `robby__site/src/viewer/flyTo`): "dozens of "calls from …" chips don't paint over the sibling grid."
+- `apps/site/src/viewer.ts:751:3` (line, `robby__site/src/viewer/flyTo`): "dozens of "calls from …" chips don't paint over the sibling grid."
   ```
-  function flyTo(id: string) {
-    if (!currentScene().frames[id] || id === focusId || flying) {
+  function flyTo(id: string): void {
+    if (!scene!.frames[id] || id === focusId || flying) {
       return;
     }
     flying = true;
@@ -227,9 +314,9 @@ flowchart TB
     });
   }
   ```
-- `apps/site/src/viewer.ts:409:5` (line, `robby__site/src/viewer/zoomOut`): "Remount at the settled camera so the focus card paints at native screen"
+- `apps/site/src/viewer.ts:777:5` (line, `robby__site/src/viewer/zoomOut`): "Remount at the settled camera so the focus card paints at native screen"
   ```
-  function zoomOut() {
+  function zoomOut(): void {
     const parent = frame(focusId).parent;
     if (!parent) {
       return;
@@ -237,9 +324,9 @@ flowchart TB
     flyTo(parent);
   }
   ```
-- `apps/site/src/viewer.ts:410:5` (line, `robby__site/src/viewer/zoomOut`): "resolution instead of keeping a texture from the start of the tween."
+- `apps/site/src/viewer.ts:778:5` (line, `robby__site/src/viewer/zoomOut`): "resolution instead of keeping a texture from the start of the tween."
   ```
-  function zoomOut() {
+  function zoomOut(): void {
     const parent = frame(focusId).parent;
     if (!parent) {
       return;
@@ -247,9 +334,29 @@ flowchart TB
     flyTo(parent);
   }
   ```
-- `apps/site/src/viewer.ts:481:3` (line, `robby__site/src/viewer/appendExecution`): "Containers keep the child grid — inject execution above it."
+- `apps/site/src/viewer.ts:78:3` (block, `robby__site/src/viewer/Camera`): "* Mermaid sequenceDiagram from robby-render (same as Markdown)."
   ```
-  function appendExecution(panel: HTMLElement, mermaidSrc: string, frameId: string) {
+  interface Camera {
+    scale: number;
+    tx: number;
+    ty: number;
+  }
+  ```
+- `apps/site/src/viewer.ts:80:3` (block, `robby__site/src/viewer/Camera`): "* Path-level Calls sequence (functions + owning types)."
+  ```
+  interface Camera {
+    scale: number;
+    tx: number;
+    ty: number;
+  }
+  ```
+- `apps/site/src/viewer.ts:849:3` (line, `robby__site/src/viewer/appendExecution`): "Containers keep the child grid — inject execution above it."
+  ```
+  function appendExecution(
+    panel: HTMLElement,
+    mermaidSrc: string,
+    frameId: string,
+  ): void {
     const proc = document.createElement("div");
     proc.className = "process process-execution";
     const heading = document.createElement("h2");
@@ -270,41 +377,63 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`Rect`](rect.md) | `code.interface` | — | `apps/site/src/viewer.ts:20:1` |
-| [`Portal`](portal.md) | `code.interface` | — | `apps/site/src/viewer.ts:27:1` |
-| [`SceneFrame`](sceneframe.md) | `code.interface` | — | `apps/site/src/viewer.ts:34:1` |
+| [`Rect`](rect.md) | `code.interface` | — | `apps/site/src/viewer.ts:17:1` |
+| [`Portal`](portal.md) | `code.interface` | — | `apps/site/src/viewer.ts:24:1` |
+| [`SceneFrame`](sceneframe.md) | `code.interface` | — | `apps/site/src/viewer.ts:31:1` |
 | [`Scene`](scene.md) | `code.interface` | — | `apps/site/src/viewer.ts:45:1` |
-| [`FrameDetail`](framedetail.md) | `code.interface` | — | `apps/site/src/viewer.ts:51:1` |
-| [`Camera`](camera.md) | `code.interface` | — | `apps/site/src/viewer.ts:63:1` |
-| [`OrgMode`](orgmode.md) | `code.type_alias` | — | `apps/site/src/viewer.ts:80:1` |
-| [`main`](main.md) | `code.function` | 16 | `apps/site/src/viewer.ts:98:1` |
-| [`prefetchEntrypoints`](prefetchentrypoints.md) | `code.function` | 5 | `apps/site/src/viewer.ts:127:1` |
-| [`setOrgMode`](setorgmode.md) | `code.function` | 9 | `apps/site/src/viewer.ts:141:1` |
-| [`applyScene`](applyscene.md) | `code.function` | 3 | `apps/site/src/viewer.ts:162:1` |
-| [`currentScene`](currentscene.md) | `code.function` | 1 | `apps/site/src/viewer.ts:172:1` |
-| [`frame`](frame.md) | `code.function` | 2 | `apps/site/src/viewer.ts:179:1` |
-| [`ancestors`](ancestors.md) | `code.function` | 4 | `apps/site/src/viewer.ts:187:1` |
-| [`cameraForFocus`](cameraforfocus.md) | `code.function` | 3 | `apps/site/src/viewer.ts:197:1` |
-| [`screenRectFromWorld`](screenrectfromworld.md) | `code.function` | 1 | `apps/site/src/viewer.ts:213:1` |
-| [`screenRectFor`](screenrectfor.md) | `code.function` | 5 | `apps/site/src/viewer.ts:227:1` |
-| [`placeFrame`](placeframe.md) | `code.function` | 1 | `apps/site/src/viewer.ts:242:1` |
-| [`placeAllFrames`](placeallframes.md) | `code.function` | 2 | `apps/site/src/viewer.ts:251:1` |
-| [`remount`](remount.md) | `code.function` | 10 | `apps/site/src/viewer.ts:262:1` |
-| [`portalButton`](portalbutton.md) | `code.function` | 4 | `apps/site/src/viewer.ts:288:1` |
-| [`buildPortalStrip`](buildportalstrip.md) | `code.function` | 5 | `apps/site/src/viewer.ts:304:1` |
-| [`makeFrameEl`](makeframeel.md) | `code.function` | 15 | `apps/site/src/viewer.ts:353:1` |
-| [`flyTo`](flyto.md) | `code.function` | 5 | `apps/site/src/viewer.ts:400:1` |
-| [`zoomOut`](zoomout.md) | `code.function` | 3 | `apps/site/src/viewer.ts:418:1` |
-| [`easeOutCubic`](easeoutcubic.md) | `code.function` | 1 | `apps/site/src/viewer.ts:426:1` |
-| [`tweenCamera`](tweencamera.md) | `code.function` | 4 | `apps/site/src/viewer.ts:430:1` |
-| [`updateChrome`](updatechrome.md) | `code.function` | 1 | `apps/site/src/viewer.ts:455:1` |
-| [`loadDetail`](loaddetail.md) | `code.function` | 38 | `apps/site/src/viewer.ts:462:1` |
-| [`appendExecution`](appendexecution.md) | `code.function` | 8 | `apps/site/src/viewer.ts:562:1` |
-| [`loadMermaid`](loadmermaid.md) | `code.function` | 3 | `apps/site/src/viewer.ts:582:1` |
-| [`renderMermaid`](rendermermaid.md) | `code.function` | 7 | `apps/site/src/viewer.ts:597:1` |
-| [`fetchJson`](fetchjson.md) | `code.function` | 3 | `apps/site/src/viewer.ts:612:1` |
-| [`requireElement`](requireelement.md) | `code.function` | 2 | `apps/site/src/viewer.ts:620:1` |
-| [`requireButton`](requirebutton.md) | `code.function` | 2 | `apps/site/src/viewer.ts:628:1` |
-| [`escapeHtml`](escapehtml.md) | `code.function` | 2 | `apps/site/src/viewer.ts:636:1` |
-| [`cssEscape`](cssescape.md) | `code.function` | 4 | `apps/site/src/viewer.ts:644:1` |
+| [`ProcessEvent`](processevent.md) | `code.interface` | — | `apps/site/src/viewer.ts:51:1` |
+| [`FrameDetail`](framedetail.md) | `code.interface` | — | `apps/site/src/viewer.ts:62:1` |
+| [`Camera`](camera.md) | `code.interface` | — | `apps/site/src/viewer.ts:85:1` |
+| [`SceneOrgMode`](sceneorgmode.md) | `code.type_alias` | — | `apps/site/src/viewer.ts:102:1` |
+| [`OrgMode`](orgmode.md) | `code.type_alias` | — | `apps/site/src/viewer.ts:103:1` |
+| [`BuildStamp`](buildstamp.md) | `code.interface` | — | `apps/site/src/viewer.ts:105:1` |
+| [`RunIndexEntry`](runindexentry.md) | `code.interface` | — | `apps/site/src/viewer.ts:113:1` |
+| [`RunsIndex`](runsindex.md) | `code.interface` | — | `apps/site/src/viewer.ts:122:1` |
+| [`RunStep`](runstep.md) | `code.interface` | — | `apps/site/src/viewer.ts:126:1` |
+| [`RunRecord`](runrecord.md) | `code.interface` | — | `apps/site/src/viewer.ts:133:1` |
+| [`main`](main.md) | `code.function` | 18 | `apps/site/src/viewer.ts:180:1` |
+| [`startBuildWatch`](startbuildwatch.md) | `code.function` | 5 | `apps/site/src/viewer.ts:220:1` |
+| [`reloadFromDisk`](reloadfromdisk.md) | `code.function` | 22 | `apps/site/src/viewer.ts:241:1` |
+| [`showWatchBadge`](showwatchbadge.md) | `code.function` | 0 | `apps/site/src/viewer.ts:286:1` |
+| [`prefetchEntrypoints`](prefetchentrypoints.md) | `code.function` | 5 | `apps/site/src/viewer.ts:295:1` |
+| [`prefetchRuns`](prefetchruns.md) | `code.function` | 4 | `apps/site/src/viewer.ts:309:1` |
+| [`syncOrgChrome`](syncorgchrome.md) | `code.function` | 4 | `apps/site/src/viewer.ts:324:1` |
+| [`frameSafeParent`](framesafeparent.md) | `code.function` | 4 | `apps/site/src/viewer.ts:338:1` |
+| [`setOrgMode`](setorgmode.md) | `code.function` | 13 | `apps/site/src/viewer.ts:346:1` |
+| [`applyScene`](applyscene.md) | `code.function` | 3 | `apps/site/src/viewer.ts:372:1` |
+| [`showRunsPanel`](showrunspanel.md) | `code.function` | 2 | `apps/site/src/viewer.ts:382:1` |
+| [`renderRunsList`](renderrunslist.md) | `code.function` | 9 | `apps/site/src/viewer.ts:394:1` |
+| [`selectRun`](selectrun.md) | `code.function` | 8 | `apps/site/src/viewer.ts:424:1` |
+| [`renderRunDetail`](renderrundetail.md) | `code.function` | 4 | `apps/site/src/viewer.ts:442:1` |
+| [`statusClass`](statusclass.md) | `code.function` | 3 | `apps/site/src/viewer.ts:486:1` |
+| [`formatDuration`](formatduration.md) | `code.function` | 4 | `apps/site/src/viewer.ts:496:1` |
+| [`formatRelative`](formatrelative.md) | `code.function` | 5 | `apps/site/src/viewer.ts:507:1` |
+| [`formatAbsolute`](formatabsolute.md) | `code.function` | 4 | `apps/site/src/viewer.ts:521:1` |
+| [`currentScene`](currentscene.md) | `code.function` | 1 | `apps/site/src/viewer.ts:529:1` |
+| [`frame`](frame.md) | `code.function` | 2 | `apps/site/src/viewer.ts:536:1` |
+| [`ancestors`](ancestors.md) | `code.function` | 4 | `apps/site/src/viewer.ts:544:1` |
+| [`cameraForFocus`](cameraforfocus.md) | `code.function` | 3 | `apps/site/src/viewer.ts:554:1` |
+| [`ScreenRect`](screenrect.md) | `code.interface` | — | `apps/site/src/viewer.ts:569:1` |
+| [`screenRectFromWorld`](screenrectfromworld.md) | `code.function` | 1 | `apps/site/src/viewer.ts:577:1` |
+| [`screenRectFor`](screenrectfor.md) | `code.function` | 5 | `apps/site/src/viewer.ts:591:1` |
+| [`placeFrame`](placeframe.md) | `code.function` | 1 | `apps/site/src/viewer.ts:605:1` |
+| [`placeAllFrames`](placeallframes.md) | `code.function` | 2 | `apps/site/src/viewer.ts:614:1` |
+| [`remount`](remount.md) | `code.function` | 10 | `apps/site/src/viewer.ts:623:1` |
+| [`portalButton`](portalbutton.md) | `code.function` | 5 | `apps/site/src/viewer.ts:649:1` |
+| [`buildPortalStrip`](buildportalstrip.md) | `code.function` | 5 | `apps/site/src/viewer.ts:667:1` |
+| [`makeFrameEl`](makeframeel.md) | `code.function` | 15 | `apps/site/src/viewer.ts:716:1` |
+| [`flyTo`](flyto.md) | `code.function` | 5 | `apps/site/src/viewer.ts:768:1` |
+| [`zoomOut`](zoomout.md) | `code.function` | 3 | `apps/site/src/viewer.ts:786:1` |
+| [`easeOutCubic`](easeoutcubic.md) | `code.function` | 2 | `apps/site/src/viewer.ts:794:1` |
+| [`tweenCamera`](tweencamera.md) | `code.function` | 4 | `apps/site/src/viewer.ts:798:1` |
+| [`updateChrome`](updatechrome.md) | `code.function` | 1 | `apps/site/src/viewer.ts:823:1` |
+| [`loadDetail`](loaddetail.md) | `code.function` | 39 | `apps/site/src/viewer.ts:830:1` |
+| [`appendExecution`](appendexecution.md) | `code.function` | 8 | `apps/site/src/viewer.ts:933:1` |
+| [`loadMermaid`](loadmermaid.md) | `code.function` | 3 | `apps/site/src/viewer.ts:957:1` |
+| [`renderMermaid`](rendermermaid.md) | `code.function` | 7 | `apps/site/src/viewer.ts:972:1` |
+| [`fetchJson`](fetchjson.md) | `code.function` | 3 | `apps/site/src/viewer.ts:991:1` |
+| [`requireElement`](requireelement.md) | `code.function` | 2 | `apps/site/src/viewer.ts:999:1` |
+| [`requireButton`](requirebutton.md) | `code.function` | 2 | `apps/site/src/viewer.ts:1007:1` |
+| [`escapeHtml`](escapehtml.md) | `code.function` | 2 | `apps/site/src/viewer.ts:1015:1` |
+| [`cssEscape`](cssescape.md) | `code.function` | 4 | `apps/site/src/viewer.ts:1023:1` |
 
