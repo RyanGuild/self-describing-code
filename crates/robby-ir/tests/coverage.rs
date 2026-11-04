@@ -23,7 +23,8 @@ fn fully_covered_file_has_no_gaps() {
     let report = file_coverage(FILE, source, &[span(source, 0, source.len() as u32)]);
 
     assert!(report.is_complete());
-    assert!(report.gaps.is_empty());
+    let no_gaps: [robby_ir::Gap; 0] = [];
+    assert_eq!(report.gaps, no_gaps);
     assert_eq!(report.covered_bytes, source.len() as u32);
     assert_eq!(report.ratio(), 1.0);
 }
@@ -33,8 +34,8 @@ fn nested_spans_are_unioned_not_double_counted() {
     let source = "fn add() { 1 }";
     let spans = [
         span(source, 0, source.len() as u32),
-        span(source, 3, 8),  // "add()"
-        span(source, 4, 6),  // "dd"
+        span(source, 3, 8), // "add()"
+        span(source, 4, 6), // "dd"
     ];
 
     let report = file_coverage(FILE, source, &spans);
@@ -151,7 +152,11 @@ fn report_orders_worst_files_first() {
     doc.insert(a);
 
     let report = document_coverage(&doc, &sources);
-    let order: Vec<&str> = report.worst_first().iter().map(|f| f.file.as_str()).collect();
+    let order: Vec<&str> = report
+        .worst_first()
+        .iter()
+        .map(|f| f.file.as_str())
+        .collect();
     assert_eq!(order, vec!["b.rs", "a.rs"]);
 }
 
@@ -173,7 +178,11 @@ fn frontier_spans_exclude_parents_that_have_span_children() {
     parent.span = Some(Span::new(FILE, source, 0, source.len() as u32));
     doc.insert(parent);
 
-    let mut a = Node::new(NodeId::symbol("rust", "demo::a"), kind::code::FUNCTION, "demo::a");
+    let mut a = Node::new(
+        NodeId::symbol("rust", "demo::a"),
+        kind::code::FUNCTION,
+        "demo::a",
+    );
     a.parent = Some(NodeId::from("rust://demo"));
     a.span = Some(Span::new(FILE, source, 0, 9));
     doc.insert(a);
@@ -207,7 +216,11 @@ fn typescript_comments_and_shebang_are_trivia() {
     let file = "src/demo.ts";
     let source = "#!/usr/bin/env node\n// leading\n\nexport function a() {}\n";
     let start = source.find("export").unwrap() as u32;
-    let report = file_coverage(file, source, &[Span::new(file, source, start, source.len() as u32)]);
+    let report = file_coverage(
+        file,
+        source,
+        &[Span::new(file, source, start, source.len() as u32)],
+    );
 
     assert!(report.is_complete());
     assert!(
@@ -245,4 +258,3 @@ fn typescript_node_sets_lang() {
     assert_eq!(node.name, "a");
     assert_eq!(node.kind.as_str(), kind::code::MODULE);
 }
-

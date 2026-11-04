@@ -12,8 +12,6 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use robby_ir::{CoverageReport, Diagnostic, Document, Severity, coverage, validate};
 
-
-
 /// A document plus everything derived from it.
 pub struct Loaded {
     pub document: Document,
@@ -38,7 +36,12 @@ impl Loaded {
     pub fn summary(&self) -> String {
         let files = self.coverage.files.len();
         let claimed: u32 = self.coverage.files.iter().map(|f| f.covered_bytes).sum();
-        let unclaimed: u32 = self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum();
+        let unclaimed: u32 = self
+            .coverage
+            .files
+            .iter()
+            .map(robby_ir::FileCoverage::uncovered_bytes)
+            .sum();
         format!(
             "{files} file(s), {claimed} bytes claimed, {unclaimed} unclaimed, {} diagnostic(s)",
             self.diagnostics.len()
@@ -110,7 +113,10 @@ pub fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize> {
     }
     for root in &doc.roots {
         let mermaid = crate::flowchart(doc, root);
-        fs::write(out.join(format!("graph-{}.mmd", slug(root.as_str()))), mermaid)?;
+        fs::write(
+            out.join(format!("graph-{}.mmd", slug(root.as_str()))),
+            mermaid,
+        )?;
         count += 1;
     }
 
@@ -178,11 +184,7 @@ fn remove_markdown(dir: &Path) -> std::io::Result<()> {
 
 /// Files whose change must invalidate a cached build.
 pub fn watched_files(loaded: &Loaded) -> Vec<PathBuf> {
-    loaded
-        .sources
-        .keys()
-        .map(PathBuf::from)
-        .collect::<Vec<_>>()
+    loaded.sources.keys().map(PathBuf::from).collect::<Vec<_>>()
 }
 
 fn slug(input: &str) -> String {

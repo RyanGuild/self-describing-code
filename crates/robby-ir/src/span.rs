@@ -8,7 +8,9 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 /// A single point in a source file.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+)]
 pub struct Position {
     /// 1-based line number.
     pub line: u32,
@@ -31,7 +33,7 @@ impl Position {
         let byte = byte.min(source.len() as u32);
         let prefix = &source[..byte as usize];
         let line = prefix.matches('\n').count() as u32 + 1;
-        let line_start = prefix.rfind('\n').map(|i| i + 1).unwrap_or(0);
+        let line_start = prefix.rfind('\n').map_or(0, |i| i + 1);
         let column = prefix[line_start..].chars().count() as u32 + 1;
         Self { line, column, byte }
     }

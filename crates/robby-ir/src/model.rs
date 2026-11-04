@@ -19,7 +19,9 @@ pub const SCHEMA_VERSION: u32 = 1;
 /// use `parent#ordinal`. Ordinal-based ids are stable within a run but shift
 /// when earlier siblings change; that is documented and accepted, because
 /// byte-offset ids would shift on every edit above them instead.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+)]
 #[serde(transparent)]
 pub struct NodeId(String);
 
@@ -149,6 +151,8 @@ pub struct Edge {
     pub resolved: bool,
 }
 
+// `skip_serializing_if` requires `fn(&T) -> bool`, so this stays a reference.
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn is_one(v: &f32) -> bool {
     (*v - 1.0).abs() < f32::EPSILON
 }
@@ -169,7 +173,9 @@ impl Edge {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum EdgeKind {
     Contains,
@@ -339,12 +345,11 @@ impl Document {
         let id = node.id.clone();
         if node.parent.is_none() {
             self.roots.push(id.clone());
-        } else if let Some(parent) = &node.parent {
-            if let Some(p) = self.nodes.get_mut(parent) {
-                if !p.children.contains(&id) {
-                    p.children.push(id.clone());
-                }
-            }
+        } else if let Some(parent) = &node.parent
+            && let Some(p) = self.nodes.get_mut(parent)
+            && !p.children.contains(&id)
+        {
+            p.children.push(id.clone());
         }
         self.nodes.insert(id, node);
     }
@@ -465,16 +470,16 @@ pub fn validate(doc: &Document) -> Vec<Diagnostic> {
     }
 
     for (id, node) in &doc.nodes {
-        if let Some(parent) = &node.parent {
-            if !doc.nodes.contains_key(parent) {
-                out.push(
-                    Diagnostic::error(
-                        "node/parent-missing",
-                        format!("parent {parent} is not in the document"),
-                    )
-                    .about(id.clone()),
-                );
-            }
+        if let Some(parent) = &node.parent
+            && !doc.nodes.contains_key(parent)
+        {
+            out.push(
+                Diagnostic::error(
+                    "node/parent-missing",
+                    format!("parent {parent} is not in the document"),
+                )
+                .about(id.clone()),
+            );
         }
         for child in &node.children {
             if !doc.nodes.contains_key(child) {

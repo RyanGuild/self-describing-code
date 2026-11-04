@@ -98,7 +98,12 @@ impl Process {
     }
 
     /// Add a participant, returning its index. Duplicate ids are ignored.
-    pub fn participant(&mut self, id: impl Into<String>, label: impl Into<String>, kind: Kind) -> usize {
+    pub fn participant(
+        &mut self,
+        id: impl Into<String>,
+        label: impl Into<String>,
+        kind: Kind,
+    ) -> usize {
         let id = id.into();
         if let Some(idx) = self.participants.iter().position(|p| p.id == id) {
             return idx;
@@ -130,9 +135,11 @@ impl Process {
 
         let mut matched = vec![false; observed.steps.len()];
         for step in &mut self.steps {
-            if let Some(idx) = observed.steps.iter().position(|o| {
-                o.from == step.from && o.to == step.to && o.label == step.label
-            }) {
+            if let Some(idx) = observed
+                .steps
+                .iter()
+                .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
+            {
                 step.observed = true;
                 matched[idx] = true;
             }

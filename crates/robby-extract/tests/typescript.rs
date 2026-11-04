@@ -75,10 +75,7 @@ fn resolves_calls_and_imports() {
         .find(|n| n.kind.as_str() == kind::code::CLASS && n.name == "Point")
         .expect("Point");
     assert!(
-        point
-            .edges
-            .iter()
-            .any(|e| e.kind == EdgeKind::Implements),
+        point.edges.iter().any(|e| e.kind == EdgeKind::Implements),
         "Point implements Drawable"
     );
 }
@@ -96,21 +93,21 @@ fn bare_import_creates_external_npm_stub() {
     assert_eq!(stub.lang, Lang::TypeScript);
     assert!(stub.tags.iter().any(|t| t == "external"));
     assert_eq!(
-        stub.annotations.get("external").map(|s| s.as_str()),
+        stub.annotations
+            .get("external")
+            .map(std::string::String::as_str),
         Some("true")
     );
 
     let bare = doc
         .nodes
         .values()
-        .find(|n| {
-            n.kind.as_str() == kind::code::IMPORT && n.fqn.contains("import:demo-ext")
-        })
+        .find(|n| n.kind.as_str() == kind::code::IMPORT && n.fqn.contains("import:demo-ext"))
         .expect("bare import");
     assert!(
-        bare.edges.iter().any(|e| {
-            e.kind == EdgeKind::Imports && e.to == stub.id
-        }),
+        bare.edges
+            .iter()
+            .any(|e| { e.kind == EdgeKind::Imports && e.to == stub.id }),
         "bare import should edge to stub: {:?}",
         bare.edges
     );
@@ -131,14 +128,20 @@ fn emits_comment_nodes_and_attaches_docs() {
     );
     assert!(
         comments.iter().any(|c| {
-            c.annotations.get("comment_kind").map(|s| s.as_str()) == Some("block")
+            c.annotations
+                .get("comment_kind")
+                .map(std::string::String::as_str)
+                == Some("block")
                 && c.docs.as_deref().is_some_and(|d| d.contains("drawable"))
         }),
         "missing JSDoc block: {comments:?}"
     );
     assert!(
         comments.iter().any(|c| {
-            c.annotations.get("comment_kind").map(|s| s.as_str()) == Some("line")
+            c.annotations
+                .get("comment_kind")
+                .map(std::string::String::as_str)
+                == Some("line")
                 && c.docs.as_deref().is_some_and(|d| d.contains("canvas"))
         }),
         "missing line comment: {comments:?}"
@@ -177,8 +180,5 @@ fn typescript_fixture_is_fully_covered() {
         .map(|(file, gap)| format!("{}:{} {:?}", file.file, gap.span.location(), gap.preview))
         .collect();
 
-    assert!(
-        report.is_complete(),
-        "unclaimed TypeScript: {failures:#?}"
-    );
+    assert!(report.is_complete(), "unclaimed TypeScript: {failures:#?}");
 }

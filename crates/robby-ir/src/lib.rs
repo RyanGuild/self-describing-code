@@ -22,9 +22,7 @@ pub mod model;
 pub mod process;
 pub mod span;
 
-pub use codepath::{
-    CodePath, CodePathEdge, DEFAULT_MAX_DEPTH, build_code_paths, find_entrypoints,
-};
+pub use codepath::{CodePath, CodePathEdge, DEFAULT_MAX_DEPTH, build_code_paths, find_entrypoints};
 pub use coverage::{
     CoverageReport, FileCoverage, Gap, GapReason, document_coverage, file_coverage,
 };

@@ -169,8 +169,7 @@ impl Renderer for TuiRenderer {
                 } => {
                     from_width = from_width.max(UnicodeWidthStr::width(name(from).as_str()));
                     to_width = to_width.max(UnicodeWidthStr::width(name(to).as_str()));
-                    label_width =
-                        label_width.max(UnicodeWidthStr::width(clip(label, 52).as_str()));
+                    label_width = label_width.max(UnicodeWidthStr::width(clip(label, 52).as_str()));
                 }
                 ProcessEvent::Else { .. } => {}
             }
@@ -211,11 +210,7 @@ impl Renderer for TuiRenderer {
                 }
                 ProcessEvent::Begin { keyword, label } => {
                     let guide = "│ ".repeat(depth);
-                    let _ = writeln!(
-                        out,
-                        "{gutter}{guide}┌─ {keyword} {}",
-                        clip(label, 60)
-                    );
+                    let _ = writeln!(out, "{gutter}{guide}┌─ {keyword} {}", clip(label, 60));
                     depth += 1;
                 }
                 ProcessEvent::Interaction {
@@ -384,11 +379,7 @@ impl Renderer for TuiRenderer {
                 } else {
                     format!(" — {} items", link.items.len())
                 };
-                let _ = writeln!(
-                    out,
-                    "  {} → {}{detail}",
-                    link.kind_label, link.module_fqn
-                );
+                let _ = writeln!(out, "  {} → {}{detail}", link.kind_label, link.module_fqn);
             }
             out.push('\n');
         }
@@ -457,10 +448,6 @@ impl Renderer for TuiRenderer {
 }
 
 fn ascii_package_structure(view: &PackageStructure) -> String {
-    if view.is_empty() {
-        return String::from("(no package structure)\n");
-    }
-    let mut out = String::new();
     fn walk(node: &PackageNode, prefix: &str, is_last: bool, out: &mut String) {
         let branch = if prefix.is_empty() {
             ""
@@ -482,6 +469,10 @@ fn ascii_package_structure(view: &PackageStructure) -> String {
             walk(child, &child_prefix, index + 1 == count, out);
         }
     }
+    if view.is_empty() {
+        return String::from("(no package structure)\n");
+    }
+    let mut out = String::new();
     walk(&view.root, "", true, &mut out);
     if !view.externals.is_empty() {
         out.push_str("externals\n");
@@ -495,12 +486,10 @@ fn ascii_package_structure(view: &PackageStructure) -> String {
             let mark = if edge.in_cycle { " ⇄" } else { "" };
             let from = view
                 .module_by_stable(&edge.from)
-                .map(|m| m.name.as_str())
-                .unwrap_or(edge.from.as_str());
+                .map_or(edge.from.as_str(), |m| m.name.as_str());
             let to = view
                 .module_by_stable(&edge.to)
-                .map(|m| m.name.as_str())
-                .unwrap_or(edge.to.as_str());
+                .map_or(edge.to.as_str(), |m| m.name.as_str());
             let _ = writeln!(out, "  {from} → {to}{mark}");
         }
     }
@@ -508,20 +497,6 @@ fn ascii_package_structure(view: &PackageStructure) -> String {
 }
 
 fn ascii_coupling(view: &CouplingGraph) -> String {
-    if view.is_empty() {
-        return String::from("(no internal coupling)\n");
-    }
-    let leaves = view.leaf_nodes();
-    let by_parent: BTreeMap<&str, Vec<&str>> = {
-        let mut map: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
-        for leaf in leaves {
-            map.entry(leaf.parent_stable_id.as_str())
-                .or_default()
-                .push(leaf.name.as_str());
-        }
-        map
-    };
-    let mut out = String::new();
     fn walk(
         node: &CouplingModule,
         by_parent: &BTreeMap<&str, Vec<&str>>,
@@ -544,7 +519,10 @@ fn ascii_coupling(view: &CouplingGraph) -> String {
         } else {
             format!("{prefix}│   ")
         };
-        let fns = by_parent.get(node.stable_id.as_str()).cloned().unwrap_or_default();
+        let fns = by_parent
+            .get(node.stable_id.as_str())
+            .cloned()
+            .unwrap_or_default();
         let total = node.children.len() + fns.len();
         for (index, child) in node.children.iter().enumerate() {
             walk(child, by_parent, &child_prefix, index + 1 == total, out);
@@ -555,6 +533,21 @@ fn ascii_coupling(view: &CouplingGraph) -> String {
             let _ = writeln!(out, "{child_prefix}{b}{name}()");
         }
     }
+
+    if view.is_empty() {
+        return String::from("(no internal coupling)\n");
+    }
+    let leaves = view.leaf_nodes();
+    let by_parent: BTreeMap<&str, Vec<&str>> = {
+        let mut map: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
+        for leaf in leaves {
+            map.entry(leaf.parent_stable_id.as_str())
+                .or_default()
+                .push(leaf.name.as_str());
+        }
+        map
+    };
+    let mut out = String::new();
     walk(&view.root, &by_parent, "", true, &mut out);
     if !view.edges.is_empty() {
         out.push_str("calls\n");
@@ -562,8 +555,7 @@ fn ascii_coupling(view: &CouplingGraph) -> String {
             leaves
                 .iter()
                 .find(|f| f.stable_id == sid)
-                .map(|f| f.name.clone())
-                .unwrap_or_else(|| sid.to_owned())
+                .map_or_else(|| sid.to_owned(), |f| f.name.clone())
         };
         for edge in &view.edges {
             let mark = if edge.in_cycle { " ⇄" } else { "" };

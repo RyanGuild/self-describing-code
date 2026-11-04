@@ -199,11 +199,7 @@ impl Renderer for MermaidRenderer {
         out.push_str("    end\n");
         for edge in &view.edges {
             let arrow = if edge.resolved { "-->" } else { "-.->" };
-            let _ = writeln!(
-                out,
-                "    {} {arrow}|{}| {}",
-                edge.from, edge.label, edge.to
-            );
+            let _ = writeln!(out, "    {} {arrow}|{}| {}", edge.from, edge.label, edge.to);
         }
         out
     }
@@ -257,7 +253,10 @@ fn emit_coupling_subgraph(
     depth: usize,
 ) {
     let indent = "    ".repeat(depth);
-    let leaves = by_parent.get(node.stable_id.as_str()).cloned().unwrap_or_default();
+    let leaves = by_parent
+        .get(node.stable_id.as_str())
+        .cloned()
+        .unwrap_or_default();
     if node.children.is_empty() && leaves.is_empty() {
         return;
     }
@@ -272,17 +271,13 @@ fn emit_coupling_subgraph(
         emit_coupling_subgraph(out, child, by_parent, depth + 1);
     }
     for leaf in &leaves {
-        let _ = writeln!(
-            out,
-            "{indent}    {}[\"{}\"]",
-            leaf.stable_id, leaf.name
-        );
+        let _ = writeln!(out, "{indent}    {}[\"{}\"]", leaf.stable_id, leaf.name);
     }
     let _ = writeln!(out, "{indent}end");
 }
 
 /// Markdown DSM table (row depends on column). Shared by Markdown/TUI.
-pub fn dsm_markdown_table(view: &PackageStructure) -> String {
+pub(super) fn dsm_markdown_table(view: &PackageStructure) -> String {
     if view.modules.is_empty() {
         return String::new();
     }
@@ -293,10 +288,10 @@ pub fn dsm_markdown_table(view: &PackageStructure) -> String {
         let mut ordered = Vec::new();
         for layer in &view.layers {
             for sid in layer {
-                if let Some(m) = view.module_by_stable(sid) {
-                    if seen.insert(sid.clone()) {
-                        ordered.push(m);
-                    }
+                if let Some(m) = view.module_by_stable(sid)
+                    && seen.insert(sid.clone())
+                {
+                    ordered.push(m);
                 }
             }
         }

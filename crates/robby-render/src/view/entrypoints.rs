@@ -6,7 +6,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use robby_ir::{CodePath, Document, EdgeKind, NodeId, DEFAULT_MAX_DEPTH, find_entrypoints};
+use robby_ir::{CodePath, DEFAULT_MAX_DEPTH, Document, EdgeKind, NodeId, find_entrypoints};
 
 /// Max call-tree depth from an entrypoint (entry = 0). Matches IR default.
 pub const MAX_CALL_DEPTH: usize = DEFAULT_MAX_DEPTH as usize;
@@ -80,18 +80,13 @@ impl CallTree {
     pub fn from_entries(doc: &Document, entries: &[NodeId], max_depth: usize) -> Self {
         let paths: Vec<CodePath> = entries
             .iter()
-            .filter_map(|entry| {
-                CodePath::from_entry(doc, entry, max_depth as u32)
-            })
+            .filter_map(|entry| CodePath::from_entry(doc, entry, max_depth as u32))
             .collect();
         Self::from_code_paths(doc, &paths)
     }
 
     pub fn children_of(&self, id: &NodeId) -> &[NodeId] {
-        self.children
-            .get(id)
-            .map(|v| v.as_slice())
-            .unwrap_or(&[])
+        self.children.get(id).map_or(&[], std::vec::Vec::as_slice)
     }
 }
 
@@ -140,8 +135,10 @@ mod tests {
             kind::code::FUNCTION,
             "demo::main",
         );
-        main.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::a"), EdgeKind::Calls));
+        main.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::a"),
+            EdgeKind::Calls,
+        ));
         doc.insert(main);
 
         let mut a = Node::new(
@@ -149,8 +146,10 @@ mod tests {
             kind::code::FUNCTION,
             "demo::a",
         );
-        a.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::b"), EdgeKind::Calls));
+        a.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::b"),
+            EdgeKind::Calls,
+        ));
         doc.insert(a);
 
         doc.insert(Node::new(
@@ -164,9 +163,10 @@ mod tests {
             kind::code::FUNCTION,
             "demo::other",
         );
-        other
-            .edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::b"), EdgeKind::Calls));
+        other.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::b"),
+            EdgeKind::Calls,
+        ));
         doc.insert(other);
 
         doc.rebuild_code_paths();
@@ -176,7 +176,8 @@ mod tests {
     #[test]
     fn prefers_document_code_paths() {
         let doc = doc_with_mains();
-        assert!(!doc.code_paths.is_empty());
+        let no_paths: [robby_ir::CodePath; 0] = [];
+        assert_ne!(doc.code_paths, no_paths);
         let tree = CallTree::from_document(&doc);
         assert_eq!(tree.entries, vec![NodeId::symbol("rust", "demo::main")]);
         assert_eq!(
@@ -198,13 +199,12 @@ mod tests {
             tree.children_of(&NodeId::symbol("rust", "demo::a")),
             &[NodeId::symbol("rust", "demo::b")]
         );
-        assert!(tree
-            .cross_edges
-            .iter()
-            .any(|(f, t)| f == &NodeId::symbol("rust", "demo::other")
-                && t == &NodeId::symbol("rust", "demo::b")));
-        assert!(tree
-            .children_of(&NodeId::symbol("rust", "demo::other"))
-            .is_empty());
+        assert!(
+            tree.cross_edges
+                .iter()
+                .any(|(f, t)| f == &NodeId::symbol("rust", "demo::other")
+                    && t == &NodeId::symbol("rust", "demo::b"))
+        );
+        assert_eq!(tree.children_of(&NodeId::symbol("rust", "demo::other")), []);
     }
 }

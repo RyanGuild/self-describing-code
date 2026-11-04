@@ -32,6 +32,19 @@ what collapses, clusters, and drills down. Representation never does.
 The map describes Robby itself: 4 crates, 18 files, ~530 nodes, 100% byte
 coverage. The hand-authored fixture is kept only as a test input.
 
+## Check
+
+Formatting and lint are part of the build, not a suggestion. Rust is `rustfmt` (see `rustfmt.toml`) plus Clippy with `clippy::all`, `clippy::pedantic`, and `clippy::cargo` denied. The site is Biome plus `tsc` strict.
+
+```sh
+cargo fmt --all
+cargo lint
+cargo test --workspace
+cd apps/site && npm install && npm run check
+```
+
+`cargo test` regenerates `docs/self-model/` and `.robby/`. A clean tree after the test run means those artifacts match the source.
+
 ## Run it
 
 ```sh

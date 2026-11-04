@@ -15,9 +15,7 @@ use robby_ir::{Document, Node, Source, StepKind};
 use crate::render::MermaidRenderer;
 use crate::render::Renderer;
 use crate::util::stable_id;
-use crate::view::{
-    ProcessEvent, ProcessView, Scene, SourceSlice, WORKSPACE_ID, execution_process,
-};
+use crate::view::{ProcessEvent, ProcessView, Scene, SourceSlice, WORKSPACE_ID, execution_process};
 
 /// Lazy detail for one frame (fetched after the camera settles).
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -160,7 +158,7 @@ impl FrameDetail {
             kind: node.kind.as_str().to_owned(),
             signature: node.signature.clone(),
             docs: node.docs.clone(),
-            location: node.span.as_ref().map(|s| s.location()),
+            location: node.span.as_ref().map(robby_ir::Span::location),
             provenance: provenance_name(node.provenance.source),
             confidence: node.provenance.confidence,
             process,
@@ -226,11 +224,7 @@ fn provenance_name(source: Source) -> &'static str {
 /// Returns the number of frame payload files written. The TypeScript viewer in
 /// `apps/site/src` loads these files; it is not copied here so the self-model
 /// keeps a single source of truth.
-pub fn write_site(
-    doc: &Document,
-    sources: &BTreeMap<String, String>,
-    out: &Path,
-) -> Result<usize> {
+pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path) -> Result<usize> {
     fs::create_dir_all(out)?;
     let frames_dir = out.join("frames");
     fs::create_dir_all(&frames_dir)?;

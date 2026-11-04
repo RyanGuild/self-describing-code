@@ -31,6 +31,8 @@ fn default_confidence() -> f32 {
     1.0
 }
 
+// `skip_serializing_if` requires `fn(&T) -> bool`, so this stays a reference.
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn is_one(v: &f32) -> bool {
     (*v - 1.0).abs() < f32::EPSILON
 }
@@ -49,9 +51,7 @@ pub struct CodePath {
 impl CodePath {
     /// Build one path from `entry` over resolved `Calls` edges.
     pub fn from_entry(doc: &Document, entry: &NodeId, max_depth: u32) -> Option<Self> {
-        if doc.get(entry).is_none() {
-            return None;
-        }
+        doc.get(entry)?;
 
         let mut edges = Vec::new();
         let mut placed = BTreeSet::new();
@@ -76,8 +76,8 @@ impl CodePath {
                 .map(|e| (e.to.clone(), e.confidence))
                 .collect();
             callees.sort_by(|(a, _), (b, _)| {
-                let fa = doc.get(a).map(|n| n.fqn.as_str()).unwrap_or("");
-                let fb = doc.get(b).map(|n| n.fqn.as_str()).unwrap_or("");
+                let fa = doc.get(a).map_or("", |n| n.fqn.as_str());
+                let fb = doc.get(b).map_or("", |n| n.fqn.as_str());
                 fa.cmp(fb).then_with(|| a.as_str().cmp(b.as_str()))
             });
             callees.dedup_by(|(a, _), (b, _)| a == b);
@@ -110,11 +110,13 @@ pub fn find_entrypoints(doc: &Document) -> Vec<NodeId> {
     let mut entries: Vec<&crate::Node> = doc
         .nodes
         .values()
-        .filter(|node| {
-            node.name == "main" && node.kind.as_str() == kind::code::FUNCTION
-        })
+        .filter(|node| node.name == "main" && node.kind.as_str() == kind::code::FUNCTION)
         .collect();
-    entries.sort_by(|a, b| a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().cmp(b.id.as_str())));
+    entries.sort_by(|a, b| {
+        a.fqn
+            .cmp(&b.fqn)
+            .then_with(|| a.id.as_str().cmp(b.id.as_str()))
+    });
     entries.into_iter().map(|n| n.id.clone()).collect()
 }
 
@@ -138,8 +140,10 @@ mod tests {
             kind::code::FUNCTION,
             "demo::main",
         );
-        main.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::a"), EdgeKind::Calls));
+        main.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::a"),
+            EdgeKind::Calls,
+        ));
         doc.insert(main);
 
         let mut a = Node::new(
@@ -147,8 +151,10 @@ mod tests {
             kind::code::FUNCTION,
             "demo::a",
         );
-        a.edges
-            .push(Edge::new(NodeId::symbol("rust", "demo::b"), EdgeKind::Calls));
+        a.edges.push(Edge::new(
+            NodeId::symbol("rust", "demo::b"),
+            EdgeKind::Calls,
+        ));
         doc.insert(a);
 
         doc.insert(Node::new(
@@ -176,8 +182,8 @@ mod tests {
     #[test]
     fn respects_max_depth() {
         let doc = sample_doc();
-        let path = CodePath::from_entry(&doc, &NodeId::symbol("rust", "demo::main"), 1)
-            .expect("path");
+        let path =
+            CodePath::from_entry(&doc, &NodeId::symbol("rust", "demo::main"), 1).expect("path");
         assert_eq!(path.edges.len(), 1);
         assert_eq!(path.edges[0].to, NodeId::symbol("rust", "demo::a"));
     }

@@ -125,4 +125,3 @@ pub fn step_summary(step: &Step) -> String {
     };
     format!("{kind} {} -> {}", step.from, step.to)
 }
-

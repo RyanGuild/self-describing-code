@@ -210,7 +210,14 @@ fn run() -> Result<ExitCode> {
             decision_model,
             note_model,
             limit,
-        } => enrich_comments(&ir, &source_root, out.as_deref(), decision_model, note_model, limit),
+        } => enrich_comments(
+            &ir,
+            &source_root,
+            out.as_deref(),
+            decision_model,
+            note_model,
+            limit,
+        ),
         Command::Web {
             ir,
             source_root,
@@ -219,7 +226,11 @@ fn run() -> Result<ExitCode> {
     }
 }
 
-fn web(ir: &std::path::Path, source_root: &std::path::Path, out: &std::path::Path) -> Result<ExitCode> {
+fn web(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    out: &std::path::Path,
+) -> Result<ExitCode> {
     let loaded = pipeline::load(ir, source_root)?;
     let count = robby_render::write_site(&loaded.document, &loaded.sources, out)?;
     println!(
@@ -248,12 +259,17 @@ fn enrich_comments(
     }
     opts.limit = limit;
 
-    let stats = robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
+    let stats =
+        robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
     let out_path = out.unwrap_or(ir);
     pipeline::write_document(&loaded.document, out_path)?;
     println!(
         "enriched {} comment(s): {} relevant, {} noise, {} noted → {}",
-        stats.decided, stats.relevant, stats.noise, stats.noted, out_path.display()
+        stats.decided,
+        stats.relevant,
+        stats.noise,
+        stats.noted,
+        out_path.display()
     );
     Ok(ExitCode::SUCCESS)
 }
@@ -287,7 +303,10 @@ fn print_human(loaded: &pipeline::Loaded) {
             Severity::Info => "info ",
         };
         match &diagnostic.node {
-            Some(node) => println!("{tag} [{}] {} ({})", diagnostic.code, diagnostic.message, node),
+            Some(node) => println!(
+                "{tag} [{}] {} ({})",
+                diagnostic.code, diagnostic.message, node
+            ),
             None => println!("{tag} [{}] {}", diagnostic.code, diagnostic.message),
         }
     }
@@ -375,7 +394,7 @@ fn show(
     view: ViewKind,
     no_source: bool,
 ) -> Result<ExitCode> {
-    let ir = ir.map(PathBuf::from).unwrap_or_else(default_ir);
+    let ir = ir.map_or_else(default_ir, PathBuf::from);
     if !ir.exists() {
         bail!(
             "{} does not exist; run `cargo run -p robby-cli -- extract --out {}` first",

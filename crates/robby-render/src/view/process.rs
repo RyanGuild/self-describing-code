@@ -65,10 +65,7 @@ impl ProcessView {
                 && step.blocks.len() >= common
                 && step.blocks[common - 1].branch != stack[common - 1].branch
             {
-                let branch = step.blocks[common - 1]
-                    .branch
-                    .clone()
-                    .unwrap_or_default();
+                let branch = step.blocks[common - 1].branch.clone().unwrap_or_default();
                 events.push(ProcessEvent::Else { label: branch });
             }
 
@@ -82,7 +79,7 @@ impl ProcessView {
                 opened += 1;
             }
 
-            stack = step.blocks.clone();
+            stack.clone_from(&step.blocks);
 
             events.push(ProcessEvent::Interaction {
                 index: index + 1,

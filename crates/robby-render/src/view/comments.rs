@@ -59,7 +59,11 @@ impl CommentsView {
             if text.is_empty() {
                 continue;
             }
-            let kind = match node.annotations.get("comment_kind").map(|s| s.as_str()) {
+            let kind = match node
+                .annotations
+                .get("comment_kind")
+                .map(std::string::String::as_str)
+            {
                 Some("line") => CommentKind::Line,
                 _ => CommentKind::Block,
             };
@@ -71,11 +75,11 @@ impl CommentsView {
             }
             let owner = nearest_following_item(doc, node);
             let code = sources.and_then(|s| code_window(s, node, owner));
-            let (note_kind, note, highlights) = decision
-                .map(|d| enrichment_fields(d, code.as_deref()))
-                .unwrap_or((None, None, Vec::new()));
+            let (note_kind, note, highlights) = decision.map_or((None, None, Vec::new()), |d| {
+                enrichment_fields(d, code.as_deref())
+            });
             entries.push(CommentEntry {
-                location: node.span.as_ref().map(|s| s.location()),
+                location: node.span.as_ref().map(robby_ir::Span::location),
                 kind,
                 text,
                 owner_fqn: owner.map(|n| n.fqn.clone()),
@@ -103,11 +107,11 @@ impl CommentsView {
                 continue;
             }
             let code = sources.and_then(|s| slice_node(s, node));
-            let (note_kind, note, highlights) = decision
-                .map(|d| enrichment_fields(d, code.as_deref()))
-                .unwrap_or((None, None, Vec::new()));
+            let (note_kind, note, highlights) = decision.map_or((None, None, Vec::new()), |d| {
+                enrichment_fields(d, code.as_deref())
+            });
             entries.push(CommentEntry {
-                location: node.span.as_ref().map(|s| s.location()),
+                location: node.span.as_ref().map(robby_ir::Span::location),
                 kind: CommentKind::Docs,
                 text: docs.clone(),
                 owner_fqn: Some(node.fqn.clone()),
@@ -244,10 +248,10 @@ fn code_window(
     comment: &Node,
     owner: Option<&Node>,
 ) -> Option<String> {
-    if let Some(owner) = owner {
-        if let Some(slice) = slice_node(sources, owner) {
-            return Some(slice);
-        }
+    if let Some(owner) = owner
+        && let Some(slice) = slice_node(sources, owner)
+    {
+        return Some(slice);
     }
     line_window(sources, comment)
 }
@@ -257,7 +261,7 @@ fn slice_node(sources: &BTreeMap<String, String>, node: &Node) -> Option<String>
     let source = sources.get(&span.file)?;
     source
         .get(span.start.byte as usize..span.end.byte as usize)
-        .map(|s| s.to_owned())
+        .map(std::borrow::ToOwned::to_owned)
 }
 
 fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String> {
@@ -279,11 +283,7 @@ fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String
         out.push_str(line);
         out.push('\n');
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 
 /// Apply «…» markers around highlight ranges in `code` (byte offsets).

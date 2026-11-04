@@ -2,6 +2,9 @@
 node_modules
 dist
 .DS_Store
+*.swp
+*~
+.biome
 *.svg.tmp
 apps/site/public/scene.json
 apps/site/public/frames/

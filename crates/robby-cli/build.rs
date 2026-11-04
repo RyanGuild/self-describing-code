@@ -20,7 +20,10 @@ fn main() {
     let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR"));
     let root = manifest.join("../..");
 
-    println!("cargo:rerun-if-changed={}", manifest.join("build.rs").display());
+    println!(
+        "cargo:rerun-if-changed={}",
+        manifest.join("build.rs").display()
+    );
 
     let document = robby_extract::extract(&root).unwrap_or_else(|err| {
         panic!("robby: extraction failed: {err:#}");

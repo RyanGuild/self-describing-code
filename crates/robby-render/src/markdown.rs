@@ -185,14 +185,13 @@ fn node_section(
         out.push('\n');
     }
 
-    if let Some(span) = &node.span {
-        if let Some(source) = sources.and_then(|s| s.get(&span.file)) {
-            if let Some(slice) = source.get(span.start.byte as usize..span.end.byte as usize) {
-                out.push_str("```rust\n");
-                out.push_str(slice.trim_end());
-                out.push_str("\n```\n\n");
-            }
-        }
+    if let Some(span) = &node.span
+        && let Some(source) = sources.and_then(|s| s.get(&span.file))
+        && let Some(slice) = source.get(span.start.byte as usize..span.end.byte as usize)
+    {
+        out.push_str("```rust\n");
+        out.push_str(slice.trim_end());
+        out.push_str("\n```\n\n");
     }
 
     if let Some(process) = &node.process {
@@ -214,12 +213,7 @@ fn node_section(
         let _ = writeln!(out, "**Edges**\n");
         for edge in &node.edges {
             let marker = if edge.resolved { "" } else { " (unresolved)" };
-            let _ = writeln!(
-                out,
-                "- {} → `{}`{marker}",
-                edge_name(edge.kind),
-                edge.to
-            );
+            let _ = writeln!(out, "- {} → `{}`{marker}", edge_name(edge.kind), edge.to);
         }
         out.push('\n');
     }
@@ -282,15 +276,8 @@ pub fn index(doc: &Document) -> String {
         let location = node
             .span
             .as_ref()
-            .map(|s| s.location())
-            .unwrap_or_else(|| "—".to_owned());
-        let _ = writeln!(
-            out,
-            "| `{}` | `{}` | `{}` |",
-            node.fqn,
-            node.kind,
-            location
-        );
+            .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
+        let _ = writeln!(out, "| `{}` | `{}` | `{}` |", node.fqn, node.kind, location);
     }
     out
 }
