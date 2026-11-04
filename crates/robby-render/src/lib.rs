@@ -33,9 +33,9 @@ pub use render::{MarkdownRenderer, MermaidRenderer, Renderer, ShowOptions, TuiRe
 pub use report::{Report, Section};
 pub use robby_ir::RunRecord;
 pub use runs::{
-    RunIndexEntry, RunsIndex, ScoredDecisionProduct, SiteRunsStore, ensure_runs_layout,
-    mint_run_id, review_metrics, run_file_stem, synthetic_extract_run, web_build_run, write_runs,
-    write_site_runs,
+    LiveRunSourcesFile, RunIndexEntry, RunsIndex, ScoredDecisionProduct, SiteRunsStore,
+    ensure_runs_layout, mint_run_id, resolve_live_run_sources, review_metrics, run_file_stem,
+    synthetic_extract_run, web_build_run, write_live_run_sources, write_runs, write_site_runs,
 };
 pub use view::{
     CouplingGraph, DependencyViews, LinkGraph, NodeViews, PackageStructure, ProcessView, Scene,

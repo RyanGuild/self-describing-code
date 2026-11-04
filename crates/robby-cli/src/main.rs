@@ -283,6 +283,12 @@ enum IngestSource {
         /// Site public directory that already holds (or will hold) `runs/`.
         #[arg(long, default_value = "apps/site/public")]
         out: PathBuf,
+        /// Re-read `--from` on an interval (Mac-local live panel). Ctrl-C to stop.
+        #[arg(long)]
+        watch: bool,
+        /// Poll interval for `--watch` (milliseconds).
+        #[arg(long, default_value_t = 5_000)]
+        interval_ms: u64,
     },
 }
 
@@ -406,7 +412,12 @@ fn run() -> Result<ExitCode> {
             watch_interval_ms,
         } => web(&ir, &source_root, &out, watch, watch_interval_ms),
         Command::Ingest { source } => match source {
-            IngestSource::Cursor { from, out } => ingest_cursor(&from, &out),
+            IngestSource::Cursor {
+                from,
+                out,
+                watch,
+                interval_ms,
+            } => ingest_cursor(&from, &out, watch, interval_ms),
         },
         Command::SampleOpportunities {
             ir,
@@ -485,31 +496,55 @@ fn run() -> Result<ExitCode> {
     }
 }
 
-fn ingest_cursor(from: &std::path::Path, out: &std::path::Path) -> Result<ExitCode> {
-    let json = if from.as_os_str() == "-" {
-        use std::io::Read;
-        let mut buf = String::new();
-        std::io::stdin().read_to_string(&mut buf)?;
-        buf
-    } else {
-        std::fs::read_to_string(from)
-            .with_context(|| format!("read cursor ingest file {}", from.display()))?
-    };
-    let records = robby_render::ingest_cursor_json(out, &json)?;
-    println!(
-        "ingested {} cursor.cloud run(s) into {}/runs/",
-        records.len(),
-        out.display()
-    );
-    for record in &records {
-        println!(
-            "  {}  {}  {}",
-            record.status.as_str(),
-            record.run_id,
-            record.recipe.as_str()
-        );
+fn ingest_cursor(
+    from: &std::path::Path,
+    out: &std::path::Path,
+    watch: bool,
+    interval_ms: u64,
+) -> Result<ExitCode> {
+    // Ensure sources.json exists so the viewer knows this live feed.
+    robby_render::ensure_runs_layout(out)?;
+    let mut last_raw = String::new();
+    loop {
+        let json = if from.as_os_str() == "-" {
+            use std::io::Read;
+            let mut buf = String::new();
+            std::io::stdin().read_to_string(&mut buf)?;
+            buf
+        } else if from.is_file() {
+            std::fs::read_to_string(from)
+                .with_context(|| format!("read cursor ingest file {}", from.display()))?
+        } else if watch {
+            // Wait for the dump file to appear (Vite / agent writes it).
+            std::thread::sleep(std::time::Duration::from_millis(interval_ms));
+            continue;
+        } else {
+            bail!("{} does not exist", from.display());
+        };
+
+        if json != last_raw {
+            let records = robby_render::ingest_cursor_json(out, &json)?;
+            println!(
+                "ingested {} cursor.cloud run(s) into {}/runs/",
+                records.len(),
+                out.display()
+            );
+            for record in &records {
+                println!(
+                    "  {}  {}  {}",
+                    record.status.as_str(),
+                    record.run_id,
+                    record.recipe.as_str()
+                );
+            }
+            last_raw = json;
+        }
+
+        if !watch || from.as_os_str() == "-" {
+            return Ok(ExitCode::SUCCESS);
+        }
+        std::thread::sleep(std::time::Duration::from_millis(interval_ms));
     }
-    Ok(ExitCode::SUCCESS)
 }
 
 fn sample_opportunities_cmd(

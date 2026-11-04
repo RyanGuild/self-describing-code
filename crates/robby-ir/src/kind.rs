@@ -105,6 +105,8 @@ pub mod agent {
     pub const PIPELINE: &str = "agent.pipeline";
     /// One invocation of a recipe (past, live, or queued).
     pub const RUN: &str = "agent.run";
+    /// Runtime-fetchable catalog entry for live / foreign RunRecords.
+    pub const LIVE_SOURCE: &str = "agent.live_source";
 }
 
 /// True when `kind` is understood by the current version of the tool.

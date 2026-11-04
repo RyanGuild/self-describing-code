@@ -13,7 +13,9 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 
-use robby_ir::run::{RecipeId, RunRecord, RunStatus, recipes};
+use robby_ir::run::{
+    LiveRunSource, RecipeId, RunRecord, RunStatus, default_live_run_sources, recipes,
+};
 use robby_ir::sample::OpportunitySample;
 use robby_ir::{Document, Kind, Process, Step, StepKind, kind::agent};
 
@@ -467,7 +469,37 @@ pub fn run_file_stem(run_id: &str) -> String {
 
 /// Ensure empty `runs/index.json` beside scene payloads.
 pub fn ensure_runs_layout(site_out: &Path) -> Result<()> {
-    SiteRunsStore::new(site_out).ensure_layout()
+    let store = SiteRunsStore::new(site_out);
+    store.ensure_layout()?;
+    write_live_run_sources(site_out, &default_live_run_sources())?;
+    Ok(())
+}
+
+/// Catalog envelope written to `runs/sources.json` for the Mac-local runtime.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LiveRunSourcesFile {
+    pub sources: Vec<LiveRunSource>,
+}
+
+/// Resolve sources from the Document or fall back to the built-in Mac defaults.
+pub fn resolve_live_run_sources(doc: &Document) -> Vec<LiveRunSource> {
+    if doc.live_run_sources.is_empty() {
+        default_live_run_sources()
+    } else {
+        doc.live_run_sources.clone()
+    }
+}
+
+/// Write `runs/sources.json` so Vite / the viewer can poll live feeds.
+pub fn write_live_run_sources(out: &Path, sources: &[LiveRunSource]) -> Result<()> {
+    let runs_dir = out.join("runs");
+    fs::create_dir_all(&runs_dir)?;
+    let file = LiveRunSourcesFile {
+        sources: sources.to_vec(),
+    };
+    let raw = serde_json::to_string_pretty(&file)?;
+    fs::write(runs_dir.join("sources.json"), format!("{raw}\n"))?;
+    Ok(())
 }
 
 /// Synthetic completed extract from the loaded Document (retrospective history).
@@ -559,7 +591,9 @@ pub fn write_site_runs(doc: &Document, out: &Path, frames: usize, rebuilt_at: u6
     };
     let extract = synthetic_extract_run(doc, finished.saturating_sub(1_000));
     let web = web_build_run(doc, frames, finished);
-    write_runs(out, &[extract, web])
+    write_runs(out, &[extract, web])?;
+    write_live_run_sources(out, &resolve_live_run_sources(doc))?;
+    Ok(())
 }
 
 #[cfg(test)]

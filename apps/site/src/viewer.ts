@@ -232,7 +232,7 @@ let reloading = false;
 let runsIndex: RunsIndex | null = null;
 let selectedRunId: string | null = null;
 const runDetailCache = new Map<string, RunRecord>();
-let runsFilter: RunsFilter = "all";
+let runsFilter: RunsFilter = "live";
 let lastRunsIndexJson = "";
 let metricsSort: MetricsSort = "type";
 let metricsRows: MetricRow[] = [];
@@ -445,10 +445,20 @@ async function prefetchRuns(force = false): Promise<boolean> {
   return true;
 }
 
-/** Poll runs so cursor.cloud live rows refresh without an IR rebuild. */
+/** Ask Vite to re-read LiveRunSource file dumps (Cursor agents.json). */
+async function refreshLiveSources(): Promise<void> {
+  try {
+    await fetch("/api/runs/live/refresh", { method: "POST" });
+  } catch {
+    // Static serve / older Vite without live middleware — ignore.
+  }
+}
+
+/** Poll runs + live sources so cursor.cloud rows stay current. */
 async function startRunsWatch(): Promise<void> {
   window.setInterval(() => {
     void (async () => {
+      await refreshLiveSources();
       const changed = await prefetchRuns(true);
       if (changed && orgMode === "runs") {
         runDetailCache.clear();

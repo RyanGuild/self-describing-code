@@ -338,6 +338,75 @@ pub fn pipelines_json() -> String {
     out
 }
 
+/// How a Mac-local runtime discovers and refreshes foreign [`RunRecord`]s.
+///
+/// The IR names the source; Vite / `robby ingest --watch` / future `robby serve`
+/// perform the fetch. Credentials stay on the host — never in this document.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum LiveRunTransport {
+    /// Re-read a local JSON dump on an interval (Cursor MCP dump, NDJSON inbox).
+    FilePoll {
+        /// Repo-relative or absolute path (e.g. `.robby/external/cursor/agents.json`).
+        path: String,
+        /// Poll cadence in milliseconds while any run from this source is live.
+        interval_ms: u64,
+    },
+    /// HTTP GET returning an agents envelope or RunRecord list.
+    HttpPoll {
+        url: String,
+        interval_ms: u64,
+    },
+    /// React to filesystem mtime (Claude / OpenCode session dirs later).
+    FileWatch {
+        path: String,
+    },
+}
+
+/// A live feed that produces [`RunRecord`]s for a recipe family at runtime.
+///
+/// Site artifact: `runs/sources.json`. Viewer / Vite middleware polls these
+/// so the Runs dock stays current without re-extracting the IR.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct LiveRunSource {
+    /// Stable id, usually the recipe id (`cursor.cloud`).
+    pub id: String,
+    pub recipe: RecipeId,
+    pub label: String,
+    pub transport: LiveRunTransport,
+    /// Runtime adapter key (`cursor_agents_v1`, `run_records_v1`, …).
+    pub adapter: String,
+    /// When false, runtime skips this source (opt-in team browser later).
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+}
+
+fn default_true() -> bool {
+    true
+}
+
+impl LiveRunSource {
+    /// Default Mac-local Cursor cloud dump path used by Vite + ingest watch.
+    pub fn cursor_cloud_file_poll() -> Self {
+        Self {
+            id: recipes::CURSOR_CLOUD.to_owned(),
+            recipe: RecipeId::from(recipes::CURSOR_CLOUD),
+            label: "Cursor cloud / Project workers".to_owned(),
+            transport: LiveRunTransport::FilePoll {
+                path: ".robby/external/cursor/agents.json".to_owned(),
+                interval_ms: 5_000,
+            },
+            adapter: "cursor_agents_v1".to_owned(),
+            enabled: true,
+        }
+    }
+}
+
+/// Built-in live sources for a trusted MacBook host (slice 1: Cursor file dump).
+pub fn default_live_run_sources() -> Vec<LiveRunSource> {
+    vec![LiveRunSource::cursor_cloud_file_poll()]
+}
+
 /// Lookup over a recipe catalog (pipelines.json, in-memory, …).
 pub trait RecipeCatalog {
     fn get(&self, id: &RecipeId) -> Option<&Recipe>;
@@ -419,5 +488,20 @@ mod tests {
             actual, expected,
             "schema/pipelines.json out of sync with builtin_recipes(); refresh from pipelines_json()"
         );
+    }
+
+    #[test]
+    fn live_run_source_round_trips() {
+        let src = LiveRunSource::cursor_cloud_file_poll();
+        let json = serde_json::to_value(&src).unwrap();
+        assert_eq!(json["id"], recipes::CURSOR_CLOUD);
+        assert_eq!(json["adapter"], "cursor_agents_v1");
+        assert_eq!(json["transport"]["kind"], "file_poll");
+        assert_eq!(
+            json["transport"]["path"],
+            ".robby/external/cursor/agents.json"
+        );
+        let back: LiveRunSource = serde_json::from_value(json).unwrap();
+        assert_eq!(back, src);
     }
 }
