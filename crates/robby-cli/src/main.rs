@@ -168,6 +168,28 @@ enum Command {
         #[command(subcommand)]
         source: IngestSource,
     },
+    /// Seeded random opportunity sample for self-improvement (not every function).
+    ///
+    /// Ranker models are deferred; this always uses strategy `random`.
+    SampleOpportunities {
+        #[arg(long)]
+        ir: PathBuf,
+        /// RNG seed recorded as `sample_seed` (default: 0).
+        #[arg(long, default_value_t = 0)]
+        seed: u64,
+        /// Subset size (default: 8).
+        #[arg(long, default_value_t = robby_ir::DEFAULT_SAMPLE_N)]
+        n: usize,
+        /// Emit machine-readable JSON on stdout.
+        #[arg(long)]
+        json: bool,
+        /// Soft-queue `robby.review_view` for each drawn subject under site out.
+        #[arg(long)]
+        queue: bool,
+        /// Site public dir used with `--queue` (default: `apps/site/public`).
+        #[arg(long, default_value = "apps/site/public")]
+        out: PathBuf,
+    },
 }
 
 #[derive(Subcommand)]
@@ -305,6 +327,14 @@ fn run() -> Result<ExitCode> {
         Command::Ingest { source } => match source {
             IngestSource::Cursor { from, out } => ingest_cursor(&from, &out),
         },
+        Command::SampleOpportunities {
+            ir,
+            seed,
+            n,
+            json,
+            queue,
+            out,
+        } => sample_opportunities_cmd(&ir, seed, n, json, queue, &out),
     }
 }
 
@@ -331,6 +361,51 @@ fn ingest_cursor(from: &std::path::Path, out: &std::path::Path) -> Result<ExitCo
             record.run_id,
             record.recipe.as_str()
         );
+    }
+    Ok(ExitCode::SUCCESS)
+}
+
+fn sample_opportunities_cmd(
+    ir: &std::path::Path,
+    seed: u64,
+    n: usize,
+    json: bool,
+    queue: bool,
+    out: &std::path::Path,
+) -> Result<ExitCode> {
+    let raw = std::fs::read_to_string(ir)?;
+    let doc: Document = serde_json::from_str(&raw)?;
+    let sample = robby_ir::sample_opportunities(&doc, seed, n);
+
+    if queue {
+        let store = robby_render::runs::SiteRunsStore::new(out);
+        let records = store.queue_sampled_review_views(&sample, "cli.sample_opportunities")?;
+        eprintln!(
+            "queued {} robby.review_view run(s) under {}/runs",
+            records.len(),
+            out.display()
+        );
+    }
+
+    if json {
+        println!("{}", serde_json::to_string_pretty(&sample)?);
+    } else {
+        println!(
+            "strategy={} seed={} n={} candidates={} drawn={}",
+            sample.strategy,
+            sample.seed,
+            sample.n,
+            sample.candidate_count,
+            sample.subjects.len()
+        );
+        for opportunity in &sample.subjects {
+            println!(
+                "{}	{}	{}",
+                opportunity.reason.as_str(),
+                opportunity.subject,
+                opportunity.name
+            );
+        }
     }
     Ok(ExitCode::SUCCESS)
 }
