@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant weighted_deps as weighted_deps()
+    participant ascii_dep_graph as ascii_dep_graph
+    weighted_deps-->>ascii_dep_graph: ascii_dep_graph(view, true)

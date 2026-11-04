@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant dependencies as dependencies()
+    participant Self__fence as Self::fence
+    dependencies-->>Self__fence: Self::fence('mermaid', &self.mermaid.dependencies(view))

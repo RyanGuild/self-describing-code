@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-ir/src/model.rs:61`](../../../../crates/robby-ir/src/model.rs#L61) |
+| location | [`crates/robby-ir/src/model.rs:62`](../../../../crates/robby-ir/src/model.rs#L62) |
 | provenance | extractor · confidence 1.00 |
 
 > Which producer contributed a fact.
@@ -30,9 +30,9 @@ pub enum Source {
 
 **Fields and variants**
 
-- `Extractor` — `crates/robby-ir/src/model.rs:65:5`
-- `Macro` — `crates/robby-ir/src/model.rs:67:5`
-- `Trace` — `crates/robby-ir/src/model.rs:69:5`
-- `Agent` — `crates/robby-ir/src/model.rs:71:5`
-- `Hand` — `crates/robby-ir/src/model.rs:73:5`
+- `Extractor` — `crates/robby-ir/src/model.rs:66:5`
+- `Macro` — `crates/robby-ir/src/model.rs:68:5`
+- `Trace` — `crates/robby-ir/src/model.rs:70:5`
+- `Agent` — `crates/robby-ir/src/model.rs:72:5`
+- `Hand` — `crates/robby-ir/src/model.rs:74:5`
 

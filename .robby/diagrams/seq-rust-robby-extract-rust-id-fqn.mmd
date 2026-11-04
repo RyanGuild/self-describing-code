@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant id_fqn as id_fqn()
+    participant as_str as as_str
+    participant split_once as split_once
+    participant map as map
+    participant unwrap_or as unwrap_or
+    id_fqn-->>as_str: id.as_str()
+    id_fqn-->>split_once: id.as_str() .split_once('://')
+    id_fqn-->>map: id.as_str() .split_once('://') .map(|(_, fqn)| fqn)
+    id_fqn-->>as_str: id.as_str()
+    id_fqn-->>unwrap_or: id.as_str() .split_once('://') .map(|(_, fqn)| fqn) .unwrap_or(id.as_...

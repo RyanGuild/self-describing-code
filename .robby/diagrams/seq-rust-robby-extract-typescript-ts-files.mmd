@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant ts_files as ts_files()
+    participant Vec__new as Vec::new
+    participant join as join
+    participant is_dir as is_dir
+    participant collect_ts as collect_ts
+    participant sort as sort
+    participant Ok as Ok
+    ts_files-->>Vec__new: Vec::new()
+    ts_files-->>join: package_dir.join('src')
+    ts_files-->>is_dir: src.is_dir()
+    alt src.is_dir()
+    ts_files-->>collect_ts: collect_ts(&src, &mut files)
+    ts_files-->>ts_files: ? (propagate)
+    else else
+    ts_files-->>collect_ts: collect_ts(package_dir, &mut files)
+    ts_files-->>ts_files: ? (propagate)
+    end
+    ts_files-->>sort: files.sort()
+    ts_files-->>Ok: Ok(files)

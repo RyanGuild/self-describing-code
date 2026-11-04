@@ -4,7 +4,11 @@ use robby_ir::kind::code;
 use robby_ir::{
     Block, BlockKind, Document, Edge, EdgeKind, Kind, Node, NodeId, Process, Source, Step, StepKind,
 };
-use robby_render::{flowchart, sequence, stable_id};
+use robby_render::{
+    MarkdownRenderer, Renderer, class_diagram, collect, coupling, dependencies, flowchart,
+    sequence, stable_id, workspace_dependencies,
+};
+use robby_render::view::{CommentsView, ExternalsView};
 
 fn step(from: &str, to: &str, label: &str, observed: bool, blocks: Vec<Block>) -> Step {
     Step {
@@ -157,4 +161,368 @@ fn flowchart_clusters_modules() {
     assert!(out.starts_with("flowchart TD\n"));
     assert!(out.contains("subgraph"));
     assert!(out.contains("|calls|"));
+}
+
+#[test]
+fn dependencies_emits_package_weighted_and_dsm() {
+    let mut doc = Document::new("test");
+
+    let mut krate = Node::new(NodeId::from("rust://demo"), code::CRATE, "demo");
+    krate.kind = Kind::from(code::CRATE);
+    doc.insert(krate);
+
+    // Third arg is FQN (name is derived); mirror extractor shape.
+    let mut left = Node::new(NodeId::symbol("rust", "demo::left"), code::MODULE, "demo::left");
+    left.parent = Some(NodeId::from("rust://demo"));
+    doc.insert(left);
+
+    let mut right =
+        Node::new(NodeId::symbol("rust", "demo::right"), code::MODULE, "demo::right");
+    right.parent = Some(NodeId::from("rust://demo"));
+    doc.insert(right);
+
+    let mut point = Node::new(
+        NodeId::symbol("rust", "demo::left::Point"),
+        code::STRUCT,
+        "demo::left::Point",
+    );
+    point.parent = Some(NodeId::symbol("rust", "demo::left"));
+    doc.insert(point);
+
+    let mut a = Node::new(
+        NodeId::symbol("rust", "demo::left::a"),
+        code::FUNCTION,
+        "demo::left::a",
+    );
+    a.parent = Some(NodeId::symbol("rust", "demo::left"));
+    doc.insert(a);
+
+    let mut b = Node::new(
+        NodeId::symbol("rust", "demo::right::b"),
+        code::FUNCTION,
+        "demo::right::b",
+    );
+    b.parent = Some(NodeId::symbol("rust", "demo::right"));
+    b.edges
+        .push(Edge::new(NodeId::symbol("rust", "demo::left::a"), EdgeKind::Calls));
+    doc.insert(b);
+
+    // Keep parent→child links consistent with how the extractor builds the tree.
+    if let Some(krate) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
+        krate.children = vec![
+            NodeId::symbol("rust", "demo::left"),
+            NodeId::symbol("rust", "demo::right"),
+        ];
+    }
+    if let Some(left) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::left")) {
+        left.children = vec![
+            NodeId::symbol("rust", "demo::left::Point"),
+            NodeId::symbol("rust", "demo::left::a"),
+        ];
+    }
+    if let Some(right) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::right")) {
+        right.children = vec![NodeId::symbol("rust", "demo::right::b")];
+    }
+
+    let out = dependencies(&doc, &NodeId::from("rust://demo"));
+
+    assert!(out.starts_with("flowchart TB\n"));
+    assert!(out.contains("subgraph"), "package diagram nests modules");
+    assert!(out.contains("left"), "package digraph names modules");
+    assert!(out.contains("right"), "package digraph names modules");
+    assert!(
+        !out.contains("Point"),
+        "types belong in the class diagram, not module deps"
+    );
+    assert!(!out.contains("[\"a\"]"), "functions stay out of the package diagram");
+
+    let coupled = coupling(&doc, &NodeId::from("rust://demo"));
+    assert!(coupled.starts_with("flowchart TB\n"));
+    assert!(coupled.contains("subgraph"), "coupling nests modules");
+    assert!(coupled.contains("a"), "coupling shows callee");
+    assert!(coupled.contains("b"), "coupling shows caller");
+    assert!(coupled.contains("-->"), "coupling draws the call edge");
+    assert!(!coupled.contains("Point"), "types stay out of coupling");
+
+    let types = class_diagram(&doc, &NodeId::symbol("rust", "demo::left"));
+    assert!(types.contains("classDiagram"));
+    assert!(types.contains("class Point"));
+
+    let workspace = workspace_dependencies(&doc);
+    assert!(workspace.contains("Package diagram"));
+    assert!(workspace.contains("Module coupling"));
+    assert!(workspace.contains("Dependency matrix"));
+    assert!(workspace.contains("demo"));
+    assert!(!workspace.contains("Point"));
+}
+
+#[test]
+fn externals_and_comments_sections_render() {
+    let mut doc = Document::new("test");
+
+    let mut pkg = Node::new(
+        NodeId::symbol("typescript", "demo"),
+        code::PACKAGE,
+        "demo",
+    );
+    pkg.lang = robby_ir::Lang::TypeScript;
+    doc.insert(pkg);
+
+    let mut module = Node::new(
+        NodeId::symbol("typescript", "demo/shapes"),
+        code::MODULE,
+        "demo/shapes",
+    );
+    module.parent = Some(NodeId::symbol("typescript", "demo"));
+    doc.insert(module);
+
+    let mut stub = Node::new(
+        NodeId::symbol("typescript", "npm/demo-ext"),
+        code::PACKAGE,
+        "npm/demo-ext",
+    );
+    stub.lang = robby_ir::Lang::TypeScript;
+    stub.tags.push("external".into());
+    stub.annotations.insert("external".into(), "true".into());
+    doc.insert(stub);
+
+    let mut import = Node::new(
+        NodeId::symbol("typescript", "demo/shapes/import:demo-ext"),
+        code::IMPORT,
+        "demo/shapes/import:demo-ext",
+    );
+    import.parent = Some(NodeId::symbol("typescript", "demo/shapes"));
+    import.edges.push(Edge::new(
+        NodeId::symbol("typescript", "npm/demo-ext"),
+        EdgeKind::Imports,
+    ));
+    doc.insert(import);
+
+    let mut comment = Node::new(
+        NodeId::symbol("typescript", "demo/shapes/comment@0"),
+        code::COMMENT,
+        "demo/shapes/comment@0",
+    );
+    comment.parent = Some(NodeId::symbol("typescript", "demo/shapes"));
+    comment.docs = Some("A drawable shape.".into());
+    comment
+        .annotations
+        .insert("comment_kind".into(), "block".into());
+    comment.span = Some(robby_ir::Span {
+        file: "shapes.ts".into(),
+        start: robby_ir::Position {
+            byte: 0,
+            line: 1,
+            column: 1,
+        },
+        end: robby_ir::Position {
+            byte: 20,
+            line: 1,
+            column: 21,
+        },
+    });
+    doc.insert(comment);
+
+    let mut decision = Node::new(
+        NodeId::symbol("typescript", "demo/shapes/comment@0/decision"),
+        robby_ir::kind::agent::DECISION,
+        "demo/shapes/comment@0/decision",
+    );
+    decision.parent = Some(NodeId::symbol("typescript", "demo/shapes/comment@0"));
+    decision.provenance = robby_ir::Provenance::new(robby_ir::Source::Agent);
+    decision.docs = Some("Call draw() on implementors.".into());
+    decision
+        .annotations
+        .insert("verdict".into(), "relevant".into());
+    decision
+        .annotations
+        .insert("note_kind".into(), "usage_example".into());
+    decision.annotations.insert(
+        "highlights".into(),
+        r#"[{"start":0,"end":6}]"#.into(),
+    );
+    doc.insert(decision);
+
+    let mut noise = Node::new(
+        NodeId::symbol("typescript", "demo/shapes/comment@99"),
+        code::COMMENT,
+        "demo/shapes/comment@99",
+    );
+    noise.parent = Some(NodeId::symbol("typescript", "demo/shapes"));
+    noise.docs = Some("TODO: delete me".into());
+    noise
+        .annotations
+        .insert("comment_kind".into(), "line".into());
+    doc.insert(noise);
+
+    let mut noise_decision = Node::new(
+        NodeId::symbol("typescript", "demo/shapes/comment@99/decision"),
+        robby_ir::kind::agent::DECISION,
+        "demo/shapes/comment@99/decision",
+    );
+    noise_decision.parent = Some(NodeId::symbol("typescript", "demo/shapes/comment@99"));
+    noise_decision
+        .annotations
+        .insert("verdict".into(), "noise".into());
+    doc.insert(noise_decision);
+
+    let mut iface = Node::new(
+        NodeId::symbol("typescript", "demo/shapes/Drawable"),
+        code::INTERFACE,
+        "demo/shapes/Drawable",
+    );
+    iface.parent = Some(NodeId::symbol("typescript", "demo/shapes"));
+    iface.span = Some(robby_ir::Span {
+        file: "shapes.ts".into(),
+        start: robby_ir::Position {
+            byte: 22,
+            line: 2,
+            column: 1,
+        },
+        end: robby_ir::Position {
+            byte: 62,
+            line: 4,
+            column: 2,
+        },
+    });
+    doc.insert(iface);
+
+    if let Some(pkg) = doc.nodes.get_mut(&NodeId::symbol("typescript", "demo")) {
+        pkg.children = vec![NodeId::symbol("typescript", "demo/shapes")];
+    }
+    if let Some(module) = doc.nodes.get_mut(&NodeId::symbol("typescript", "demo/shapes")) {
+        module.children = vec![
+            NodeId::symbol("typescript", "demo/shapes/import:demo-ext"),
+            NodeId::symbol("typescript", "demo/shapes/comment@0"),
+            NodeId::symbol("typescript", "demo/shapes/comment@99"),
+            NodeId::symbol("typescript", "demo/shapes/Drawable"),
+        ];
+    }
+    if let Some(c) = doc
+        .nodes
+        .get_mut(&NodeId::symbol("typescript", "demo/shapes/comment@0"))
+    {
+        c.children = vec![NodeId::symbol(
+            "typescript",
+            "demo/shapes/comment@0/decision",
+        )];
+    }
+    if let Some(c) = doc
+        .nodes
+        .get_mut(&NodeId::symbol("typescript", "demo/shapes/comment@99"))
+    {
+        c.children = vec![NodeId::symbol(
+            "typescript",
+            "demo/shapes/comment@99/decision",
+        )];
+    }
+
+    let mut sources = std::collections::BTreeMap::new();
+    sources.insert(
+        "shapes.ts".into(),
+        "/** A drawable shape. */\nexport interface Drawable {\n  draw(): void;\n}\n".into(),
+    );
+
+    let root = NodeId::symbol("typescript", "demo");
+    let externals = ExternalsView::from_root(&doc, &root);
+    assert!(!externals.is_empty());
+    assert_eq!(externals.entries[0].package, "demo-ext");
+
+    let comments = CommentsView::from_root(&doc, &root, Some(&sources));
+    assert!(!comments.is_empty());
+    assert!(
+        comments
+            .entries
+            .iter()
+            .all(|e| e.text != "TODO: delete me"),
+        "noise comments filtered"
+    );
+    let enriched = comments
+        .entries
+        .iter()
+        .find(|e| e.note.is_some())
+        .expect("enriched entry");
+    assert!(enriched.code.as_ref().is_some_and(|c| c.contains("Drawable")));
+
+    let md = MarkdownRenderer::new();
+    let ext_body = md.externals(&externals);
+    assert!(ext_body.contains("`demo-ext`"));
+    assert!(ext_body.contains("imported by"));
+
+    let cmt_body = md.comments(&comments);
+    assert!(cmt_body.contains("usage example"));
+    assert!(cmt_body.contains("Call draw()"));
+    assert!(cmt_body.contains('«') && cmt_body.contains('»'));
+    assert!(!cmt_body.contains("TODO: delete me"));
+
+    let views = collect(
+        &doc,
+        doc.get(&root).expect("demo"),
+        Some(&sources),
+        &robby_render::SelectOpts::markdown(),
+    );
+    let report = md.report(&views).to_markdown();
+    assert!(report.contains("## Externals"));
+    assert!(report.contains("## Comments"));
+}
+
+#[test]
+fn class_diagram_marks_traits_as_interfaces() {
+    let mut doc = Document::new("test");
+
+    let mut module = Node::new(NodeId::from("rust://demo"), code::MODULE, "demo");
+    module.kind = Kind::from(code::MODULE);
+    doc.insert(module);
+
+    let mut drawable = Node::new(
+        NodeId::symbol("rust", "demo::Drawable"),
+        code::TRAIT,
+        "Drawable",
+    );
+    drawable.parent = Some(NodeId::from("rust://demo"));
+    doc.insert(drawable);
+
+    let mut method = Node::new(
+        NodeId::symbol("rust", "demo::Drawable::draw"),
+        code::METHOD,
+        "draw",
+    );
+    method.parent = Some(NodeId::symbol("rust", "demo::Drawable"));
+    doc.insert(method);
+
+    let mut point = Node::new(NodeId::symbol("rust", "demo::Point"), code::STRUCT, "Point");
+    point.parent = Some(NodeId::from("rust://demo"));
+    point.children = vec![NodeId::symbol("rust", "demo::Point::x")];
+    doc.insert(point);
+
+    let mut field = Node::new(NodeId::symbol("rust", "demo::Point::x"), code::FIELD, "x");
+    field.parent = Some(NodeId::symbol("rust", "demo::Point"));
+    doc.insert(field);
+
+    let mut impl_node = Node::new(
+        NodeId::symbol("rust", "demo::impl Drawable for Point"),
+        code::IMPL,
+        "impl Drawable for Point",
+    );
+    impl_node.parent = Some(NodeId::from("rust://demo"));
+    doc.insert(impl_node);
+
+    if let Some(module) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
+        module.children = vec![
+            NodeId::symbol("rust", "demo::Drawable"),
+            NodeId::symbol("rust", "demo::Point"),
+            NodeId::symbol("rust", "demo::impl Drawable for Point"),
+        ];
+    }
+    if let Some(drawable) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::Drawable")) {
+        drawable.children = vec![NodeId::symbol("rust", "demo::Drawable::draw")];
+    }
+
+    let out = class_diagram(&doc, &NodeId::from("rust://demo"));
+    assert!(out.contains("<<interface>>"));
+    assert!(out.contains("class Drawable"));
+    assert!(out.contains("+draw()"));
+    assert!(out.contains("class Point"));
+    assert!(out.contains("+x"));
+    assert!(out.contains("Point ..|> Drawable : implements"));
 }

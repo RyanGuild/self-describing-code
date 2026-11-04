@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant extract as extract()
+    participant Document__new as Document::new
+    participant Vec__new as Vec::new
+    participant discover_packages as discover_packages
+    participant NodeId__symbol as NodeId::symbol
+    participant clone as clone
+    participant Node__with_lang as Node::with_lang
+    participant Provenance__new as Provenance::new
+    participant merge as merge
+    participant extract_file as extract_file
+    participant resolve_calls as resolve_calls
+    participant rebuild_code_paths as rebuild_code_paths
+    participant Ok as Ok
+    extract-->>Document__new: Document::new('robby-extract')
+    extract-->>Vec__new: Vec::new()
+    extract-->>discover_packages: discover_packages(root)
+    extract-->>extract: ? (propagate)
+    loop discover_packages(root)?
+    extract-->>NodeId__symbol: NodeId::symbol('typescript', &package.name)
+    extract-->>clone: package.name.clone()
+    extract-->>Node__with_lang: Node::with_lang( NodeId::symbol('typescript', &package.name), kind::c...
+    extract-->>Provenance__new: Provenance::new(Source::Extractor)
+    extract-->>merge: doc.merge(pkg)
+    loop &package.files
+    extract-->>extract_file: extract_file(&mut doc, &package, file, &mut pending)
+    extract-->>extract: ? (propagate)
+    end
+    end
+    extract-->>resolve_calls: resolve_calls(&mut doc, pending)
+    extract-->>rebuild_code_paths: doc.rebuild_code_paths()
+    extract-->>Ok: Ok(doc)

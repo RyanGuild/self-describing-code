@@ -1,0 +1,43 @@
+sequenceDiagram
+    autonumber
+    participant entrypoints_scene_roots_mains_and_nests_callees as entrypoints_scene_roots_mains_and_nests_callees()
+    participant entrypoints_demo_doc as entrypoints_demo_doc
+    participant Scene__from_entrypoints as Scene::from_entrypoints
+    participant get as get
+    participant expect as expect
+    participant stable_id as stable_id
+    participant values as values
+    participant contains as contains
+    participant filter as filter
+    participant as_str as as_str
+    participant map as map
+    participant collect as collect
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_demo_doc: entrypoints_demo_doc()
+    entrypoints_scene_roots_mains_and_nests_callees-->>Scene__from_entrypoints: Scene::from_entrypoints(&doc)
+    entrypoints_scene_roots_mains_and_nests_callees-->>get: scene.frames.get(&scene.root)
+    entrypoints_scene_roots_mains_and_nests_callees-->>expect: scene.frames.get(&scene.root).expect('root')
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert_eq!(root.kind_tag, 'entrypoints')
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert_eq!(root.children.len(), 2, 'two main entries')
+    entrypoints_scene_roots_mains_and_nests_callees-->>stable_id: stable_id('rust://demo::bin_a::main')
+    entrypoints_scene_roots_mains_and_nests_callees-->>stable_id: stable_id('rust://demo::helper')
+    entrypoints_scene_roots_mains_and_nests_callees-->>stable_id: stable_id('rust://demo::shared')
+    entrypoints_scene_roots_mains_and_nests_callees-->>stable_id: stable_id('rust://demo::bin_b::main')
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert!(root.children.contains(&main_a_sid))
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert!(root.children.contains(&main_b_sid))
+    entrypoints_scene_roots_mains_and_nests_callees-->>get: scene.frames.get(&main_a_sid)
+    entrypoints_scene_roots_mains_and_nests_callees-->>expect: scene.frames.get(&main_a_sid).expect('main_a')
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert!( main_a.children.contains(&helper_sid) || main_a.children.con...
+    entrypoints_scene_roots_mains_and_nests_callees-->>get: scene.frames.get(&shared_sid)
+    entrypoints_scene_roots_mains_and_nests_callees-->>expect: scene.frames.get(&shared_sid).expect('shared')
+    entrypoints_scene_roots_mains_and_nests_callees-->>values: scene .frames .values()
+    entrypoints_scene_roots_mains_and_nests_callees-->>contains: f.children.contains(&shared_sid)
+    entrypoints_scene_roots_mains_and_nests_callees-->>filter: scene .frames .values() .filter(|f| f.children.contains(&shared_sid))
+    entrypoints_scene_roots_mains_and_nests_callees-->>as_str: f.stable_id.as_str()
+    entrypoints_scene_roots_mains_and_nests_callees-->>map: scene .frames .values() .filter(|f| f.children.contains(&shared_sid))...
+    entrypoints_scene_roots_mains_and_nests_callees-->>collect: scene .frames .values() .filter(|f| f.children.contains(&shared_sid))...
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert_eq!( parents_with_shared.len(), 1, 'shared should have one tre...
+    entrypoints_scene_roots_mains_and_nests_callees-->>get: scene.frames.get(&main_b_sid)
+    entrypoints_scene_roots_mains_and_nests_callees-->>expect: scene.frames.get(&main_b_sid).expect('main_b')
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert!( !main_b.children.contains(&shared_sid), 'main_b must not re-...
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert!( main_b.portals.iter().any(|p| p.target.as_deref() == Some(sh...
+    entrypoints_scene_roots_mains_and_nests_callees-->>entrypoints_scene_roots_mains_and_nests_callees: assert!( shared .portals .iter() .any(|p| p.target.as_deref() == Some...

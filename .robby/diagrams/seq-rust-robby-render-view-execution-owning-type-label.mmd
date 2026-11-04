@@ -1,0 +1,45 @@
+sequenceDiagram
+    autonumber
+    participant owning_type_label as owning_type_label()
+    participant as_str as as_str
+    participant as_ref as as_ref
+    participant get as get
+    participant and_then as and_then
+    participant trim as trim
+    participant rsplit_once as rsplit_once
+    participant is_empty as is_empty
+    participant to_owned as to_owned
+    participant Some as Some
+    participant strip_prefix as strip_prefix
+    participant map as map
+    participant contains as contains
+    participant filter as filter
+    owning_type_label-->>as_str: method.kind.as_str()
+    alt method.kind.as_str() != kind::code::METHOD
+    owning_type_label-->>owning_type_label: return
+    end
+    owning_type_label-->>as_ref: method.parent.as_ref()
+    owning_type_label-->>get: doc.get(id)
+    owning_type_label-->>and_then: method.parent.as_ref().and_then(|id| doc.get(id))
+    owning_type_label-->>owning_type_label: ? (propagate)
+    owning_type_label-->>as_str: parent.kind.as_str()
+    alt parent.kind.as_str() != kind::code::IMPL
+    owning_type_label-->>owning_type_label: return
+    end
+    owning_type_label-->>trim: parent.name.trim()
+    owning_type_label-->>rsplit_once: name.rsplit_once(' for ')
+    alt let Some((_, ty)) = name.rsplit_once(' for ')
+    owning_type_label-->>trim: ty.trim()
+    owning_type_label-->>is_empty: ty.is_empty()
+    alt !ty.is_empty()
+    owning_type_label-->>to_owned: ty.to_owned()
+    owning_type_label-->>Some: Some(ty.to_owned())
+    owning_type_label-->>owning_type_label: return
+    end
+    end
+    owning_type_label-->>strip_prefix: name.strip_prefix('impl')
+    owning_type_label-->>map: name.strip_prefix('impl') .map(str::trim)
+    owning_type_label-->>is_empty: s.is_empty()
+    owning_type_label-->>contains: s.contains(' ')
+    owning_type_label-->>filter: name.strip_prefix('impl') .map(str::trim) .filter(|s| !s.is_empty() &...
+    owning_type_label-->>map: name.strip_prefix('impl') .map(str::trim) .filter(|s| !s.is_empty() &...

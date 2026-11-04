@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn schema_json() -> String` |
-| location | [`crates/robby-ir/src/lib.rs:42`](../../../crates/robby-ir/src/lib.rs#L42) |
+| location | [`crates/robby-ir/src/lib.rs:47`](../../../crates/robby-ir/src/lib.rs#L47) |
 | provenance | extractor · confidence 1.00 |
 
 > Pretty-printed JSON Schema.
@@ -22,9 +22,25 @@ pub fn schema_json() -> String {
 sequenceDiagram
     autonumber
     participant schema_json as schema_json()
+    participant schema as schema
+    participant serde_json__to_string_pretty as serde_json::to_string_pretty
     participant expect as expect
+    schema_json-->>schema: schema()
+    schema_json-->>serde_json__to_string_pretty: serde_json::to_string_pretty(&schema())
     schema_json-->>expect: serde_json::to_string_pretty(&schema()).expect('schema is always seri...
 ```
 
-1 steps · 0 observed · 1 possible only
+3 steps · 0 observed · 3 possible only
+
+**Edges**
+
+- calls → [`robby_ir::schema`](schema.md)
+
+## References
+
+- calls → [`robby_ir`](index.md) — schema
+
+## Referenced by
+
+- calls ← [`robby_cli::run`](../robby_cli/run.md)
 

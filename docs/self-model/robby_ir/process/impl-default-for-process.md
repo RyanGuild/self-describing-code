@@ -16,6 +16,16 @@ impl Default for Process {
 }
 ```
 
+## References
+
+- calls → [`robby_ir::process`](index.md) — new
+
+## Referenced by
+
+- calls ← [`robby_cli::enrich_comments`](../../robby_cli/enrich-comments.md)
+- calls ← [`robby_extract::typescript::extract_file`](../../robby_extract/typescript/extract-file.md)
+- calls ← [`robby_ir::coverage::scan_trivia`](../coverage/scan-trivia.md)
+
 ### `default`
 
 | | |
@@ -43,5 +53,5 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_extract::impl LineIndex::new`](../../robby_extract/index.md)
+- calls → [`robby_ir::process::impl Process::new`](index.md)
 

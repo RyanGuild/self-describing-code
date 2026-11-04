@@ -56,12 +56,16 @@ impl From<String> for Kind {
 pub mod code {
     pub const WORKSPACE: &str = "code.workspace";
     pub const CRATE: &str = "code.crate";
+    /// npm / workspace package root (TypeScript and similar).
+    pub const PACKAGE: &str = "code.package";
     pub const MODULE: &str = "code.module";
     pub const FILE: &str = "code.file";
     pub const STRUCT: &str = "code.struct";
+    pub const CLASS: &str = "code.class";
     pub const ENUM: &str = "code.enum";
     pub const UNION: &str = "code.union";
     pub const TRAIT: &str = "code.trait";
+    pub const INTERFACE: &str = "code.interface";
     pub const IMPL: &str = "code.impl";
     pub const FUNCTION: &str = "code.function";
     pub const METHOD: &str = "code.method";
@@ -75,6 +79,7 @@ pub mod code {
     pub const STATEMENT: &str = "code.statement";
     pub const EXPRESSION: &str = "code.expression";
     pub const IMPORT: &str = "code.import";
+    pub const COMMENT: &str = "code.comment";
     pub const EXTERN_CRATE: &str = "code.extern_crate";
     pub const FOREIGN_MOD: &str = "code.foreign_mod";
     pub const TRAIT_ALIAS: &str = "code.trait_alias";

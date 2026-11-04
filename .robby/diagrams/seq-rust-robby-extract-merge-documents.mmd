@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant merge_documents as merge_documents()
+    participant declare_file as declare_file
+    participant into_values as into_values
+    participant merge as merge
+    loop from.files
+    merge_documents-->>declare_file: into.declare_file(file)
+    end
+    merge_documents-->>into_values: from.nodes.into_values()
+    loop from.nodes.into_values()
+    merge_documents-->>merge: into.merge(node)
+    end

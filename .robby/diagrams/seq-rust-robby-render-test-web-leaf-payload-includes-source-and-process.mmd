@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant leaf_payload_includes_source_and_process as leaf_payload_includes_source_and_process()
+    participant demo_doc as demo_doc
+    participant NodeId__symbol as NodeId::symbol
+    participant get as get
+    participant unwrap as unwrap
+    participant FrameDetail__from_node as FrameDetail::from_node
+    participant as_deref as as_deref
+    participant expect as expect
+    leaf_payload_includes_source_and_process-->>demo_doc: demo_doc()
+    leaf_payload_includes_source_and_process-->>NodeId__symbol: NodeId::symbol('rust', 'demo::left::a')
+    leaf_payload_includes_source_and_process-->>get: doc.get(&NodeId::symbol('rust', 'demo::left::a'))
+    leaf_payload_includes_source_and_process-->>unwrap: doc.get(&NodeId::symbol('rust', 'demo::left::a')).unwrap()
+    leaf_payload_includes_source_and_process-->>FrameDetail__from_node: FrameDetail::from_node(node, &sources)
+    leaf_payload_includes_source_and_process-->>leaf_payload_includes_source_and_process: assert!(detail.source.is_some(), 'expected source slice')
+    leaf_payload_includes_source_and_process-->>leaf_payload_includes_source_and_process: assert!(detail.process.is_some(), 'expected process')
+    leaf_payload_includes_source_and_process-->>as_deref: detail.process_mermaid.as_deref()
+    leaf_payload_includes_source_and_process-->>expect: detail.process_mermaid.as_deref().expect('process_mermaid')
+    leaf_payload_includes_source_and_process-->>leaf_payload_includes_source_and_process: assert!( mermaid.starts_with('sequenceDiagram'), 'expected sequenceDi...
+    leaf_payload_includes_source_and_process-->>leaf_payload_includes_source_and_process: assert_eq!(detail.source.as_ref().unwrap().text, 'fn a() {}')

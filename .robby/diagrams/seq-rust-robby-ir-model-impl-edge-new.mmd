@@ -1,4 +1,5 @@
 sequenceDiagram
     autonumber
     participant new as new()
-    new-->>new: Self { to: to.into(), kind, span: None, confidence: 1.0, resolved: tr...
+    participant into as into
+    new-->>into: to.into()

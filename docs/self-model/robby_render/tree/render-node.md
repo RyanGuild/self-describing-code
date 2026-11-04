@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn render_node(     out: &mut String,     doc: &Document,     node: &Node,     depth: usize,     page: &Path,     sources: Option<&BTreeMap<String, String>>,     out_rel: &str,     emit_heading: bool, )` |
-| location | [`crates/robby-render/src/tree.rs:389`](../../../../crates/robby-render/src/tree.rs#L389) |
+| location | [`crates/robby-render/src/tree.rs:436`](../../../../crates/robby-render/src/tree.rs#L436) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -101,6 +101,11 @@ fn render_node(
         out.push('\n');
     }
 
+    if !emit_heading {
+        let links = LinkGraph::for_node(doc, node);
+        out.push_str(&render_links(doc, &links, page));
+    }
+
     let children: Vec<&Node> = node
         .children
         .iter()
@@ -134,14 +139,34 @@ fn render_node(
 sequenceDiagram
     autonumber
     participant render_node as render_node()
+    participant min as min
     participant repeat as repeat
     participant push as push
+    participant lines as lines
+    participant slice as slice
     participant push_str as push_str
+    participant trim_end as trim_end
+    participant sequence as sequence
+    participant iter as iter
+    participant filter as filter
     participant count as count
+    participant is_empty as is_empty
     participant get as get
+    participant page_of_node as page_of_node
+    participant and_then as and_then
+    participant LinkGraph__for_node as LinkGraph::for_node
+    participant render_links as render_links
+    participant filter_map as filter_map
     participant collect as collect
+    participant as_str as as_str
+    participant is_compact as is_compact
+    participant as_ref as as_ref
+    participant location as location
+    participant map as map
     participant unwrap_or_default as unwrap_or_default
+    participant is_module as is_module
     alt emit_heading
+    render_node-->>min: depth.min(6)
     render_node-->>repeat: ' '.repeat(depth.min(6))
     render_node-->>render_node: writeln!(out, '{hashes} `{}`\n', node.name)
     end
@@ -157,34 +182,38 @@ sequenceDiagram
     render_node-->>render_node: writeln!( out, '| provenance | {} · confidence {:.2} |', source_name(...
     render_node-->>push: out.push('\n')
     alt let Some(docs) = &node.docs
+    render_node-->>lines: docs.lines()
     loop docs.lines()
     render_node-->>render_node: writeln!(out, '> {line}')
     end
     render_node-->>push: out.push('\n')
     end
     alt let (Some(span), Some(sources)) = (&node.span, sources)
+    render_node-->>slice: slice(sources, span)
     alt let Some(text) = slice(sources, span)
     render_node-->>push_str: out.push_str('```rust\n')
+    render_node-->>trim_end: text.trim_end()
     render_node-->>push_str: out.push_str(text.trim_end())
     render_node-->>push_str: out.push_str('\n```\n\n')
     end
     end
     alt let Some(process) = &node.process
     render_node-->>push_str: out.push_str('```mermaid\n')
+    render_node-->>sequence: sequence(process)
     render_node-->>push_str: out.push_str(&sequence(process))
     render_node-->>push_str: out.push_str('```\n\n')
+    render_node-->>iter: process.steps.iter()
+    render_node-->>filter: process.steps.iter().filter(|step| step.observed)
     render_node-->>count: process.steps.iter().filter(|step| step.observed).count()
     render_node-->>render_node: writeln!( out, '{} steps · {} observed · {} possible only\n', process...
     end
+    render_node-->>is_empty: node.edges.is_empty()
     alt !node.edges.is_empty()
     render_node-->>push_str: out.push_str('**Edges**\n\n')
     loop &node.edges
-    alt edge.resolved
-    render_node-->>render_node: ''
-    else else
-    render_node-->>render_node: ' (unresolved)'
-    end
     render_node-->>get: doc.get(&edge.to)
+    render_node-->>page_of_node: page_of_node(doc, t)
+    render_node-->>and_then: target.and_then(|t| page_of_node(doc, t))
     alt match target.and_then(|t| page_of_node(doc, t))
     render_node-->>render_node: writeln!( out, '- {} → [`{}`]({}){marker}', edge_name(edge.kind), tar...
     else None
@@ -193,28 +222,79 @@ sequenceDiagram
     end
     render_node-->>push: out.push('\n')
     end
+    alt !emit_heading
+    render_node-->>LinkGraph__for_node: LinkGraph::for_node(doc, node)
+    render_node-->>render_links: render_links(doc, &links, page)
+    render_node-->>push_str: out.push_str(&render_links(doc, &links, page))
+    end
+    render_node-->>iter: node .children .iter()
+    render_node-->>get: doc.get(child)
+    render_node-->>filter_map: node .children .iter() .filter_map(|child| doc.get(child))
     render_node-->>collect: node .children .iter() .filter_map(|child| doc.get(child)) .collect()
+    render_node-->>iter: children.iter()
+    render_node-->>as_str: c.kind.as_str()
+    render_node-->>is_compact: is_compact(c.kind.as_str())
+    render_node-->>filter: children.iter().filter(|c| is_compact(c.kind.as_str()))
     render_node-->>collect: children.iter().filter(|c| is_compact(c.kind.as_str())).collect()
+    render_node-->>is_empty: compact.is_empty()
     alt !compact.is_empty()
     render_node-->>push_str: out.push_str('**Fields and variants**\n\n')
     loop compact
+    render_node-->>as_ref: child .span .as_ref()
+    render_node-->>location: span.location()
+    render_node-->>map: child .span .as_ref() .map(|span| span.location())
     render_node-->>unwrap_or_default: child .span .as_ref() .map(|span| span.location()) .unwrap_or_default()
     render_node-->>render_node: writeln!(out, '- `{}` — `{}`', child.name, location)
     end
     render_node-->>push: out.push('\n')
     end
     loop &children
-    alt is_compact(child.kind.as_str()) || is_module(child)
-    render_node-->>render_node: continue
-    end
+    render_node-->>as_str: child.kind.as_str()
+    render_node-->>is_compact: is_compact(child.kind.as_str())
+    render_node-->>is_module: is_module(child)
     render_node-->>render_node: render_node(out, doc, child, depth + 1, page, sources, out_rel, true)
     end
 ```
 
-34 steps · 0 observed · 34 possible only
+58 steps · 0 observed · 58 possible only
 
 **Edges**
 
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::tree::slice`](slice.md)
+- calls → [`robby_render::sequence`](../sequence.md)
+- calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_render::tree::page_of_node`](page-of-node.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::view::links::impl LinkGraph::for_node`](../view/links/index.md)
+- calls → [`robby_render::tree::render_links`](render-links.md)
+- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_render::view::select::collect`](../view/select/collect.md)
+- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::tree::is_compact`](is-compact.md)
+- calls → [`robby_render::view::select::collect`](../view/select/collect.md)
+- calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
+- calls → [`robby_ir::span::impl Span::location`](../../robby_ir/span/index.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::tree::is_compact`](is-compact.md)
+- calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::render_node`](render-node.md)
+
+## References
+
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_ir::span`](../../robby_ir/span/index.md) — location
+- calls → [`robby_render`](../index.md) — sequence
+- calls → [`robby_render::report`](../report/index.md) — push
+- calls → [`robby_render::tree`](index.md) — 5 items
+- calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
+- calls → [`robby_render::view::links`](../view/links/index.md) — for_node, is_empty
+- calls → [`robby_render::view::select`](../view/select/index.md) — collect
+
+## Referenced by
+
+- calls ← [`robby_render::tree::item_page`](item-page.md)
 

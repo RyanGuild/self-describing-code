@@ -1,8 +1,5 @@
 sequenceDiagram
     autonumber
     participant new as new()
-    participant into as into
-    participant to_owned as to_owned
-    new-->>into: fqn.into()
-    new-->>to_owned: fqn.rsplit('::').next().unwrap_or(&fqn).to_owned()
-    new-->>new: Self { id: id.into(), kind: kind.into(), name, fqn, lang: Lang::Rust,...
+    participant Self__with_lang as Self::with_lang
+    new-->>Self__with_lang: Self::with_lang(id, kind, fqn, Lang::Rust)

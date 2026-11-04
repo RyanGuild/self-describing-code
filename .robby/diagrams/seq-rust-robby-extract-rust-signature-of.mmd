@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    participant signature_of as signature_of()
+    participant span_of as span_of
+    participant slice as slice
+    participant split as split
+    participant next as next
+    participant unwrap_or as unwrap_or
+    participant trim as trim
+    participant to_owned as to_owned
+    signature_of-->>span_of: span_of(&f.sig, ctx)
+    signature_of-->>slice: slice(ctx, span_of(&f.sig, ctx))
+    signature_of-->>split: text.split('{')
+    signature_of-->>next: text.split('{').next()
+    signature_of-->>unwrap_or: text.split('{').next().unwrap_or(&text)
+    signature_of-->>trim: text.split('{').next().unwrap_or(&text).trim()
+    signature_of-->>to_owned: text.split('{').next().unwrap_or(&text).trim().to_owned()

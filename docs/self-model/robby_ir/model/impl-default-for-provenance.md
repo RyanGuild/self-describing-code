@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:120`](../../../../crates/robby-ir/src/model.rs#L120) |
+| location | [`crates/robby-ir/src/model.rs:121`](../../../../crates/robby-ir/src/model.rs#L121) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -16,13 +16,21 @@ impl Default for Provenance {
 }
 ```
 
+## References
+
+- calls → [`robby_ir::model`](index.md) — new
+
+## Referenced by
+
+- calls ← [`robby_ir::model::impl Node::with_lang`](index.md)
+
 ### `default`
 
 | | |
 |---|---|
 | kind | `code.method` |
 | signature | `fn default(0)` |
-| location | [`crates/robby-ir/src/model.rs:121`](../../../../crates/robby-ir/src/model.rs#L121) |
+| location | [`crates/robby-ir/src/model.rs:122`](../../../../crates/robby-ir/src/model.rs#L122) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -43,5 +51,5 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_extract::impl LineIndex::new`](../../robby_extract/index.md)
+- calls → [`robby_ir::model::impl Edge::new`](index.md)
 

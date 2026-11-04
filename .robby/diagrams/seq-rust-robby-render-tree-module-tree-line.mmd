@@ -4,11 +4,13 @@ sequenceDiagram
     participant module_index_path as module_index_path
     participant repeat as repeat
     participant get as get
+    participant is_module as is_module
     module_tree_line-->>module_index_path: module_index_path(node, crate_dir)
     module_tree_line-->>repeat: ' '.repeat(depth)
     module_tree_line-->>module_tree_line: writeln!( out, '{indent}- [`{}`]({}) — {} nodes', short_fqn(node, cra...
     loop &node.children
     module_tree_line-->>get: doc.get(child)
+    module_tree_line-->>is_module: is_module(child)
     alt is_module(child)
     module_tree_line-->>module_tree_line: module_tree_line(doc, child, crate_dir, depth + 1, out)
     end

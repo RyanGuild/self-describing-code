@@ -41,19 +41,38 @@ sequenceDiagram
     autonumber
     participant all_spans as all_spans()
     participant BTreeMap__new as BTreeMap::new
+    participant values as values
+    participant clone as clone
+    participant entry as entry
+    participant or_default as or_default
     participant push as push
     all_spans-->>BTreeMap__new: BTreeMap::new()
+    all_spans-->>values: doc.nodes.values()
     loop doc.nodes.values()
     alt let Some(span) = &node.span
+    all_spans-->>clone: span.file.clone()
+    all_spans-->>entry: out.entry(span.file.clone())
+    all_spans-->>or_default: out.entry(span.file.clone()).or_default()
+    all_spans-->>clone: span.clone()
     all_spans-->>push: out.entry(span.file.clone()).or_default().push(span.clone())
     end
     end
-    all_spans-->>all_spans: out
 ```
 
-3 steps · 0 observed · 3 possible only
+7 steps · 0 observed · 7 possible only
 
 **Edges**
 
-- calls → [`robby_extract::impl LineIndex::new`](../../robby_extract/index.md)
+- calls → [`robby_ir::kind::impl Kind::new`](../kind/index.md)
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+
+## References
+
+- calls → [`robby_ir::kind`](../kind/index.md) — new
+- calls → [`robby_render::report`](../../robby_render/report/index.md) — push
+
+## Referenced by
+
+- calls ← [`robby_ir::coverage::document_coverage`](document-coverage.md)
+- calls ← [`robby_render::pipeline::load_sources`](../../robby_render/pipeline/load-sources.md)
 

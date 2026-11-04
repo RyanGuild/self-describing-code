@@ -6,28 +6,15 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn stable_id(input: &str) -> String` |
-| location | [`crates/robby-render/src/lib.rs:198`](../../../crates/robby-render/src/lib.rs#L198) |
+| location | [`crates/robby-render/src/lib.rs:97`](../../../crates/robby-render/src/lib.rs#L97) |
 | provenance | extractor · confidence 1.00 |
 
-> A stable, order-independent identifier derived from a node id.
-> 
-> FNV-1a, not `DefaultHasher`: `DefaultHasher` is explicitly allowed to change
-> between releases, which would rewrite every diagram in the repository on a
-> toolchain bump.
+> Stable Mermaid/layout id.
 
 ```rust
-/// A stable, order-independent identifier derived from a node id.
-///
-/// FNV-1a, not `DefaultHasher`: `DefaultHasher` is explicitly allowed to change
-/// between releases, which would rewrite every diagram in the repository on a
-/// toolchain bump.
+/// Stable Mermaid/layout id.
 pub fn stable_id(input: &str) -> String {
-    let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
-    for byte in input.as_bytes() {
-        hash ^= u64::from(*byte);
-        hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
-    }
-    format!("n_{hash:016x}")
+    util::stable_id(input)
 }
 ```
 
@@ -35,13 +22,35 @@ pub fn stable_id(input: &str) -> String {
 sequenceDiagram
     autonumber
     participant stable_id as stable_id()
-    stable_id-->>stable_id: 0xcbf2_9ce4_8422_2325
-    loop input.as_bytes()
-    stable_id-->>stable_id: hash ^= u64::from(*byte)
-    stable_id-->>stable_id: hash = hash.wrapping_mul(0x0000_0100_0000_01b3)
-    end
-    stable_id-->>stable_id: format!('n_{hash:016x}')
+    participant util__stable_id as util::stable_id
+    stable_id-->>util__stable_id: util::stable_id(input)
 ```
 
-4 steps · 0 observed · 4 possible only
+1 steps · 0 observed · 1 possible only
+
+**Edges**
+
+- calls → [`robby_render::stable_id`](stable-id.md)
+
+## Referenced by
+
+- calls ← [`robby_render::markdown::anchor`](markdown/anchor.md)
+- calls ← [`robby_render::pipeline::slug`](pipeline/slug.md)
+- calls ← [`robby_render::test_web::entrypoints_scene_roots_mains_and_nests_callees`](test_web/entrypoints-scene-roots-mains-and-nests-callees.md)
+- calls ← [`robby_render::tree::item_slug`](tree/item-slug.md)
+- calls ← [`robby_render::view::deps::impl CouplingGraph::from_root`](view/deps/index.md)
+- calls ← [`robby_render::view::deps::impl CouplingGraph::workspace`](view/deps/index.md)
+- calls ← [`robby_render::view::deps::impl PackageStructure::workspace`](view/deps/index.md)
+- calls ← [`robby_render::view::deps::insert_module`](view/deps/insert-module.md)
+- calls ← [`robby_render::view::deps::package_edges`](view/deps/package-edges.md)
+- calls ← [`robby_render::view::deps::package_leaf`](view/deps/package-leaf.md)
+- calls ← [`robby_render::view::scene::attach_call_portals`](view/scene/attach-call-portals.md)
+- calls ← [`robby_render::view::scene::build_call_frame`](view/scene/build-call-frame.md)
+- calls ← [`robby_render::view::scene::build_frame`](view/scene/build-frame.md)
+- calls ← [`robby_render::view::scene::impl Scene::from_document`](view/scene/index.md)
+- calls ← [`robby_render::view::scene::impl Scene::from_entrypoints`](view/scene/index.md)
+- calls ← [`robby_render::view::scene::portals_for`](view/scene/portals-for.md)
+- calls ← [`robby_render::view::sibling::impl SiblingGraph::from_root`](view/sibling/index.md)
+- calls ← [`robby_render::web::impl FrameDetail::for_workspace`](web/index.md)
+- calls ← [`robby_render::web::impl FrameDetail::from_node_in_doc`](web/index.md)
 

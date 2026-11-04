@@ -12,5 +12,6 @@ sequenceDiagram
     else syn::Member::Unnamed(i)
     callee_name-->>callee_name: format!('field{}', i.index)
     end
+    else _
     callee_name-->>to_owned: 'call'.to_owned()
     end

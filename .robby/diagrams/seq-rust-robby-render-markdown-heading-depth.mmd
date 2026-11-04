@@ -2,10 +2,11 @@ sequenceDiagram
     autonumber
     participant heading_depth as heading_depth()
     participant clone as clone
-    heading_depth-->>heading_depth: 3
+    participant get as get
+    participant and_then as and_then
     heading_depth-->>clone: node.parent.clone()
     loop let Some(parent) = current
-    heading_depth-->>heading_depth: depth += 1
-    heading_depth-->>heading_depth: current = doc.get(&parent).and_then(|p| p.parent.clone())
+    heading_depth-->>get: doc.get(&parent)
+    heading_depth-->>clone: p.parent.clone()
+    heading_depth-->>and_then: doc.get(&parent).and_then(|p| p.parent.clone())
     end
-    heading_depth-->>heading_depth: depth

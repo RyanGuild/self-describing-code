@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant cssEscape as cssEscape()
+    participant escape as escape
+    participant replace as replace
+    alt if
+    self-->>escape: 
+    return-->>caller: 
+    end
+    self-->>replace: 
+    return-->>caller: 

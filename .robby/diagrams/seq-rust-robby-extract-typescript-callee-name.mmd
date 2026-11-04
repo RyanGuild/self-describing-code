@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    participant callee_name as callee_name()
+    participant as_str as as_str
+    participant to_owned as to_owned
+    participant Some as Some
+    alt match expr
+    callee_name-->>as_str: id.name.as_str()
+    callee_name-->>to_owned: id.name.as_str().to_owned()
+    callee_name-->>Some: Some(id.name.as_str().to_owned())
+    else Expression::StaticMemberExpression(m)
+    callee_name-->>as_str: m.property.name.as_str()
+    callee_name-->>to_owned: m.property.name.as_str().to_owned()
+    callee_name-->>Some: Some(m.property.name.as_str().to_owned())
+    else Expression::ChainExpression(c)
+    alt match &c.expression
+    callee_name-->>callee_name: callee_name(&call.callee)
+    else oxc::ast::ast::ChainElement::StaticMemberExpression(m)
+    callee_name-->>as_str: m.property.name.as_str()
+    callee_name-->>to_owned: m.property.name.as_str().to_owned()
+    callee_name-->>Some: Some(m.property.name.as_str().to_owned())
+    end
+    end

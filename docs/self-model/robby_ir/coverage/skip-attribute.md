@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn skip_attribute(bytes: &[u8], start: u32, end: u32) -> Option<u32>` |
-| location | [`crates/robby-ir/src/coverage.rs:344`](../../../../crates/robby-ir/src/coverage.rs#L344) |
+| location | [`crates/robby-ir/src/coverage.rs:382`](../../../../crates/robby-ir/src/coverage.rs#L382) |
 | provenance | extractor · confidence 1.00 |
 
 > Skip `#[...]` or `#![...]`, honouring nested brackets and string literals.
@@ -64,47 +64,22 @@ sequenceDiagram
     autonumber
     participant skip_attribute as skip_attribute()
     participant Some as Some
-    skip_attribute-->>skip_attribute: start + 1
-    alt i < end && bytes[i as usize] == b'!'
-    skip_attribute-->>skip_attribute: i += 1
-    end
     alt i >= end || bytes[i as usize] != b'['
-    skip_attribute-->>skip_attribute: None
     skip_attribute-->>skip_attribute: return
     end
-    skip_attribute-->>skip_attribute: 0i32
-    skip_attribute-->>skip_attribute: false
     loop i < end
-    skip_attribute-->>skip_attribute: bytes[i as usize]
-    alt in_string
-    alt c == b'\\'
-    skip_attribute-->>skip_attribute: i += 2
-    skip_attribute-->>skip_attribute: continue
-    end
-    alt c == b'''
-    skip_attribute-->>skip_attribute: in_string = false
-    end
-    skip_attribute-->>skip_attribute: i += 1
-    skip_attribute-->>skip_attribute: continue
-    end
     alt match c
-    skip_attribute-->>skip_attribute: in_string = true
-    skip_attribute-->>skip_attribute: i += 1
-    else b'['
-    skip_attribute-->>skip_attribute: depth += 1
-    skip_attribute-->>skip_attribute: i += 1
-    else b']'
-    skip_attribute-->>skip_attribute: depth -= 1
-    skip_attribute-->>skip_attribute: i += 1
     alt depth == 0
     skip_attribute-->>Some: Some(i)
     skip_attribute-->>skip_attribute: return
     end
-    skip_attribute-->>skip_attribute: i += 1
     end
     end
-    skip_attribute-->>skip_attribute: None
 ```
 
-22 steps · 0 observed · 22 possible only
+3 steps · 0 observed · 3 possible only
+
+## Referenced by
+
+- calls ← [`robby_ir::coverage::scan_trivia`](scan-trivia.md)
 

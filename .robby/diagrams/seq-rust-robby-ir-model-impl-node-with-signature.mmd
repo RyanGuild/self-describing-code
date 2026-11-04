@@ -1,5 +1,7 @@
 sequenceDiagram
     autonumber
     participant with_signature as with_signature()
-    with_signature-->>with_signature: self.signature = Some(signature.into())
-    with_signature-->>with_signature: self
+    participant into as into
+    participant Some as Some
+    with_signature-->>into: signature.into()
+    with_signature-->>Some: Some(signature.into())

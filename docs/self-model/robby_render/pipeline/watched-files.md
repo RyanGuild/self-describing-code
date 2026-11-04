@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn watched_files(loaded: &Loaded) -> Vec<PathBuf>` |
-| location | [`crates/robby-render/src/pipeline.rs:176`](../../../../crates/robby-render/src/pipeline.rs#L176) |
+| location | [`crates/robby-render/src/pipeline.rs:179`](../../../../crates/robby-render/src/pipeline.rs#L179) |
 | provenance | extractor · confidence 1.00 |
 
 > Files whose change must invalidate a cached build.
@@ -26,9 +26,21 @@ pub fn watched_files(loaded: &Loaded) -> Vec<PathBuf> {
 sequenceDiagram
     autonumber
     participant watched_files as watched_files()
+    participant keys as keys
+    participant map as map
     participant collect as collect
+    watched_files-->>keys: loaded .sources .keys()
+    watched_files-->>map: loaded .sources .keys() .map(PathBuf::from)
     watched_files-->>collect: loaded .sources .keys() .map(PathBuf::from) .collect::<Vec<_>>()
 ```
 
-1 steps · 0 observed · 1 possible only
+3 steps · 0 observed · 3 possible only
+
+**Edges**
+
+- calls → [`robby_render::view::select::collect`](../view/select/collect.md)
+
+## References
+
+- calls → [`robby_render::view::select`](../view/select/index.md) — collect
 

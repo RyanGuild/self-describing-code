@@ -2,8 +2,16 @@ sequenceDiagram
     autonumber
     participant summary as summary()
     participant len as len
+    participant iter as iter
+    participant map as map
     participant sum as sum
+    participant uncovered_bytes as uncovered_bytes
     summary-->>len: self.coverage.files.len()
+    summary-->>iter: self.coverage.files.iter()
+    summary-->>map: self.coverage.files.iter().map(|f| f.covered_bytes)
     summary-->>sum: self.coverage.files.iter().map(|f| f.covered_bytes).sum()
+    summary-->>iter: self.coverage.files.iter()
+    summary-->>uncovered_bytes: f.uncovered_bytes()
+    summary-->>map: self.coverage.files.iter().map(|f| f.uncovered_bytes())
     summary-->>sum: self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum()
     summary-->>summary: format!( '{files} file(s), {claimed} bytes claimed, {unclaimed} uncla...

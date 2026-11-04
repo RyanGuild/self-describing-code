@@ -1,0 +1,72 @@
+sequenceDiagram
+    autonumber
+    participant build as build()
+    participant BTreeMap__new as BTreeMap::new
+    participant insert_module as insert_module
+    participant owning_in_scope as owning_in_scope
+    participant container_of as container_of
+    participant or_else as or_else
+    participant stable_id as stable_id
+    participant DependencyGraph__empty as DependencyGraph::empty
+    participant or_default as or_default
+    participant insert as insert
+    participant tarjan as tarjan
+    participant collect as collect
+    participant BTreeSet__new as BTreeSet::new
+    participant sort_by as sort_by
+    participant topological_layers as topological_layers
+    build-->>BTreeMap__new: BTreeMap::new()
+    build-->>BTreeMap__new: BTreeMap::new()
+    loop scope
+    alt let Some(node) = doc.get(id)
+    build-->>insert_module: insert_module(&mut modules, node, false, doc)
+    end
+    end
+    loop nodes
+    loop &node.edges
+    build-->>owning_in_scope: owning_in_scope(doc, &node.id, scope)
+    build-->>container_of: container_of(doc, &edge.to)
+    build-->>or_else: lift_to_scope(doc, to_owner, scope).or_else(|| { if both_in_scope { N...
+    alt from_mod.id == to_mod.id
+    build-->>build: continue
+    end
+    build-->>stable_id: stable_id(from_mod.id.as_str())
+    build-->>stable_id: stable_id(to_mod.id.as_str())
+    build-->>insert_module: insert_module(&mut modules, from_mod, false, doc)
+    build-->>insert_module: insert_module( &mut modules, to_mod, !scope.contains(&to_mod.id), doc, )
+    build-->>build: *weights.entry((from_sid, to_sid)).or_default() += 1
+    end
+    end
+    alt modules.is_empty()
+    build-->>DependencyGraph__empty: DependencyGraph::empty()
+    build-->>build: return
+    end
+    build-->>BTreeMap__new: BTreeMap::new()
+    loop modules.keys()
+    build-->>or_default: adj.entry(sid.clone()).or_default()
+    end
+    loop &weights
+    build-->>insert: adj.entry(from.clone()).or_default().insert(to.clone())
+    end
+    build-->>build: adj
+    build-->>tarjan: tarjan(&adjacency)
+    build-->>collect: sccs .iter() .filter(|scc| scc.len() > 1) .flat_map(|scc| scc.iter()....
+    build-->>BTreeSet__new: BTreeSet::new()
+    loop &sccs
+    alt scc.len() < 2
+    build-->>build: continue
+    end
+    build-->>collect: scc.iter().cloned().collect()
+    loop &weights
+    alt set.contains(from) && set.contains(to)
+    build-->>insert: edge_in_cycle.insert((from.clone(), to.clone()))
+    end
+    end
+    end
+    build-->>collect: weights .into_iter() .map(|((from, to), weight)| WeightedEdge { in_cy...
+    build-->>sort_by: edges.sort_by(|a, b| (&a.from, &a.to).cmp(&(&b.from, &b.to)))
+    build-->>collect: sccs .into_iter() .filter(|scc| scc.len() > 1) .map(|mut scc| { scc.s...
+    build-->>topological_layers: topological_layers(&adjacency, &cyclic)
+    build-->>collect: modules.into_values().collect()
+    build-->>sort_by: module_list.sort_by(|a, b| a.name.cmp(&b.name))
+    build-->>build: DependencyGraph { modules: module_list, edges, layers, cycles, }

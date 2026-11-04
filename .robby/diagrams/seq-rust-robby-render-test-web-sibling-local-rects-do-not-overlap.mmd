@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    participant sibling_local_rects_do_not_overlap as sibling_local_rects_do_not_overlap()
+    participant demo_doc as demo_doc
+    participant Scene__from_document as Scene::from_document
+    participant values as values
+    participant iter as iter
+    participant filter_map as filter_map
+    participant collect as collect
+    participant enumerate as enumerate
+    participant skip as skip
+    sibling_local_rects_do_not_overlap-->>demo_doc: demo_doc()
+    sibling_local_rects_do_not_overlap-->>Scene__from_document: Scene::from_document(&doc)
+    sibling_local_rects_do_not_overlap-->>values: scene.frames.values()
+    loop scene.frames.values()
+    sibling_local_rects_do_not_overlap-->>iter: frame .children .iter()
+    sibling_local_rects_do_not_overlap-->>filter_map: frame .children .iter() .filter_map(|id| scene.frames[id].local_in_pa...
+    sibling_local_rects_do_not_overlap-->>collect: frame .children .iter() .filter_map(|id| scene.frames[id].local_in_pa...
+    sibling_local_rects_do_not_overlap-->>iter: locals.iter()
+    sibling_local_rects_do_not_overlap-->>enumerate: locals.iter().enumerate()
+    loop locals.iter().enumerate()
+    sibling_local_rects_do_not_overlap-->>iter: locals.iter()
+    sibling_local_rects_do_not_overlap-->>skip: locals.iter().skip(i + 1)
+    loop locals.iter().skip(i + 1)
+    sibling_local_rects_do_not_overlap-->>sibling_local_rects_do_not_overlap: assert!( !overlap, 'siblings overlap in {} local grid: {:?} vs {:?}',...
+    end
+    end
+    end

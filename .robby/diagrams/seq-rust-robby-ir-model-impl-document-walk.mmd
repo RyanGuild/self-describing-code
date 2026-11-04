@@ -1,7 +1,9 @@
 sequenceDiagram
     autonumber
     participant walk as walk()
+    participant get as get
     participant push as push
+    walk-->>get: self.nodes.get(id)
     alt let Some(node) = self.nodes.get(id)
     walk-->>push: out.push(node)
     loop &node.children

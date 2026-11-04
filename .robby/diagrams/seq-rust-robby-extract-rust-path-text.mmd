@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant path_text as path_text()
+    participant iter as iter
+    participant to_string as to_string
+    participant type_text as type_text
+    participant to_owned as to_owned
+    participant map as map
+    participant collect as collect
+    participant push as push
+    participant join as join
+    participant push_str as push_str
+    path_text-->>iter: path.segments .iter()
+    path_text-->>to_string: segment.ident.to_string()
+    alt let syn::PathArguments::AngleBracketed(args) = &segment.arguments
+    path_text-->>iter: args .args .iter()
+    alt match arg
+    path_text-->>type_text: type_text(ty)
+    else syn::GenericArgument::Lifetime(lt)
+    path_text-->>path_text: format!(''{}', lt.ident)
+    else _
+    path_text-->>to_owned: '_'.to_owned()
+    end
+    path_text-->>map: args .args .iter() .map(|arg| match arg { syn::GenericArgument::Type(...
+    path_text-->>collect: args .args .iter() .map(|arg| match arg { syn::GenericArgument::Type(...
+    path_text-->>push: out.push('<')
+    path_text-->>join: inner.join(', ')
+    path_text-->>push_str: out.push_str(&inner.join(', '))
+    path_text-->>push: out.push('>')
+    end
+    path_text-->>map: path.segments .iter() .map(|segment| { let mut out = segment.ident.to...
+    path_text-->>collect: path.segments .iter() .map(|segment| { let mut out = segment.ident.to...
+    path_text-->>join: path.segments .iter() .map(|segment| { let mut out = segment.ident.to...

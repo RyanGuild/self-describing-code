@@ -1,5 +1,7 @@
 sequenceDiagram
     autonumber
     participant from as from()
+    participant to_owned as to_owned
     participant Self as Self
+    from-->>to_owned: value.to_owned()
     from-->>Self: Self(value.to_owned())

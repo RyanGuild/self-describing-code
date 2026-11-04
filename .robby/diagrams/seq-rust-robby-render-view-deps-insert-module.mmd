@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant insert_module as insert_module()
+    participant as_str as as_str
+    participant stable_id as stable_id
+    participant clone as clone
+    participant entry as entry
+    participant text as text
+    participant subtree as subtree
+    participant len as len
+    participant or_insert_with as or_insert_with
+    insert_module-->>as_str: node.id.as_str()
+    insert_module-->>stable_id: stable_id(node.id.as_str())
+    insert_module-->>clone: sid.clone()
+    insert_module-->>entry: modules.entry(sid.clone())
+    insert_module-->>clone: node.id.clone()
+    insert_module-->>clone: node.name.clone()
+    insert_module-->>insert_module: format!('{} [{}]', node.name, short_kind(&node.kind))
+    insert_module-->>text: text(&format!('{} [{}]', node.name, short_kind(&node.kind)))
+    insert_module-->>subtree: doc.subtree(&node.id)
+    insert_module-->>len: doc.subtree(&node.id).len()
+    insert_module-->>or_insert_with: modules.entry(sid.clone()).or_insert_with(|| DepModule { id: node.id....

@@ -2,26 +2,23 @@ sequenceDiagram
     autonumber
     participant markdown_links as markdown_links()
     participant Vec__new as Vec::new
+    participant lines as lines
+    participant trim_start as trim_start
+    participant starts_with as starts_with
+    participant find as find
+    participant to_owned as to_owned
     participant push as push
     markdown_links-->>Vec__new: Vec::new()
-    markdown_links-->>markdown_links: false
+    markdown_links-->>lines: body.lines()
     loop body.lines()
-    alt line.trim_start().starts_with('```')
-    markdown_links-->>markdown_links: fenced = !fenced
-    markdown_links-->>markdown_links: continue
-    end
-    alt fenced
-    markdown_links-->>markdown_links: continue
-    end
-    markdown_links-->>markdown_links: line
+    markdown_links-->>trim_start: line.trim_start()
+    markdown_links-->>starts_with: line.trim_start().starts_with('```')
+    markdown_links-->>find: rest.find('](')
     loop let Some(start) = rest.find('](')
-    markdown_links-->>markdown_links: &rest[start + 2..]
+    markdown_links-->>find: after.find(')')
     alt match after.find(')')
+    markdown_links-->>to_owned: after[..end].to_owned()
     markdown_links-->>push: links.push(after[..end].to_owned())
-    markdown_links-->>markdown_links: rest = &after[end + 1..]
-    else None
-    markdown_links-->>markdown_links: break
     end
     end
     end
-    markdown_links-->>markdown_links: links

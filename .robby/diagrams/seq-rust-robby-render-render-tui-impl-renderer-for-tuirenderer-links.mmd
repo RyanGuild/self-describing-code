@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant links as links()
+    participant String__new as String::new
+    participant is_empty as is_empty
+    participant push_str as push_str
+    participant len as len
+    participant push as push
+    participant join as join
+    links-->>String__new: String::new()
+    links-->>is_empty: view.outbound.is_empty()
+    alt !view.outbound.is_empty()
+    links-->>push_str: out.push_str('references\n')
+    loop &view.outbound
+    links-->>len: link.items.len()
+    alt link.items.len() <= 4
+    links-->>links: format!(' — {}', link.items.join(', '))
+    else else
+    links-->>links: format!(' — {} items', link.items.len())
+    end
+    links-->>links: writeln!( out, ' {} → {}{detail}', link.kind_label, link.module_fqn )
+    end
+    links-->>push: out.push('\n')
+    end
+    links-->>is_empty: view.inbound.is_empty()
+    alt !view.inbound.is_empty()
+    links-->>push_str: out.push_str('referenced by\n')
+    loop &view.inbound
+    links-->>join: link.kinds.join(', ')
+    links-->>links: writeln!(out, ' {kinds} ← {}', link.caller_fqn)
+    end
+    links-->>push: out.push('\n')
+    end

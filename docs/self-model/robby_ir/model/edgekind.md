@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-ir/src/model.rs:171`](../../../../crates/robby-ir/src/model.rs#L171) |
+| location | [`crates/robby-ir/src/model.rs:172`](../../../../crates/robby-ir/src/model.rs#L172) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -26,13 +26,13 @@ pub enum EdgeKind {
 
 **Fields and variants**
 
-- `Contains` — `crates/robby-ir/src/model.rs:174:5`
-- `Calls` — `crates/robby-ir/src/model.rs:175:5`
-- `Uses` — `crates/robby-ir/src/model.rs:176:5`
-- `Imports` — `crates/robby-ir/src/model.rs:177:5`
-- `Implements` — `crates/robby-ir/src/model.rs:178:5`
-- `Extends` — `crates/robby-ir/src/model.rs:179:5`
-- `Returns` — `crates/robby-ir/src/model.rs:180:5`
-- `Field` — `crates/robby-ir/src/model.rs:181:5`
-- `References` — `crates/robby-ir/src/model.rs:182:5`
+- `Contains` — `crates/robby-ir/src/model.rs:175:5`
+- `Calls` — `crates/robby-ir/src/model.rs:176:5`
+- `Uses` — `crates/robby-ir/src/model.rs:177:5`
+- `Imports` — `crates/robby-ir/src/model.rs:178:5`
+- `Implements` — `crates/robby-ir/src/model.rs:179:5`
+- `Extends` — `crates/robby-ir/src/model.rs:180:5`
+- `Returns` — `crates/robby-ir/src/model.rs:181:5`
+- `Field` — `crates/robby-ir/src/model.rs:182:5`
+- `References` — `crates/robby-ir/src/model.rs:183:5`
 

@@ -1,5 +1,7 @@
 sequenceDiagram
     autonumber
     participant new as new()
+    participant into as into
     participant Self as Self
+    new-->>into: value.into()
     new-->>Self: Self(value.into())

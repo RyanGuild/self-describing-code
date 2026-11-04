@@ -18,14 +18,16 @@ what collapses, clusters, and drills down. Representation never does.
 |---|---|
 | `robby-ir` — schema, model, coverage gate | done, 13 tests |
 | `robby-render` — Mermaid + linked Markdown tree | done, 17 tests |
-| `robby-extract` — `syn` walk over the workspace | done, 5 tests |
-| `robby-cli` — `schema`, `check`, `render`, `report`, `extract` | done |
+| `robby-extract` — `syn` (Rust) + oxc (TypeScript) producers | done |
+| `robby-cli` — `schema`, `check`, `render`, `report`, `extract`, `enrich-comments`, `web` | done |
+| `robby-agent` — OpenRouter decision + note enrich | done |
 | `build.rs` — extracts the workspace, fails on uncovered code | done |
 | `examples/self-model.rs` — bootstrap escape hatch | done |
+| TS extract (fixture `ts-mini`) | done |
 | `robby-resolve` — real name resolution | next |
 | `robby-macros` — additive annotations | next |
 | `robby-trace` — process recorder | next |
-| site | deferred until the map earns one |
+| site (`apps/site` TypeScript Prezi viewer + `robby web`) | done |
 
 The map describes Robby itself: 4 crates, 18 files, ~530 nodes, 100% byte
 coverage. The hand-authored fixture is kept only as a test input.
@@ -64,6 +66,16 @@ cargo run -p robby-cli -- check   --ir .robby/robby.ir.json
 cargo run -p robby-cli -- render  --ir .robby/robby.ir.json --out .robby/diagrams
 cargo run -p robby-cli -- report  --ir .robby/robby.ir.json --out docs/self-model
 cargo run -p robby-cli -- schema  --out schema/robby-ir.schema.json
+cargo run -p robby-cli -- enrich-comments --ir .robby/robby.ir.json
+cargo run -p robby-cli -- web --ir .robby/robby.ir.json --out apps/site/public
+```
+
+`enrich-comments` needs `OPENROUTER_API_KEY`. It writes `agent.decision` nodes into the IR (relevance + optional usage/implementation notes). Report/show stay offline and only read that cache.
+
+`web` writes `scene.json` and lazy frame payloads for the TypeScript Prezi viewer in [`apps/site`](apps/site). Serve it with:
+
+```sh
+cd apps/site && npm install && npm run dev
 ```
 
 ## The four invariants

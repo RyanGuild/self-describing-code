@@ -2,14 +2,22 @@ sequenceDiagram
     autonumber
     participant insert as insert()
     participant clone as clone
+    participant is_none as is_none
     participant push as push
+    participant get_mut as get_mut
+    participant contains as contains
     insert-->>clone: node.id.clone()
+    insert-->>is_none: node.parent.is_none()
     alt node.parent.is_none()
+    insert-->>clone: id.clone()
     insert-->>push: self.roots.push(id.clone())
     else else
     alt let Some(parent) = &node.parent
+    insert-->>get_mut: self.nodes.get_mut(parent)
     alt let Some(p) = self.nodes.get_mut(parent)
+    insert-->>contains: p.children.contains(&id)
     alt !p.children.contains(&id)
+    insert-->>clone: id.clone()
     insert-->>push: p.children.push(id.clone())
     end
     end

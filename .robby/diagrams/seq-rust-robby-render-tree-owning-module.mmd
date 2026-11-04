@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    participant owning_module as owning_module()
+    participant Some as Some
+    participant and_then as and_then
+    alt is_module(node)
+    owning_module-->>Some: Some(node)
+    owning_module-->>owning_module: return
+    end
+    owning_module-->>and_then: node.parent.as_ref().and_then(|id| doc.get(id))
+    loop let Some(parent) = current
+    alt is_module(parent)
+    owning_module-->>Some: Some(parent)
+    owning_module-->>owning_module: return
+    end
+    owning_module-->>owning_module: current = parent.parent.as_ref().and_then(|id| doc.get(id))
+    end
+    owning_module-->>owning_module: None

@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant build_coupling_tree as build_coupling_tree()
+    participant build_package_tree as build_package_tree
+    participant convert as convert
+    build_coupling_tree-->>build_package_tree: build_package_tree(root, packages)
+    build_coupling_tree-->>build_coupling_tree: fn convert(node: PackageNode) -> CouplingModule { CouplingModule { id...
+    build_coupling_tree-->>convert: convert(tree)

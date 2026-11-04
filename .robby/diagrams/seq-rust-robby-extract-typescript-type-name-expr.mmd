@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    participant type_name_expr as type_name_expr()
+    participant as_str as as_str
+    participant to_owned as to_owned
+    participant Some as Some
+    alt match expr
+    type_name_expr-->>as_str: id.name.as_str()
+    type_name_expr-->>to_owned: id.name.as_str().to_owned()
+    type_name_expr-->>Some: Some(id.name.as_str().to_owned())
+    else Expression::StaticMemberExpression(m)
+    type_name_expr-->>type_name_expr: type_name_expr(&m.object)
+    type_name_expr-->>type_name_expr: ? (propagate)
+    type_name_expr-->>type_name_expr: format!('{obj}.{}', m.property.name.as_str())
+    type_name_expr-->>Some: Some(format!('{obj}.{}', m.property.name.as_str()))
+    end

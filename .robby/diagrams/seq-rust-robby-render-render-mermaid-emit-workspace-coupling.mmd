@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    participant emit_workspace_coupling as emit_workspace_coupling()
+    participant repeat as repeat
+    participant is_empty as is_empty
+    emit_workspace_coupling-->>repeat: ' '.repeat(depth)
+    emit_workspace_coupling-->>is_empty: node.children.is_empty()
+    alt node.children.is_empty()
+    emit_workspace_coupling-->>emit_workspace_coupling: writeln!(out, '{indent}{}[\'{}\']', node.stable_id, node.name)
+    emit_workspace_coupling-->>emit_workspace_coupling: return
+    end
+    emit_workspace_coupling-->>emit_workspace_coupling: writeln!( out, '{indent}subgraph {}[\'{}\']', node.stable_id, node.na...
+    emit_workspace_coupling-->>emit_workspace_coupling: writeln!(out, '{indent} direction TB')
+    loop &node.children
+    emit_workspace_coupling-->>emit_workspace_coupling: emit_workspace_coupling(out, child, depth + 1)
+    end
+    emit_workspace_coupling-->>emit_workspace_coupling: writeln!(out, '{indent}end')

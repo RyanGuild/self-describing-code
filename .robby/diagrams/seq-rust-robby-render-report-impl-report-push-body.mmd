@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant push_body as push_body()
+    participant Section__untitled as Section::untitled
+    participant push as push
+    push_body-->>Section__untitled: Section::untitled(body)
+    push_body-->>push: self.push(Section::untitled(body))

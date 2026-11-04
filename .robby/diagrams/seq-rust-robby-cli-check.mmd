@@ -3,6 +3,7 @@ sequenceDiagram
     participant check as check()
     participant pipeline__load as pipeline::load
     participant print_human as print_human
+    participant is_ok as is_ok
     participant Ok as Ok
     check-->>pipeline__load: pipeline::load(ir, source_root)
     check-->>check: ? (propagate)
@@ -12,4 +13,5 @@ sequenceDiagram
     else else
     check-->>print_human: print_human(&loaded)
     end
+    check-->>is_ok: loaded.is_ok()
     check-->>Ok: Ok(if loaded.is_ok() { ExitCode::SUCCESS } else { ExitCode::FAILURE })

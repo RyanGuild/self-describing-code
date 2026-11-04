@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/model.rs:15`](../../../../crates/robby-ir/src/model.rs#L15) |
+| location | [`crates/robby-ir/src/model.rs:16`](../../../../crates/robby-ir/src/model.rs#L16) |
 | provenance | extractor · confidence 1.00 |
 
 > A stable, content-addressed node identifier.

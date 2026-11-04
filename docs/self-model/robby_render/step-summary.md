@@ -6,13 +6,13 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn step_summary(step: &Step) -> String` |
-| location | [`crates/robby-render/src/lib.rs:260`](../../../crates/robby-render/src/lib.rs#L260) |
+| location | [`crates/robby-render/src/lib.rs:117`](../../../crates/robby-render/src/lib.rs#L117) |
 | provenance | extractor · confidence 1.00 |
 
-> Render a step as a compact one-liner, used by the site's step list.
+> Compact one-liner for a step.
 
 ```rust
-/// Render a step as a compact one-liner, used by the site's step list.
+/// Compact one-liner for a step.
 pub fn step_summary(step: &Step) -> String {
     let kind = match step.kind {
         StepKind::Call => "call",
@@ -29,19 +29,8 @@ pub fn step_summary(step: &Step) -> String {
 sequenceDiagram
     autonumber
     participant step_summary as step_summary()
-    alt match step.kind
-    step_summary-->>step_summary: 'call'
-    else StepKind::Return
-    step_summary-->>step_summary: 'return'
-    else StepKind::Signal
-    step_summary-->>step_summary: 'signal'
-    else StepKind::Decision
-    step_summary-->>step_summary: 'decision'
-    else StepKind::Note
-    step_summary-->>step_summary: 'note'
-    end
     step_summary-->>step_summary: format!('{kind} {} -> {}', step.from, step.to)
 ```
 
-6 steps · 0 observed · 6 possible only
+1 steps · 0 observed · 1 possible only
 

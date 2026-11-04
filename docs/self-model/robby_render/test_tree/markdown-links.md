@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn markdown_links(body: &str) -> Vec<String>` |
-| location | [`crates/robby-render/tests/tree.rs:98`](../../../../crates/robby-render/tests/tree.rs#L98) |
+| location | [`crates/robby-render/tests/tree.rs:135`](../../../../crates/robby-render/tests/tree.rs#L135) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -44,34 +44,40 @@ sequenceDiagram
     autonumber
     participant markdown_links as markdown_links()
     participant Vec__new as Vec::new
+    participant lines as lines
+    participant trim_start as trim_start
+    participant starts_with as starts_with
+    participant find as find
+    participant to_owned as to_owned
     participant push as push
     markdown_links-->>Vec__new: Vec::new()
-    markdown_links-->>markdown_links: false
+    markdown_links-->>lines: body.lines()
     loop body.lines()
-    alt line.trim_start().starts_with('```')
-    markdown_links-->>markdown_links: fenced = !fenced
-    markdown_links-->>markdown_links: continue
-    end
-    alt fenced
-    markdown_links-->>markdown_links: continue
-    end
-    markdown_links-->>markdown_links: line
+    markdown_links-->>trim_start: line.trim_start()
+    markdown_links-->>starts_with: line.trim_start().starts_with('```')
+    markdown_links-->>find: rest.find('](')
     loop let Some(start) = rest.find('](')
-    markdown_links-->>markdown_links: &rest[start + 2..]
+    markdown_links-->>find: after.find(')')
     alt match after.find(')')
+    markdown_links-->>to_owned: after[..end].to_owned()
     markdown_links-->>push: links.push(after[..end].to_owned())
-    markdown_links-->>markdown_links: rest = &after[end + 1..]
-    else None
-    markdown_links-->>markdown_links: break
     end
     end
     end
-    markdown_links-->>markdown_links: links
 ```
 
-11 steps · 0 observed · 11 possible only
+8 steps · 0 observed · 8 possible only
 
 **Edges**
 
-- calls → [`robby_extract::impl LineIndex::new`](../../robby_extract/index.md)
+- calls → [`robby_render::report::impl Report::new`](../report/index.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+
+## References
+
+- calls → [`robby_render::report`](../report/index.md) — new, push
+
+## Referenced by
+
+- calls ← [`robby_render::test_tree::every_internal_link_resolves`](every-internal-link-resolves.md)
 

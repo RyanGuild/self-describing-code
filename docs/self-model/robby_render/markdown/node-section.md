@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn node_section(     out: &mut String,     doc: &Document,     node: &Node,     sources: Option<&BTreeMap<String, String>>, )` |
-| location | [`crates/robby-render/src/markdown.rs:102`](../../../../crates/robby-render/src/markdown.rs#L102) |
+| location | [`crates/robby-render/src/markdown.rs:145`](../../../../crates/robby-render/src/markdown.rs#L145) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -109,12 +109,24 @@ sequenceDiagram
     autonumber
     participant node_section as node_section()
     participant heading_depth as heading_depth
+    participant min as min
     participant repeat as repeat
+    participant is_empty as is_empty
     participant push as push
+    participant lines as lines
+    participant get as get
+    participant and_then as and_then
     participant push_str as push_str
+    participant trim_end as trim_end
+    participant sequence as sequence
+    participant iter as iter
+    participant filter as filter
     participant count as count
+    participant filter_map as filter_map
+    participant map as map
     participant collect as collect
     node_section-->>heading_depth: heading_depth(doc, node)
+    node_section-->>min: depth.min(6)
     node_section-->>repeat: ' '.repeat(depth.min(6))
     node_section-->>node_section: writeln!(out, '{hashes} `{}`\n', node.fqn)
     node_section-->>node_section: writeln!(out, '| | |')
@@ -129,20 +141,26 @@ sequenceDiagram
     node_section-->>node_section: writeln!( out, '| span | bytes {}..{} |', span.start.byte, span.end.b...
     end
     node_section-->>node_section: writeln!( out, '| provenance | {} · confidence {:.2} |', source_name(...
+    node_section-->>is_empty: node.tags.is_empty()
     alt !node.tags.is_empty()
     node_section-->>node_section: writeln!(out, '| tags | {} |', node.tags.join(', '))
     end
     node_section-->>push: out.push('\n')
     alt let Some(docs) = &node.docs
+    node_section-->>lines: docs.lines()
     loop docs.lines()
     node_section-->>node_section: writeln!(out, '> {line}')
     end
     node_section-->>push: out.push('\n')
     end
     alt let Some(span) = &node.span
+    node_section-->>get: s.get(&span.file)
+    node_section-->>and_then: sources.and_then(|s| s.get(&span.file))
     alt let Some(source) = sources.and_then(|s| s.get(&span.file))
+    node_section-->>get: source.get(span.start.byte as usize..span.end.byte as usize)
     alt let Some(slice) = source.get(span.start.byte as usize..span.end.byte ...
     node_section-->>push_str: out.push_str('```rust\n')
+    node_section-->>trim_end: slice.trim_end()
     node_section-->>push_str: out.push_str(slice.trim_end())
     node_section-->>push_str: out.push_str('\n```\n\n')
     end
@@ -150,32 +168,61 @@ sequenceDiagram
     end
     alt let Some(process) = &node.process
     node_section-->>push_str: out.push_str('```mermaid\n')
+    node_section-->>sequence: sequence(process)
     node_section-->>push_str: out.push_str(&sequence(process))
     node_section-->>push_str: out.push_str('```\n\n')
+    node_section-->>iter: process.steps.iter()
+    node_section-->>filter: process.steps.iter().filter(|s| s.observed)
     node_section-->>count: process.steps.iter().filter(|s| s.observed).count()
     node_section-->>node_section: writeln!( out, '{} steps · {} observed · {} possible only\n', process...
     end
+    node_section-->>is_empty: node.edges.is_empty()
     alt !node.edges.is_empty()
     node_section-->>node_section: writeln!(out, '**Edges**\n')
     loop &node.edges
-    alt edge.resolved
-    node_section-->>node_section: ''
-    else else
-    node_section-->>node_section: ' (unresolved)'
-    end
     node_section-->>node_section: writeln!( out, '- {} → `{}`{marker}', edge_name(edge.kind), edge.to )
     end
     node_section-->>push: out.push('\n')
     end
+    node_section-->>is_empty: node.children.is_empty()
     alt !node.children.is_empty()
+    node_section-->>iter: node .children .iter()
+    node_section-->>get: doc.get(c)
+    node_section-->>filter_map: node .children .iter() .filter_map(|c| doc.get(c))
+    node_section-->>node_section: format!('`{}`', c.fqn)
+    node_section-->>map: node .children .iter() .filter_map(|c| doc.get(c)) .map(|c| format!('...
     node_section-->>collect: node .children .iter() .filter_map(|c| doc.get(c)) .map(|c| format!('...
     node_section-->>node_section: writeln!(out, '**Children** — {}\n', names.join(', '))
     end
 ```
 
-30 steps · 0 observed · 30 possible only
+45 steps · 0 observed · 45 possible only
 
 **Edges**
 
 - calls → [`robby_render::markdown::heading_depth`](heading-depth.md)
+- calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_render::sequence`](../sequence.md)
+- calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
+- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_render::view::select::collect`](../view/select/collect.md)
+
+## References
+
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_render`](../index.md) — sequence
+- calls → [`robby_render::markdown`](index.md) — heading_depth
+- calls → [`robby_render::report`](../report/index.md) — push
+- calls → [`robby_render::view::links`](../view/links/index.md) — is_empty
+- calls → [`robby_render::view::select`](../view/select/index.md) — collect
+
+## Referenced by
+
+- calls ← [`robby_render::markdown::report`](report.md)
 

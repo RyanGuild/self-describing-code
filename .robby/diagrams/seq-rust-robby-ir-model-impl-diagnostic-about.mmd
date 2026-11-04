@@ -1,5 +1,7 @@
 sequenceDiagram
     autonumber
     participant about as about()
-    about-->>about: self.node = Some(node.into())
-    about-->>about: self
+    participant into as into
+    participant Some as Some
+    about-->>into: node.into()
+    about-->>Some: Some(node.into())

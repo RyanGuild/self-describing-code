@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant sanitize_pkg_name as sanitize_pkg_name()
+    participant replace as replace
+    sanitize_pkg_name-->>replace: name.replace('-', '_')

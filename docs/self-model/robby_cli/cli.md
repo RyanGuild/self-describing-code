@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-cli/src/main.rs:14`](../../../crates/robby-cli/src/main.rs#L14) |
+| location | [`crates/robby-cli/src/main.rs:16`](../../../crates/robby-cli/src/main.rs#L16) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -23,5 +23,5 @@ struct Cli {
 
 **Fields and variants**
 
-- `command` — `crates/robby-cli/src/main.rs:21:5`
+- `command` — `crates/robby-cli/src/main.rs:23:5`
 

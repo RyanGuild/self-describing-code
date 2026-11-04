@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn global_index(doc: &Document, coverage: Option<&CoverageReport>, crates: &[&Node]) -> String` |
-| location | [`crates/robby-render/src/tree.rs:128`](../../../../crates/robby-render/src/tree.rs#L128) |
+| location | [`crates/robby-render/src/tree.rs:131`](../../../../crates/robby-render/src/tree.rs#L131) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -43,6 +43,14 @@ fn global_index(doc: &Document, coverage: Option<&CoverageReport>, crates: &[&No
     }
     out.push('\n');
 
+    if !crates.is_empty() {
+        out.push_str(&workspace_dependencies(doc));
+        if !out.ends_with('\n') {
+            out.push('\n');
+        }
+        out.push('\n');
+    }
+
     out.push_str("## Module tree\n\n");
     for krate in crates {
         let crate_dir = krate.name.clone();
@@ -68,8 +76,12 @@ sequenceDiagram
     participant push_str as push_str
     participant coverage_section as coverage_section
     participant push as push
+    participant is_empty as is_empty
+    participant workspace_dependencies as workspace_dependencies
+    participant ends_with as ends_with
     participant clone as clone
     participant get as get
+    participant is_module as is_module
     participant module_tree_line as module_tree_line
     global_index-->>String__new: String::new()
     global_index-->>push_str: out.push_str(' Robby self-model\n\n')
@@ -84,27 +96,57 @@ sequenceDiagram
     global_index-->>global_index: writeln!( out, '| [`{}`]({}/index.md) | {} | {} |', krate.name, krate...
     end
     global_index-->>push: out.push('\n')
+    global_index-->>is_empty: crates.is_empty()
+    alt !crates.is_empty()
+    global_index-->>workspace_dependencies: workspace_dependencies(doc)
+    global_index-->>push_str: out.push_str(&workspace_dependencies(doc))
+    global_index-->>ends_with: out.ends_with('\n')
+    alt !out.ends_with('\n')
+    global_index-->>push: out.push('\n')
+    end
+    global_index-->>push: out.push('\n')
+    end
     global_index-->>push_str: out.push_str(' Module tree\n\n')
     loop crates
     global_index-->>clone: krate.name.clone()
     global_index-->>global_index: writeln!(out, '- [`{}`]({crate_dir}/index.md)', krate.name)
     loop &krate.children
     global_index-->>get: doc.get(child)
+    global_index-->>is_module: is_module(node)
     alt is_module(node)
     global_index-->>module_tree_line: module_tree_line(doc, node, &crate_dir, 1, &mut out)
     end
     end
     end
     global_index-->>push: out.push('\n')
-    global_index-->>global_index: out
 ```
 
-16 steps · 0 observed · 16 possible only
+22 steps · 0 observed · 22 possible only
 
 **Edges**
 
-- calls → [`robby_extract::impl LineIndex::new`](../../robby_extract/index.md)
+- calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::markdown::coverage_section`](../markdown/coverage-section.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
+- calls → [`robby_render::workspace_dependencies`](../workspace-dependencies.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_render::tree::is_module`](is-module.md)
 - calls → [`robby_render::tree::module_tree_line`](module-tree-line.md)
+- calls → [`robby_render::report::impl Report::push`](../report/index.md)
+
+## References
+
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_render`](../index.md) — workspace_dependencies
+- calls → [`robby_render::markdown`](../markdown/index.md) — coverage_section
+- calls → [`robby_render::report`](../report/index.md) — new, push
+- calls → [`robby_render::tree`](index.md) — is_module, module_tree_line
+- calls → [`robby_render::view::links`](../view/links/index.md) — is_empty
+
+## Referenced by
+
+- calls ← [`robby_render::tree::tree`](tree.md)
 

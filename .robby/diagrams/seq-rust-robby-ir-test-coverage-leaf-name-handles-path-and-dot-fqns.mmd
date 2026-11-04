@@ -1,0 +1,6 @@
+sequenceDiagram
+    autonumber
+    participant leaf_name_handles_path_and_dot_fqns as leaf_name_handles_path_and_dot_fqns()
+    leaf_name_handles_path_and_dot_fqns-->>leaf_name_handles_path_and_dot_fqns: assert_eq!(robby_ir::leaf_name('demo::left::Point'), 'Point')
+    leaf_name_handles_path_and_dot_fqns-->>leaf_name_handles_path_and_dot_fqns: assert_eq!(robby_ir::leaf_name('ts_mini/src/util'), 'util')
+    leaf_name_handles_path_and_dot_fqns-->>leaf_name_handles_path_and_dot_fqns: assert_eq!(robby_ir::leaf_name('ts_mini.src.util.helper'), 'helper')

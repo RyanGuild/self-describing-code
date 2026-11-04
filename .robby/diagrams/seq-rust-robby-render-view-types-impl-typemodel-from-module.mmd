@@ -1,0 +1,107 @@
+sequenceDiagram
+    autonumber
+    participant from_module as from_module()
+    participant get as get
+    participant iter as iter
+    participant filter_map as filter_map
+    participant collect as collect
+    participant copied as copied
+    participant is_type as is_type
+    participant filter as filter
+    participant as_str as as_str
+    participant strip_generics as strip_generics
+    participant map as map
+    participant Vec__new as Vec::new
+    participant BTreeSet__new as BTreeSet::new
+    participant class_id as class_id
+    participant clone as clone
+    participant insert as insert
+    participant class_from_node as class_from_node
+    participant push as push
+    participant parse_impl_target as parse_impl_target
+    participant iter_mut as iter_mut
+    participant find as find
+    participant impl_methods as impl_methods
+    participant ClassMember__Method as ClassMember::Method
+    participant Some as Some
+    participant cmp as cmp
+    participant sort_by as sort_by
+    participant dedup as dedup
+    from_module-->>get: doc.get(root)
+    from_module-->>iter: root_node .children .iter()
+    from_module-->>get: doc.get(id)
+    from_module-->>filter_map: root_node .children .iter() .filter_map(|id| doc.get(id))
+    from_module-->>collect: root_node .children .iter() .filter_map(|id| doc.get(id)) .collect()
+    from_module-->>iter: children .iter()
+    from_module-->>copied: children .iter() .copied()
+    from_module-->>is_type: is_type(node)
+    from_module-->>filter: children .iter() .copied() .filter(|node| is_type(node))
+    from_module-->>collect: children .iter() .copied() .filter(|node| is_type(node)) .collect()
+    from_module-->>iter: children .iter()
+    from_module-->>copied: children .iter() .copied()
+    from_module-->>as_str: node.kind.as_str()
+    from_module-->>filter: children .iter() .copied() .filter(|node| node.kind.as_str() == kind:...
+    from_module-->>collect: children .iter() .copied() .filter(|node| node.kind.as_str() == kind:...
+    from_module-->>iter: types .iter()
+    from_module-->>strip_generics: strip_generics(&node.name)
+    from_module-->>map: types .iter() .map(|node| (strip_generics(&node.name), *node))
+    from_module-->>collect: types .iter() .map(|node| (strip_generics(&node.name), *node)) .colle...
+    from_module-->>Vec__new: Vec::new()
+    from_module-->>BTreeSet__new: BTreeSet::new()
+    from_module-->>Vec__new: Vec::new()
+    loop &types
+    from_module-->>class_id: class_id(&node.name)
+    from_module-->>clone: id.clone()
+    from_module-->>insert: emitted.insert(id.clone())
+    from_module-->>class_from_node: class_from_node(doc, node, id)
+    from_module-->>push: classes.push(class_from_node(doc, node, id))
+    end
+    loop &impls
+    from_module-->>parse_impl_target: parse_impl_target(impl_node)
+    from_module-->>strip_generics: strip_generics(&self_name)
+    from_module-->>get: type_by_name.get(&self_key)
+    from_module-->>copied: type_by_name.get(&self_key).copied()
+    from_module-->>class_id: class_id(&target.name)
+    alt match trait_name
+    from_module-->>iter_mut: classes.iter_mut()
+    from_module-->>find: classes.iter_mut().find(|c| c.id == target_id)
+    alt let Some(class) = classes.iter_mut().find(|c| c.id == target_id)
+    from_module-->>impl_methods: impl_methods(doc, impl_node)
+    loop impl_methods(doc, impl_node)
+    from_module-->>ClassMember__Method: ClassMember::Method(method)
+    from_module-->>push: class.members.push(ClassMember::Method(method))
+    end
+    end
+    else Some(trait_name)
+    from_module-->>class_id: class_id(&trait_name)
+    from_module-->>clone: trait_id.clone()
+    from_module-->>insert: emitted.insert(trait_id.clone())
+    alt emitted.insert(trait_id.clone())
+    from_module-->>clone: trait_id.clone()
+    from_module-->>strip_generics: strip_generics(&trait_name)
+    from_module-->>Some: Some(ClassStereotype::Interface)
+    from_module-->>Vec__new: Vec::new()
+    from_module-->>push: classes.push(ClassView { id: trait_id.clone(), name: strip_generics(&...
+    end
+    from_module-->>push: relations.push(TypeRelation { from_id: target_id, to_id: trait_id, ki...
+    end
+    end
+    loop &types
+    from_module-->>class_id: class_id(&node.name)
+    loop &node.edges
+    from_module-->>get: doc.get(&edge.to)
+    from_module-->>class_id: class_id(&target.name)
+    from_module-->>clone: to_id.clone()
+    from_module-->>insert: emitted.insert(to_id.clone())
+    alt emitted.insert(to_id.clone())
+    from_module-->>clone: to_id.clone()
+    from_module-->>class_from_node: class_from_node(doc, target, to_id.clone())
+    from_module-->>push: classes.push(class_from_node(doc, target, to_id.clone()))
+    end
+    from_module-->>clone: from_id.clone()
+    from_module-->>push: relations.push(TypeRelation { from_id: from_id.clone(), to_id, kind, })
+    end
+    end
+    from_module-->>cmp: (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind))
+    from_module-->>sort_by: relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from...
+    from_module-->>dedup: relations.dedup()

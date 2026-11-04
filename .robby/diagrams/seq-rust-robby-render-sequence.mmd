@@ -1,41 +1,7 @@
 sequenceDiagram
     autonumber
     participant sequence as sequence()
-    participant String__from as String::from
-    participant push_str as push_str
-    participant Vec__new as Vec::new
-    participant common_prefix as common_prefix
-    participant unwrap_or as unwrap_or
-    sequence-->>String__from: String::from('sequenceDiagram\n')
-    sequence-->>push_str: out.push_str(' autonumber\n')
-    loop &process.participants
-    sequence-->>sequence: writeln!( out, ' participant {} as {}', alias(&participant.id), text(...
-    end
-    sequence-->>Vec__new: Vec::new()
-    loop &process.steps
-    sequence-->>common_prefix: common_prefix(&stack, &step.blocks)
-    loop common..stack.len()
-    sequence-->>push_str: out.push_str(' end\n')
-    end
-    sequence-->>sequence: common
-    alt common == stack.len() && common > 0 && step.blocks.len() >= common &&...
-    sequence-->>unwrap_or: step.blocks[common - 1].branch.as_deref().unwrap_or('')
-    sequence-->>sequence: writeln!(out, ' else {}', text(branch))
-    end
-    loop opened < step.blocks.len()
-    sequence-->>sequence: &step.blocks[opened]
-    sequence-->>sequence: writeln!(out, ' {} {}', keyword(block.kind), text(&block.label))
-    sequence-->>sequence: opened += 1
-    end
-    sequence-->>sequence: stack = step.blocks.clone()
-    alt step.observed
-    sequence-->>sequence: '->>'
-    else else
-    sequence-->>sequence: '-->>'
-    end
-    sequence-->>sequence: writeln!( out, ' {}{}{}: {}', alias(&step.from), arrow, alias(&step.t...
-    end
-    loop 0..stack.len()
-    sequence-->>push_str: out.push_str(' end\n')
-    end
-    sequence-->>sequence: out
+    participant ProcView__from_process as ProcView::from_process
+    participant process as process
+    sequence-->>ProcView__from_process: ProcView::from_process(process)
+    sequence-->>process: MermaidRenderer.process(&ProcView::from_process(process))

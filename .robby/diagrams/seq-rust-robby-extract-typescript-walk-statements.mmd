@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+    participant walk_statements as walk_statements()
+    participant emit_import as emit_import
+    participant walk_declaration as walk_declaration
+    participant emit_function as emit_function
+    participant emit_class as emit_class
+    participant emit_interface as emit_interface
+    participant as_str as as_str
+    participant oxc_span as oxc_span
+    participant item_node as item_node
+    participant merge as merge
+    participant emit_variable as emit_variable
+    loop stmts
+    alt match stmt
+    walk_statements-->>emit_import: emit_import(doc, imp, parent, ctx)
+    else Statement::ExportDeclaration(exp)
+    walk_statements-->>walk_declaration: walk_declaration(doc, &exp.declaration, parent, ctx, pending)
+    else Statement::ExportDefaultDeclaration(exp)
+    alt match &exp.declaration
+    walk_statements-->>emit_function: emit_function(doc, f, parent, ctx, pending)
+    else oxc::ast::ast::ExportDefaultDeclarationKind::ClassDeclaration(c)
+    walk_statements-->>emit_class: emit_class(doc, c, parent, ctx, pending)
+    else oxc::ast::ast::ExportDefaultDeclarationKind::TSInterfaceDeclaration(i)
+    walk_statements-->>emit_interface: emit_interface(doc, i, parent, ctx)
+    end
+    else Statement::FunctionDeclaration(f)
+    walk_statements-->>emit_function: emit_function(doc, f, parent, ctx, pending)
+    else Statement::ClassDeclaration(c)
+    walk_statements-->>emit_class: emit_class(doc, c, parent, ctx, pending)
+    else Statement::TSInterfaceDeclaration(i)
+    walk_statements-->>emit_interface: emit_interface(doc, i, parent, ctx)
+    else Statement::TSTypeAliasDeclaration(t)
+    walk_statements-->>as_str: t.id.name.as_str()
+    walk_statements-->>walk_statements: format!('{}/{}', ctx.module, name)
+    walk_statements-->>oxc_span: oxc_span(t.span, ctx)
+    walk_statements-->>item_node: item_node(kind::code::TYPE_ALIAS, &fqn, oxc_span(t.span, ctx), parent)
+    walk_statements-->>merge: doc.merge(node)
+    else Statement::TSEnumDeclaration(e)
+    walk_statements-->>as_str: e.id.name.as_str()
+    walk_statements-->>walk_statements: format!('{}/{}', ctx.module, name)
+    walk_statements-->>oxc_span: oxc_span(e.span, ctx)
+    walk_statements-->>item_node: item_node(kind::code::ENUM, &fqn, oxc_span(e.span, ctx), parent)
+    walk_statements-->>merge: doc.merge(node)
+    else Statement::VariableDeclaration(v)
+    loop &v.declarations
+    walk_statements-->>emit_variable: emit_variable(doc, decl, parent, ctx, pending)
+    end
+    end
+    end

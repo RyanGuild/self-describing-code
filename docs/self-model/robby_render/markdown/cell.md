@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn cell(input: &str) -> String` |
-| location | [`crates/robby-render/src/markdown.rs:205`](../../../../crates/robby-render/src/markdown.rs#L205) |
+| location | [`crates/robby-render/src/markdown.rs:248`](../../../../crates/robby-render/src/markdown.rs#L248) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -20,8 +20,9 @@ sequenceDiagram
     autonumber
     participant cell as cell()
     participant replace as replace
+    cell-->>replace: input.replace('|', '\\|')
     cell-->>replace: input.replace('|', '\\|').replace('\n', ' ')
 ```
 
-1 steps · 0 observed · 1 possible only
+2 steps · 0 observed · 2 possible only
 

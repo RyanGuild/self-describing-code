@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant dependency_matrix as dependency_matrix()
+    participant crate__render__mermaid__dsm_markdown_table as crate::render::mermaid::dsm_markdown_table
+    dependency_matrix-->>crate__render__mermaid__dsm_markdown_table: crate::render::mermaid::dsm_markdown_table(view)

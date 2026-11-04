@@ -1,0 +1,32 @@
+sequenceDiagram
+    autonumber
+    participant build_function_process as build_function_process()
+    participant as_ref as as_ref
+    participant as_str as as_str
+    participant map as map
+    participant rsplit as rsplit
+    participant next as next
+    participant unwrap_or as unwrap_or
+    participant unwrap_or_else as unwrap_or_else
+    participant Process__new as Process::new
+    participant sanitize as sanitize
+    participant Kind__from as Kind::from
+    participant participant as participant
+    participant NodeId__symbol as NodeId::symbol
+    participant walk_stmts as walk_stmts
+    build_function_process-->>as_ref: f .id .as_ref()
+    build_function_process-->>as_str: i.name.as_str()
+    build_function_process-->>map: f .id .as_ref() .map(|i| i.name.as_str())
+    build_function_process-->>rsplit: fqn.rsplit('/')
+    build_function_process-->>next: fqn.rsplit('/').next()
+    build_function_process-->>unwrap_or: fqn.rsplit('/').next().unwrap_or(fqn)
+    build_function_process-->>unwrap_or_else: f .id .as_ref() .map(|i| i.name.as_str()) .unwrap_or_else(|| fqn.rspl...
+    build_function_process-->>Process__new: Process::new()
+    build_function_process-->>sanitize: sanitize(name)
+    build_function_process-->>build_function_process: format!('{name}()')
+    build_function_process-->>Kind__from: Kind::from(kind::code::FUNCTION)
+    build_function_process-->>participant: process.participant( sanitize(name), format!('{name}()'), Kind::from(...
+    build_function_process-->>NodeId__symbol: NodeId::symbol('typescript', fqn)
+    alt let Some(body) = &f.body
+    build_function_process-->>walk_stmts: walk_stmts(&body.statements, &mut process, &[], pending, &from, ctx)
+    end

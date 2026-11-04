@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant timeline as timeline()
+    participant TuiRenderer__default as TuiRenderer::default
+    participant ProcessView__from_process as ProcessView::from_process
+    participant process as process
+    timeline-->>TuiRenderer__default: TuiRenderer::default()
+    timeline-->>ProcessView__from_process: ProcessView::from_process(process)
+    timeline-->>process: TuiRenderer::default().process(&ProcessView::from_process(process))

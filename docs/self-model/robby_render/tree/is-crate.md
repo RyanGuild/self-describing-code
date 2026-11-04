@@ -6,12 +6,15 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_crate(node: &Node) -> bool` |
-| location | [`crates/robby-render/src/tree.rs:516`](../../../../crates/robby-render/src/tree.rs#L516) |
+| location | [`crates/robby-render/src/tree.rs:686`](../../../../crates/robby-render/src/tree.rs#L686) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn is_crate(node: &Node) -> bool {
-    node.kind.as_str() == kind::code::CRATE
+    matches!(
+        node.kind.as_str(),
+        kind::code::CRATE | kind::code::PACKAGE
+    )
 }
 ```
 
@@ -19,8 +22,13 @@ fn is_crate(node: &Node) -> bool {
 sequenceDiagram
     autonumber
     participant is_crate as is_crate()
-    is_crate-->>is_crate: node.kind.as_str() == kind::code::CRATE
+    is_crate-->>is_crate: matches!( node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
 ```
 
 1 steps · 0 observed · 1 possible only
+
+## Referenced by
+
+- calls ← [`robby_render::tree::nav`](nav.md)
+- calls ← [`robby_render::tree::tree`](tree.md)
 

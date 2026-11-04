@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant item_node as item_node()
+    participant NodeId__symbol as NodeId::symbol
+    participant Node__with_lang as Node::with_lang
+    participant Some as Some
+    participant clone as clone
+    participant Provenance__new as Provenance::new
+    item_node-->>NodeId__symbol: NodeId::symbol('typescript', fqn)
+    item_node-->>Node__with_lang: Node::with_lang( NodeId::symbol('typescript', fqn), kind_name, fqn, L...
+    item_node-->>Some: Some(span)
+    item_node-->>clone: parent.clone()
+    item_node-->>Some: Some(parent.clone())
+    item_node-->>Provenance__new: Provenance::new(Source::Extractor)

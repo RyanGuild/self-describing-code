@@ -1,10 +1,13 @@
 sequenceDiagram
     autonumber
     participant from_document as from_document()
+    participant rebuild_code_paths as rebuild_code_paths
     participant load_sources as load_sources
     participant coverage__document_coverage as coverage::document_coverage
     participant validate as validate
+    participant to_path_buf as to_path_buf
+    from_document-->>rebuild_code_paths: document.rebuild_code_paths()
     from_document-->>load_sources: load_sources(&document, root)
     from_document-->>coverage__document_coverage: coverage::document_coverage(&document, &sources)
     from_document-->>validate: validate(&document)
-    from_document-->>from_document: Loaded { document, sources, coverage, diagnostics, root: root.to_path...
+    from_document-->>to_path_buf: root.to_path_buf()

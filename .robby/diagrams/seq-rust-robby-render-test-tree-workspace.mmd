@@ -1,5 +1,8 @@
 sequenceDiagram
     autonumber
     participant workspace as workspace()
+    participant PathBuf__from as PathBuf::from
     participant join as join
+    workspace-->>workspace: env!('CARGO_MANIFEST_DIR')
+    workspace-->>PathBuf__from: PathBuf::from(env!('CARGO_MANIFEST_DIR'))
     workspace-->>join: PathBuf::from(env!('CARGO_MANIFEST_DIR')).join('../..')

@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant zoomOut as zoomOut()
+    participant frame as frame
+    participant flyTo as flyTo
+    self-->>frame: 
+    alt if
+    return-->>caller: 
+    end
+    self-->>flyTo: 

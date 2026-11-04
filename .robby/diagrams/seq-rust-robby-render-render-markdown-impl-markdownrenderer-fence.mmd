@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    participant fence as fence()
+    participant trim as trim
+    participant is_empty as is_empty
+    participant String__new as String::new
+    participant String__from as String::from
+    participant push_str as push_str
+    participant push as push
+    participant ends_with as ends_with
+    fence-->>trim: body.trim()
+    fence-->>is_empty: body.trim().is_empty()
+    alt body.trim().is_empty()
+    fence-->>String__new: String::new()
+    fence-->>fence: return
+    end
+    fence-->>String__from: String::from('```')
+    fence-->>push_str: out.push_str(lang)
+    fence-->>push: out.push('\n')
+    fence-->>push_str: out.push_str(body)
+    fence-->>ends_with: body.ends_with('\n')
+    alt !body.ends_with('\n')
+    fence-->>push: out.push('\n')
+    end
+    fence-->>push_str: out.push_str('```\n')

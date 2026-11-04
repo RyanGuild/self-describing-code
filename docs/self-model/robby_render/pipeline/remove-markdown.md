@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn remove_markdown(dir: &Path) -> std::io::Result<()>` |
-| location | [`crates/robby-render/src/pipeline.rs:158`](../../../../crates/robby-render/src/pipeline.rs#L158) |
+| location | [`crates/robby-render/src/pipeline.rs:161`](../../../../crates/robby-render/src/pipeline.rs#L161) |
 | provenance | extractor · confidence 1.00 |
 
 > Delete generated Markdown so removed modules do not linger.
@@ -35,21 +35,32 @@ fn remove_markdown(dir: &Path) -> std::io::Result<()> {
 sequenceDiagram
     autonumber
     participant remove_markdown as remove_markdown()
+    participant is_dir as is_dir
     participant Ok as Ok
+    participant fs__read_dir as fs::read_dir
     participant path as path
     participant fs__remove_dir as fs::remove_dir
+    participant extension as extension
+    participant is_some_and as is_some_and
     participant fs__remove_file as fs::remove_file
+    remove_markdown-->>is_dir: dir.is_dir()
     alt !dir.is_dir()
     remove_markdown-->>Ok: Ok(())
     remove_markdown-->>remove_markdown: return
     end
+    remove_markdown-->>fs__read_dir: fs::read_dir(dir)
+    remove_markdown-->>remove_markdown: ? (propagate)
     loop fs::read_dir(dir)?
+    remove_markdown-->>remove_markdown: ? (propagate)
     remove_markdown-->>path: entry?.path()
+    remove_markdown-->>is_dir: path.is_dir()
     alt path.is_dir()
     remove_markdown-->>remove_markdown: remove_markdown(&path)
     remove_markdown-->>remove_markdown: ? (propagate)
     remove_markdown-->>fs__remove_dir: fs::remove_dir(&path)
     else else
+    remove_markdown-->>extension: path.extension()
+    remove_markdown-->>is_some_and: path.extension().is_some_and(|ext| ext == 'md')
     alt path.extension().is_some_and(|ext| ext == 'md')
     remove_markdown-->>fs__remove_file: fs::remove_file(&path)
     remove_markdown-->>remove_markdown: ? (propagate)
@@ -59,9 +70,13 @@ sequenceDiagram
     remove_markdown-->>Ok: Ok(())
 ```
 
-9 steps · 0 observed · 9 possible only
+16 steps · 0 observed · 16 possible only
 
 **Edges**
 
 - calls → [`robby_render::pipeline::remove_markdown`](remove-markdown.md)
+
+## Referenced by
+
+- calls ← [`robby_render::pipeline::write_report`](write-report.md)
 

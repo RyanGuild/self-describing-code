@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant oxc_span as oxc_span()
+    participant Span__new as Span::new
+    oxc_span-->>Span__new: Span::new(ctx.file, ctx.source, span.start, span.end)

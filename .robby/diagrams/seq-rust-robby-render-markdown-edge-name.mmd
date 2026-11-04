@@ -1,22 +1,3 @@
 sequenceDiagram
     autonumber
     participant edge_name as edge_name()
-    alt match kind
-    edge_name-->>edge_name: 'contains'
-    else EdgeKind::Calls
-    edge_name-->>edge_name: 'calls'
-    else EdgeKind::Uses
-    edge_name-->>edge_name: 'uses'
-    else EdgeKind::Imports
-    edge_name-->>edge_name: 'imports'
-    else EdgeKind::Implements
-    edge_name-->>edge_name: 'implements'
-    else EdgeKind::Extends
-    edge_name-->>edge_name: 'extends'
-    else EdgeKind::Returns
-    edge_name-->>edge_name: 'returns'
-    else EdgeKind::Field
-    edge_name-->>edge_name: 'field'
-    else EdgeKind::References
-    edge_name-->>edge_name: 'references'
-    end

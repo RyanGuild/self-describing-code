@@ -6,45 +6,86 @@
 |---|---|
 | kind | `code.module` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 12 |
+| nodes | 13 |
+
+## Package diagram
 
 ```mermaid
-flowchart TD
-    subgraph n_2790416a72a81c1b["test_tree [module]"]
-        direction TB
-        n_13a9263f385f07c0["fn workspace() -> PathBuf [function]"]
-        n_9ed0f9b7842fbcc9["fn pages() -> (robby_ir::Document, Vec<tree::Page>) [function]"]
-        n_197157e39be2dfd1["fn every_internal_link_resolves() [function]"]
-        n_1a89d16c1861baae["fn no_page_is_a_wall_of_text() [function]"]
-        n_32cf4d2ecb5a0a21["fn every_module_has_an_index_page() [function]"]
-        n_4080fdf0b68d4a87["fn page_names_never_collide_with_index() [function]"]
-        n_323013ead64fbe04["fn markdown_links(body: &str) -> Vec<String> [function]"]
-        n_2bde649864bf1146["fn normalize(path: &Path) -> String [function]"]
-    end
-    n_197157e39be2dfd1 -->|calls| n_2bde649864bf1146
-    n_197157e39be2dfd1 -->|calls| n_9ed0f9b7842fbcc9
-    n_1a89d16c1861baae -->|calls| n_9ed0f9b7842fbcc9
-    n_32cf4d2ecb5a0a21 -->|calls| n_9ed0f9b7842fbcc9
-    n_4080fdf0b68d4a87 -->|calls| n_9ed0f9b7842fbcc9
-    n_9ed0f9b7842fbcc9 -->|calls| n_13a9263f385f07c0
+flowchart TB
+    n_2790416a72a81c1b["test_tree"]
+    n_a331a60ee1568354(["robby_cli"])
+    n_356bf2c23da68961(["robby_ir"])
+    n_9c636b098ca4450e(["robby_render"])
+    n_2790416a72a81c1b --> n_356bf2c23da68961
+    n_2790416a72a81c1b --> n_9c636b098ca4450e
+    n_2790416a72a81c1b --> n_a331a60ee1568354
 ```
+
+## Module coupling
+
+```mermaid
+flowchart TB
+    subgraph n_2790416a72a81c1b["test_tree"]
+        direction TB
+        n_197157e39be2dfd1["every_internal_link_resolves"]
+        n_32cf4d2ecb5a0a21["every_module_has_an_index_page"]
+        n_323013ead64fbe04["markdown_links"]
+        n_9f9d6bd897ae1852["modules_link_out_and_back"]
+        n_1a89d16c1861baae["no_page_is_a_wall_of_text"]
+        n_2bde649864bf1146["normalize"]
+        n_4080fdf0b68d4a87["page_names_never_collide_with_index"]
+        n_9ed0f9b7842fbcc9["pages"]
+        n_13a9263f385f07c0["workspace"]
+    end
+    n_197157e39be2dfd1 --> n_2bde649864bf1146
+    n_197157e39be2dfd1 --> n_323013ead64fbe04
+    n_197157e39be2dfd1 --> n_9ed0f9b7842fbcc9
+    n_1a89d16c1861baae --> n_9ed0f9b7842fbcc9
+    n_32cf4d2ecb5a0a21 --> n_9ed0f9b7842fbcc9
+    n_4080fdf0b68d4a87 --> n_9ed0f9b7842fbcc9
+    n_9ed0f9b7842fbcc9 --> n_13a9263f385f07c0
+    n_9f9d6bd897ae1852 --> n_9ed0f9b7842fbcc9
+```
+
+## Dependency matrix
+
+| | test_tree | robby_ir | robby_render | robby_cli |
+|---|---:|---:|---:|---:|
+| **test_tree** | · | 3 | 12 | 1 |
+| **robby_ir** | | · | | |
+| **robby_render** | | | · | |
+| **robby_cli** | | | | · |
+## References
+
+- calls → [`robby_cli`](../../robby_cli/index.md) — extract
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+- calls → [`robby_render::report`](../report/index.md) — new, push
+- calls → [`robby_render::tui`](../tui/index.md) — tree
+- calls → [`robby_render::view::scene`](../view/scene/index.md) — contains
+- calls → [`robby_render::view::select`](../view/select/index.md) — collect
+
+## Referenced by
+
+- calls ← [`robby_render::workspace_dependencies`](../workspace-dependencies.md)
 
 ## Items
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`workspace`](workspace.md) | `code.function` | 1 | `crates/robby-render/tests/tree.rs:9:1` |
+| [`workspace`](workspace.md) | `code.function` | 3 | `crates/robby-render/tests/tree.rs:9:1` |
 | [`pages`](pages.md) | `code.function` | 4 | `crates/robby-render/tests/tree.rs:13:1` |
-| [`every_internal_link_resolves`](every-internal-link-resolves.md) | `code.function` | 9 | `crates/robby-render/tests/tree.rs:20:1` |
-| [`no_page_is_a_wall_of_text`](no-page-is-a-wall-of-text.md) | `code.function` | 3 | `crates/robby-render/tests/tree.rs:46:1` |
-| [`every_module_has_an_index_page`](every-module-has-an-index-page.md) | `code.function` | 4 | `crates/robby-render/tests/tree.rs:63:1` |
-| [`page_names_never_collide_with_index`](page-names-never-collide-with-index.md) | `code.function` | 4 | `crates/robby-render/tests/tree.rs:88:1` |
-| [`markdown_links`](markdown-links.md) | `code.function` | 11 | `crates/robby-render/tests/tree.rs:98:1` |
-| [`normalize`](normalize.md) | `code.function` | 4 | `crates/robby-render/tests/tree.rs:126:1` |
+| [`every_internal_link_resolves`](every-internal-link-resolves.md) | `code.function` | 21 | `crates/robby-render/tests/tree.rs:20:1` |
+| [`no_page_is_a_wall_of_text`](no-page-is-a-wall-of-text.md) | `code.function` | 9 | `crates/robby-render/tests/tree.rs:46:1` |
+| [`every_module_has_an_index_page`](every-module-has-an-index-page.md) | `code.function` | 11 | `crates/robby-render/tests/tree.rs:63:1` |
+| [`page_names_never_collide_with_index`](page-names-never-collide-with-index.md) | `code.function` | 5 | `crates/robby-render/tests/tree.rs:90:1` |
+| [`modules_link_out_and_back`](modules-link-out-and-back.md) | `code.function` | 14 | `crates/robby-render/tests/tree.rs:100:1` |
+| [`markdown_links`](markdown-links.md) | `code.function` | 8 | `crates/robby-render/tests/tree.rs:135:1` |
+| [`normalize`](normalize.md) | `code.function` | 7 | `crates/robby-render/tests/tree.rs:163:1` |
 
 ## Imports
 
 - `use std::collections::BTreeSet;`
 - `use std::path::{Component, Path, PathBuf};`
-- `use robby_render::tree;`
+- [`use robby_render::tree;`](../tree/index.md)
 

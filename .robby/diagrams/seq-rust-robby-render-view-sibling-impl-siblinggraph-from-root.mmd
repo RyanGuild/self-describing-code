@@ -1,0 +1,71 @@
+sequenceDiagram
+    autonumber
+    participant from_root as from_root()
+    participant get as get
+    participant iter as iter
+    participant filter_map as filter_map
+    participant is_structural as is_structural
+    participant filter as filter
+    participant collect as collect
+    participant as_deref as as_deref
+    participant unwrap_or as unwrap_or
+    participant clone as clone
+    participant as_str as as_str
+    participant stable_id as stable_id
+    participant text as text
+    participant short_kind as short_kind
+    participant to_owned as to_owned
+    participant map as map
+    participant Vec__new as Vec::new
+    participant contains as contains
+    participant push as push
+    participant sort as sort
+    participant dedup as dedup
+    participant into_iter as into_iter
+    participant edge_label as edge_label
+    from_root-->>get: doc.get(root)
+    from_root-->>iter: root_node .children .iter()
+    from_root-->>get: doc.get(child)
+    from_root-->>filter_map: root_node .children .iter() .filter_map(|child| doc.get(child))
+    from_root-->>is_structural: is_structural(&node.kind)
+    from_root-->>filter: root_node .children .iter() .filter_map(|child| doc.get(child)) .filt...
+    from_root-->>collect: root_node .children .iter() .filter_map(|child| doc.get(child)) .filt...
+    from_root-->>iter: visible .iter()
+    from_root-->>as_deref: node.signature.as_deref()
+    from_root-->>unwrap_or: node.signature.as_deref().unwrap_or(&node.name)
+    from_root-->>clone: node.id.clone()
+    from_root-->>as_str: node.id.as_str()
+    from_root-->>stable_id: stable_id(node.id.as_str())
+    from_root-->>from_root: format!('{} [{}]', sig, short_kind(&node.kind))
+    from_root-->>text: text(&format!('{} [{}]', sig, short_kind(&node.kind)))
+    from_root-->>clone: node.name.clone()
+    from_root-->>short_kind: short_kind(&node.kind)
+    from_root-->>to_owned: short_kind(&node.kind).to_owned()
+    from_root-->>map: visible .iter() .map(|node| { let sig = node.signature.as_deref().unw...
+    from_root-->>collect: visible .iter() .map(|node| { let sig = node.signature.as_deref().unw...
+    from_root-->>iter: visible.iter()
+    from_root-->>map: visible.iter().map(|n| &n.id)
+    from_root-->>collect: visible.iter().map(|n| &n.id).collect()
+    from_root-->>Vec__new: Vec::new()
+    loop &visible
+    loop &node.edges
+    from_root-->>contains: ids.contains(&&edge.to)
+    from_root-->>as_str: node.id.as_str()
+    from_root-->>stable_id: stable_id(node.id.as_str())
+    from_root-->>as_str: edge.to.as_str()
+    from_root-->>stable_id: stable_id(edge.to.as_str())
+    from_root-->>push: edges.push(( stable_id(node.id.as_str()), stable_id(edge.to.as_str())...
+    end
+    end
+    from_root-->>sort: edges.sort()
+    from_root-->>dedup: edges.dedup()
+    from_root-->>into_iter: edges .into_iter()
+    from_root-->>edge_label: edge_label(kind)
+    from_root-->>map: edges .into_iter() .map(|(from, to, kind, resolved)| SiblingEdge { fr...
+    from_root-->>collect: edges .into_iter() .map(|(from, to, kind, resolved)| SiblingEdge { fr...
+    from_root-->>as_deref: root_node.signature.as_deref()
+    from_root-->>unwrap_or: root_node.signature.as_deref().unwrap_or(&root_node.name)
+    from_root-->>as_str: root.as_str()
+    from_root-->>stable_id: stable_id(root.as_str())
+    from_root-->>from_root: format!('{} [{}]', sig, short_kind(&root_node.kind))
+    from_root-->>text: text(&format!('{} [{}]', sig, short_kind(&root_node.kind)))

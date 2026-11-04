@@ -2,28 +2,35 @@ sequenceDiagram
     autonumber
     participant merge as merge()
     participant clone as clone
+    participant get_mut as get_mut
+    participant is_none as is_none
+    participant contains as contains
     participant push as push
+    participant entry as entry
     participant or_insert as or_insert
     participant insert as insert
     merge-->>clone: node.id.clone()
+    merge-->>get_mut: self.nodes.get_mut(&id)
     alt let Some(existing) = self.nodes.get_mut(&id)
-    alt existing.span.is_none()
-    merge-->>merge: existing.span = node.span
-    end
+    merge-->>is_none: existing.span.is_none()
     loop node.children
+    merge-->>contains: existing.children.contains(&child)
     alt !existing.children.contains(&child)
     merge-->>push: existing.children.push(child)
     end
     end
     loop node.edges
+    merge-->>contains: existing.edges.contains(&edge)
     alt !existing.edges.contains(&edge)
     merge-->>push: existing.edges.push(edge)
     end
     end
     loop node.annotations
+    merge-->>entry: existing.annotations.entry(key)
     merge-->>or_insert: existing.annotations.entry(key).or_insert(value)
     end
     loop node.tags
+    merge-->>contains: existing.tags.contains(&tag)
     alt !existing.tags.contains(&tag)
     merge-->>push: existing.tags.push(tag)
     end

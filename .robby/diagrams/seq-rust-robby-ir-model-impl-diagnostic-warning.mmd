@@ -1,4 +1,6 @@
 sequenceDiagram
     autonumber
     participant warning as warning()
-    warning-->>warning: Self { severity: Severity::Warning, code: code.into(), message: messa...
+    participant into as into
+    warning-->>into: code.into()
+    warning-->>into: message.into()

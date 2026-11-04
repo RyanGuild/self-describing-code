@@ -59,6 +59,17 @@ impl FileCoverage {
 }
 ```
 
+## References
+
+- calls → [`robby_ir::coverage`](index.md) — is_failure
+
+## Referenced by
+
+- calls ← [`robby_ir::coverage::impl CoverageReport::worst_first`](index.md)
+- calls ← [`robby_render::markdown::coverage_section`](../../robby_render/markdown/coverage-section.md)
+- calls ← [`robby_render::pipeline::impl Loaded::is_ok`](../../robby_render/pipeline/index.md)
+- calls ← [`robby_render::pipeline::impl Loaded::summary`](../../robby_render/pipeline/index.md)
+
 ### `is_complete`
 
 | | |
@@ -78,10 +89,19 @@ pub fn is_complete(&self) -> bool {
 sequenceDiagram
     autonumber
     participant is_complete as is_complete()
-    is_complete-->>is_complete: !self.gaps.iter().any(|g| g.reason.is_failure())
+    participant iter as iter
+    participant is_failure as is_failure
+    participant any as any
+    is_complete-->>iter: self.gaps.iter()
+    is_complete-->>is_failure: g.reason.is_failure()
+    is_complete-->>any: self.gaps.iter().any(|g| g.reason.is_failure())
 ```
 
-1 steps · 0 observed · 1 possible only
+3 steps · 0 observed · 3 possible only
+
+**Edges**
+
+- calls → [`robby_ir::coverage::impl GapReason::is_failure`](index.md)
 
 ### `uncovered_bytes`
 
@@ -109,11 +129,25 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant uncovered_bytes as uncovered_bytes()
+    participant iter as iter
+    participant is_failure as is_failure
+    participant filter as filter
+    participant saturating_sub as saturating_sub
+    participant map as map
     participant sum as sum
+    uncovered_bytes-->>iter: self.gaps .iter()
+    uncovered_bytes-->>is_failure: g.reason.is_failure()
+    uncovered_bytes-->>filter: self.gaps .iter() .filter(|g| g.reason.is_failure())
+    uncovered_bytes-->>saturating_sub: g.span.end.byte.saturating_sub(g.span.start.byte)
+    uncovered_bytes-->>map: self.gaps .iter() .filter(|g| g.reason.is_failure()) .map(|g| g.span....
     uncovered_bytes-->>sum: self.gaps .iter() .filter(|g| g.reason.is_failure()) .map(|g| g.span....
 ```
 
-1 steps · 0 observed · 1 possible only
+6 steps · 0 observed · 6 possible only
+
+**Edges**
+
+- calls → [`robby_ir::coverage::impl GapReason::is_failure`](index.md)
 
 ### `ratio`
 
@@ -147,14 +181,9 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant ratio as ratio()
-    alt self.total_bytes == 0
-    ratio-->>ratio: 1.0
-    else else
-    ratio-->>ratio: self.covered_bytes as f32 / self.total_bytes as f32
-    end
 ```
 
-2 steps · 0 observed · 2 possible only
+0 steps · 0 observed · 0 possible only
 
 ### `code_ratio`
 
@@ -189,15 +218,15 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant code_ratio as code_ratio()
-    code_ratio-->>code_ratio: self.covered_bytes + self.uncovered_bytes()
-    alt code == 0
-    code_ratio-->>code_ratio: 1.0
-    else else
-    code_ratio-->>code_ratio: self.covered_bytes as f32 / code as f32
-    end
+    participant uncovered_bytes as uncovered_bytes
+    code_ratio-->>uncovered_bytes: self.uncovered_bytes()
 ```
 
-3 steps · 0 observed · 3 possible only
+1 steps · 0 observed · 1 possible only
+
+**Edges**
+
+- calls → [`robby_ir::coverage::impl FileCoverage::uncovered_bytes`](index.md)
 
 ### `trivia_bytes`
 
@@ -225,9 +254,23 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant trivia_bytes as trivia_bytes()
+    participant iter as iter
+    participant is_failure as is_failure
+    participant filter as filter
+    participant saturating_sub as saturating_sub
+    participant map as map
     participant sum as sum
+    trivia_bytes-->>iter: self.gaps .iter()
+    trivia_bytes-->>is_failure: g.reason.is_failure()
+    trivia_bytes-->>filter: self.gaps .iter() .filter(|g| !g.reason.is_failure())
+    trivia_bytes-->>saturating_sub: g.span.end.byte.saturating_sub(g.span.start.byte)
+    trivia_bytes-->>map: self.gaps .iter() .filter(|g| !g.reason.is_failure()) .map(|g| g.span...
     trivia_bytes-->>sum: self.gaps .iter() .filter(|g| !g.reason.is_failure()) .map(|g| g.span...
 ```
 
-1 steps · 0 observed · 1 possible only
+6 steps · 0 observed · 6 possible only
+
+**Edges**
+
+- calls → [`robby_ir::coverage::impl GapReason::is_failure`](index.md)
 

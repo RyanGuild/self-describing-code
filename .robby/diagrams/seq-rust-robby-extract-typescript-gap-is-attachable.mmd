@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant gap_is_attachable as gap_is_attachable()
+    participant get as get
+    participant unwrap_or as unwrap_or
+    participant split_whitespace as split_whitespace
+    participant all as all
+    alt to < from
+    gap_is_attachable-->>gap_is_attachable: return
+    end
+    gap_is_attachable-->>get: source.get(from as usize..to as usize)
+    gap_is_attachable-->>unwrap_or: source.get(from as usize..to as usize).unwrap_or('')
+    gap_is_attachable-->>split_whitespace: gap.split_whitespace()
+    gap_is_attachable-->>gap_is_attachable: matches!(tok, 'export' | 'default' | 'async' | 'declare')
+    gap_is_attachable-->>all: gap.split_whitespace().all(|tok| { matches!(tok, 'export' | 'default'...

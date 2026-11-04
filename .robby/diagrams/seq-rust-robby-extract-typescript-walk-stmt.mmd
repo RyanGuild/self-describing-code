@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant walk_stmt as walk_stmt()
+    participant std__slice__from_ref as std::slice::from_ref
+    participant walk_stmts as walk_stmts
+    walk_stmt-->>std__slice__from_ref: std::slice::from_ref(stmt)
+    walk_stmt-->>walk_stmts: walk_stmts(std::slice::from_ref(stmt), process, frames, pending, from...

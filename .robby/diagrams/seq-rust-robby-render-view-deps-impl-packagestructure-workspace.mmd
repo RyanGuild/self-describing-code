@@ -1,0 +1,43 @@
+sequenceDiagram
+    autonumber
+    participant workspace as workspace()
+    participant values as values
+    participant filter as filter
+    participant collect as collect
+    participant is_empty as is_empty
+    participant Self__empty as Self::empty
+    participant iter as iter
+    participant package_leaf as package_leaf
+    participant map as map
+    participant cmp as cmp
+    participant sort_by as sort_by
+    participant NodeId__from as NodeId::from
+    participant stable_id as stable_id
+    participant into as into
+    participant clone as clone
+    participant package_edges as package_edges
+    workspace-->>values: doc .nodes .values()
+    workspace-->>workspace: matches!( node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
+    workspace-->>filter: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
+    workspace-->>collect: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
+    workspace-->>is_empty: crates.is_empty()
+    alt crates.is_empty()
+    workspace-->>Self__empty: Self::empty()
+    workspace-->>workspace: return
+    end
+    workspace-->>iter: crates.iter()
+    workspace-->>package_leaf: package_leaf(c)
+    workspace-->>map: crates.iter().map(|c| package_leaf(c))
+    workspace-->>collect: crates.iter().map(|c| package_leaf(c)).collect()
+    workspace-->>cmp: a.name.cmp(&b.name)
+    workspace-->>sort_by: children.sort_by(|a, b| a.name.cmp(&b.name))
+    workspace-->>NodeId__from: NodeId::from('workspace://root')
+    workspace-->>stable_id: stable_id('workspace://root')
+    workspace-->>into: 'workspace'.into()
+    workspace-->>into: 'workspace'.into()
+    workspace-->>iter: crates.iter()
+    workspace-->>clone: c.id.clone()
+    workspace-->>map: crates.iter().map(|c| c.id.clone())
+    workspace-->>collect: crates.iter().map(|c| c.id.clone()).collect()
+    workspace-->>values: doc.nodes.values()
+    workspace-->>package_edges: package_edges(doc, &scope, doc.nodes.values(), true, crates[0])

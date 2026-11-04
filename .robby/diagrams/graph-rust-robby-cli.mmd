@@ -5,15 +5,28 @@ flowchart TD
         n_c58f68f7fc449f63["example_self_model [module]"]
         n_099bba204f6689a2["Cli [struct]"]
         n_07cb3a5c0ad73319["Command [enum]"]
+        n_0e8528d282f05d7f["ViewKind [enum]"]
         n_eb50e92e5843791d["fn main() -> ExitCode [function]"]
         n_5fb1bc1f5dbdeb45["fn run() -> Result<ExitCode> [function]"]
+        n_8ac47b1f7612cc06["fn web(ir: &std::path::Path, source_root: &std::path::Path, out: &std::path::Path) -> Result<ExitCode> [function]"]
+        n_6173b9031ddd73f8["fn enrich_comments( ir: &std::path::Path, source_root: &std::path::Path, out: Option<&std::path::Path>, decision_model: Option<String>, note_model: Option<String>, limit: Option<usize>, ) -> Result<ExitCode> [function]"]
         n_0b19cbdc9c790728["fn check(ir: &std::path::Path, source_root: &std::path::Path, json: bool) -> Result<ExitCode> [function]"]
         n_e3b7ee2025a4b7a1["fn print_human(loaded: &pipeline::Loaded) [function]"]
         n_b685ee67ac4f2f21["fn extract(root: &std::path::Path, out: Option<PathBuf>) -> Result<ExitCode> [function]"]
         n_310da90f0204c1aa["fn report( ir: &std::path::Path, source_root: &std::path::Path, out: Option<PathBuf>, ) -> Result<ExitCode> [function]"]
+        n_c3f69457e875b2e9["fn show( path: Option<&str>, ir: Option<&std::path::Path>, source_root: &std::path::Path, depth: usize, width: usize, all: bool, view: ViewKind, no_source: bool, ) -> Result<ExitCode> [function]"]
+        n_be028663403b3dad["fn default_ir() -> PathBuf [function]"]
+        n_5a5a1809407edb4d["fn workspace(doc: &Document, opts: &tui::ShowOptions) -> String [function]"]
+        n_ca2aecbbe65eed5c["fn resolve<'a>(doc: &'a Document, path: &str) -> Result<&'a Node> [function]"]
     end
     n_0b19cbdc9c790728 -->|calls| n_e3b7ee2025a4b7a1
     n_5fb1bc1f5dbdeb45 -->|calls| n_0b19cbdc9c790728
     n_5fb1bc1f5dbdeb45 -->|calls| n_310da90f0204c1aa
+    n_5fb1bc1f5dbdeb45 -->|calls| n_6173b9031ddd73f8
+    n_5fb1bc1f5dbdeb45 -->|calls| n_8ac47b1f7612cc06
     n_5fb1bc1f5dbdeb45 -->|calls| n_b685ee67ac4f2f21
+    n_5fb1bc1f5dbdeb45 -->|calls| n_c3f69457e875b2e9
+    n_6173b9031ddd73f8 -->|calls| n_6173b9031ddd73f8
     n_b685ee67ac4f2f21 -->|calls| n_b685ee67ac4f2f21
+    n_c3f69457e875b2e9 -->|calls| n_ca2aecbbe65eed5c
+    n_eb50e92e5843791d -->|calls| n_5fb1bc1f5dbdeb45

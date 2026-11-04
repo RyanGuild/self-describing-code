@@ -1,14 +1,25 @@
 sequenceDiagram
     autonumber
     participant write_report as write_report()
+    participant strip_prefix as strip_prefix
+    participant unwrap_or as unwrap_or
+    participant to_string_lossy as to_string_lossy
     participant replace as replace
+    participant Some as Some
     participant crate__tree__tree as crate::tree::tree
     participant fs__create_dir_all as fs::create_dir_all
     participant remove_markdown as remove_markdown
     participant join as join
+    participant parent as parent
     participant fs__write as fs::write
+    participant len as len
     participant Ok as Ok
+    write_report-->>strip_prefix: out_dir .strip_prefix(&loaded.root)
+    write_report-->>unwrap_or: out_dir .strip_prefix(&loaded.root) .unwrap_or(out_dir)
+    write_report-->>to_string_lossy: out_dir .strip_prefix(&loaded.root) .unwrap_or(out_dir) .to_string_lo...
     write_report-->>replace: out_dir .strip_prefix(&loaded.root) .unwrap_or(out_dir) .to_string_lo...
+    write_report-->>Some: Some(&loaded.coverage)
+    write_report-->>Some: Some(&loaded.sources)
     write_report-->>crate__tree__tree: crate::tree::tree( &loaded.document, Some(&loaded.coverage), Some(&lo...
     write_report-->>fs__create_dir_all: fs::create_dir_all(out_dir)
     write_report-->>write_report: ? (propagate)
@@ -16,6 +27,7 @@ sequenceDiagram
     write_report-->>write_report: ? (propagate)
     loop &pages
     write_report-->>join: out_dir.join(&page.path)
+    write_report-->>parent: path.parent()
     alt let Some(parent) = path.parent()
     write_report-->>fs__create_dir_all: fs::create_dir_all(parent)
     write_report-->>write_report: ? (propagate)
@@ -23,4 +35,5 @@ sequenceDiagram
     write_report-->>fs__write: fs::write(&path, &page.body)
     write_report-->>write_report: ? (propagate)
     end
+    write_report-->>len: pages.len()
     write_report-->>Ok: Ok(pages.len())

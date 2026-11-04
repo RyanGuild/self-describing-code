@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant to_plain as to_plain()
+    participant String__new as String::new
+    participant push_str as push_str
+    participant ends_with as ends_with
+    participant push as push
+    to_plain-->>String__new: String::new()
+    loop &self.sections
+    to_plain-->>push_str: out.push_str(&section.body)
+    to_plain-->>ends_with: section.body.ends_with('\n')
+    alt !section.body.ends_with('\n')
+    to_plain-->>push: out.push('\n')
+    end
+    end

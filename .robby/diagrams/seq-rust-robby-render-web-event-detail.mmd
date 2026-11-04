@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant event_detail as event_detail()
+    participant to_owned as to_owned
+    participant step_kind_name as step_kind_name
+    alt match event
+    event_detail-->>to_owned: keyword.to_owned()
+    else ProcessEvent::Interaction { index, from, to, label, observed, kind, }
+    event_detail-->>step_kind_name: step_kind_name(kind)
+    event_detail-->>to_owned: step_kind_name(kind).to_owned()
+    end

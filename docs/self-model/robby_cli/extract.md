@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn extract(root: &std::path::Path, out: Option<PathBuf>) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:182`](../../../crates/robby-cli/src/main.rs#L182) |
+| location | [`crates/robby-cli/src/main.rs:323`](../../../crates/robby-cli/src/main.rs#L323) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -38,6 +38,7 @@ sequenceDiagram
     participant extract as extract()
     participant robby_extract__extract as robby_extract::extract
     participant serde_json__to_string_pretty as serde_json::to_string_pretty
+    participant parent as parent
     participant std__fs__create_dir_all as std::fs::create_dir_all
     participant std__fs__write as std::fs::write
     participant Ok as Ok
@@ -46,6 +47,7 @@ sequenceDiagram
     extract-->>serde_json__to_string_pretty: serde_json::to_string_pretty(&doc)
     extract-->>extract: ? (propagate)
     alt match out
+    extract-->>parent: path.parent()
     alt let Some(parent) = path.parent()
     extract-->>std__fs__create_dir_all: std::fs::create_dir_all(parent)
     extract-->>extract: ? (propagate)
@@ -59,9 +61,16 @@ sequenceDiagram
     extract-->>Ok: Ok(ExitCode::SUCCESS)
 ```
 
-11 steps · 0 observed · 11 possible only
+12 steps · 0 observed · 12 possible only
 
 **Edges**
 
 - calls → [`robby_cli::extract`](extract.md)
+
+## Referenced by
+
+- calls ← [`robby_cli::build::main`](build/main.md)
+- calls ← [`robby_cli::example_self_model::run`](example_self_model/run.md)
+- calls ← [`robby_cli::run`](run.md)
+- calls ← [`robby_render::test_tree::pages`](../robby_render/test_tree/pages.md)
 

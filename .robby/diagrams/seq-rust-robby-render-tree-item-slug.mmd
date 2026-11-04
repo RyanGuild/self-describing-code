@@ -2,32 +2,48 @@ sequenceDiagram
     autonumber
     participant item_slug as item_slug()
     participant String__new as String::new
+    participant chars as chars
+    participant is_ascii_alphanumeric as is_ascii_alphanumeric
+    participant to_ascii_lowercase as to_ascii_lowercase
     participant push as push
+    participant is_empty as is_empty
+    participant ends_with as ends_with
     participant pop as pop
     participant push_str as push_str
-    participant crate__stable_id as crate::stable_id
+    participant clone as clone
     participant insert as insert
+    participant as_str as as_str
+    participant crate__stable_id as crate::stable_id
     item_slug-->>String__new: String::new()
+    item_slug-->>chars: name.chars()
     loop name.chars()
+    item_slug-->>is_ascii_alphanumeric: ch.is_ascii_alphanumeric()
     alt ch.is_ascii_alphanumeric()
+    item_slug-->>to_ascii_lowercase: ch.to_ascii_lowercase()
     item_slug-->>push: base.push(ch.to_ascii_lowercase())
     else else
+    item_slug-->>is_empty: base.is_empty()
+    item_slug-->>ends_with: base.ends_with('-')
     alt !base.is_empty() && !base.ends_with('-')
     item_slug-->>push: base.push('-')
     end
     end
     end
+    item_slug-->>ends_with: base.ends_with('-')
     loop base.ends_with('-')
     item_slug-->>pop: base.pop()
     end
+    item_slug-->>is_empty: base.is_empty()
     alt base.is_empty()
     item_slug-->>push_str: base.push_str('item')
     end
+    item_slug-->>clone: base.clone()
+    item_slug-->>insert: used.insert(base.clone())
     alt used.insert(base.clone())
-    item_slug-->>item_slug: base
     item_slug-->>item_slug: return
     end
+    item_slug-->>as_str: id.as_str()
     item_slug-->>crate__stable_id: crate::stable_id(id.as_str())
     item_slug-->>item_slug: format!('{base}-{}', &suffix[..suffix.len().min(8)])
+    item_slug-->>clone: alt.clone()
     item_slug-->>insert: used.insert(alt.clone())
-    item_slug-->>item_slug: alt

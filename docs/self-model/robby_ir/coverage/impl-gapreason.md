@@ -17,6 +17,16 @@ impl GapReason {
 }
 ```
 
+## Referenced by
+
+- calls ← [`robby_cli::print_human`](../../robby_cli/print-human.md)
+- calls ← [`robby_ir::coverage::impl CoverageReport::failures`](index.md)
+- calls ← [`robby_ir::coverage::impl FileCoverage::is_complete`](index.md)
+- calls ← [`robby_ir::coverage::impl FileCoverage::trivia_bytes`](index.md)
+- calls ← [`robby_ir::coverage::impl FileCoverage::uncovered_bytes`](index.md)
+- calls ← [`robby_ir::test_coverage::gap_preview_is_whitespace_collapsed`](../test_coverage/gap-preview-is-whitespace-collapsed.md)
+- calls ← [`robby_ir::test_coverage::unclaimed_code_fails_with_the_exact_byte`](../test_coverage/unclaimed-code-fails-with-the-exact-byte.md)
+
 ### `is_failure`
 
 | | |

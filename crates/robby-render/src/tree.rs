@@ -21,7 +21,10 @@ use std::path::{Path, PathBuf};
 use robby_ir::{CoverageReport, Document, Node, NodeId, kind};
 
 use crate::markdown::{cell, coverage_section, edge_name, source_name};
-use crate::{flowchart, sequence};
+use crate::render::{MarkdownRenderer, Renderer};
+use crate::report::Report;
+use crate::view::{LinkGraph, SelectOpts, collect};
+use crate::{sequence, workspace_dependencies};
 
 /// One generated page.
 pub struct Page {
@@ -158,6 +161,14 @@ fn global_index(doc: &Document, coverage: Option<&CoverageReport>, crates: &[&No
     }
     out.push('\n');
 
+    if !crates.is_empty() {
+        out.push_str(&workspace_dependencies(doc));
+        if !out.ends_with('\n') {
+            out.push('\n');
+        }
+        out.push('\n');
+    }
+
     out.push_str("## Module tree\n\n");
     for krate in crates {
         let crate_dir = krate.name.clone();
@@ -242,11 +253,47 @@ fn module_page(
         .filter_map(|child| doc.get(child))
         .collect();
 
-    if !children.is_empty() {
-        out.push_str("```mermaid\n");
-        out.push_str(&flowchart(doc, &node.id));
-        out.push_str("```\n\n");
+    // Views → rendered sections → report artifact (one formal diagram per concern).
+    let views = collect(
+        doc,
+        node,
+        sources,
+        &SelectOpts {
+            hierarchy: false,
+            hierarchy_depth: 0,
+            hierarchy_all: false,
+            sibling: false,
+            source: false,
+            types: true,
+            dependencies: true,
+            externals: true,
+            comments: true,
+            links: true,
+            entry: true,
+            process: false,
+        },
+    );
+    let md = MarkdownRenderer::new();
+    let mut report = Report::new();
+    if let Some(entry) = &views.entry {
+        report.push_titled("Entry", md.process(entry));
     }
+    if let Some(types) = &views.types {
+        report.push_titled("Types", md.types(types));
+    }
+    if let Some(deps) = &views.dependencies {
+        for section in md.dependency_sections(deps) {
+            report.push(section);
+        }
+    }
+    if let Some(externals) = &views.externals {
+        report.push_titled("Externals", md.externals(externals));
+    }
+    if let Some(comments) = &views.comments {
+        report.push_titled("Comments", md.comments(comments));
+    }
+    out.push_str(&report.to_markdown());
+    out.push_str(&render_links(doc, &views.links, &page));
 
     let submodules: Vec<&&Node> = children.iter().filter(|c| is_module(c)).collect();
     if !submodules.is_empty() {
@@ -314,7 +361,7 @@ fn module_page(
                 .and_then(|s| import.span.as_ref().and_then(|span| slice(s, span)))
                 .map(|text| first_line(&text))
                 .unwrap_or_else(|| import.name.clone());
-            let _ = writeln!(out, "- `{}`", cell(&text));
+            let _ = writeln!(out, "- {}", linked_import(doc, &page, &text));
         }
         out.push('\n');
     }
@@ -477,6 +524,11 @@ fn render_node(
         out.push('\n');
     }
 
+    if !emit_heading {
+        let links = LinkGraph::for_node(doc, node);
+        out.push_str(&render_links(doc, &links, page));
+    }
+
     let children: Vec<&Node> = node
         .children
         .iter()
@@ -506,15 +558,136 @@ fn render_node(
 }
 
 // ---------------------------------------------------------------------------
+// Cross-links
+// ---------------------------------------------------------------------------
+
+/// Render a [`LinkGraph`] as markdown with resolved page paths.
+fn render_links(doc: &Document, links: &LinkGraph, page: &Path) -> String {
+    if links.is_empty() {
+        return String::new();
+    }
+
+    let mut out = String::new();
+    if !links.outbound.is_empty() {
+        out.push_str("## References\n\n");
+        for link in &links.outbound {
+            let Some(module) = doc.get(&link.module_id) else {
+                continue;
+            };
+            let Some(target_page) = page_of_node(doc, module) else {
+                continue;
+            };
+            let detail = if link.items.len() <= 4 {
+                format!(" — {}", link.items.join(", "))
+            } else {
+                format!(" — {} items", link.items.len())
+            };
+            let _ = writeln!(
+                out,
+                "- {} → [`{}`]({}){detail}",
+                link.kind_label,
+                link.module_fqn,
+                rel_link(page, &target_page)
+            );
+        }
+        out.push('\n');
+    }
+
+    if !links.inbound.is_empty() {
+        out.push_str("## Referenced by\n\n");
+        for link in &links.inbound {
+            let kinds = link.kinds.join(", ");
+            let Some(caller) = doc.get(&link.caller_id) else {
+                let _ = writeln!(out, "- {kinds} ← `{}`", link.caller_fqn);
+                continue;
+            };
+            match page_of_node(doc, caller) {
+                Some(target_page) => {
+                    let _ = writeln!(
+                        out,
+                        "- {kinds} ← [`{}`]({})",
+                        link.caller_fqn,
+                        rel_link(page, &target_page)
+                    );
+                }
+                None => {
+                    let _ = writeln!(out, "- {kinds} ← `{}`", link.caller_fqn);
+                }
+            }
+        }
+        out.push('\n');
+    }
+
+    out
+}
+
+fn linked_import(doc: &Document, page: &Path, text: &str) -> String {
+    match resolve_use_path(doc, text).and_then(|node| page_of_node(doc, node)) {
+        Some(target) => format!("[`{}`]({})", cell(text), rel_link(page, &target)),
+        None => format!("`{}`", cell(text)),
+    }
+}
+
+fn resolve_use_path<'a>(doc: &'a Document, text: &str) -> Option<&'a Node> {
+    let path = text
+        .trim()
+        .trim_start_matches("pub ")
+        .trim_start_matches("use ")
+        .trim_end_matches(';')
+        .trim();
+    let path = path
+        .split_once('{')
+        .map(|(prefix, _)| prefix)
+        .unwrap_or(path)
+        .split_once(" as ")
+        .map(|(prefix, _)| prefix)
+        .unwrap_or(path)
+        .trim()
+        .trim_end_matches("::")
+        .trim();
+    if path.is_empty() {
+        return None;
+    }
+
+    let mut candidates = vec![path.to_owned()];
+    let mut rest = path;
+    while let Some((prefix, _)) = rest.rsplit_once("::") {
+        candidates.push(prefix.to_owned());
+        rest = prefix;
+    }
+
+    for candidate in candidates {
+        let id = NodeId::symbol("rust", &candidate);
+        if let Some(node) = doc.get(&id) {
+            if is_module(node) {
+                return Some(node);
+            }
+        }
+    }
+    None
+}
+
+// ---------------------------------------------------------------------------
 // Paths and links
 // ---------------------------------------------------------------------------
 
 fn crate_of(node: &Node) -> Option<String> {
-    node.fqn.split("::").next().map(|s| s.to_owned())
+    // Rust FQNs use `::`; TypeScript packages use `/` after the package name.
+    let fqn = &node.fqn;
+    if let Some((head, _)) = fqn.split_once("::") {
+        return Some(head.to_owned());
+    }
+    if let Some((head, _)) = fqn.split_once('/') {
+        return Some(head.to_owned());
+    }
+    Some(fqn.clone())
 }
 
 fn is_crate(node: &Node) -> bool {
-    node.kind.as_str() == kind::code::CRATE
+    matches!(
+        node.kind.as_str(),
+        kind::code::CRATE | kind::code::PACKAGE
+    )
 }
 
 fn is_module(node: &Node) -> bool {
@@ -522,13 +695,16 @@ fn is_module(node: &Node) -> bool {
 }
 
 fn is_module_kind(kind_name: &str) -> bool {
-    matches!(kind_name, kind::code::MODULE | kind::code::CRATE)
+    matches!(
+        kind_name,
+        kind::code::MODULE | kind::code::CRATE | kind::code::PACKAGE
+    )
 }
 
 fn is_compact(kind_name: &str) -> bool {
     matches!(
         kind_name,
-        kind::code::FIELD | kind::code::VARIANT | kind::code::IMPORT
+        kind::code::FIELD | kind::code::VARIANT | kind::code::IMPORT | kind::code::COMMENT
     )
 }
 
@@ -541,7 +717,10 @@ fn module_index_path(node: &Node, crate_dir: &str) -> Option<PathBuf> {
     if node.fqn == crate_dir {
         return Some(crate_index_path(crate_dir));
     }
-    let rest = node.fqn.strip_prefix(&format!("{crate_dir}::"))?;
+    let rest = node
+        .fqn
+        .strip_prefix(&format!("{crate_dir}::"))
+        .or_else(|| node.fqn.strip_prefix(&format!("{crate_dir}/")))?;
     Some(PathBuf::from(format!(
         "{crate_dir}/{}/index.md",
         rest.replace("::", "/")

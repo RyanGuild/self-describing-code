@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant workspace as workspace()
+    participant collect as collect
+    participant Self__empty as Self::empty
+    participant build as build
+    workspace-->>collect: doc .nodes .values() .filter(|node| node.kind.as_str() == robby_ir::k...
+    alt crates.is_empty()
+    workspace-->>Self__empty: Self::empty()
+    workspace-->>workspace: return
+    end
+    workspace-->>collect: crates.iter().map(|c| c.id.clone()).collect()
+    workspace-->>build: build(doc, &scope, doc.nodes.values(), true)

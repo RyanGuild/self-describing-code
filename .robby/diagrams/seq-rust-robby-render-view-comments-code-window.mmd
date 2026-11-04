@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant code_window as code_window()
+    participant slice_node as slice_node
+    participant Some as Some
+    participant line_window as line_window
+    alt let Some(owner) = owner
+    code_window-->>slice_node: slice_node(sources, owner)
+    alt let Some(slice) = slice_node(sources, owner)
+    code_window-->>Some: Some(slice)
+    code_window-->>code_window: return
+    end
+    end
+    code_window-->>line_window: line_window(sources, comment)

@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    participant type_text as type_text()
+    participant path_text as path_text
+    participant to_owned as to_owned
+    alt match ty
+    type_text-->>path_text: path_text(&p.path)
+    else Type::Reference(r)
+    type_text-->>type_text: format!( '&{}{}', if r.mutability.is_some() { 'mut ' } else { '' }, t...
+    else Type::Tuple(t)
+    type_text-->>type_text: format!( '({})', t.elems.iter().map(type_text).collect::<Vec<_>>().jo...
+    else Type::Slice(s)
+    type_text-->>type_text: format!('[{}]', type_text(&s.elem))
+    else Type::Array(a)
+    type_text-->>type_text: format!('[{} _]', type_text(&a.elem))
+    else Type::Ptr(p)
+    type_text-->>type_text: format!('*{}', type_text(&p.elem))
+    else Type::Paren(p)
+    type_text-->>type_text: type_text(&p.elem)
+    else Type::Group(g)
+    type_text-->>type_text: type_text(&g.elem)
+    else _
+    type_text-->>to_owned: '_'.to_owned()
+    end

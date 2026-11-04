@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant child_world_rects_lie_inside_parent_world as child_world_rects_lie_inside_parent_world()
+    participant demo_doc as demo_doc
+    participant Scene__from_document as Scene::from_document
+    participant values as values
+    child_world_rects_lie_inside_parent_world-->>demo_doc: demo_doc()
+    child_world_rects_lie_inside_parent_world-->>Scene__from_document: Scene::from_document(&doc)
+    child_world_rects_lie_inside_parent_world-->>values: scene.frames.values()
+    loop scene.frames.values()
+    loop &frame.children
+    child_world_rects_lie_inside_parent_world-->>child_world_rects_lie_inside_parent_world: assert!( frame.world.contains(&child.world), '{} ({:?}) not inside {}...
+    end
+    end

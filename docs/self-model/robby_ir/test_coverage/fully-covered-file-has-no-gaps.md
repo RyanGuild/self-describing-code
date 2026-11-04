@@ -26,8 +26,11 @@ fn fully_covered_file_has_no_gaps() {
 sequenceDiagram
     autonumber
     participant fully_covered_file_has_no_gaps as fully_covered_file_has_no_gaps()
+    participant len as len
+    participant span as span
     participant file_coverage as file_coverage
-    fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: 'fn add(a: i32, b: i32) -> i32 { a + b }'
+    fully_covered_file_has_no_gaps-->>len: source.len()
+    fully_covered_file_has_no_gaps-->>span: span(source, 0, source.len() as u32)
     fully_covered_file_has_no_gaps-->>file_coverage: file_coverage(FILE, source, &[span(source, 0, source.len() as u32)])
     fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert!(report.is_complete())
     fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert!(report.gaps.is_empty())
@@ -35,9 +38,15 @@ sequenceDiagram
     fully_covered_file_has_no_gaps-->>fully_covered_file_has_no_gaps: assert_eq!(report.ratio(), 1.0)
 ```
 
-6 steps · 0 observed · 6 possible only
+7 steps · 0 observed · 7 possible only
 
 **Edges**
 
+- calls → [`robby_ir::test_coverage::span`](span.md)
 - calls → [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
+
+## References
+
+- calls → [`robby_ir::coverage`](../coverage/index.md) — file_coverage
+- calls → [`robby_ir::test_coverage`](index.md) — span
 

@@ -2,4 +2,5 @@ sequenceDiagram
     autonumber
     participant crate_index_path as crate_index_path()
     participant PathBuf__from as PathBuf::from
+    crate_index_path-->>crate_index_path: format!('{crate_dir}/index.md')
     crate_index_path-->>PathBuf__from: PathBuf::from(format!('{crate_dir}/index.md'))

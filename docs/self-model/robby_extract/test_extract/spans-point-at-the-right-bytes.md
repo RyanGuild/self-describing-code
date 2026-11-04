@@ -40,20 +40,37 @@ sequenceDiagram
     autonumber
     participant spans_point_at_the_right_bytes as spans_point_at_the_right_bytes()
     participant root as root
+    participant robby_extract__extract as robby_extract::extract
     participant expect as expect
+    participant values as values
+    participant find as find
+    participant as_ref as as_ref
+    participant join as join
+    participant std__fs__read_to_string as std::fs::read_to_string
     spans_point_at_the_right_bytes-->>root: root()
+    spans_point_at_the_right_bytes-->>robby_extract__extract: robby_extract::extract(&root)
     spans_point_at_the_right_bytes-->>expect: robby_extract::extract(&root).expect('extract')
+    spans_point_at_the_right_bytes-->>values: doc .nodes .values()
+    spans_point_at_the_right_bytes-->>find: doc .nodes .values() .find(|n| n.fqn == 'robby_ir::coverage::file_cov...
     spans_point_at_the_right_bytes-->>expect: doc .nodes .values() .find(|n| n.fqn == 'robby_ir::coverage::file_cov...
+    spans_point_at_the_right_bytes-->>as_ref: node.span.as_ref()
     spans_point_at_the_right_bytes-->>expect: node.span.as_ref().expect('span')
+    spans_point_at_the_right_bytes-->>join: root.join(&span.file)
+    spans_point_at_the_right_bytes-->>std__fs__read_to_string: std::fs::read_to_string(root.join(&span.file))
     spans_point_at_the_right_bytes-->>expect: std::fs::read_to_string(root.join(&span.file)).expect('source')
-    spans_point_at_the_right_bytes-->>spans_point_at_the_right_bytes: &source[span.start.byte as usize..span.end.byte as usize]
     spans_point_at_the_right_bytes-->>spans_point_at_the_right_bytes: assert!( slice.contains('pub fn file_coverage'), 'span did not land o...
     spans_point_at_the_right_bytes-->>spans_point_at_the_right_bytes: assert!(slice.trim_end().ends_with('}'), 'span is truncated')
 ```
 
-8 steps · 0 observed · 8 possible only
+13 steps · 0 observed · 13 possible only
 
 **Edges**
 
 - calls → [`robby_extract::test_extract::root`](root.md)
+- calls → [`robby_extract::extract`](../extract.md)
+
+## References
+
+- calls → [`robby_extract`](../index.md) — extract
+- calls → [`robby_extract::test_extract`](index.md) — root
 

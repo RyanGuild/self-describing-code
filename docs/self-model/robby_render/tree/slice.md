@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn slice<'a>(sources: &'a BTreeMap<String, String>, span: &robby_ir::Span) -> Option<&'a str>` |
-| location | [`crates/robby-render/src/tree.rs:624`](../../../../crates/robby-render/src/tree.rs#L624) |
+| location | [`crates/robby-render/src/tree.rs:803`](../../../../crates/robby-render/src/tree.rs#L803) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,12 +22,24 @@ sequenceDiagram
     autonumber
     participant slice as slice()
     participant get as get
+    slice-->>get: sources .get(&span.file)
+    slice-->>slice: ? (propagate)
     slice-->>get: sources .get(&span.file)? .get(span.start.byte as usize..span.end.byt...
 ```
 
-1 steps · 0 observed · 1 possible only
+3 steps · 0 observed · 3 possible only
 
 **Edges**
 
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+
+## References
+
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+
+## Referenced by
+
+- calls ← [`robby_render::tree::module_page`](module-page.md)
+- calls ← [`robby_render::tree::render_node`](render-node.md)
 

@@ -1,0 +1,4 @@
+sequenceDiagram
+    autonumber
+    participant container_label as container_label()
+    container_label-->>container_label: format!('{} [{}]', node.name, short_kind(&node.kind))

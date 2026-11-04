@@ -1,5 +1,5 @@
 sequenceDiagram
     autonumber
     participant with_process as with_process()
-    with_process-->>with_process: self.process = Some(process)
-    with_process-->>with_process: self
+    participant Some as Some
+    with_process-->>Some: Some(process)

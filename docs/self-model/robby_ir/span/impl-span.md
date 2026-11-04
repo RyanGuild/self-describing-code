@@ -34,6 +34,35 @@ impl Span {
 }
 ```
 
+## References
+
+- calls → [`robby_ir::span`](index.md) — at
+
+## Referenced by
+
+- calls ← [`robby_agent::context::collect_comment_contexts`](../../robby_agent/context/collect-comment-contexts.md)
+- calls ← [`robby_agent::context::file_location`](../../robby_agent/context/file-location.md)
+- calls ← [`robby_agent::context::line_window`](../../robby_agent/context/line-window.md)
+- calls ← [`robby_agent::enrich::impl ChatClient for FakeClient::chat`](../../robby_agent/enrich/tests/index.md)
+- calls ← [`robby_agent::enrich::insert_decision`](../../robby_agent/enrich/insert-decision.md)
+- calls ← [`robby_agent::model::parse_note`](../../robby_agent/model/parse-note.md)
+- calls ← [`robby_agent::openrouter::impl OpenRouterClient::from_env`](../../robby_agent/openrouter/index.md)
+- calls ← [`robby_extract::rust::docs_of`](../../robby_extract/rust/docs-of.md)
+- calls ← [`robby_extract::rust::sanitize`](../../robby_extract/rust/sanitize.md)
+- calls ← [`robby_extract::typescript::attach_leading_docs`](../../robby_extract/typescript/attach-leading-docs.md)
+- calls ← [`robby_extract::typescript::emit_comments`](../../robby_extract/typescript/emit-comments.md)
+- calls ← [`robby_extract::typescript::is_bare_specifier`](../../robby_extract/typescript/is-bare-specifier.md)
+- calls ← [`robby_extract::typescript::package_at`](../../robby_extract/typescript/package-at.md)
+- calls ← [`robby_extract::typescript::resolve_relative_import`](../../robby_extract/typescript/resolve-relative-import.md)
+- calls ← [`robby_extract::typescript::sanitize`](../../robby_extract/typescript/sanitize.md)
+- calls ← [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
+- calls ← [`robby_render::markdown::index`](../../robby_render/markdown/index-n_fadae9.md)
+- calls ← [`robby_render::tree::module_page`](../../robby_render/tree/module-page.md)
+- calls ← [`robby_render::tree::render_node`](../../robby_render/tree/render-node.md)
+- calls ← [`robby_render::view::comments::impl CommentsView::from_root`](../../robby_render/view/comments/index.md)
+- calls ← [`robby_render::view::select::collect`](../../robby_render/view/select/collect.md)
+- calls ← [`robby_render::web::impl FrameDetail::from_node_in_doc`](../../robby_render/web/index.md)
+
 ### `new`
 
 | | |
@@ -58,12 +87,25 @@ pub fn new(file: impl Into<String>, source: &str, start: u32, end: u32) -> Self 
 sequenceDiagram
     autonumber
     participant new as new()
+    participant max as max
+    participant len as len
     participant min as min
+    participant into as into
+    participant Position__at as Position::at
+    new-->>max: end.max(start)
+    new-->>len: source.len()
     new-->>min: end.max(start).min(source.len() as u32)
-    new-->>new: Self { file: file.into(), start: Position::at(source, start), end: Po...
+    new-->>into: file.into()
+    new-->>Position__at: Position::at(source, start)
+    new-->>Position__at: Position::at(source, end)
 ```
 
-2 steps · 0 observed · 2 possible only
+6 steps · 0 observed · 6 possible only
+
+**Edges**
+
+- calls → [`robby_ir::span::impl Position::at`](index.md)
+- calls → [`robby_ir::span::impl Position::at`](index.md)
 
 ### `byte_range`
 
@@ -84,10 +126,9 @@ pub fn byte_range(&self) -> (u32, u32) {
 sequenceDiagram
     autonumber
     participant byte_range as byte_range()
-    byte_range-->>byte_range: (self.start.byte, self.end.byte)
 ```
 
-1 steps · 0 observed · 1 possible only
+0 steps · 0 observed · 0 possible only
 
 ### `is_empty`
 
@@ -108,10 +149,9 @@ pub fn is_empty(&self) -> bool {
 sequenceDiagram
     autonumber
     participant is_empty as is_empty()
-    is_empty-->>is_empty: self.start.byte >= self.end.byte
 ```
 
-1 steps · 0 observed · 1 possible only
+0 steps · 0 observed · 0 possible only
 
 ### `location`
 

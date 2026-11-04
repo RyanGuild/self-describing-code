@@ -1,8 +1,20 @@
 sequenceDiagram
     autonumber
     participant worst_first as worst_first()
+    participant iter as iter
     participant collect as collect
+    participant code_ratio as code_ratio
+    participant partial_cmp as partial_cmp
+    participant unwrap_or as unwrap_or
+    participant cmp as cmp
+    participant then_with as then_with
     participant sort_by as sort_by
+    worst_first-->>iter: self.files.iter()
     worst_first-->>collect: self.files.iter().collect()
+    worst_first-->>code_ratio: a.code_ratio()
+    worst_first-->>code_ratio: b.code_ratio()
+    worst_first-->>partial_cmp: a.code_ratio() .partial_cmp(&b.code_ratio())
+    worst_first-->>unwrap_or: a.code_ratio() .partial_cmp(&b.code_ratio()) .unwrap_or(std::cmp::Ord...
+    worst_first-->>cmp: a.file.cmp(&b.file)
+    worst_first-->>then_with: a.code_ratio() .partial_cmp(&b.code_ratio()) .unwrap_or(std::cmp::Ord...
     worst_first-->>sort_by: files.sort_by(|a, b| { a.code_ratio() .partial_cmp(&b.code_ratio()) ....
-    worst_first-->>worst_first: files

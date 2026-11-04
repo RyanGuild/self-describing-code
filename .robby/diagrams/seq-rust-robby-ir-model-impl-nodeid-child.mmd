@@ -2,4 +2,5 @@ sequenceDiagram
     autonumber
     participant child as child()
     participant Self as Self
+    child-->>child: format!('{} {}', parent.0, ordinal)
     child-->>Self: Self(format!('{} {}', parent.0, ordinal))

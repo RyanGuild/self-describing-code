@@ -1,4 +1,7 @@
 sequenceDiagram
     autonumber
     participant step as step()
-    step-->>step: Step { from: from.to_owned(), to: to.to_owned(), label: label.to_owne...
+    participant to_owned as to_owned
+    step-->>to_owned: from.to_owned()
+    step-->>to_owned: to.to_owned()
+    step-->>to_owned: label.to_owned()

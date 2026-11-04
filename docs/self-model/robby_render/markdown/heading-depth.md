@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn heading_depth(doc: &Document, node: &Node) -> usize` |
-| location | [`crates/robby-render/src/markdown.rs:195`](../../../../crates/robby-render/src/markdown.rs#L195) |
+| location | [`crates/robby-render/src/markdown.rs:238`](../../../../crates/robby-render/src/markdown.rs#L238) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -26,14 +26,27 @@ sequenceDiagram
     autonumber
     participant heading_depth as heading_depth()
     participant clone as clone
-    heading_depth-->>heading_depth: 3
+    participant get as get
+    participant and_then as and_then
     heading_depth-->>clone: node.parent.clone()
     loop let Some(parent) = current
-    heading_depth-->>heading_depth: depth += 1
-    heading_depth-->>heading_depth: current = doc.get(&parent).and_then(|p| p.parent.clone())
+    heading_depth-->>get: doc.get(&parent)
+    heading_depth-->>clone: p.parent.clone()
+    heading_depth-->>and_then: doc.get(&parent).and_then(|p| p.parent.clone())
     end
-    heading_depth-->>heading_depth: depth
 ```
 
-5 steps · 0 observed · 5 possible only
+4 steps · 0 observed · 4 possible only
+
+**Edges**
+
+- calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
+
+## References
+
+- calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
+
+## Referenced by
+
+- calls ← [`robby_render::markdown::node_section`](node-section.md)
 

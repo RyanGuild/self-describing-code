@@ -1,0 +1,50 @@
+sequenceDiagram
+    autonumber
+    participant from_document as from_document()
+    participant stable_id as stable_id
+    participant BTreeMap__new as BTreeMap::new
+    participant crate_roots as crate_roots
+    participant iter as iter
+    participant clone as clone
+    participant map as map
+    participant collect as collect
+    participant to_owned as to_owned
+    participant Vec__new as Vec::new
+    participant WorldRect__new as WorldRect::new
+    participant len as len
+    participant layout_grid as layout_grid
+    participant enumerate as enumerate
+    participant map_local_to_world as map_local_to_world
+    participant Some as Some
+    participant build_frame as build_frame
+    participant push as push
+    participant insert as insert
+    from_document-->>stable_id: stable_id(WORKSPACE_ID)
+    from_document-->>BTreeMap__new: BTreeMap::new()
+    from_document-->>crate_roots: crate_roots(doc)
+    from_document-->>iter: crates.iter()
+    from_document-->>clone: n.id.clone()
+    from_document-->>map: crates.iter().map(|n| n.id.clone())
+    from_document-->>collect: crates.iter().map(|n| n.id.clone()).collect()
+    from_document-->>to_owned: WORKSPACE_ID.to_owned()
+    from_document-->>clone: root_stable.clone()
+    from_document-->>to_owned: 'workspace'.to_owned()
+    from_document-->>to_owned: 'workspace'.to_owned()
+    from_document-->>to_owned: 'workspace'.to_owned()
+    from_document-->>Vec__new: Vec::new()
+    from_document-->>WorldRect__new: WorldRect::new(0.0, 0.0, CANVAS_W as f64, CANVAS_H as f64)
+    from_document-->>Vec__new: Vec::new()
+    from_document-->>Vec__new: Vec::new()
+    from_document-->>len: child_ids.len()
+    from_document-->>layout_grid: layout_grid(child_ids.len())
+    from_document-->>iter: crates.iter()
+    from_document-->>enumerate: crates.iter().enumerate()
+    loop crates.iter().enumerate()
+    from_document-->>map_local_to_world: map_local_to_world(&root.world, &local)
+    from_document-->>clone: root_stable.clone()
+    from_document-->>Some: Some(root_stable.clone())
+    from_document-->>build_frame: build_frame( doc, node, Some(root_stable.clone()), local, world, &mut...
+    from_document-->>push: root.children.push(child_stable)
+    end
+    from_document-->>clone: root_stable.clone()
+    from_document-->>insert: frames.insert(root_stable.clone(), root)

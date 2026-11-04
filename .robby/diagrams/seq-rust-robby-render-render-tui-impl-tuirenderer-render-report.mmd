@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant render_report as render_report()
+    participant report as report
+    participant to_terminal as to_terminal
+    render_report-->>report: self.report(views)
+    render_report-->>to_terminal: self.report(views).to_terminal(self.width)

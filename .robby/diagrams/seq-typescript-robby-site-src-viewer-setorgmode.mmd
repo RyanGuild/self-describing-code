@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant setOrgMode as setOrgMode()
+    participant get as get
+    participant prefetchEntrypoints as prefetchEntrypoints
+    participant toggle as toggle
+    participant applyScene as applyScene
+    alt if
+    return-->>caller: 
+    end
+    self-->>get: 
+    alt if
+    alt if
+    self-->>prefetchEntrypoints: 
+    self-->>await: 
+    self-->>get: 
+    return-->>caller: 
+    end
+    end
+    self-->>toggle: 
+    self-->>toggle: 
+    self-->>applyScene: 

@@ -29,6 +29,11 @@ impl Position {
 }
 ```
 
+## Referenced by
+
+- calls ← [`robby_ir::coverage::make_gap`](../coverage/make-gap.md)
+- calls ← [`robby_ir::span::impl Span::new`](index.md)
+
 ### `new`
 
 | | |
@@ -48,10 +53,9 @@ pub fn new(line: u32, column: u32, byte: u32) -> Self {
 sequenceDiagram
     autonumber
     participant new as new()
-    new-->>new: Self { line, column, byte }
 ```
 
-1 steps · 0 observed · 1 possible only
+0 steps · 0 observed · 0 possible only
 
 ### `at`
 
@@ -86,15 +90,24 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant at as at()
+    participant len as len
     participant min as min
+    participant matches as matches
+    participant count as count
+    participant rfind as rfind
+    participant map as map
     participant unwrap_or as unwrap_or
+    participant chars as chars
+    at-->>len: source.len()
     at-->>min: byte.min(source.len() as u32)
-    at-->>at: &source[..byte as usize]
-    at-->>at: prefix.matches('\n').count() as u32 + 1
+    at-->>matches: prefix.matches('\n')
+    at-->>count: prefix.matches('\n').count()
+    at-->>rfind: prefix.rfind('\n')
+    at-->>map: prefix.rfind('\n').map(|i| i + 1)
     at-->>unwrap_or: prefix.rfind('\n').map(|i| i + 1).unwrap_or(0)
-    at-->>at: prefix[line_start..].chars().count() as u32 + 1
-    at-->>at: Self { line, column, byte }
+    at-->>chars: prefix[line_start..].chars()
+    at-->>count: prefix[line_start..].chars().count()
 ```
 
-6 steps · 0 observed · 6 possible only
+9 steps · 0 observed · 9 possible only
 

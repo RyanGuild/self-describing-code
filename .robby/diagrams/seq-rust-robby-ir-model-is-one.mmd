@@ -1,4 +1,5 @@
 sequenceDiagram
     autonumber
     participant is_one as is_one()
-    is_one-->>is_one: (*v - 1.0).abs() < f32::EPSILON
+    participant abs as abs
+    is_one-->>abs: (*v - 1.0).abs()

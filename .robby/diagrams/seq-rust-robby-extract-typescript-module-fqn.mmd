@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    participant module_fqn as module_fqn()
+    participant strip_prefix as strip_prefix
+    participant unwrap_or as unwrap_or
+    participant to_string_lossy as to_string_lossy
+    participant replace as replace
+    participant strip_ts_ext as strip_ts_ext
+    participant clone as clone
+    module_fqn-->>strip_prefix: file .strip_prefix(&package.dir)
+    module_fqn-->>unwrap_or: file .strip_prefix(&package.dir) .unwrap_or(file)
+    module_fqn-->>to_string_lossy: file .strip_prefix(&package.dir) .unwrap_or(file) .to_string_lossy()
+    module_fqn-->>replace: file .strip_prefix(&package.dir) .unwrap_or(file) .to_string_lossy() ...
+    module_fqn-->>strip_ts_ext: strip_ts_ext(&rel)
+    alt stem == 'src/index' || stem == 'index'
+    module_fqn-->>clone: package.name.clone()
+    module_fqn-->>module_fqn: return
+    end
+    module_fqn-->>module_fqn: format!('{}/{}', package.name, stem)

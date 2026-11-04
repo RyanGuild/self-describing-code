@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant find_entrypoints as find_entrypoints()
+    participant values as values
+    participant as_str as as_str
+    participant filter as filter
+    participant collect as collect
+    participant cmp as cmp
+    participant then_with as then_with
+    participant sort_by as sort_by
+    participant into_iter as into_iter
+    participant clone as clone
+    participant map as map
+    find_entrypoints-->>values: doc .nodes .values()
+    find_entrypoints-->>as_str: node.kind.as_str()
+    find_entrypoints-->>filter: doc .nodes .values() .filter(|node| { node.name == 'main' && node.kin...
+    find_entrypoints-->>collect: doc .nodes .values() .filter(|node| { node.name == 'main' && node.kin...
+    find_entrypoints-->>cmp: a.fqn.cmp(&b.fqn)
+    find_entrypoints-->>as_str: a.id.as_str()
+    find_entrypoints-->>as_str: b.id.as_str()
+    find_entrypoints-->>cmp: a.id.as_str().cmp(b.id.as_str())
+    find_entrypoints-->>then_with: a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().cmp(b.id.as_str()))
+    find_entrypoints-->>sort_by: entries.sort_by(|a, b| a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().c...
+    find_entrypoints-->>into_iter: entries.into_iter()
+    find_entrypoints-->>clone: n.id.clone()
+    find_entrypoints-->>map: entries.into_iter().map(|n| n.id.clone())
+    find_entrypoints-->>collect: entries.into_iter().map(|n| n.id.clone()).collect()

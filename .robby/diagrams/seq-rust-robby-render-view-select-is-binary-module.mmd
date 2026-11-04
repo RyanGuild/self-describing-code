@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant is_binary_module as is_binary_module()
+    participant iter as iter
+    participant get as get
+    participant filter_map as filter_map
+    participant as_str as as_str
+    participant any as any
+    is_binary_module-->>iter: node.children.iter()
+    is_binary_module-->>get: doc.get(id)
+    is_binary_module-->>filter_map: node.children.iter().filter_map(|id| doc.get(id))
+    is_binary_module-->>as_str: child.kind.as_str()
+    is_binary_module-->>any: node.children.iter().filter_map(|id| doc.get(id)).any(|child| { child...

@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant subtree_ids as subtree_ids()
+    participant subtree as subtree
+    participant into_iter as into_iter
+    participant clone as clone
+    participant map as map
+    participant collect as collect
+    subtree_ids-->>subtree: doc.subtree(&root.id)
+    subtree_ids-->>into_iter: doc.subtree(&root.id) .into_iter()
+    subtree_ids-->>clone: node.id.clone()
+    subtree_ids-->>map: doc.subtree(&root.id) .into_iter() .map(|node| node.id.clone())
+    subtree_ids-->>collect: doc.subtree(&root.id) .into_iter() .map(|node| node.id.clone()) .coll...

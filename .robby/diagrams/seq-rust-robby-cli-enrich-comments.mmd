@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant enrich_comments as enrich_comments()
+    participant pipeline__load as pipeline::load
+    participant robby_agent__OpenRouterClient__from_env as robby_agent::OpenRouterClient::from_env
+    participant robby_agent__EnrichOpts__default as robby_agent::EnrichOpts::default
+    participant robby_agent__enrich_comments as robby_agent::enrich_comments
+    participant unwrap_or as unwrap_or
+    participant pipeline__write_document as pipeline::write_document
+    participant Ok as Ok
+    enrich_comments-->>pipeline__load: pipeline::load(ir, source_root)
+    enrich_comments-->>enrich_comments: ? (propagate)
+    enrich_comments-->>robby_agent__OpenRouterClient__from_env: robby_agent::OpenRouterClient::from_env()
+    enrich_comments-->>enrich_comments: ? (propagate)
+    enrich_comments-->>robby_agent__EnrichOpts__default: robby_agent::EnrichOpts::default()
+    enrich_comments-->>robby_agent__enrich_comments: robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &...
+    enrich_comments-->>enrich_comments: ? (propagate)
+    enrich_comments-->>unwrap_or: out.unwrap_or(ir)
+    enrich_comments-->>pipeline__write_document: pipeline::write_document(&loaded.document, out_path)
+    enrich_comments-->>enrich_comments: ? (propagate)
+    enrich_comments-->>enrich_comments: println!( 'enriched {} comment(s): {} relevant, {} noise, {} noted → ...
+    enrich_comments-->>Ok: Ok(ExitCode::SUCCESS)

@@ -1,0 +1,37 @@
+sequenceDiagram
+    autonumber
+    participant from_root as from_root()
+    participant get as get
+    participant values as values
+    participant is_container as is_container
+    participant is_under_fqn as is_under_fqn
+    participant filter as filter
+    participant collect as collect
+    participant is_empty as is_empty
+    participant Self__empty as Self::empty
+    participant build_package_tree as build_package_tree
+    participant iter as iter
+    participant clone as clone
+    participant map as map
+    participant subtree as subtree
+    participant into_iter as into_iter
+    participant package_edges as package_edges
+    from_root-->>get: doc.get(root)
+    from_root-->>values: doc .nodes .values()
+    from_root-->>is_container: is_container(node)
+    from_root-->>is_under_fqn: is_under_fqn(root_node, node)
+    from_root-->>filter: doc .nodes .values() .filter(|node| { is_container(node) && (node.id ...
+    from_root-->>collect: doc .nodes .values() .filter(|node| { is_container(node) && (node.id ...
+    from_root-->>is_empty: packages.is_empty()
+    alt packages.is_empty()
+    from_root-->>Self__empty: Self::empty()
+    from_root-->>from_root: return
+    end
+    from_root-->>build_package_tree: build_package_tree(root_node, &packages)
+    from_root-->>iter: packages.iter()
+    from_root-->>clone: p.id.clone()
+    from_root-->>map: packages.iter().map(|p| p.id.clone())
+    from_root-->>collect: packages.iter().map(|p| p.id.clone()).collect()
+    from_root-->>subtree: doc.subtree(root)
+    from_root-->>into_iter: doc.subtree(root).into_iter()
+    from_root-->>package_edges: package_edges(doc, &scope, doc.subtree(root).into_iter(), false, root...

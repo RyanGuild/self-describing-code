@@ -34,3 +34,7 @@ sequenceDiagram
 
 - calls → [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
 
+## References
+
+- calls → [`robby_ir::coverage`](../coverage/index.md) — file_coverage
+

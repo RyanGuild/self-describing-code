@@ -1,0 +1,38 @@
+sequenceDiagram
+    autonumber
+    participant emit_comments as emit_comments()
+    participant iter as iter
+    participant enumerate as enumerate
+    participant content_span as content_span
+    participant get as get
+    participant unwrap_or as unwrap_or
+    participant trim as trim
+    participant is_empty as is_empty
+    participant oxc_span as oxc_span
+    participant item_node as item_node
+    participant to_owned as to_owned
+    participant Some as Some
+    participant is_line as is_line
+    participant into as into
+    participant insert as insert
+    participant merge as merge
+    emit_comments-->>iter: comments.iter()
+    emit_comments-->>enumerate: comments.iter().enumerate()
+    loop comments.iter().enumerate()
+    emit_comments-->>content_span: comment.content_span()
+    emit_comments-->>get: ctx .source .get(content.start as usize..content.end as usize)
+    emit_comments-->>unwrap_or: ctx .source .get(content.start as usize..content.end as usize) .unwra...
+    emit_comments-->>trim: ctx .source .get(content.start as usize..content.end as usize) .unwra...
+    emit_comments-->>is_empty: raw.is_empty()
+    emit_comments-->>emit_comments: format!('{}/comment@{}', ctx.module, comment.span.start)
+    emit_comments-->>oxc_span: oxc_span(comment.span, ctx)
+    emit_comments-->>item_node: item_node( kind::code::COMMENT, &fqn, oxc_span(comment.span, ctx), pa...
+    emit_comments-->>emit_comments: format!('comment_{index}')
+    emit_comments-->>to_owned: raw.to_owned()
+    emit_comments-->>Some: Some(raw.to_owned())
+    emit_comments-->>is_line: comment.is_line()
+    emit_comments-->>into: 'comment_kind'.into()
+    emit_comments-->>into: kind_tag.into()
+    emit_comments-->>insert: node.annotations .insert('comment_kind'.into(), kind_tag.into())
+    emit_comments-->>merge: doc.merge(node)
+    end

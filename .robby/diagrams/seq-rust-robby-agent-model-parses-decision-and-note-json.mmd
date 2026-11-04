@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant parses_decision_and_note_json as parses_decision_and_note_json()
+    participant parse_decision as parse_decision
+    participant unwrap as unwrap
+    participant parse_note as parse_note
+    parses_decision_and_note_json-->>parse_decision: parse_decision(r '{'verdict':'relevant','reason':'api hint'}' )
+    parses_decision_and_note_json-->>unwrap: parse_decision(r '{'verdict':'relevant','reason':'api hint'}' ).unwrap()
+    parses_decision_and_note_json-->>parses_decision_and_note_json: assert_eq!(d.verdict, Verdict::Relevant)
+    parses_decision_and_note_json-->>parse_note: parse_note( r '{'kind':'usage_example','body':'Call draw().','highlig...
+    parses_decision_and_note_json-->>unwrap: parse_note( r '{'kind':'usage_example','body':'Call draw().','highlig...
+    parses_decision_and_note_json-->>parses_decision_and_note_json: assert_eq!(n.kind, NoteKind::UsageExample)
+    parses_decision_and_note_json-->>parses_decision_and_note_json: assert_eq!(n.highlights[0].end, 4)

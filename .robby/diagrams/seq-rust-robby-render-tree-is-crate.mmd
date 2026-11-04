@@ -1,4 +1,4 @@
 sequenceDiagram
     autonumber
     participant is_crate as is_crate()
-    is_crate-->>is_crate: node.kind.as_str() == kind::code::CRATE
+    is_crate-->>is_crate: matches!( node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )

@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant for_workspace as for_workspace()
+    participant stable_id as stable_id
+    participant to_owned as to_owned
+    participant Some as Some
+    for_workspace-->>stable_id: stable_id(WORKSPACE_ID)
+    for_workspace-->>to_owned: WORKSPACE_ID.to_owned()
+    for_workspace-->>to_owned: 'workspace'.to_owned()
+    for_workspace-->>to_owned: 'code.workspace'.to_owned()
+    for_workspace-->>to_owned: 'Synthetic root: crates and packages of this map.'.to_owned()
+    for_workspace-->>Some: Some('Synthetic root: crates and packages of this map.'.to_owned())

@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    participant externals as externals()
+    participant String__new as String::new
+    participant join as join
+    participant clone as clone
+    externals-->>String__new: String::new()
+    loop &view.entries
+    externals-->>join: entry.importers.join(', ')
+    alt entry.spec == entry.package
+    externals-->>clone: entry.package.clone()
+    else else
+    externals-->>externals: format!('{} ({})', entry.package, entry.spec)
+    end
+    externals-->>externals: writeln!(out, ' {label} — imported by {importers}')
+    end

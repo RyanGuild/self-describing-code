@@ -1,5 +1,19 @@
 sequenceDiagram
     autonumber
     participant item_children as item_children()
+    participant iter as iter
+    participant get as get
+    participant filter_map as filter_map
+    participant is_module as is_module
+    participant as_str as as_str
+    participant is_compact as is_compact
+    participant filter as filter
     participant collect as collect
+    item_children-->>iter: node.children .iter()
+    item_children-->>get: doc.get(child)
+    item_children-->>filter_map: node.children .iter() .filter_map(|child| doc.get(child))
+    item_children-->>is_module: is_module(child)
+    item_children-->>as_str: child.kind.as_str()
+    item_children-->>is_compact: is_compact(child.kind.as_str())
+    item_children-->>filter: node.children .iter() .filter_map(|child| doc.get(child)) .filter(|ch...
     item_children-->>collect: node.children .iter() .filter_map(|child| doc.get(child)) .filter(|ch...

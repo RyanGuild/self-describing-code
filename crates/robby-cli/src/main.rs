@@ -3,13 +3,15 @@
 //! Every subcommand delegates to [`robby_render::pipeline`], which is also what
 //! `build.rs` calls. There is one code path that produces artifacts.
 
+use std::fmt::Write as _;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use anyhow::Result;
-use clap::{Parser, Subcommand};
-use robby_ir::Severity;
+use anyhow::{Result, bail};
+use clap::{Parser, Subcommand, ValueEnum};
+use robby_ir::{Document, Node, Severity};
 use robby_render::pipeline;
+use robby_render::tui;
 
 #[derive(Parser)]
 #[command(
@@ -68,6 +70,74 @@ enum Command {
         #[arg(long)]
         out: Option<PathBuf>,
     },
+    /// Print a node as a terminal tree, box graph, and process timeline.
+    Show {
+        /// Node path: `crate`, `crate::module`, or `crate::module::item`.
+        /// Omit to print the whole workspace tree.
+        path: Option<String>,
+        /// IR document. Defaults to `.robby/robby.ir.json`.
+        #[arg(long)]
+        ir: Option<PathBuf>,
+        /// Root used to resolve repository-relative source paths.
+        #[arg(long, default_value = ".")]
+        source_root: PathBuf,
+        /// Tree depth.
+        #[arg(long, default_value_t = 4)]
+        depth: usize,
+        /// Target line width.
+        #[arg(long, default_value_t = 96)]
+        width: usize,
+        /// Include imports, fields, and variants in the tree.
+        #[arg(long)]
+        all: bool,
+        /// Which sections to print.
+        #[arg(long, value_enum, default_value = "all")]
+        view: ViewKind,
+        /// Omit the source slice.
+        #[arg(long)]
+        no_source: bool,
+    },
+    /// Enrich comments via OpenRouter (decision + note); writes agent.decision into IR.
+    EnrichComments {
+        #[arg(long)]
+        ir: PathBuf,
+        #[arg(long, default_value = ".")]
+        source_root: PathBuf,
+        /// Output path (defaults to overwriting `--ir`).
+        #[arg(long)]
+        out: Option<PathBuf>,
+        #[arg(long)]
+        decision_model: Option<String>,
+        #[arg(long)]
+        note_model: Option<String>,
+        /// Max comments to process this run.
+        #[arg(long)]
+        limit: Option<usize>,
+    },
+    /// Write Prezi-style scene JSON for the TypeScript viewer in `apps/site`.
+    Web {
+        #[arg(long)]
+        ir: PathBuf,
+        /// Root used to resolve repository-relative source paths.
+        #[arg(long, default_value = ".")]
+        source_root: PathBuf,
+        /// Directory for `scene.json` and `frames/` (default: `apps/site/public`).
+        #[arg(long, default_value = "apps/site/public")]
+        out: PathBuf,
+    },
+}
+
+#[derive(Clone, Copy, Debug, ValueEnum)]
+enum ViewKind {
+    All,
+    Entry,
+    Types,
+    Dependencies,
+    References,
+    Tree,
+    Graph,
+    Process,
+    Source,
 }
 
 fn main() -> ExitCode {
@@ -114,7 +184,78 @@ fn run() -> Result<ExitCode> {
             source_root,
             out,
         } => report(&ir, &source_root, out),
+        Command::Show {
+            path,
+            ir,
+            source_root,
+            depth,
+            width,
+            all,
+            view,
+            no_source,
+        } => show(
+            path.as_deref(),
+            ir.as_deref(),
+            &source_root,
+            depth,
+            width,
+            all,
+            view,
+            no_source,
+        ),
+        Command::EnrichComments {
+            ir,
+            source_root,
+            out,
+            decision_model,
+            note_model,
+            limit,
+        } => enrich_comments(&ir, &source_root, out.as_deref(), decision_model, note_model, limit),
+        Command::Web {
+            ir,
+            source_root,
+            out,
+        } => web(&ir, &source_root, &out),
     }
+}
+
+fn web(ir: &std::path::Path, source_root: &std::path::Path, out: &std::path::Path) -> Result<ExitCode> {
+    let loaded = pipeline::load(ir, source_root)?;
+    let count = robby_render::write_site(&loaded.document, &loaded.sources, out)?;
+    println!(
+        "wrote {count} frame(s) to {}\nserve with: cd apps/site && npm install && npm run dev",
+        out.display()
+    );
+    Ok(ExitCode::SUCCESS)
+}
+
+fn enrich_comments(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    out: Option<&std::path::Path>,
+    decision_model: Option<String>,
+    note_model: Option<String>,
+    limit: Option<usize>,
+) -> Result<ExitCode> {
+    let mut loaded = pipeline::load(ir, source_root)?;
+    let client = robby_agent::OpenRouterClient::from_env()?;
+    let mut opts = robby_agent::EnrichOpts::default();
+    if let Some(m) = decision_model {
+        opts.decision_model = m;
+    }
+    if let Some(m) = note_model {
+        opts.note_model = m;
+    }
+    opts.limit = limit;
+
+    let stats = robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
+    let out_path = out.unwrap_or(ir);
+    pipeline::write_document(&loaded.document, out_path)?;
+    println!(
+        "enriched {} comment(s): {} relevant, {} noise, {} noted → {}",
+        stats.decided, stats.relevant, stats.noise, stats.noted, out_path.display()
+    );
+    Ok(ExitCode::SUCCESS)
 }
 
 fn check(ir: &std::path::Path, source_root: &std::path::Path, json: bool) -> Result<ExitCode> {
@@ -221,4 +362,112 @@ fn report(
         ),
     }
     Ok(ExitCode::SUCCESS)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn show(
+    path: Option<&str>,
+    ir: Option<&std::path::Path>,
+    source_root: &std::path::Path,
+    depth: usize,
+    width: usize,
+    all: bool,
+    view: ViewKind,
+    no_source: bool,
+) -> Result<ExitCode> {
+    let ir = ir.map(PathBuf::from).unwrap_or_else(default_ir);
+    if !ir.exists() {
+        bail!(
+            "{} does not exist; run `cargo run -p robby-cli -- extract --out {}` first",
+            ir.display(),
+            ir.display()
+        );
+    }
+
+    let loaded = pipeline::load(&ir, source_root)?;
+    let opts = tui::ShowOptions {
+        depth,
+        width,
+        all,
+        tree: matches!(view, ViewKind::All | ViewKind::Tree),
+        graph: matches!(view, ViewKind::Graph),
+        process: matches!(view, ViewKind::All | ViewKind::Process),
+        source: !no_source && matches!(view, ViewKind::All | ViewKind::Source),
+        entry: matches!(view, ViewKind::All | ViewKind::Entry),
+        types: matches!(view, ViewKind::All | ViewKind::Types),
+        dependencies: matches!(view, ViewKind::All | ViewKind::Dependencies),
+        externals: matches!(view, ViewKind::All | ViewKind::Dependencies),
+        comments: matches!(view, ViewKind::All),
+        references: matches!(view, ViewKind::All | ViewKind::References),
+    };
+
+    match path {
+        Some(path) => {
+            let node = resolve(&loaded.document, path)?;
+            print!(
+                "{}",
+                tui::show(&loaded.document, node, Some(&loaded.sources), &opts)
+            );
+        }
+        None => print!("{}", workspace(&loaded.document, &opts)),
+    }
+
+    Ok(ExitCode::SUCCESS)
+}
+
+fn default_ir() -> PathBuf {
+    PathBuf::from(".robby/robby.ir.json")
+}
+
+fn workspace(doc: &Document, opts: &tui::ShowOptions) -> String {
+    let mut out = String::new();
+    let _ = writeln!(
+        out,
+        "Robby · {} nodes · {} files · {} crates",
+        doc.nodes.len(),
+        doc.files.len(),
+        doc.roots.len()
+    );
+    let _ = writeln!(out, "{}", "─".repeat(opts.width.clamp(24, 78)));
+    out.push('\n');
+
+    for root in &doc.roots {
+        out.push_str(&tui::tree(doc, root, opts));
+        out.push_str("\n\n");
+    }
+    out
+}
+
+/// Resolve an exact fqn, an id, or a unique suffix / bare name.
+fn resolve<'a>(doc: &'a Document, path: &str) -> Result<&'a Node> {
+    if let Some(node) = doc
+        .nodes
+        .values()
+        .find(|node| node.fqn == path || node.id.as_str() == path)
+    {
+        return Ok(node);
+    }
+
+    let suffix = format!("::{path}");
+    let mut matches: Vec<&Node> = doc
+        .nodes
+        .values()
+        .filter(|node| node.fqn.ends_with(&suffix) || node.name == path)
+        .collect();
+
+    match matches.len() {
+        0 => bail!("no node matches `{path}`"),
+        1 => Ok(matches.remove(0)),
+        _ => {
+            matches.sort_by(|a, b| a.fqn.cmp(&b.fqn));
+            let mut message = format!("`{path}` is ambiguous ({} matches):", matches.len());
+            for node in matches.iter().take(20) {
+                let _ = write!(message, "\n  {}  [{}]", node.fqn, node.kind);
+            }
+            if matches.len() > 20 {
+                let _ = write!(message, "\n  … {} more", matches.len() - 20);
+            }
+            bail!(message)
+        }
+    }
 }

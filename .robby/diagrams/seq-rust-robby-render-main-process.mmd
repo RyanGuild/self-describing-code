@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant main_process as main_process()
+    participant and_then as and_then
+    main_process-->>and_then: node.children .iter() .filter_map(|id| doc.get(id)) .find(|child| chi...

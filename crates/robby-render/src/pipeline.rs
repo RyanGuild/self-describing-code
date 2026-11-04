@@ -83,7 +83,10 @@ pub fn load(ir: &Path, root: &Path) -> Result<Loaded> {
 }
 
 /// Compute everything derived from an in-memory document.
-pub fn from_document(document: Document, root: &Path) -> Loaded {
+pub fn from_document(mut document: Document, root: &Path) -> Loaded {
+    // Refresh entrypoint call trees so older IR files and post-edit graphs
+    // stay consistent with current `Calls` edges.
+    document.rebuild_code_paths();
     let sources = load_sources(&document, root);
     let coverage = coverage::document_coverage(&document, &sources);
     let diagnostics = validate(&document);

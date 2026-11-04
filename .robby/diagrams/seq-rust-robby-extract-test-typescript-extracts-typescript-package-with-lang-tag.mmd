@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    participant extracts_typescript_package_with_lang_tag as extracts_typescript_package_with_lang_tag()
+    participant fixture as fixture
+    participant robby_extract__extract as robby_extract::extract
+    participant expect as expect
+    participant values as values
+    participant as_str as as_str
+    participant find as find
+    extracts_typescript_package_with_lang_tag-->>fixture: fixture()
+    extracts_typescript_package_with_lang_tag-->>robby_extract__extract: robby_extract::extract(&fixture())
+    extracts_typescript_package_with_lang_tag-->>expect: robby_extract::extract(&fixture()).expect('extract')
+    extracts_typescript_package_with_lang_tag-->>values: doc .nodes .values()
+    extracts_typescript_package_with_lang_tag-->>as_str: n.kind.as_str()
+    extracts_typescript_package_with_lang_tag-->>find: doc .nodes .values() .find(|n| n.kind.as_str() == kind::code::PACKAGE...
+    extracts_typescript_package_with_lang_tag-->>expect: doc .nodes .values() .find(|n| n.kind.as_str() == kind::code::PACKAGE...
+    extracts_typescript_package_with_lang_tag-->>extracts_typescript_package_with_lang_tag: assert_eq!(pkg.lang, Lang::TypeScript)
+    extracts_typescript_package_with_lang_tag-->>extracts_typescript_package_with_lang_tag: assert!( doc.nodes .values() .any(|n| n.kind.as_str() == kind::code::...
+    extracts_typescript_package_with_lang_tag-->>extracts_typescript_package_with_lang_tag: assert!( doc.nodes .values() .any(|n| n.kind.as_str() == kind::code::...

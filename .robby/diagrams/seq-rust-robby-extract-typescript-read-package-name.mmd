@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    participant read_package_name as read_package_name()
+    participant fs__read_to_string as fs::read_to_string
+    participant with_context as with_context
+    participant serde_json__from_str as serde_json::from_str
+    participant get as get
+    participant as_str as as_str
+    participant and_then as and_then
+    participant trim_start_matches as trim_start_matches
+    participant replace as replace
+    participant map as map
+    participant Ok as Ok
+    read_package_name-->>fs__read_to_string: fs::read_to_string(path)
+    read_package_name-->>read_package_name: format!('reading {}', path.display())
+    read_package_name-->>with_context: fs::read_to_string(path).with_context(|| format!('reading {}', path.d...
+    read_package_name-->>read_package_name: ? (propagate)
+    read_package_name-->>serde_json__from_str: serde_json::from_str(&text)
+    read_package_name-->>read_package_name: format!('parsing {}', path.display())
+    read_package_name-->>with_context: serde_json::from_str(&text) .with_context(|| format!('parsing {}', pa...
+    read_package_name-->>read_package_name: ? (propagate)
+    read_package_name-->>get: value .get('name')
+    read_package_name-->>as_str: v.as_str()
+    read_package_name-->>and_then: value .get('name') .and_then(|v| v.as_str())
+    read_package_name-->>trim_start_matches: s.trim_start_matches('@')
+    read_package_name-->>replace: s.trim_start_matches('@').replace('/', '__')
+    read_package_name-->>map: value .get('name') .and_then(|v| v.as_str()) .map(|s| s.trim_start_ma...
+    read_package_name-->>Ok: Ok(value .get('name') .and_then(|v| v.as_str()) .map(|s| s.trim_start...

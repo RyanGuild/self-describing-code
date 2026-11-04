@@ -3,6 +3,7 @@ sequenceDiagram
     participant renders_a_flat_sequence as renders_a_flat_sequence()
     participant process as process
     participant sequence as sequence
+    renders_a_flat_sequence-->>renders_a_flat_sequence: vec![step('caller', 'io', 'load(path)', true, vec![])]
     renders_a_flat_sequence-->>process: process(vec![step('caller', 'io', 'load(path)', true, vec![])])
     renders_a_flat_sequence-->>sequence: sequence(&p)
     renders_a_flat_sequence-->>renders_a_flat_sequence: assert!(out.starts_with('sequenceDiagram\n'))

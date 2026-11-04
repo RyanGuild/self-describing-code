@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn nests_blocks_by_frame_stack()` |
-| location | [`crates/robby-render/tests/render.rs:94`](../../../../crates/robby-render/tests/render.rs#L94) |
+| location | [`crates/robby-render/tests/render.rs:98`](../../../../crates/robby-render/tests/render.rs#L98) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -39,13 +39,14 @@ fn nests_blocks_by_frame_stack() {
 sequenceDiagram
     autonumber
     participant nests_blocks_by_frame_stack as nests_blocks_by_frame_stack()
+    participant to_owned as to_owned
     participant clone as clone
     participant process as process
     participant sequence as sequence
-    nests_blocks_by_frame_stack-->>nests_blocks_by_frame_stack: Block { kind: BlockKind::Alt, label: 'outer'.to_owned(), branch: None, }
+    nests_blocks_by_frame_stack-->>to_owned: 'outer'.to_owned()
     nests_blocks_by_frame_stack-->>clone: alt.clone()
-    nests_blocks_by_frame_stack-->>nests_blocks_by_frame_stack: loop_block.kind = BlockKind::Loop
-    nests_blocks_by_frame_stack-->>nests_blocks_by_frame_stack: loop_block.label = 'inner'.to_owned()
+    nests_blocks_by_frame_stack-->>to_owned: 'inner'.to_owned()
+    nests_blocks_by_frame_stack-->>nests_blocks_by_frame_stack: vec![ step('caller', 'io', 'a', true, vec![alt.clone()]), step('calle...
     nests_blocks_by_frame_stack-->>process: process(vec![ step('caller', 'io', 'a', true, vec![alt.clone()]), ste...
     nests_blocks_by_frame_stack-->>sequence: sequence(&p)
     nests_blocks_by_frame_stack-->>nests_blocks_by_frame_stack: assert!(out.contains('alt outer'))
@@ -59,4 +60,9 @@ sequenceDiagram
 
 - calls → [`robby_render::test_render::process`](process.md)
 - calls → [`robby_render::sequence`](../sequence.md)
+
+## References
+
+- calls → [`robby_render`](../index.md) — sequence
+- calls → [`robby_render::test_render`](index.md) — process
 

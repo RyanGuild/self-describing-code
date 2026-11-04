@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant pad as pad()
+    participant UnicodeWidthStr__width as UnicodeWidthStr::width
+    participant to_owned as to_owned
+    pad-->>UnicodeWidthStr__width: UnicodeWidthStr::width(text)
+    alt current >= width
+    pad-->>to_owned: text.to_owned()
+    else else
+    pad-->>pad: format!('{text}{}', ' '.repeat(width - current))
+    end

@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant format_context as format_context()
+    participant as_deref as as_deref
+    participant unwrap_or as unwrap_or
+    format_context-->>as_deref: ctx.owner_fqn.as_deref()
+    format_context-->>unwrap_or: ctx.owner_fqn.as_deref().unwrap_or('(none)')
+    format_context-->>as_deref: ctx.location.as_deref()
+    format_context-->>unwrap_or: ctx.location.as_deref().unwrap_or('(unknown)')
+    format_context-->>format_context: format!( 'file: {}\nlocation: {}\nowner: {}\n\ncomment:\n{}\n\ncode:\...

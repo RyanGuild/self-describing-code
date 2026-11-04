@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    participant edges as edges()
+    participant section as section
+    participant unwrap_or as unwrap_or
+    participant push as push
+    participant collect as collect
+    alt !node.edges.is_empty()
+    edges-->>section: section(out, 'edges out', rule)
+    loop &node.edges
+    edges-->>unwrap_or: doc .get(&edge.to) .map(|target| target.fqn.as_str()) .unwrap_or(edge...
+    alt edge.resolved
+    edges-->>edges: ''
+    else else
+    edges-->>edges: ' (unresolved)'
+    end
+    edges-->>edges: writeln!( out, ' {} → {target}{marker}', crate::edge_label(edge.kind) )
+    end
+    edges-->>push: out.push('\n')
+    end
+    edges-->>collect: doc .nodes .values() .flat_map(|source| { source .edges .iter() .filt...
+    alt !incoming.is_empty()
+    edges-->>section: section(out, 'edges in', rule)
+    loop incoming
+    edges-->>edges: writeln!(out, ' {} ← {}', crate::edge_label(edge_kind), source.fqn)
+    end
+    edges-->>push: out.push('\n')
+    end

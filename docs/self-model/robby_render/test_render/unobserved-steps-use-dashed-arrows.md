@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn unobserved_steps_use_dashed_arrows()` |
-| location | [`crates/robby-render/tests/render.rs:42`](../../../../crates/robby-render/tests/render.rs#L42) |
+| location | [`crates/robby-render/tests/render.rs:46`](../../../../crates/robby-render/tests/render.rs#L46) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -25,16 +25,22 @@ sequenceDiagram
     participant unobserved_steps_use_dashed_arrows as unobserved_steps_use_dashed_arrows()
     participant process as process
     participant sequence as sequence
+    unobserved_steps_use_dashed_arrows-->>unobserved_steps_use_dashed_arrows: vec![step('caller', 'io', 'load(path)', false, vec![])]
     unobserved_steps_use_dashed_arrows-->>process: process(vec![step('caller', 'io', 'load(path)', false, vec![])])
     unobserved_steps_use_dashed_arrows-->>sequence: sequence(&p)
     unobserved_steps_use_dashed_arrows-->>unobserved_steps_use_dashed_arrows: assert!(out.contains('caller-->>io: load(path)'))
     unobserved_steps_use_dashed_arrows-->>unobserved_steps_use_dashed_arrows: assert!(!out.contains('caller->>io'))
 ```
 
-4 steps · 0 observed · 4 possible only
+5 steps · 0 observed · 5 possible only
 
 **Edges**
 
 - calls → [`robby_render::test_render::process`](process.md)
 - calls → [`robby_render::sequence`](../sequence.md)
+
+## References
+
+- calls → [`robby_render`](../index.md) — sequence
+- calls → [`robby_render::test_render`](index.md) — process
 

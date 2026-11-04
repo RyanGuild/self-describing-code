@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant scene_json_is_byte_identical_across_runs as scene_json_is_byte_identical_across_runs()
+    participant demo_doc as demo_doc
+    participant Scene__from_document as Scene::from_document
+    participant to_json as to_json
+    scene_json_is_byte_identical_across_runs-->>demo_doc: demo_doc()
+    scene_json_is_byte_identical_across_runs-->>Scene__from_document: Scene::from_document(&doc)
+    scene_json_is_byte_identical_across_runs-->>to_json: Scene::from_document(&doc).to_json()
+    scene_json_is_byte_identical_across_runs-->>Scene__from_document: Scene::from_document(&doc)
+    scene_json_is_byte_identical_across_runs-->>to_json: Scene::from_document(&doc).to_json()
+    scene_json_is_byte_identical_across_runs-->>scene_json_is_byte_identical_across_runs: assert_eq!(a, b)

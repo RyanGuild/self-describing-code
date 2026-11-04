@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant from_node as from_node()
+    participant get as get
+    participant build as build
+    from_node-->>get: doc.get(root)
+    from_node-->>build: build(doc, node, depth, 0, include_compact)

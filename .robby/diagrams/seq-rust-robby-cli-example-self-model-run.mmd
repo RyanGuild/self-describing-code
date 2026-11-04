@@ -8,7 +8,11 @@ sequenceDiagram
     participant pipeline__write_document as pipeline::write_document
     participant pipeline__write_report as pipeline::write_report
     participant pipeline__render_files as pipeline::render_files
+    participant is_ok as is_ok
     participant Ok as Ok
+    participant iter as iter
+    participant filter as filter
+    participant failures as failures
     run-->>Args__parse: Args::parse()
     alt match &args.ir
     run-->>pipeline__load: pipeline::load(ir, &args.root)
@@ -32,13 +36,17 @@ sequenceDiagram
     run-->>pipeline__render_files: pipeline::render_files(&loaded.document, &args.diagrams)
     run-->>run: ? (propagate)
     run-->>run: println!('wrote {count} diagram(s) to {}', args.diagrams.display())
+    run-->>is_ok: loaded.is_ok()
     alt loaded.is_ok()
     run-->>Ok: Ok(ExitCode::SUCCESS)
     run-->>run: return
     end
+    run-->>iter: loaded .diagnostics .iter()
+    run-->>filter: loaded .diagnostics .iter() .filter(|d| d.severity == robby_ir::Sever...
     loop loaded .diagnostics .iter() .filter(|d| d.severity == robby_ir::Sever...
     run-->>run: eprintln!('[{}] {}', diagnostic.code, diagnostic.message)
     end
+    run-->>failures: loaded.coverage.failures()
     loop loaded.coverage.failures()
     run-->>run: eprintln!('unclaimed at {} {:?}', gap.span.location(), gap.preview)
     end

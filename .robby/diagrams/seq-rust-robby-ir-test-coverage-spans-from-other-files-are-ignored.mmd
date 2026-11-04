@@ -1,9 +1,10 @@
 sequenceDiagram
     autonumber
     participant spans_from_other_files_are_ignored as spans_from_other_files_are_ignored()
+    participant len as len
     participant Span__new as Span::new
     participant file_coverage as file_coverage
-    spans_from_other_files_are_ignored-->>spans_from_other_files_are_ignored: 'fn a() {}'
+    spans_from_other_files_are_ignored-->>len: source.len()
     spans_from_other_files_are_ignored-->>Span__new: Span::new('src/other.rs', source, 0, source.len() as u32)
     spans_from_other_files_are_ignored-->>file_coverage: file_coverage(FILE, source, &[other])
     spans_from_other_files_are_ignored-->>spans_from_other_files_are_ignored: assert!(!report.is_complete())

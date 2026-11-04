@@ -1,0 +1,30 @@
+sequenceDiagram
+    autonumber
+    participant weighted_deps as weighted_deps()
+    participant String__from as String::from
+    participant clone as clone
+    weighted_deps-->>String__from: String::from('flowchart LR\n')
+    alt view.is_empty()
+    weighted_deps-->>weighted_deps: out
+    weighted_deps-->>weighted_deps: return
+    end
+    loop &view.modules
+    alt m.item_count > 1
+    weighted_deps-->>weighted_deps: format!('{} ({})', m.name, m.item_count)
+    else else
+    weighted_deps-->>clone: m.name.clone()
+    end
+    alt m.external
+    weighted_deps-->>weighted_deps: writeln!(out, ' {}([\'{}\'])', m.stable_id, label)
+    else else
+    weighted_deps-->>weighted_deps: writeln!(out, ' {}[\'{}\']', m.stable_id, label)
+    end
+    end
+    loop &view.edges
+    alt edge.in_cycle
+    weighted_deps-->>weighted_deps: writeln!( out, ' {} -.->|\'{} circular\'| {}', edge.from, edge.weight...
+    else else
+    weighted_deps-->>weighted_deps: writeln!( out, ' {} -->|\'{}\'| {}', edge.from, edge.weight, edge.to )
+    end
+    end
+    weighted_deps-->>weighted_deps: out

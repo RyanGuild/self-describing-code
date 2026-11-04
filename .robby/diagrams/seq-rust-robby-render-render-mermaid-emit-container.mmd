@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant emit_container as emit_container()
+    participant repeat as repeat
+    emit_container-->>repeat: ' '.repeat(depth)
+    emit_container-->>emit_container: writeln!( out, '{indent}subgraph {}[\'{}\']', node.stable_id, node.la...
+    emit_container-->>emit_container: writeln!(out, '{indent} direction TB')
+    loop &node.children
+    emit_container-->>emit_container: emit_container(out, child, depth + 1)
+    end
+    emit_container-->>emit_container: writeln!(out, '{indent}end')

@@ -1,0 +1,55 @@
+sequenceDiagram
+    autonumber
+    participant comments as comments()
+    participant String__new as String::new
+    participant as_deref as as_deref
+    participant unwrap_or as unwrap_or
+    participant as_ref as as_ref
+    participant lines as lines
+    participant apply_highlights as apply_highlights
+    participant trim_end as trim_end
+    participant push as push
+    participant as_str as as_str
+    participant replace as replace
+    participant clip as clip
+    participant take as take
+    comments-->>comments: use crate::view::apply_highlights
+    comments-->>String__new: String::new()
+    loop &view.entries
+    comments-->>as_deref: entry.location.as_deref()
+    comments-->>unwrap_or: entry.location.as_deref().unwrap_or('?')
+    comments-->>as_ref: entry.note.as_ref()
+    alt let (Some(note_kind), Some(note)) = (entry.note_kind, entry.note.as_r...
+    comments-->>comments: writeln!(out, ' {loc} — {}', note_kind.label())
+    comments-->>lines: note.lines()
+    loop note.lines()
+    comments-->>comments: writeln!(out, ' {line}')
+    end
+    alt let Some(code) = &entry.code
+    comments-->>apply_highlights: apply_highlights(code, &entry.highlights)
+    comments-->>trim_end: marked.trim_end()
+    comments-->>lines: marked.trim_end().lines()
+    loop marked.trim_end().lines()
+    comments-->>comments: writeln!(out, ' │ {line}')
+    end
+    end
+    comments-->>push: out.push('\n')
+    end
+    comments-->>as_str: entry.kind.as_str()
+    comments-->>replace: entry.text.replace('\n', ' ')
+    comments-->>clip: clip(&entry.text.replace('\n', ' '), 80)
+    alt let Some(owner) = &entry.owner_fqn
+    comments-->>comments: writeln!(out, ' {loc} ({kind}, {owner}): {text}')
+    else else
+    comments-->>comments: writeln!(out, ' {loc} ({kind}): {text}')
+    end
+    alt let Some(code) = &entry.code
+    comments-->>apply_highlights: apply_highlights(code, &entry.highlights)
+    comments-->>trim_end: marked.trim_end()
+    comments-->>lines: marked.trim_end().lines()
+    comments-->>take: marked.trim_end().lines().take(8)
+    loop marked.trim_end().lines().take(8)
+    comments-->>comments: writeln!(out, ' │ {line}')
+    end
+    end
+    end

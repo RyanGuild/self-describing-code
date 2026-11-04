@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant decision_child as decision_child()
+    participant iter as iter
+    participant get as get
+    participant as_str as as_str
+    participant then_some as then_some
+    participant find_map as find_map
+    decision_child-->>iter: node.children.iter()
+    decision_child-->>get: doc.get(id)
+    decision_child-->>decision_child: ? (propagate)
+    decision_child-->>as_str: child.kind.as_str()
+    decision_child-->>then_some: (child.kind.as_str() == kind::agent::DECISION).then_some(child)
+    decision_child-->>find_map: node.children.iter().find_map(|id| { let child = doc.get(id)? (child...

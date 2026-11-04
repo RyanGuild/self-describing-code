@@ -74,14 +74,16 @@ fn every_module_has_an_index_page() {
         .filter(|node| {
             matches!(
                 node.kind.as_str(),
-                robby_ir::kind::code::MODULE | robby_ir::kind::code::CRATE
+                robby_ir::kind::code::MODULE
+                    | robby_ir::kind::code::CRATE
+                    | robby_ir::kind::code::PACKAGE
             )
         })
         .count();
 
     assert_eq!(
         indexes, modules,
-        "every module and crate should have exactly one index page"
+        "every module, crate, and package should have exactly one index page"
     );
 }
 
@@ -93,6 +95,41 @@ fn page_names_never_collide_with_index() {
         let path = page.path.to_string_lossy().to_string();
         assert!(seen.insert(path.clone()), "duplicate page {path}");
     }
+}
+
+#[test]
+fn modules_link_out_and_back() {
+    let (_, pages) = pages();
+    let by_path: std::collections::BTreeMap<_, _> = pages
+        .iter()
+        .map(|page| (page.path.to_string_lossy().replace('\\', "/"), page))
+        .collect();
+
+    let cli = by_path
+        .get("robby_cli/index.md")
+        .expect("robby_cli index");
+    assert!(
+        cli.body.contains("## References"),
+        "crate pages should list outbound references"
+    );
+    assert!(
+        cli.body.contains("robby_render/pipeline/index.md"),
+        "robby_cli should link to pipeline docs:\n{}",
+        cli.body
+    );
+
+    let pipeline = by_path
+        .get("robby_render/pipeline/index.md")
+        .expect("pipeline index");
+    assert!(
+        pipeline.body.contains("## Referenced by"),
+        "pipeline should list backlinks"
+    );
+    assert!(
+        pipeline.body.contains("robby_cli"),
+        "pipeline should link back to robby_cli callers:\n{}",
+        pipeline.body
+    );
 }
 
 fn markdown_links(body: &str) -> Vec<String> {

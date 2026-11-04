@@ -6,33 +6,17 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn extract(root: &Path) -> Result<Document>` |
-| location | [`crates/robby-extract/src/lib.rs:31`](../../../crates/robby-extract/src/lib.rs#L31) |
+| location | [`crates/robby-extract/src/lib.rs:18`](../../../crates/robby-extract/src/lib.rs#L18) |
 | provenance | extractor · confidence 1.00 |
 
-> Extract a document describing every Rust crate under `<root>/crates`.
+> Extract a document describing Rust crates and TypeScript packages under `root`.
 
 ```rust
-/// Extract a document describing every Rust crate under `<root>/crates`.
+/// Extract a document describing Rust crates and TypeScript packages under `root`.
 pub fn extract(root: &Path) -> Result<Document> {
-    let mut doc = Document::new("robby-extract");
-    let mut pending: Vec<PendingCall> = Vec::new();
-
-    let crates = discover_crates(root)?;
-    for krate in &crates {
-        let mut crate_node = Node::new(
-            NodeId::symbol("rust", &krate.name),
-            kind::code::CRATE,
-            krate.name.clone(),
-        );
-        crate_node.provenance = Provenance::new(Source::Extractor);
-        doc.merge(crate_node);
-
-        for file in &krate.files {
-            extract_file(&mut doc, krate, file, &mut pending)?;
-        }
-    }
-
-    resolve_calls(&mut doc, pending);
+    let mut doc = rust::extract(root)?;
+    let ts = typescript::extract(root)?;
+    merge_documents(&mut doc, ts);
     Ok(doc)
 }
 ```
@@ -41,40 +25,39 @@ pub fn extract(root: &Path) -> Result<Document> {
 sequenceDiagram
     autonumber
     participant extract as extract()
-    participant Document__new as Document::new
-    participant Vec__new as Vec::new
-    participant discover_crates as discover_crates
-    participant Node__new as Node::new
-    participant merge as merge
-    participant extract_file as extract_file
-    participant resolve_calls as resolve_calls
+    participant rust__extract as rust::extract
+    participant typescript__extract as typescript::extract
+    participant merge_documents as merge_documents
     participant Ok as Ok
-    extract-->>Document__new: Document::new('robby-extract')
-    extract-->>Vec__new: Vec::new()
-    extract-->>discover_crates: discover_crates(root)
+    extract-->>rust__extract: rust::extract(root)
     extract-->>extract: ? (propagate)
-    loop &crates
-    extract-->>Node__new: Node::new( NodeId::symbol('rust', &krate.name), kind::code::CRATE, kr...
-    extract-->>extract: crate_node.provenance = Provenance::new(Source::Extractor)
-    extract-->>merge: doc.merge(crate_node)
-    loop &krate.files
-    extract-->>extract_file: extract_file(&mut doc, krate, file, &mut pending)
+    extract-->>typescript__extract: typescript::extract(root)
     extract-->>extract: ? (propagate)
-    end
-    end
-    extract-->>resolve_calls: resolve_calls(&mut doc, pending)
+    extract-->>merge_documents: merge_documents(&mut doc, ts)
     extract-->>Ok: Ok(doc)
 ```
 
-11 steps · 0 observed · 11 possible only
+6 steps · 0 observed · 6 possible only
 
 **Edges**
 
-- calls → [`robby_extract::impl LineIndex::new`](index.md)
-- calls → [`robby_extract::impl LineIndex::new`](index.md)
-- calls → [`robby_extract::discover_crates`](discover-crates.md)
-- calls → [`robby_extract::impl LineIndex::new`](index.md)
-- calls → [`robby_ir::model::impl Document::merge`](../robby_ir/model/index.md)
-- calls → [`robby_extract::extract_file`](extract-file.md)
-- calls → [`robby_extract::resolve_calls`](resolve-calls.md)
+- calls → [`robby_extract::extract`](extract.md)
+- calls → [`robby_extract::extract`](extract.md)
+- calls → [`robby_extract::merge_documents`](merge-documents.md)
+
+## References
+
+- calls → [`robby_extract`](index.md) — merge_documents
+
+## Referenced by
+
+- calls ← [`robby_extract::test_extract::every_source_file_is_declared`](test_extract/every-source-file-is-declared.md)
+- calls ← [`robby_extract::test_extract::functions_produce_process_steps`](test_extract/functions-produce-process-steps.md)
+- calls ← [`robby_extract::test_extract::spans_point_at_the_right_bytes`](test_extract/spans-point-at-the-right-bytes.md)
+- calls ← [`robby_extract::test_extract::the_workspace_is_fully_covered`](test_extract/the-workspace-is-fully-covered.md)
+- calls ← [`robby_extract::test_typescript::bare_import_creates_external_npm_stub`](test_typescript/bare-import-creates-external-npm-stub.md)
+- calls ← [`robby_extract::test_typescript::emits_comment_nodes_and_attaches_docs`](test_typescript/emits-comment-nodes-and-attaches-docs.md)
+- calls ← [`robby_extract::test_typescript::extracts_typescript_package_with_lang_tag`](test_typescript/extracts-typescript-package-with-lang-tag.md)
+- calls ← [`robby_extract::test_typescript::resolves_calls_and_imports`](test_typescript/resolves-calls-and-imports.md)
+- calls ← [`robby_extract::test_typescript::typescript_fixture_is_fully_covered`](test_typescript/typescript-fixture-is-fully-covered.md)
 

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:105`](../../../../crates/robby-ir/src/model.rs#L105) |
+| location | [`crates/robby-ir/src/model.rs:106`](../../../../crates/robby-ir/src/model.rs#L106) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -31,7 +31,7 @@ impl Provenance {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(1)` |
-| location | [`crates/robby-ir/src/model.rs:106`](../../../../crates/robby-ir/src/model.rs#L106) |
+| location | [`crates/robby-ir/src/model.rs:107`](../../../../crates/robby-ir/src/model.rs#L107) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -48,10 +48,9 @@ pub fn new(source: Source) -> Self {
 sequenceDiagram
     autonumber
     participant new as new()
-    new-->>new: Self { source, observed_at: None, confidence: 1.0, }
 ```
 
-1 steps · 0 observed · 1 possible only
+0 steps · 0 observed · 0 possible only
 
 ### `with_confidence`
 
@@ -59,7 +58,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn with_confidence(2)` |
-| location | [`crates/robby-ir/src/model.rs:114`](../../../../crates/robby-ir/src/model.rs#L114) |
+| location | [`crates/robby-ir/src/model.rs:115`](../../../../crates/robby-ir/src/model.rs#L115) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -73,9 +72,9 @@ pub fn with_confidence(mut self, confidence: f32) -> Self {
 sequenceDiagram
     autonumber
     participant with_confidence as with_confidence()
-    with_confidence-->>with_confidence: self.confidence = confidence.clamp(0.0, 1.0)
-    with_confidence-->>with_confidence: self
+    participant clamp as clamp
+    with_confidence-->>clamp: confidence.clamp(0.0, 1.0)
 ```
 
-2 steps · 0 observed · 2 possible only
+1 steps · 0 observed · 1 possible only
 

@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant is_direct_package as is_direct_package()
+    participant strip_prefix as strip_prefix
+    participant is_empty as is_empty
+    participant contains as contains
+    is_direct_package-->>is_direct_package: format!('{}::', root.fqn)
+    is_direct_package-->>strip_prefix: candidate.fqn.strip_prefix(&prefix)
+    is_direct_package-->>is_empty: rest.is_empty()
+    is_direct_package-->>contains: rest.contains('::')

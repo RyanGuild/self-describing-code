@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    participant meta as meta()
+    participant String__new as String::new
+    participant clamp as clamp
+    participant repeat as repeat
+    participant push as push
+    participant lines as lines
+    meta-->>String__new: String::new()
+    meta-->>clamp: self.width.clamp(24, 78)
+    meta-->>repeat: '─'.repeat(self.width.clamp(24, 78))
+    meta-->>meta: writeln!(out, '{}', meta.fqn)
+    meta-->>meta: writeln!(out, '{rule}')
+    meta-->>meta: writeln!(out, 'kind {}', meta.kind)
+    alt let Some(signature) = &meta.signature
+    meta-->>meta: writeln!( out, 'signature {}', clip(signature, self.width.saturating_...
+    end
+    alt let Some(location) = &meta.location
+    meta-->>meta: writeln!(out, 'location {location}')
+    end
+    meta-->>meta: writeln!( out, 'provenance {} · confidence {:.2}', meta.provenance_so...
+    meta-->>meta: writeln!(out, 'nodes {}', meta.node_count)
+    alt let Some(docs) = &meta.docs
+    meta-->>push: out.push('\n')
+    meta-->>lines: docs.lines()
+    loop docs.lines()
+    meta-->>meta: writeln!(out, ' {line}')
+    end
+    end

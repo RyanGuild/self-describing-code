@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:77`](../../../../crates/robby-ir/src/model.rs#L77) |
+| location | [`crates/robby-ir/src/model.rs:78`](../../../../crates/robby-ir/src/model.rs#L78) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -32,7 +32,7 @@ impl Source {
 |---|---|
 | kind | `code.method` |
 | signature | `fn precedence(1)` |
-| location | [`crates/robby-ir/src/model.rs:78`](../../../../crates/robby-ir/src/model.rs#L78) |
+| location | [`crates/robby-ir/src/model.rs:79`](../../../../crates/robby-ir/src/model.rs#L79) |
 | provenance | extractor · confidence 1.00 |
 
 > Lower numbers win when two producers disagree about the same fact.
@@ -60,18 +60,7 @@ impl Source {
 sequenceDiagram
     autonumber
     participant precedence as precedence()
-    alt match self
-    precedence-->>precedence: 0
-    else Source::Agent
-    precedence-->>precedence: 1
-    else Source::Macro
-    precedence-->>precedence: 2
-    else Source::Extractor
-    precedence-->>precedence: 3
-    else Source::Hand
-    precedence-->>precedence: 4
-    end
 ```
 
-5 steps · 0 observed · 5 possible only
+0 steps · 0 observed · 0 possible only
 

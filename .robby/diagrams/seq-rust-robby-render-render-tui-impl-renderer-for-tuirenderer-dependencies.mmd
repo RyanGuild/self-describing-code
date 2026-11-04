@@ -1,0 +1,52 @@
+sequenceDiagram
+    autonumber
+    participant dependencies as dependencies()
+    participant String__from as String::from
+    participant Vec__new as Vec::new
+    participant BTreeMap__new as BTreeMap::new
+    participant walk as walk
+    participant len as len
+    participant insert as insert
+    participant push as push
+    participant Graph__new as Graph::new
+    participant add_node as add_node
+    participant get as get
+    participant add_edge as add_edge
+    participant set_direction as set_direction
+    participant render_string as render_string
+    alt view.is_empty()
+    dependencies-->>String__from: String::from('(no module dependencies)\n')
+    dependencies-->>dependencies: return
+    end
+    dependencies-->>Vec__new: Vec::new()
+    dependencies-->>BTreeMap__new: BTreeMap::new()
+    dependencies-->>dependencies: fn walk( node: &crate::view::ContainerNode, labels: &mut Vec<String>,...
+    loop &view.roots
+    dependencies-->>walk: walk(root, &mut labels, &mut index_of)
+    end
+    loop &view.externals
+    alt !index_of.contains_key(&external.stable_id)
+    dependencies-->>len: labels.len()
+    dependencies-->>insert: index_of.insert(external.stable_id.clone(), index)
+    dependencies-->>push: labels.push(format!('{} (ext)', external.label))
+    end
+    end
+    alt labels.is_empty()
+    dependencies-->>String__from: String::from('(no module dependencies)\n')
+    dependencies-->>dependencies: return
+    end
+    dependencies-->>Graph__new: Graph::new()
+    loop labels.iter().enumerate()
+    dependencies-->>add_node: graph.add_node(index, label.as_str())
+    end
+    loop &view.edges
+    dependencies-->>get: index_of.get(&edge.from)
+    dependencies-->>get: index_of.get(&edge.to)
+    dependencies-->>add_edge: graph.add_edge(from, to, Some(edge.label))
+    end
+    dependencies-->>set_direction: graph.set_direction(Direction::TopDown)
+    dependencies-->>render_string: graph .compute_layout() .render_string(&RenderOptions::plain())
+    alt !out.ends_with('\n')
+    dependencies-->>push: out.push('\n')
+    end
+    dependencies-->>dependencies: out

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn schema() -> schemars::Schema` |
-| location | [`crates/robby-ir/src/lib.rs:34`](../../../crates/robby-ir/src/lib.rs#L34) |
+| location | [`crates/robby-ir/src/lib.rs:39`](../../../crates/robby-ir/src/lib.rs#L39) |
 | provenance | extractor · confidence 1.00 |
 
 > The JSON Schema for [`Document`], derived from the Rust types.
@@ -32,4 +32,8 @@ sequenceDiagram
 ```
 
 1 steps · 0 observed · 1 possible only
+
+## Referenced by
+
+- calls ← [`robby_ir::schema_json`](schema-json.md)
 

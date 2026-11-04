@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/model.rs:379`](../../../../crates/robby-ir/src/model.rs#L379) |
+| location | [`crates/robby-ir/src/model.rs:415`](../../../../crates/robby-ir/src/model.rs#L415) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,8 +22,8 @@ pub struct Diagnostic {
 
 **Fields and variants**
 
-- `severity` — `crates/robby-ir/src/model.rs:381:5`
-- `code` — `crates/robby-ir/src/model.rs:382:5`
-- `message` — `crates/robby-ir/src/model.rs:384:5`
-- `node` — `crates/robby-ir/src/model.rs:385:5`
+- `severity` — `crates/robby-ir/src/model.rs:417:5`
+- `code` — `crates/robby-ir/src/model.rs:418:5`
+- `message` — `crates/robby-ir/src/model.rs:420:5`
+- `node` — `crates/robby-ir/src/model.rs:421:5`
 

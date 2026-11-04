@@ -1,0 +1,81 @@
+sequenceDiagram
+    autonumber
+    participant walk_stmts as walk_stmts()
+    participant to_vec as to_vec
+    participant frame as frame
+    participant push as push
+    participant walk_stmt as walk_stmt
+    participant walk_expr as walk_expr
+    participant push_step as push_step
+    loop stmts
+    alt match stmt
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Alt, 'if')
+    walk_stmts-->>push: then_frames.push(frame(BlockKind::Alt, 'if'))
+    walk_stmts-->>walk_stmt: walk_stmt(&iff.consequent, process, &then_frames, pending, from, ctx)
+    alt let Some(alt) = &iff.alternate
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Alt, 'else')
+    walk_stmts-->>push: else_frames.push(frame(BlockKind::Alt, 'else'))
+    walk_stmts-->>walk_stmt: walk_stmt(alt, process, &else_frames, pending, from, ctx)
+    end
+    else Statement::WhileStatement(w)
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Loop, 'while')
+    walk_stmts-->>push: loop_frames.push(frame(BlockKind::Loop, 'while'))
+    walk_stmts-->>walk_stmt: walk_stmt(&w.body, process, &loop_frames, pending, from, ctx)
+    else Statement::DoWhileStatement(w)
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Loop, 'do')
+    walk_stmts-->>push: loop_frames.push(frame(BlockKind::Loop, 'do'))
+    walk_stmts-->>walk_stmt: walk_stmt(&w.body, process, &loop_frames, pending, from, ctx)
+    else Statement::ForStatement(f)
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Loop, 'for')
+    walk_stmts-->>push: loop_frames.push(frame(BlockKind::Loop, 'for'))
+    walk_stmts-->>walk_stmt: walk_stmt(&f.body, process, &loop_frames, pending, from, ctx)
+    else Statement::ForInStatement(f)
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Loop, 'for-in')
+    walk_stmts-->>push: loop_frames.push(frame(BlockKind::Loop, 'for-in'))
+    walk_stmts-->>walk_stmt: walk_stmt(&f.body, process, &loop_frames, pending, from, ctx)
+    else Statement::ForOfStatement(f)
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Loop, 'for-of')
+    walk_stmts-->>push: loop_frames.push(frame(BlockKind::Loop, 'for-of'))
+    walk_stmts-->>walk_stmt: walk_stmt(&f.body, process, &loop_frames, pending, from, ctx)
+    else Statement::SwitchStatement(sw)
+    loop &sw.cases
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Alt, 'case')
+    walk_stmts-->>push: case_frames.push(frame(BlockKind::Alt, 'case'))
+    walk_stmts-->>walk_stmts: walk_stmts(&case.consequent, process, &case_frames, pending, from, ctx)
+    end
+    else Statement::TryStatement(t)
+    walk_stmts-->>walk_stmts: walk_stmts(&t.block.body, process, frames, pending, from, ctx)
+    alt let Some(handler) = &t.handler
+    walk_stmts-->>to_vec: frames.to_vec()
+    walk_stmts-->>frame: frame(BlockKind::Alt, 'catch')
+    walk_stmts-->>push: catch_frames.push(frame(BlockKind::Alt, 'catch'))
+    walk_stmts-->>walk_stmts: walk_stmts( &handler.body.body, process, &catch_frames, pending, from...
+    end
+    alt let Some(finalizer) = &t.finalizer
+    walk_stmts-->>walk_stmts: walk_stmts(&finalizer.body, process, frames, pending, from, ctx)
+    end
+    else Statement::ReturnStatement(r)
+    alt let Some(arg) = &r.argument
+    walk_stmts-->>walk_expr: walk_expr(arg, process, frames, pending, from, ctx)
+    end
+    walk_stmts-->>push_step: push_step(process, frames, StepKind::Return, 'return', 'caller')
+    else Statement::ExpressionStatement(e)
+    walk_stmts-->>walk_expr: walk_expr(&e.expression, process, frames, pending, from, ctx)
+    else Statement::BlockStatement(b)
+    walk_stmts-->>walk_stmts: walk_stmts(&b.body, process, frames, pending, from, ctx)
+    else Statement::VariableDeclaration(v)
+    loop &v.declarations
+    alt let Some(init) = &d.init
+    walk_stmts-->>walk_expr: walk_expr(init, process, frames, pending, from, ctx)
+    end
+    end
+    end
+    end

@@ -1,0 +1,6 @@
+sequenceDiagram
+    autonumber
+    participant types as types()
+    participant Self__fence as Self::fence
+    types-->>types: self.mermaid.types(view)
+    types-->>Self__fence: Self::fence('mermaid', &self.mermaid.types(view))

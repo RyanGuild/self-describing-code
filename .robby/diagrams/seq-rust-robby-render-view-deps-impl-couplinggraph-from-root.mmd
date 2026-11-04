@@ -1,0 +1,114 @@
+sequenceDiagram
+    autonumber
+    participant from_root as from_root()
+    participant get as get
+    participant values as values
+    participant is_container as is_container
+    participant is_under_fqn as is_under_fqn
+    participant filter as filter
+    participant collect as collect
+    participant iter as iter
+    participant clone as clone
+    participant map as map
+    participant BTreeMap__new as BTreeMap::new
+    participant subtree as subtree
+    participant is_callable as is_callable
+    participant under_root_fqn as under_root_fqn
+    participant owning_in_scope as owning_in_scope
+    participant as_str as as_str
+    participant stable_id as stable_id
+    participant entry as entry
+    participant or_insert_with as or_insert_with
+    participant or_default as or_default
+    participant is_empty as is_empty
+    participant Self__empty as Self::empty
+    participant find as find
+    participant filter_map as filter_map
+    participant copied as copied
+    participant starts_with as starts_with
+    participant any as any
+    participant build_coupling_tree as build_coupling_tree
+    participant finalize_edges as finalize_edges
+    participant into_values as into_values
+    participant cmp as cmp
+    participant then as then
+    participant sort_by as sort_by
+    participant Vec__new as Vec::new
+    from_root-->>get: doc.get(root)
+    from_root-->>values: doc .nodes .values()
+    from_root-->>is_container: is_container(node)
+    from_root-->>is_under_fqn: is_under_fqn(root_node, node)
+    from_root-->>filter: doc .nodes .values() .filter(|node| { is_container(node) && (node.id ...
+    from_root-->>collect: doc .nodes .values() .filter(|node| { is_container(node) && (node.id ...
+    from_root-->>iter: packages.iter()
+    from_root-->>clone: p.id.clone()
+    from_root-->>map: packages.iter().map(|p| p.id.clone())
+    from_root-->>collect: packages.iter().map(|p| p.id.clone()).collect()
+    from_root-->>BTreeMap__new: BTreeMap::new()
+    from_root-->>BTreeMap__new: BTreeMap::new()
+    from_root-->>subtree: doc.subtree(root)
+    loop doc.subtree(root)
+    from_root-->>is_callable: is_callable(node)
+    loop &node.edges
+    from_root-->>get: doc.get(&edge.to)
+    from_root-->>is_callable: is_callable(target)
+    from_root-->>under_root_fqn: under_root_fqn(root_node, target)
+    from_root-->>owning_in_scope: owning_in_scope(doc, &node.id, &package_scope)
+    from_root-->>owning_in_scope: owning_in_scope(doc, &target.id, &package_scope)
+    from_root-->>as_str: node.id.as_str()
+    from_root-->>stable_id: stable_id(node.id.as_str())
+    from_root-->>as_str: target.id.as_str()
+    from_root-->>stable_id: stable_id(target.id.as_str())
+    from_root-->>clone: from_sid.clone()
+    from_root-->>entry: participants.entry(from_sid.clone())
+    from_root-->>clone: node.id.clone()
+    from_root-->>clone: from_sid.clone()
+    from_root-->>clone: node.name.clone()
+    from_root-->>as_str: from_mod.id.as_str()
+    from_root-->>stable_id: stable_id(from_mod.id.as_str())
+    from_root-->>or_insert_with: participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn { i...
+    from_root-->>clone: to_sid.clone()
+    from_root-->>entry: participants.entry(to_sid.clone())
+    from_root-->>clone: target.id.clone()
+    from_root-->>clone: to_sid.clone()
+    from_root-->>clone: target.name.clone()
+    from_root-->>as_str: to_mod.id.as_str()
+    from_root-->>stable_id: stable_id(to_mod.id.as_str())
+    from_root-->>or_insert_with: participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn { id:...
+    alt from_sid != to_sid
+    from_root-->>entry: weights.entry((from_sid, to_sid))
+    from_root-->>or_default: weights.entry((from_sid, to_sid)).or_default()
+    end
+    end
+    end
+    from_root-->>is_empty: participants.is_empty()
+    alt participants.is_empty()
+    from_root-->>Self__empty: Self::empty()
+    from_root-->>from_root: return
+    end
+    from_root-->>values: participants .values()
+    from_root-->>iter: packages .iter()
+    from_root-->>as_str: m.id.as_str()
+    from_root-->>stable_id: stable_id(m.id.as_str())
+    from_root-->>find: packages .iter() .find(|m| stable_id(m.id.as_str()) == f.parent_stabl...
+    from_root-->>clone: m.fqn.clone()
+    from_root-->>map: packages .iter() .find(|m| stable_id(m.id.as_str()) == f.parent_stabl...
+    from_root-->>filter_map: participants .values() .filter_map(|f| { packages .iter() .find(|m| s...
+    from_root-->>collect: participants .values() .filter_map(|f| { packages .iter() .find(|m| s...
+    from_root-->>iter: packages .iter()
+    from_root-->>copied: packages .iter() .copied()
+    from_root-->>iter: owner_fqns .iter()
+    from_root-->>from_root: format!('{}::', p.fqn)
+    from_root-->>starts_with: fqn.starts_with(&format!('{}::', p.fqn))
+    from_root-->>any: owner_fqns .iter() .any(|fqn| fqn == &p.fqn || fqn.starts_with(&forma...
+    from_root-->>filter: packages .iter() .copied() .filter(|p| { owner_fqns .iter() .any(|fqn...
+    from_root-->>collect: packages .iter() .copied() .filter(|p| { owner_fqns .iter() .any(|fqn...
+    from_root-->>build_coupling_tree: build_coupling_tree(root_node, &tree_packages)
+    from_root-->>finalize_edges: finalize_edges(weights)
+    from_root-->>into_values: participants.into_values()
+    from_root-->>collect: participants.into_values().collect()
+    from_root-->>cmp: a.name.cmp(&b.name)
+    from_root-->>cmp: a.stable_id.cmp(&b.stable_id)
+    from_root-->>then: a.name.cmp(&b.name).then(a.stable_id.cmp(&b.stable_id))
+    from_root-->>sort_by: functions.sort_by(|a, b| a.name.cmp(&b.name).then(a.stable_id.cmp(&b....
+    from_root-->>Vec__new: Vec::new()

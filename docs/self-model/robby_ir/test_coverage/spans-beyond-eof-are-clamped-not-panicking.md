@@ -23,8 +23,9 @@ fn spans_beyond_eof_are_clamped_not_panicking() {
 sequenceDiagram
     autonumber
     participant spans_beyond_eof_are_clamped_not_panicking as spans_beyond_eof_are_clamped_not_panicking()
+    participant span as span
     participant file_coverage as file_coverage
-    spans_beyond_eof_are_clamped_not_panicking-->>spans_beyond_eof_are_clamped_not_panicking: 'fn a() {}'
+    spans_beyond_eof_are_clamped_not_panicking-->>span: span(source, 0, 10_000)
     spans_beyond_eof_are_clamped_not_panicking-->>file_coverage: file_coverage(FILE, source, &[span(source, 0, 10_000)])
     spans_beyond_eof_are_clamped_not_panicking-->>spans_beyond_eof_are_clamped_not_panicking: assert!(report.is_complete())
     spans_beyond_eof_are_clamped_not_panicking-->>spans_beyond_eof_are_clamped_not_panicking: assert_eq!(report.covered_bytes, source.len() as u32)
@@ -34,5 +35,11 @@ sequenceDiagram
 
 **Edges**
 
+- calls → [`robby_ir::test_coverage::span`](span.md)
 - calls → [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
+
+## References
+
+- calls → [`robby_ir::coverage`](../coverage/index.md) — file_coverage
+- calls → [`robby_ir::test_coverage`](index.md) — span
 

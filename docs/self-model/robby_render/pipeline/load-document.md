@@ -24,11 +24,18 @@ sequenceDiagram
     autonumber
     participant load_document as load_document()
     participant fs__read_to_string as fs::read_to_string
+    participant serde_json__from_str as serde_json::from_str
     participant Ok as Ok
     load_document-->>fs__read_to_string: fs::read_to_string(path)
+    load_document-->>load_document: ? (propagate)
+    load_document-->>serde_json__from_str: serde_json::from_str(&text)
     load_document-->>load_document: ? (propagate)
     load_document-->>Ok: Ok(serde_json::from_str(&text)?)
 ```
 
-3 steps · 0 observed · 3 possible only
+5 steps · 0 observed · 5 possible only
+
+## Referenced by
+
+- calls ← [`robby_render::pipeline::load`](load.md)
 

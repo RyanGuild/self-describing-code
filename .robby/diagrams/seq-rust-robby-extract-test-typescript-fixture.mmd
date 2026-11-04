@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant fixture as fixture()
+    participant PathBuf__from as PathBuf::from
+    participant join as join
+    fixture-->>fixture: env!('CARGO_MANIFEST_DIR')
+    fixture-->>PathBuf__from: PathBuf::from(env!('CARGO_MANIFEST_DIR'))
+    fixture-->>join: PathBuf::from(env!('CARGO_MANIFEST_DIR')).join('tests/fixtures/ts-mini')

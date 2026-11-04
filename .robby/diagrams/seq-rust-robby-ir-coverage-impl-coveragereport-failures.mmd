@@ -1,5 +1,14 @@
 sequenceDiagram
     autonumber
     participant failures as failures()
+    participant iter as iter
+    participant is_failure as is_failure
+    participant filter as filter
+    participant map as map
     participant flat_map as flat_map
+    failures-->>iter: self.files.iter()
+    failures-->>iter: f.gaps .iter()
+    failures-->>is_failure: g.reason.is_failure()
+    failures-->>filter: f.gaps .iter() .filter(|g| g.reason.is_failure())
+    failures-->>map: f.gaps .iter() .filter(|g| g.reason.is_failure()) .map(move |g| (f, g))
     failures-->>flat_map: self.files.iter().flat_map(|f| { f.gaps .iter() .filter(|g| g.reason....

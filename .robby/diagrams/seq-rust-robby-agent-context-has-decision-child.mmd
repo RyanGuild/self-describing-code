@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant has_decision_child as has_decision_child()
+    participant iter as iter
+    participant get as get
+    participant as_str as as_str
+    participant is_some_and as is_some_and
+    participant any as any
+    has_decision_child-->>iter: node.children.iter()
+    has_decision_child-->>get: doc.get(id)
+    has_decision_child-->>as_str: c.kind.as_str()
+    has_decision_child-->>is_some_and: doc.get(id) .is_some_and(|c| c.kind.as_str() == kind::agent::DECISION)
+    has_decision_child-->>any: node.children.iter().any(|id| { doc.get(id) .is_some_and(|c| c.kind.a...

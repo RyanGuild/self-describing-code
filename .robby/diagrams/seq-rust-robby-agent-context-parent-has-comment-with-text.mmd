@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant parent_has_comment_with_text as parent_has_comment_with_text()
+    participant as_ref as as_ref
+    participant get as get
+    participant and_then as and_then
+    participant iter as iter
+    participant as_str as as_str
+    participant as_deref as as_deref
+    participant Some as Some
+    participant is_some_and as is_some_and
+    participant any as any
+    parent_has_comment_with_text-->>as_ref: node.parent.as_ref()
+    parent_has_comment_with_text-->>get: doc.get(id)
+    parent_has_comment_with_text-->>and_then: node.parent.as_ref().and_then(|id| doc.get(id))
+    parent_has_comment_with_text-->>iter: parent.children.iter()
+    parent_has_comment_with_text-->>get: doc.get(id)
+    parent_has_comment_with_text-->>as_str: c.kind.as_str()
+    parent_has_comment_with_text-->>as_deref: c.docs.as_deref()
+    parent_has_comment_with_text-->>Some: Some(docs)
+    parent_has_comment_with_text-->>is_some_and: doc.get(id).is_some_and(|c| { c.kind.as_str() == kind::code::COMMENT ...
+    parent_has_comment_with_text-->>any: parent.children.iter().any(|id| { doc.get(id).is_some_and(|c| { c.kin...

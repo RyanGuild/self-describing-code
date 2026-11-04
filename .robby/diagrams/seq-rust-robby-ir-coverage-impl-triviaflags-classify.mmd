@@ -1,12 +1,3 @@
 sequenceDiagram
     autonumber
     participant classify as classify()
-    alt match (self.attribute, self.comment)
-    classify-->>classify: GapReason::Attribute
-    else (false, true)
-    classify-->>classify: GapReason::Comment
-    else (false, false)
-    classify-->>classify: GapReason::Whitespace
-    else (true, true)
-    classify-->>classify: GapReason::Trivia
-    end

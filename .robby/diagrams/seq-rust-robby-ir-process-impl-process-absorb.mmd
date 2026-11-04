@@ -1,21 +1,30 @@
 sequenceDiagram
     autonumber
     participant absorb as absorb()
+    participant iter as iter
+    participant any as any
+    participant clone as clone
     participant push as push
+    participant position as position
+    participant enumerate as enumerate
     loop &observed.participants
+    absorb-->>iter: self.participants.iter()
+    absorb-->>any: self.participants.iter().any(|q| q.id == p.id)
     alt !self.participants.iter().any(|q| q.id == p.id)
+    absorb-->>clone: p.clone()
     absorb-->>push: self.participants.push(p.clone())
     end
     end
     absorb-->>absorb: vec![false observed.steps.len()]
     loop &mut self.steps
-    alt let Some(idx) = observed.steps.iter().position(|o| { o.from == step.f...
-    absorb-->>absorb: step.observed = true
-    absorb-->>absorb: matched[idx] = true
+    absorb-->>iter: observed.steps.iter()
+    absorb-->>position: observed.steps.iter().position(|o| { o.from == step.from && o.to == s...
     end
-    end
+    absorb-->>iter: observed.steps.iter()
+    absorb-->>enumerate: observed.steps.iter().enumerate()
     loop observed.steps.iter().enumerate()
     alt !matched[idx]
+    absorb-->>clone: step.clone()
     absorb-->>push: self.steps.push(step.clone())
     end
     end

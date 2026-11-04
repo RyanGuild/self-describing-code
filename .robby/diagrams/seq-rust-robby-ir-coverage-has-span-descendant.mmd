@@ -2,6 +2,14 @@ sequenceDiagram
     autonumber
     participant has_span_descendant as has_span_descendant()
     participant get as get
+    participant iter as iter
+    participant is_some as is_some
+    participant is_some_and as is_some_and
     participant any as any
     has_span_descendant-->>get: doc.get(id)
+    has_span_descendant-->>iter: node.children.iter()
+    has_span_descendant-->>get: doc.get(child)
+    has_span_descendant-->>is_some: c.span.is_some()
+    has_span_descendant-->>is_some_and: doc.get(child).is_some_and(|c| c.span.is_some())
+    has_span_descendant-->>has_span_descendant: has_span_descendant(doc, child)
     has_span_descendant-->>any: node.children.iter().any(|child| { doc.get(child).is_some_and(|c| c.s...

@@ -25,9 +25,10 @@ fn spans_from_other_files_are_ignored() {
 sequenceDiagram
     autonumber
     participant spans_from_other_files_are_ignored as spans_from_other_files_are_ignored()
+    participant len as len
     participant Span__new as Span::new
     participant file_coverage as file_coverage
-    spans_from_other_files_are_ignored-->>spans_from_other_files_are_ignored: 'fn a() {}'
+    spans_from_other_files_are_ignored-->>len: source.len()
     spans_from_other_files_are_ignored-->>Span__new: Span::new('src/other.rs', source, 0, source.len() as u32)
     spans_from_other_files_are_ignored-->>file_coverage: file_coverage(FILE, source, &[other])
     spans_from_other_files_are_ignored-->>spans_from_other_files_are_ignored: assert!(!report.is_complete())
@@ -38,6 +39,11 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_extract::impl LineIndex::new`](../../robby_extract/index.md)
+- calls → [`robby_ir::kind::impl Kind::new`](../kind/index.md)
 - calls → [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
+
+## References
+
+- calls → [`robby_ir::coverage`](../coverage/index.md) — file_coverage
+- calls → [`robby_ir::kind`](../kind/index.md) — new
 

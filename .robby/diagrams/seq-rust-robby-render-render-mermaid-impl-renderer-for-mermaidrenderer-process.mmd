@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant process as process()
+    participant String__from as String::from
+    participant push_str as push_str
+    process-->>String__from: String::from('sequenceDiagram\n')
+    process-->>push_str: out.push_str(' autonumber\n')
+    loop &view.participants
+    process-->>process: writeln!( out, ' participant {} as {}', alias(&participant.id), crate...
+    end
+    loop &view.events
+    alt match event
+    process-->>push_str: out.push_str(' end\n')
+    else ProcessEvent::Else { label }
+    process-->>process: writeln!(out, ' else {}', crate::util::text(label))
+    else ProcessEvent::Begin { keyword, label }
+    process-->>process: writeln!(out, ' {keyword} {}', crate::util::text(label))
+    else ProcessEvent::Interaction { from, to, label, observed, .. }
+    process-->>process: writeln!( out, ' {}{}{}: {}', alias(from), arrow, alias(to), crate::u...
+    end
+    end

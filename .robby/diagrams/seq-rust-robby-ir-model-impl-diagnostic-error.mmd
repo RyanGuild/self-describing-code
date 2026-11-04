@@ -1,4 +1,6 @@
 sequenceDiagram
     autonumber
     participant error as error()
-    error-->>error: Self { severity: Severity::Error, code: code.into(), message: message...
+    participant into as into
+    error-->>into: code.into()
+    error-->>into: message.into()

@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant meta as meta()
+    participant String__new as String::new
+    participant push as push
+    participant lines as lines
+    meta-->>String__new: String::new()
+    meta-->>meta: writeln!(out, '| | |')
+    meta-->>meta: writeln!(out, '|---|---|')
+    meta-->>meta: writeln!(out, '| kind | `{}` |', meta.kind)
+    alt let Some(sig) = &meta.signature
+    meta-->>meta: writeln!(out, '| signature | `{}` |', cell(sig))
+    end
+    alt let Some(location) = &meta.location
+    meta-->>meta: writeln!(out, '| location | `{location}` |')
+    end
+    meta-->>meta: writeln!( out, '| provenance | {} · confidence {:.2} |', meta.provena...
+    meta-->>meta: writeln!(out, '| nodes | {} |', meta.node_count)
+    meta-->>push: out.push('\n')
+    alt let Some(docs) = &meta.docs
+    meta-->>lines: docs.lines()
+    loop docs.lines()
+    meta-->>meta: writeln!(out, '> {line}')
+    end
+    meta-->>push: out.push('\n')
+    end

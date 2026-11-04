@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant find_entrypoints as find_entrypoints()
+    participant collect as collect
+    participant sort_by as sort_by
+    find_entrypoints-->>collect: doc .nodes .values() .filter(|node| { node.name == 'main' && node.kin...
+    find_entrypoints-->>sort_by: entries.sort_by(|a, b| a.fqn.cmp(&b.fqn).then_with(|| a.id.as_str().c...
+    find_entrypoints-->>collect: entries.into_iter().map(|n| n.id.clone()).collect()

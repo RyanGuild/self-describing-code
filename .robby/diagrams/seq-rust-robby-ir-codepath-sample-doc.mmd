@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    participant sample_doc as sample_doc()
+    participant Document__new as Document::new
+    participant NodeId__symbol as NodeId::symbol
+    participant Node__new as Node::new
+    participant Edge__new as Edge::new
+    participant push as push
+    participant insert as insert
+    sample_doc-->>Document__new: Document::new('test')
+    sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::main')
+    sample_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::main'), kind::code::FUNCTION...
+    sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
+    sample_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKind::Calls)
+    sample_doc-->>push: main.edges .push(Edge::new(NodeId::symbol('rust', 'demo::a'), EdgeKin...
+    sample_doc-->>insert: doc.insert(main)
+    sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
+    sample_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::a'), kind::code::FUNCTION, '...
+    sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::b')
+    sample_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeKind::Calls)
+    sample_doc-->>push: a.edges .push(Edge::new(NodeId::symbol('rust', 'demo::b'), EdgeKind::...
+    sample_doc-->>insert: doc.insert(a)
+    sample_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::b')
+    sample_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::b'), kind::code::FUNCTION, '...
+    sample_doc-->>insert: doc.insert(Node::new( NodeId::symbol('rust', 'demo::b'), kind::code::...

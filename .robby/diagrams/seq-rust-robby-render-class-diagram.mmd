@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant class_diagram as class_diagram()
+    participant TypeModel__from_module as TypeModel::from_module
+    participant is_empty as is_empty
+    participant String__from as String::from
+    participant types as types
+    class_diagram-->>TypeModel__from_module: TypeModel::from_module(doc, root)
+    class_diagram-->>is_empty: model.is_empty()
+    alt model.is_empty()
+    class_diagram-->>String__from: String::from('classDiagram\n')
+    class_diagram-->>class_diagram: return
+    end
+    class_diagram-->>types: MermaidRenderer.types(&model)

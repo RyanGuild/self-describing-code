@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant emit_container as emit_container()
+    participant repeat as repeat
+    participant get as get
+    emit_container-->>repeat: ' '.repeat(depth)
+    emit_container-->>emit_container: writeln!( out, '{indent}subgraph {}[\'{}\']', stable_id(node.id.as_st...
+    emit_container-->>emit_container: writeln!(out, '{indent} direction TB')
+    emit_container-->>repeat: ' '.repeat(depth + 1)
+    loop &node.children
+    emit_container-->>get: doc.get(child_id)
+    alt is_container(child)
+    emit_container-->>emit_container: emit_container(out, doc, child, depth + 1)
+    else else
+    alt is_type(child)
+    emit_container-->>emit_container: writeln!( out, '{child_indent}{}{}\'{}\'{}', stable_id(child.id.as_st...
+    end
+    end
+    end
+    emit_container-->>emit_container: writeln!(out, '{indent}end')

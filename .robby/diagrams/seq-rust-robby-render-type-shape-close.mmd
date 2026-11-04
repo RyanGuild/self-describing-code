@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant type_shape_close as type_shape_close()
+    alt match node.kind.as_str()
+    type_shape_close-->>type_shape_close: ']'
+    else kind::code::ENUM
+    type_shape_close-->>type_shape_close: '}}'
+    else kind::code::TRAIT
+    type_shape_close-->>type_shape_close: '])'
+    else kind::code::UNION
+    type_shape_close-->>type_shape_close: ']'
+    else _
+    type_shape_close-->>type_shape_close: ']'
+    end

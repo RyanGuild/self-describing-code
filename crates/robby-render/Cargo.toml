@@ -11,6 +11,9 @@ robby-ir.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 anyhow.workspace = true
+ascii-dag.workspace = true
+termtree.workspace = true
+unicode-width.workspace = true
 
 [dev-dependencies]
 robby-extract.workspace = true

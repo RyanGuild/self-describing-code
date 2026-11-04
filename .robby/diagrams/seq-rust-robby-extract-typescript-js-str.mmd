@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant js_str as js_str()
+    participant as_str as as_str
+    participant unwrap_or as unwrap_or
+    js_str-->>as_str: value.as_str()
+    js_str-->>unwrap_or: value.as_str().unwrap_or('')

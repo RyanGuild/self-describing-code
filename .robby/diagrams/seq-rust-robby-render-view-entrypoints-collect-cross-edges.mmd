@@ -1,0 +1,36 @@
+sequenceDiagram
+    autonumber
+    participant collect_cross_edges as collect_cross_edges()
+    participant BTreeSet__new as BTreeSet::new
+    participant Vec__new as Vec::new
+    participant get as get
+    participant contains as contains
+    participant clone as clone
+    participant insert as insert
+    participant push as push
+    participant as_str as as_str
+    participant cmp as cmp
+    participant then_with as then_with
+    participant sort_by as sort_by
+    collect_cross_edges-->>BTreeSet__new: BTreeSet::new()
+    collect_cross_edges-->>Vec__new: Vec::new()
+    loop placed
+    collect_cross_edges-->>get: doc.get(from_id)
+    loop &from.edges
+    collect_cross_edges-->>contains: placed.contains(&edge.to)
+    collect_cross_edges-->>clone: from_id.clone()
+    collect_cross_edges-->>clone: edge.to.clone()
+    collect_cross_edges-->>contains: tree_edges.contains(&key)
+    collect_cross_edges-->>clone: key.clone()
+    collect_cross_edges-->>insert: seen.insert(key.clone())
+    collect_cross_edges-->>push: cross.push(key)
+    end
+    end
+    collect_cross_edges-->>as_str: a.0.as_str()
+    collect_cross_edges-->>as_str: b.0.as_str()
+    collect_cross_edges-->>cmp: a.0.as_str() .cmp(b.0.as_str())
+    collect_cross_edges-->>as_str: a.1.as_str()
+    collect_cross_edges-->>as_str: b.1.as_str()
+    collect_cross_edges-->>cmp: a.1.as_str().cmp(b.1.as_str())
+    collect_cross_edges-->>then_with: a.0.as_str() .cmp(b.0.as_str()) .then_with(|| a.1.as_str().cmp(b.1.as...
+    collect_cross_edges-->>sort_by: cross.sort_by(|a, b| { a.0.as_str() .cmp(b.0.as_str()) .then_with(|| ...

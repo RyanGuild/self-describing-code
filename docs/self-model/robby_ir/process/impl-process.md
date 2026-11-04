@@ -66,6 +66,24 @@ impl Process {
 }
 ```
 
+## References
+
+- calls → [`robby_render::report`](../../robby_render/report/index.md) — push
+
+## Referenced by
+
+- calls ← [`robby_extract::rust::build_process_sig`](../../robby_extract/rust/build-process-sig.md)
+- calls ← [`robby_extract::rust::impl ProcBuilder<'_, '_>::emit`](../../robby_extract/rust/index.md)
+- calls ← [`robby_extract::typescript::build_function_process`](../../robby_extract/typescript/build-function-process.md)
+- calls ← [`robby_extract::typescript::emit_variable`](../../robby_extract/typescript/emit-variable.md)
+- calls ← [`robby_extract::typescript::ensure_participant`](../../robby_extract/typescript/ensure-participant.md)
+- calls ← [`robby_ir::process::impl Default for Process::default`](index.md)
+- calls ← [`robby_render::test_markdown::fixture`](../../robby_render/test_markdown/fixture.md)
+- calls ← [`robby_render::test_render::process`](../../robby_render/test_render/process.md)
+- calls ← [`robby_render::test_web::demo_doc`](../../robby_render/test_web/demo-doc.md)
+- calls ← [`robby_render::view::execution::add_callable`](../../robby_render/view/execution/add-callable.md)
+- calls ← [`robby_render::view::execution::from_code_path`](../../robby_render/view/execution/from-code-path.md)
+
 ### `new`
 
 | | |
@@ -88,10 +106,17 @@ pub fn new() -> Self {
 sequenceDiagram
     autonumber
     participant new as new()
-    new-->>new: Self { participants: Vec::new(), steps: Vec::new(), }
+    participant Vec__new as Vec::new
+    new-->>Vec__new: Vec::new()
+    new-->>Vec__new: Vec::new()
 ```
 
-1 steps · 0 observed · 1 possible only
+2 steps · 0 observed · 2 possible only
+
+**Edges**
+
+- calls → [`robby_ir::process::impl Process::new`](index.md)
+- calls → [`robby_ir::process::impl Process::new`](index.md)
 
 ### `participant`
 
@@ -125,17 +150,26 @@ sequenceDiagram
     autonumber
     participant participant as participant()
     participant into as into
+    participant iter as iter
+    participant position as position
     participant push as push
+    participant len as len
     participant-->>into: id.into()
+    participant-->>iter: self.participants.iter()
+    participant-->>position: self.participants.iter().position(|p| p.id == id)
     alt let Some(idx) = self.participants.iter().position(|p| p.id == id)
-    participant-->>participant: idx
     participant-->>participant: return
     end
+    participant-->>into: label.into()
     participant-->>push: self.participants.push(Participant { id, label: label.into(), kind, })
-    participant-->>participant: self.participants.len() - 1
+    participant-->>len: self.participants.len()
 ```
 
-5 steps · 0 observed · 5 possible only
+7 steps · 0 observed · 7 possible only
+
+**Edges**
+
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 
 ### `step`
 
@@ -161,6 +195,10 @@ sequenceDiagram
 ```
 
 1 steps · 0 observed · 1 possible only
+
+**Edges**
+
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 
 ### `absorb`
 
@@ -213,25 +251,39 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant absorb as absorb()
+    participant iter as iter
+    participant any as any
+    participant clone as clone
     participant push as push
+    participant position as position
+    participant enumerate as enumerate
     loop &observed.participants
+    absorb-->>iter: self.participants.iter()
+    absorb-->>any: self.participants.iter().any(|q| q.id == p.id)
     alt !self.participants.iter().any(|q| q.id == p.id)
+    absorb-->>clone: p.clone()
     absorb-->>push: self.participants.push(p.clone())
     end
     end
     absorb-->>absorb: vec![false observed.steps.len()]
     loop &mut self.steps
-    alt let Some(idx) = observed.steps.iter().position(|o| { o.from == step.f...
-    absorb-->>absorb: step.observed = true
-    absorb-->>absorb: matched[idx] = true
+    absorb-->>iter: observed.steps.iter()
+    absorb-->>position: observed.steps.iter().position(|o| { o.from == step.from && o.to == s...
     end
-    end
+    absorb-->>iter: observed.steps.iter()
+    absorb-->>enumerate: observed.steps.iter().enumerate()
     loop observed.steps.iter().enumerate()
     alt !matched[idx]
+    absorb-->>clone: step.clone()
     absorb-->>push: self.steps.push(step.clone())
     end
     end
 ```
 
-5 steps · 0 observed · 5 possible only
+11 steps · 0 observed · 11 possible only
+
+**Edges**
+
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 

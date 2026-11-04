@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant prefetchEntrypoints as prefetchEntrypoints()
+    participant fetchJson as fetchJson
+    participant set as set
+    participant error as error
+    alt if
+    return-->>caller: 
+    end
+    self-->>fetchJson: 
+    self-->>await: 
+    self-->>set: 
+    alt catch
+    self-->>error: 
+    end

@@ -6,77 +6,15 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn flowchart(doc: &Document, root: &NodeId) -> String` |
-| location | [`crates/robby-render/src/lib.rs:101`](../../../crates/robby-render/src/lib.rs#L101) |
+| location | [`crates/robby-render/src/lib.rs:37`](../../../crates/robby-render/src/lib.rs#L37) |
 | provenance | extractor · confidence 1.00 |
 
-> Render a module overview as a Mermaid `flowchart`.
-> 
-> This shows the *structure* of one module: its items and how they reference
-> each other. Imports, fields, variants and impl bodies are in the map but not
-> in this view — they are detail, reachable by drilling down. Presentation is
-> progressive; representation is not.
+> Legacy sibling inventory flowchart.
 
 ```rust
-/// Render a module overview as a Mermaid `flowchart`.
-///
-/// This shows the *structure* of one module: its items and how they reference
-/// each other. Imports, fields, variants and impl bodies are in the map but not
-/// in this view — they are detail, reachable by drilling down. Presentation is
-/// progressive; representation is not.
+/// Legacy sibling inventory flowchart.
 pub fn flowchart(doc: &Document, root: &NodeId) -> String {
-    let Some(root_node) = doc.get(root) else {
-        return String::from("flowchart TD\n");
-    };
-
-    let visible: Vec<&Node> = root_node
-        .children
-        .iter()
-        .filter_map(|child| doc.get(child))
-        .filter(|node| is_structural(&node.kind))
-        .collect();
-
-    let mut out = String::from("flowchart TD\n");
-    let _ = writeln!(
-        out,
-        "    subgraph {}[\"{}\"]",
-        stable_id(root.as_str()),
-        text(&label(root_node))
-    );
-    out.push_str("        direction TB\n");
-    for node in &visible {
-        let _ = writeln!(
-            out,
-            "        {}[\"{}\"]",
-            stable_id(node.id.as_str()),
-            text(&label(node))
-        );
-    }
-    out.push_str("    end\n");
-
-    let ids: Vec<&NodeId> = visible.iter().map(|n| &n.id).collect();
-    let mut edges: Vec<(String, String, EdgeKind, bool)> = Vec::new();
-    for node in &visible {
-        for edge in &node.edges {
-            if !ids.contains(&&edge.to) {
-                continue;
-            }
-            edges.push((
-                stable_id(node.id.as_str()),
-                stable_id(edge.to.as_str()),
-                edge.kind,
-                edge.resolved,
-            ));
-        }
-    }
-    edges.sort();
-    edges.dedup();
-
-    for (from, to, edge_kind, resolved) in edges {
-        let arrow = if resolved { "-->" } else { "-.->" };
-        let _ = writeln!(out, "    {from} {arrow}|{}| {to}", edge_label(edge_kind));
-    }
-
-    out
+    MermaidRenderer.sibling_graph(&SiblingGraph::from_root(doc, root))
 }
 ```
 
@@ -84,51 +22,26 @@ pub fn flowchart(doc: &Document, root: &NodeId) -> String {
 sequenceDiagram
     autonumber
     participant flowchart as flowchart()
-    participant get as get
-    participant collect as collect
-    participant String__from as String::from
-    participant push_str as push_str
-    participant Vec__new as Vec::new
-    participant push as push
-    participant sort as sort
-    participant dedup as dedup
-    flowchart-->>get: doc.get(root)
-    flowchart-->>collect: root_node .children .iter() .filter_map(|child| doc.get(child)) .filt...
-    flowchart-->>String__from: String::from('flowchart TD\n')
-    flowchart-->>flowchart: writeln!( out, ' subgraph {}[\'{}\']', stable_id(root.as_str()), text...
-    flowchart-->>push_str: out.push_str(' direction TB\n')
-    loop &visible
-    flowchart-->>flowchart: writeln!( out, ' {}[\'{}\']', stable_id(node.id.as_str()), text(&labe...
-    end
-    flowchart-->>push_str: out.push_str(' end\n')
-    flowchart-->>collect: visible.iter().map(|n| &n.id).collect()
-    flowchart-->>Vec__new: Vec::new()
-    loop &visible
-    loop &node.edges
-    alt !ids.contains(&&edge.to)
-    flowchart-->>flowchart: continue
-    end
-    flowchart-->>push: edges.push(( stable_id(node.id.as_str()), stable_id(edge.to.as_str())...
-    end
-    end
-    flowchart-->>sort: edges.sort()
-    flowchart-->>dedup: edges.dedup()
-    loop edges
-    alt resolved
-    flowchart-->>flowchart: '-->'
-    else else
-    flowchart-->>flowchart: '-.->'
-    end
-    flowchart-->>flowchart: writeln!(out, ' {from} {arrow}|{}| {to}', edge_label(edge_kind))
-    end
-    flowchart-->>flowchart: out
+    participant SiblingGraph__from_root as SiblingGraph::from_root
+    participant sibling_graph as sibling_graph
+    flowchart-->>SiblingGraph__from_root: SiblingGraph::from_root(doc, root)
+    flowchart-->>sibling_graph: MermaidRenderer.sibling_graph(&SiblingGraph::from_root(doc, root))
 ```
 
-17 steps · 0 observed · 17 possible only
+2 steps · 0 observed · 2 possible only
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Document::get`](../robby_ir/model/index.md)
-- calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../robby_ir/kind/index.md)
-- calls → [`robby_extract::impl LineIndex::new`](../robby_extract/index.md)
+- calls → [`robby_render::view::deps::impl CouplingGraph::from_root`](view/deps/index.md)
+- calls → [`robby_render::render::Renderer::sibling_graph`](render/index.md)
+
+## References
+
+- calls → [`robby_render::render`](render/index.md) — sibling_graph
+- calls → [`robby_render::view::deps`](view/deps/index.md) — from_root
+
+## Referenced by
+
+- calls ← [`robby_render::pipeline::render_files`](pipeline/render-files.md)
+- calls ← [`robby_render::test_render::flowchart_clusters_modules`](test_render/flowchart-clusters-modules.md)
 

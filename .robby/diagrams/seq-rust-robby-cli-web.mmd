@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant web as web()
+    participant pipeline__load as pipeline::load
+    participant robby_render__write_site as robby_render::write_site
+    participant Ok as Ok
+    web-->>pipeline__load: pipeline::load(ir, source_root)
+    web-->>web: ? (propagate)
+    web-->>robby_render__write_site: robby_render::write_site(&loaded.document, &loaded.sources, out)
+    web-->>web: ? (propagate)
+    web-->>web: println!( 'wrote {count} frame(s) to {}\nserve with: cd apps/site && ...
+    web-->>Ok: Ok(ExitCode::SUCCESS)

@@ -19,9 +19,25 @@ fn workspace() -> PathBuf {
 sequenceDiagram
     autonumber
     participant workspace as workspace()
+    participant PathBuf__from as PathBuf::from
     participant join as join
+    workspace-->>workspace: env!('CARGO_MANIFEST_DIR')
+    workspace-->>PathBuf__from: PathBuf::from(env!('CARGO_MANIFEST_DIR'))
     workspace-->>join: PathBuf::from(env!('CARGO_MANIFEST_DIR')).join('../..')
 ```
 
-1 steps · 0 observed · 1 possible only
+3 steps · 0 observed · 3 possible only
+
+**Edges**
+
+- calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
+
+## References
+
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
+
+## Referenced by
+
+- calls ← [`robby_render::test_tree::pages`](pages.md)
+- calls ← [`robby_render::workspace_dependencies`](../workspace-dependencies.md)
 

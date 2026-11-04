@@ -28,8 +28,10 @@ sequenceDiagram
     autonumber
     participant report_embeds_source_and_diagram_together as report_embeds_source_and_diagram_together()
     participant fixture as fixture
+    participant Some as Some
     participant report as report
     report_embeds_source_and_diagram_together-->>fixture: fixture()
+    report_embeds_source_and_diagram_together-->>Some: Some(&sources)
     report_embeds_source_and_diagram_together-->>report: report(&doc, None, Some(&sources))
     report_embeds_source_and_diagram_together-->>report_embeds_source_and_diagram_together: assert!(out.contains('demo::a'))
     report_embeds_source_and_diagram_together-->>report_embeds_source_and_diagram_together: assert!(out.contains('pub fn a() {'), 'source slice is embedded')
@@ -38,10 +40,15 @@ sequenceDiagram
     report_embeds_source_and_diagram_together-->>report_embeds_source_and_diagram_together: assert!(out.contains('> Does a thing.'))
 ```
 
-7 steps · 0 observed · 7 possible only
+8 steps · 0 observed · 8 possible only
 
 **Edges**
 
 - calls → [`robby_render::test_markdown::fixture`](fixture.md)
-- calls → [`robby_cli::report`](../../robby_cli/report.md)
+- calls → [`robby_render::markdown::report`](../markdown/report.md)
+
+## References
+
+- calls → [`robby_render::markdown`](../markdown/index.md) — report
+- calls → [`robby_render::test_markdown`](index.md) — fixture
 

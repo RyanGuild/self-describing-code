@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant clamp_highlights as clamp_highlights()
+    participant retain_mut as retain_mut
+    alt h.start > h.end
+    clamp_highlights-->>clamp_highlights: return
+    end
+    clamp_highlights-->>retain_mut: highlights.retain_mut(|h| { if h.end > len { h.end = len } if h.star...

@@ -1,5 +1,7 @@
 sequenceDiagram
     autonumber
     participant is_module as is_module()
+    participant as_str as as_str
     participant is_module_kind as is_module_kind
+    is_module-->>as_str: node.kind.as_str()
     is_module-->>is_module_kind: is_module_kind(node.kind.as_str())

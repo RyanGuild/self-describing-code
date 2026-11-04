@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn report(     ir: &std::path::Path,     source_root: &std::path::Path,     out: Option<PathBuf>, ) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:203`](../../../crates/robby-cli/src/main.rs#L203) |
+| location | [`crates/robby-cli/src/main.rs:344`](../../../crates/robby-cli/src/main.rs#L344) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -59,4 +59,12 @@ sequenceDiagram
 
 - calls → [`robby_render::pipeline::load`](../robby_render/pipeline/load.md)
 - calls → [`robby_render::pipeline::write_report`](../robby_render/pipeline/write-report.md)
+
+## References
+
+- calls → [`robby_render::pipeline`](../robby_render/pipeline/index.md) — load, write_report
+
+## Referenced by
+
+- calls ← [`robby_cli::run`](run.md)
 

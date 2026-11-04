@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant execution_process as execution_process()
+    participant CodePath__from_entry as CodePath::from_entry
+    participant from_code_path as from_code_path
+    execution_process-->>CodePath__from_entry: CodePath::from_entry(doc, root, DEFAULT_MAX_DEPTH)
+    execution_process-->>execution_process: ? (propagate)
+    execution_process-->>from_code_path: from_code_path(doc, &path)

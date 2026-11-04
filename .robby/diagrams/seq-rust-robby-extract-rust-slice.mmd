@@ -1,0 +1,9 @@
+sequenceDiagram
+    autonumber
+    participant slice as slice()
+    participant get as get
+    participant unwrap_or as unwrap_or
+    participant to_owned as to_owned
+    slice-->>get: ctx.source .get(span.start.byte as usize..span.end.byte as usize)
+    slice-->>unwrap_or: ctx.source .get(span.start.byte as usize..span.end.byte as usize) .un...
+    slice-->>to_owned: ctx.source .get(span.start.byte as usize..span.end.byte as usize) .un...

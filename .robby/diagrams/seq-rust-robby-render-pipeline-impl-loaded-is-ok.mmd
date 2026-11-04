@@ -1,4 +1,9 @@
 sequenceDiagram
     autonumber
     participant is_ok as is_ok()
-    is_ok-->>is_ok: self.coverage.is_complete() && !self .diagnostics .iter() .any(|d| d....
+    participant is_complete as is_complete
+    participant iter as iter
+    participant any as any
+    is_ok-->>is_complete: self.coverage.is_complete()
+    is_ok-->>iter: self .diagnostics .iter()
+    is_ok-->>any: self .diagnostics .iter() .any(|d| d.severity == Severity::Error)

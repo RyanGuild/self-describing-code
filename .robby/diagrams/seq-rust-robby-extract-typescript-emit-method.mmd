@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    participant emit_method as emit_method()
+    participant property_key_name as property_key_name
+    participant oxc_span as oxc_span
+    participant item_node as item_node
+    participant build_function_process as build_function_process
+    participant Some as Some
+    participant merge as merge
+    emit_method-->>property_key_name: property_key_name(&method.key)
+    emit_method-->>emit_method: format!('{class_fqn}/{name}')
+    emit_method-->>oxc_span: oxc_span(method.span, ctx)
+    emit_method-->>item_node: item_node(kind::code::METHOD, &fqn, oxc_span(method.span, ctx), parent)
+    emit_method-->>build_function_process: build_function_process( &method.value, &fqn, pending, ctx, )
+    emit_method-->>Some: Some(build_function_process( &method.value, &fqn, pending, ctx, ))
+    emit_method-->>merge: doc.merge(node)

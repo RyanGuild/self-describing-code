@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant line_index_handles_non_ascii as line_index_handles_non_ascii()
+    participant LineIndex__new as LineIndex::new
+    participant byte as byte
+    line_index_handles_non_ascii-->>LineIndex__new: LineIndex::new(source)
+    line_index_handles_non_ascii-->>byte: index.byte(LineColumn { line: 2, column: 0, })
+    line_index_handles_non_ascii-->>line_index_handles_non_ascii: assert_eq!(line_two, source.find('fn a').unwrap() as u32)
+    line_index_handles_non_ascii-->>byte: index.byte(LineColumn { line: 1, column: 5, })
+    line_index_handles_non_ascii-->>line_index_handles_non_ascii: assert_eq!(after_e_acute, 6)

@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant step_tag as step_tag()
+    alt match kind
+    step_tag-->>step_tag: 'call'
+    else StepKind::Return
+    step_tag-->>step_tag: 'return'
+    else StepKind::Signal
+    step_tag-->>step_tag: 'signal'
+    else StepKind::Decision
+    step_tag-->>step_tag: 'decision'
+    else StepKind::Note
+    step_tag-->>step_tag: 'note'
+    end

@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant impl_methods as impl_methods()
+    participant iter as iter
+    participant get as get
+    participant filter_map as filter_map
+    participant as_str as as_str
+    participant filter as filter
+    participant text as text
+    participant map as map
+    participant collect as collect
+    participant sort as sort
+    impl_methods-->>iter: impl_node .children .iter()
+    impl_methods-->>get: doc.get(id)
+    impl_methods-->>filter_map: impl_node .children .iter() .filter_map(|id| doc.get(id))
+    impl_methods-->>as_str: node.kind.as_str()
+    impl_methods-->>filter: impl_node .children .iter() .filter_map(|id| doc.get(id)) .filter(|no...
+    impl_methods-->>text: text(&node.name)
+    impl_methods-->>map: impl_node .children .iter() .filter_map(|id| doc.get(id)) .filter(|no...
+    impl_methods-->>collect: impl_node .children .iter() .filter_map(|id| doc.get(id)) .filter(|no...
+    impl_methods-->>sort: methods.sort()

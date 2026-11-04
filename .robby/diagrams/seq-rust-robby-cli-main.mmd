@@ -1,9 +1,8 @@
 sequenceDiagram
     autonumber
     participant main as main()
+    participant run as run
+    main-->>run: run()
     alt match run()
-    main-->>main: code
-    else Err(err)
     main-->>main: eprintln!('error: {err: }')
-    main-->>main: ExitCode::FAILURE
     end

@@ -1,0 +1,11 @@
+sequenceDiagram
+    autonumber
+    participant show_collected as show_collected()
+    participant select_opts as select_opts
+    participant collect as collect
+    participant TuiRenderer__new as TuiRenderer::new
+    participant render_report as render_report
+    show_collected-->>select_opts: opts.select_opts()
+    show_collected-->>collect: collect(doc, node, sources, &opts.select_opts())
+    show_collected-->>TuiRenderer__new: TuiRenderer::new(opts.width)
+    show_collected-->>render_report: TuiRenderer::new(opts.width).render_report(&views)

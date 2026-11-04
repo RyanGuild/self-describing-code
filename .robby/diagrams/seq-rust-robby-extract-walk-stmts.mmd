@@ -13,6 +13,7 @@ sequenceDiagram
     walk_stmts-->>span_of: span_of(local, builder.ctx)
     walk_stmts-->>emit: builder.emit( &builder.me.clone(), label_of(builder.ctx, span.clone()...
     end
+    else Stmt::Expr(expr, _)
     walk_stmts-->>walk_expr: walk_expr(builder, expr)
     else Stmt::Macro(m)
     walk_stmts-->>span_of: span_of(m, builder.ctx)

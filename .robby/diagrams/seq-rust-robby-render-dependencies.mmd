@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant dependencies as dependencies()
+    participant PackageStructure__from_root as PackageStructure::from_root
+    participant is_empty as is_empty
+    participant String__from as String::from
+    participant package_deps as package_deps
+    dependencies-->>PackageStructure__from_root: PackageStructure::from_root(doc, root)
+    dependencies-->>is_empty: graph.is_empty()
+    alt graph.is_empty()
+    dependencies-->>String__from: String::from('flowchart TB\n')
+    dependencies-->>dependencies: return
+    end
+    dependencies-->>package_deps: MermaidRenderer.package_deps(&graph)

@@ -36,5 +36,10 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_render::test_markdown::fixture`](fixture.md)
-- calls → [`robby_cli::report`](../../robby_cli/report.md)
+- calls → [`robby_render::markdown::report`](../markdown/report.md)
+
+## References
+
+- calls → [`robby_render::markdown`](../markdown/index.md) — report
+- calls → [`robby_render::test_markdown`](index.md) — fixture
 

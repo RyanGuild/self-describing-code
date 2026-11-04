@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:389`](../../../../crates/robby-ir/src/model.rs#L389) |
+| location | [`crates/robby-ir/src/model.rs:425`](../../../../crates/robby-ir/src/model.rs#L425) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -35,13 +35,17 @@ impl Diagnostic {
 }
 ```
 
+## Referenced by
+
+- calls ← [`robby_ir::model::validate`](validate.md)
+
 ### `error`
 
 | | |
 |---|---|
 | kind | `code.method` |
 | signature | `fn error(2)` |
-| location | [`crates/robby-ir/src/model.rs:390`](../../../../crates/robby-ir/src/model.rs#L390) |
+| location | [`crates/robby-ir/src/model.rs:426`](../../../../crates/robby-ir/src/model.rs#L426) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -59,10 +63,12 @@ pub fn error(code: impl Into<String>, message: impl Into<String>) -> Self {
 sequenceDiagram
     autonumber
     participant error as error()
-    error-->>error: Self { severity: Severity::Error, code: code.into(), message: message...
+    participant into as into
+    error-->>into: code.into()
+    error-->>into: message.into()
 ```
 
-1 steps · 0 observed · 1 possible only
+2 steps · 0 observed · 2 possible only
 
 ### `warning`
 
@@ -70,7 +76,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn warning(2)` |
-| location | [`crates/robby-ir/src/model.rs:399`](../../../../crates/robby-ir/src/model.rs#L399) |
+| location | [`crates/robby-ir/src/model.rs:435`](../../../../crates/robby-ir/src/model.rs#L435) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -88,10 +94,12 @@ pub fn warning(code: impl Into<String>, message: impl Into<String>) -> Self {
 sequenceDiagram
     autonumber
     participant warning as warning()
-    warning-->>warning: Self { severity: Severity::Warning, code: code.into(), message: messa...
+    participant into as into
+    warning-->>into: code.into()
+    warning-->>into: message.into()
 ```
 
-1 steps · 0 observed · 1 possible only
+2 steps · 0 observed · 2 possible only
 
 ### `about`
 
@@ -99,7 +107,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn about(2)` |
-| location | [`crates/robby-ir/src/model.rs:408`](../../../../crates/robby-ir/src/model.rs#L408) |
+| location | [`crates/robby-ir/src/model.rs:444`](../../../../crates/robby-ir/src/model.rs#L444) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -113,8 +121,10 @@ pub fn about(mut self, node: impl Into<NodeId>) -> Self {
 sequenceDiagram
     autonumber
     participant about as about()
-    about-->>about: self.node = Some(node.into())
-    about-->>about: self
+    participant into as into
+    participant Some as Some
+    about-->>into: node.into()
+    about-->>Some: Some(node.into())
 ```
 
 2 steps · 0 observed · 2 possible only

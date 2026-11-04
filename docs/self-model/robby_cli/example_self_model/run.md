@@ -72,7 +72,11 @@ sequenceDiagram
     participant pipeline__write_document as pipeline::write_document
     participant pipeline__write_report as pipeline::write_report
     participant pipeline__render_files as pipeline::render_files
+    participant is_ok as is_ok
     participant Ok as Ok
+    participant iter as iter
+    participant filter as filter
+    participant failures as failures
     run-->>Args__parse: Args::parse()
     alt match &args.ir
     run-->>pipeline__load: pipeline::load(ir, &args.root)
@@ -96,13 +100,17 @@ sequenceDiagram
     run-->>pipeline__render_files: pipeline::render_files(&loaded.document, &args.diagrams)
     run-->>run: ? (propagate)
     run-->>run: println!('wrote {count} diagram(s) to {}', args.diagrams.display())
+    run-->>is_ok: loaded.is_ok()
     alt loaded.is_ok()
     run-->>Ok: Ok(ExitCode::SUCCESS)
     run-->>run: return
     end
+    run-->>iter: loaded .diagnostics .iter()
+    run-->>filter: loaded .diagnostics .iter() .filter(|d| d.severity == robby_ir::Sever...
     loop loaded .diagnostics .iter() .filter(|d| d.severity == robby_ir::Sever...
     run-->>run: eprintln!('[{}] {}', diagnostic.code, diagnostic.message)
     end
+    run-->>failures: loaded.coverage.failures()
     loop loaded.coverage.failures()
     run-->>run: eprintln!('unclaimed at {} {:?}', gap.span.location(), gap.preview)
     end
@@ -110,14 +118,28 @@ sequenceDiagram
     run-->>Ok: Ok(ExitCode::FAILURE)
 ```
 
-23 steps · 0 observed · 23 possible only
+27 steps · 0 observed · 27 possible only
 
 **Edges**
 
+- calls → [`robby_agent::model::impl Verdict::parse`](../../robby_agent/model/index.md)
 - calls → [`robby_render::pipeline::load`](../../robby_render/pipeline/load.md)
 - calls → [`robby_cli::extract`](../extract.md)
 - calls → [`robby_render::pipeline::from_document`](../../robby_render/pipeline/from-document.md)
 - calls → [`robby_render::pipeline::write_document`](../../robby_render/pipeline/write-document.md)
 - calls → [`robby_render::pipeline::write_report`](../../robby_render/pipeline/write-report.md)
 - calls → [`robby_render::pipeline::render_files`](../../robby_render/pipeline/render-files.md)
+- calls → [`robby_render::pipeline::impl Loaded::is_ok`](../../robby_render/pipeline/index.md)
+- calls → [`robby_ir::coverage::impl CoverageReport::failures`](../../robby_ir/coverage/index.md)
+
+## References
+
+- calls → [`robby_agent::model`](../../robby_agent/model/index.md) — parse
+- calls → [`robby_cli`](../index.md) — extract
+- calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — failures
+- calls → [`robby_render::pipeline`](../../robby_render/pipeline/index.md) — 6 items
+
+## Referenced by
+
+- calls ← [`robby_cli::example_self_model::main`](main.md)
 

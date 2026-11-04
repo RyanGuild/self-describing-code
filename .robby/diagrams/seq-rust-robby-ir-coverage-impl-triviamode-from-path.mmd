@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant from_path as from_path()
+    participant to_ascii_lowercase as to_ascii_lowercase
+    participant ends_with as ends_with
+    from_path-->>to_ascii_lowercase: path.to_ascii_lowercase()
+    from_path-->>ends_with: lower.ends_with('.ts')
+    from_path-->>ends_with: lower.ends_with('.tsx')
+    from_path-->>ends_with: lower.ends_with('.mts')
+    from_path-->>ends_with: lower.ends_with('.cts')
+    from_path-->>ends_with: lower.ends_with('.js')
+    from_path-->>ends_with: lower.ends_with('.jsx')
+    from_path-->>ends_with: lower.ends_with('.mjs')
+    from_path-->>ends_with: lower.ends_with('.cjs')

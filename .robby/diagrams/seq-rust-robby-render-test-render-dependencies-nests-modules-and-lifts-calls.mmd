@@ -1,0 +1,54 @@
+sequenceDiagram
+    autonumber
+    participant dependencies_nests_modules_and_lifts_calls as dependencies_nests_modules_and_lifts_calls()
+    participant Document__new as Document::new
+    participant Node__new as Node::new
+    participant insert as insert
+    participant push as push
+    participant dependencies as dependencies
+    participant class_diagram as class_diagram
+    participant workspace_dependencies as workspace_dependencies
+    dependencies_nests_modules_and_lifts_calls-->>Document__new: Document::new('test')
+    dependencies_nests_modules_and_lifts_calls-->>Node__new: Node::new(NodeId::from('rust://demo'), code::CRATE, 'demo')
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: krate.kind = Kind::from(code::CRATE)
+    dependencies_nests_modules_and_lifts_calls-->>insert: doc.insert(krate)
+    dependencies_nests_modules_and_lifts_calls-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::left'), code::MODULE, 'left')
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: left.parent = Some(NodeId::from('rust://demo'))
+    dependencies_nests_modules_and_lifts_calls-->>insert: doc.insert(left)
+    dependencies_nests_modules_and_lifts_calls-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::right'), code::MODULE, 'right')
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: right.parent = Some(NodeId::from('rust://demo'))
+    dependencies_nests_modules_and_lifts_calls-->>insert: doc.insert(right)
+    dependencies_nests_modules_and_lifts_calls-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::left::Point'), code::STRUCT, ...
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: point.parent = Some(NodeId::symbol('rust', 'demo::left'))
+    dependencies_nests_modules_and_lifts_calls-->>insert: doc.insert(point)
+    dependencies_nests_modules_and_lifts_calls-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::left::a'), code::FUNCTION, 'a')
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: a.parent = Some(NodeId::symbol('rust', 'demo::left'))
+    dependencies_nests_modules_and_lifts_calls-->>insert: doc.insert(a)
+    dependencies_nests_modules_and_lifts_calls-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::right::b'), code::FUNCTION, 'b')
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: b.parent = Some(NodeId::symbol('rust', 'demo::right'))
+    dependencies_nests_modules_and_lifts_calls-->>push: b.edges .push(Edge::new(NodeId::symbol('rust', 'demo::left::a'), Edge...
+    dependencies_nests_modules_and_lifts_calls-->>insert: doc.insert(b)
+    alt let Some(krate) = doc.nodes.get_mut(&NodeId::from('rust://demo'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: krate.children = vec![ NodeId::symbol('rust', 'demo::left'), NodeId::...
+    end
+    alt let Some(left) = doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::lef...
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: left.children = vec![ NodeId::symbol('rust', 'demo::left::Point'), No...
+    end
+    alt let Some(right) = doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::ri...
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: right.children = vec![NodeId::symbol('rust', 'demo::right::b')]
+    end
+    dependencies_nests_modules_and_lifts_calls-->>dependencies: dependencies(&doc, &NodeId::from('rust://demo'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(out.starts_with('flowchart TB\n') || out.starts_with('flowcha...
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(out.contains('left'), 'package digraph names modules')
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(out.contains('right'), 'package digraph names modules')
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!( !out.contains('Point'), 'types belong in the class diagram, ...
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(!out.contains('fn a'), 'functions stay out of the dependency ...
+    dependencies_nests_modules_and_lifts_calls-->>class_diagram: class_diagram(&doc, &NodeId::symbol('rust', 'demo::left'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(types.contains('classDiagram'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(types.contains('class Point'))
+    dependencies_nests_modules_and_lifts_calls-->>workspace_dependencies: workspace_dependencies(&doc)
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(workspace.contains('Package diagram'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(workspace.contains('Module coupling'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(workspace.contains('Dependency matrix'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(workspace.contains('demo'))
+    dependencies_nests_modules_and_lifts_calls-->>dependencies_nests_modules_and_lifts_calls: assert!(!workspace.contains('Point'))

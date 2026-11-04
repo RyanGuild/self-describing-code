@@ -1,5 +1,9 @@
 sequenceDiagram
     autonumber
     participant schema_json as schema_json()
+    participant schema as schema
+    participant serde_json__to_string_pretty as serde_json::to_string_pretty
     participant expect as expect
+    schema_json-->>schema: schema()
+    schema_json-->>serde_json__to_string_pretty: serde_json::to_string_pretty(&schema())
     schema_json-->>expect: serde_json::to_string_pretty(&schema()).expect('schema is always seri...

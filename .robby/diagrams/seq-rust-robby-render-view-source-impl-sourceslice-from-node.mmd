@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    participant from_node as from_node()
+    participant as_ref as as_ref
+    participant get as get
+    participant to_owned as to_owned
+    participant clone as clone
+    participant Some as Some
+    from_node-->>as_ref: node.span.as_ref()
+    from_node-->>from_node: ? (propagate)
+    from_node-->>get: sources.get(&span.file)
+    from_node-->>from_node: ? (propagate)
+    from_node-->>get: source .get(span.start.byte as usize..span.end.byte as usize)
+    from_node-->>from_node: ? (propagate)
+    from_node-->>to_owned: source .get(span.start.byte as usize..span.end.byte as usize)? .to_ow...
+    from_node-->>clone: span.file.clone()
+    from_node-->>Some: Some(Self { file: span.file.clone(), text, })

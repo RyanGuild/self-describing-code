@@ -25,18 +25,33 @@ fn gap_preview_is_whitespace_collapsed() {
 sequenceDiagram
     autonumber
     participant gap_preview_is_whitespace_collapsed as gap_preview_is_whitespace_collapsed()
-    participant file_coverage as file_coverage
+    participant find as find
     participant unwrap as unwrap
-    gap_preview_is_whitespace_collapsed-->>gap_preview_is_whitespace_collapsed: 'fn a() {}\n let x = 1 \n'
-    gap_preview_is_whitespace_collapsed-->>gap_preview_is_whitespace_collapsed: source.find('\n').unwrap() as u32 + 1
+    participant span as span
+    participant file_coverage as file_coverage
+    participant iter as iter
+    participant is_failure as is_failure
+    gap_preview_is_whitespace_collapsed-->>find: source.find('\n')
+    gap_preview_is_whitespace_collapsed-->>unwrap: source.find('\n').unwrap()
+    gap_preview_is_whitespace_collapsed-->>span: span(source, 0, end)
     gap_preview_is_whitespace_collapsed-->>file_coverage: file_coverage(FILE, source, &[span(source, 0, end)])
+    gap_preview_is_whitespace_collapsed-->>iter: report.gaps.iter()
+    gap_preview_is_whitespace_collapsed-->>is_failure: g.reason.is_failure()
+    gap_preview_is_whitespace_collapsed-->>find: report.gaps.iter().find(|g| g.reason.is_failure())
     gap_preview_is_whitespace_collapsed-->>unwrap: report.gaps.iter().find(|g| g.reason.is_failure()).unwrap()
     gap_preview_is_whitespace_collapsed-->>gap_preview_is_whitespace_collapsed: assert_eq!(gap.preview, 'let x = 1 ')
 ```
 
-5 steps · 0 observed · 5 possible only
+9 steps · 0 observed · 9 possible only
 
 **Edges**
 
+- calls → [`robby_ir::test_coverage::span`](span.md)
 - calls → [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
+- calls → [`robby_ir::coverage::impl GapReason::is_failure`](../coverage/index.md)
+
+## References
+
+- calls → [`robby_ir::coverage`](../coverage/index.md) — file_coverage, is_failure
+- calls → [`robby_ir::test_coverage`](index.md) — span
 

@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant build_code_paths as build_code_paths()
+    participant find_entrypoints as find_entrypoints
+    participant iter as iter
+    participant CodePath__from_entry as CodePath::from_entry
+    participant filter_map as filter_map
+    participant collect as collect
+    build_code_paths-->>find_entrypoints: find_entrypoints(doc)
+    build_code_paths-->>iter: find_entrypoints(doc) .iter()
+    build_code_paths-->>CodePath__from_entry: CodePath::from_entry(doc, entry, max_depth)
+    build_code_paths-->>filter_map: find_entrypoints(doc) .iter() .filter_map(|entry| CodePath::from_entr...
+    build_code_paths-->>collect: find_entrypoints(doc) .iter() .filter_map(|entry| CodePath::from_entr...

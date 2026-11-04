@@ -4,6 +4,13 @@
   "description": "The whole graph for one workspace snapshot.",
   "type": "object",
   "properties": {
+    "files": {
+      "description": "Every source file this document claims to describe.\n\nThis is what makes \"no file is invisible\" checkable: the coverage gate\nreads this list, so a file that was never parsed is a failure rather\nthan an absence.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "generator": {
       "description": "Tool name and version that produced this document.",
       "type": "string"

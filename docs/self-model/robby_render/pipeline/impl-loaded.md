@@ -32,6 +32,17 @@ impl Loaded {
 }
 ```
 
+## References
+
+- calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — is_complete, uncovered_bytes
+
+## Referenced by
+
+- calls ← [`robby_cli::build::main`](../../robby_cli/build/main.md)
+- calls ← [`robby_cli::check`](../../robby_cli/check.md)
+- calls ← [`robby_cli::example_self_model::run`](../../robby_cli/example_self_model/run.md)
+- calls ← [`robby_cli::print_human`](../../robby_cli/print-human.md)
+
 ### `is_ok`
 
 | | |
@@ -58,10 +69,19 @@ impl Loaded {
 sequenceDiagram
     autonumber
     participant is_ok as is_ok()
-    is_ok-->>is_ok: self.coverage.is_complete() && !self .diagnostics .iter() .any(|d| d....
+    participant is_complete as is_complete
+    participant iter as iter
+    participant any as any
+    is_ok-->>is_complete: self.coverage.is_complete()
+    is_ok-->>iter: self .diagnostics .iter()
+    is_ok-->>any: self .diagnostics .iter() .any(|d| d.severity == Severity::Error)
 ```
 
-1 steps · 0 observed · 1 possible only
+3 steps · 0 observed · 3 possible only
+
+**Edges**
+
+- calls → [`robby_ir::coverage::impl FileCoverage::is_complete`](../../robby_ir/coverage/index.md)
 
 ### `summary`
 
@@ -92,12 +112,24 @@ sequenceDiagram
     autonumber
     participant summary as summary()
     participant len as len
+    participant iter as iter
+    participant map as map
     participant sum as sum
+    participant uncovered_bytes as uncovered_bytes
     summary-->>len: self.coverage.files.len()
+    summary-->>iter: self.coverage.files.iter()
+    summary-->>map: self.coverage.files.iter().map(|f| f.covered_bytes)
     summary-->>sum: self.coverage.files.iter().map(|f| f.covered_bytes).sum()
+    summary-->>iter: self.coverage.files.iter()
+    summary-->>uncovered_bytes: f.uncovered_bytes()
+    summary-->>map: self.coverage.files.iter().map(|f| f.uncovered_bytes())
     summary-->>sum: self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum()
     summary-->>summary: format!( '{files} file(s), {claimed} bytes claimed, {unclaimed} uncla...
 ```
 
-4 steps · 0 observed · 4 possible only
+9 steps · 0 observed · 9 possible only
+
+**Edges**
+
+- calls → [`robby_ir::coverage::impl FileCoverage::uncovered_bytes`](../../robby_ir/coverage/index.md)
 

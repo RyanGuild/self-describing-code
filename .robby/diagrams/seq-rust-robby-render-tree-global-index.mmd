@@ -5,8 +5,12 @@ sequenceDiagram
     participant push_str as push_str
     participant coverage_section as coverage_section
     participant push as push
+    participant is_empty as is_empty
+    participant workspace_dependencies as workspace_dependencies
+    participant ends_with as ends_with
     participant clone as clone
     participant get as get
+    participant is_module as is_module
     participant module_tree_line as module_tree_line
     global_index-->>String__new: String::new()
     global_index-->>push_str: out.push_str(' Robby self-model\n\n')
@@ -21,16 +25,26 @@ sequenceDiagram
     global_index-->>global_index: writeln!( out, '| [`{}`]({}/index.md) | {} | {} |', krate.name, krate...
     end
     global_index-->>push: out.push('\n')
+    global_index-->>is_empty: crates.is_empty()
+    alt !crates.is_empty()
+    global_index-->>workspace_dependencies: workspace_dependencies(doc)
+    global_index-->>push_str: out.push_str(&workspace_dependencies(doc))
+    global_index-->>ends_with: out.ends_with('\n')
+    alt !out.ends_with('\n')
+    global_index-->>push: out.push('\n')
+    end
+    global_index-->>push: out.push('\n')
+    end
     global_index-->>push_str: out.push_str(' Module tree\n\n')
     loop crates
     global_index-->>clone: krate.name.clone()
     global_index-->>global_index: writeln!(out, '- [`{}`]({crate_dir}/index.md)', krate.name)
     loop &krate.children
     global_index-->>get: doc.get(child)
+    global_index-->>is_module: is_module(node)
     alt is_module(node)
     global_index-->>module_tree_line: module_tree_line(doc, node, &crate_dir, 1, &mut out)
     end
     end
     end
     global_index-->>push: out.push('\n')
-    global_index-->>global_index: out

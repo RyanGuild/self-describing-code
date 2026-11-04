@@ -2,5 +2,6 @@ sequenceDiagram
     autonumber
     participant output_is_byte_identical_across_runs as output_is_byte_identical_across_runs()
     participant process as process
+    output_is_byte_identical_across_runs-->>output_is_byte_identical_across_runs: vec![ step('caller', 'io', 'a', true, vec![]), step('caller', 'io', '...
     output_is_byte_identical_across_runs-->>process: process(vec![ step('caller', 'io', 'a', true, vec![]), step('caller',...
     output_is_byte_identical_across_runs-->>output_is_byte_identical_across_runs: assert_eq!(sequence(&p), sequence(&p))

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn check(ir: &std::path::Path, source_root: &std::path::Path, json: bool) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:120`](../../../crates/robby-cli/src/main.rs#L120) |
+| location | [`crates/robby-cli/src/main.rs:261`](../../../crates/robby-cli/src/main.rs#L261) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -38,6 +38,7 @@ sequenceDiagram
     participant check as check()
     participant pipeline__load as pipeline::load
     participant print_human as print_human
+    participant is_ok as is_ok
     participant Ok as Ok
     check-->>pipeline__load: pipeline::load(ir, source_root)
     check-->>check: ? (propagate)
@@ -47,13 +48,24 @@ sequenceDiagram
     else else
     check-->>print_human: print_human(&loaded)
     end
+    check-->>is_ok: loaded.is_ok()
     check-->>Ok: Ok(if loaded.is_ok() { ExitCode::SUCCESS } else { ExitCode::FAILURE })
 ```
 
-6 steps · 0 observed · 6 possible only
+7 steps · 0 observed · 7 possible only
 
 **Edges**
 
 - calls → [`robby_render::pipeline::load`](../robby_render/pipeline/load.md)
 - calls → [`robby_cli::print_human`](print-human.md)
+- calls → [`robby_render::pipeline::impl Loaded::is_ok`](../robby_render/pipeline/index.md)
+
+## References
+
+- calls → [`robby_cli`](index.md) — print_human
+- calls → [`robby_render::pipeline`](../robby_render/pipeline/index.md) — is_ok, load
+
+## Referenced by
+
+- calls ← [`robby_cli::run`](run.md)
 

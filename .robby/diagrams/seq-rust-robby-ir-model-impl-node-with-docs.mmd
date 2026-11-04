@@ -1,5 +1,7 @@
 sequenceDiagram
     autonumber
     participant with_docs as with_docs()
-    with_docs-->>with_docs: self.docs = Some(docs.into())
-    with_docs-->>with_docs: self
+    participant into as into
+    participant Some as Some
+    with_docs-->>into: docs.into()
+    with_docs-->>Some: Some(docs.into())

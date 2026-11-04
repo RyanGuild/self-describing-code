@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant tempfile_dir as tempfile_dir()
+    participant std__env__temp_dir as std::env::temp_dir
+    participant join as join
+    participant std__fs__create_dir_all as std::fs::create_dir_all
+    participant unwrap as unwrap
+    tempfile_dir-->>std__env__temp_dir: std::env::temp_dir()
+    tempfile_dir-->>tempfile_dir: format!( 'robby-web-test-{}', std::time::SystemTime::now() .duration_...
+    tempfile_dir-->>join: std::env::temp_dir().join(format!( 'robby-web-test-{}', std::time::Sy...
+    tempfile_dir-->>std__fs__create_dir_all: std::fs::create_dir_all(&dir)
+    tempfile_dir-->>unwrap: std::fs::create_dir_all(&dir).unwrap()

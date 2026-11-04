@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    participant layout_grid as layout_grid()
+    participant Vec__new as Vec::new
+    participant sqrt as sqrt
+    participant ceil as ceil
+    participant max as max
+    participant div_ceil as div_ceil
+    participant Vec__with_capacity as Vec::with_capacity
+    participant min as min
+    participant Rect__new as Rect::new
+    participant push as push
+    alt n == 0
+    layout_grid-->>Vec__new: Vec::new()
+    layout_grid-->>layout_grid: return
+    end
+    layout_grid-->>sqrt: (n as f64).sqrt()
+    layout_grid-->>ceil: (n as f64).sqrt().ceil()
+    layout_grid-->>max: cols.max(1)
+    layout_grid-->>div_ceil: n.div_ceil(cols)
+    layout_grid-->>Vec__with_capacity: Vec::with_capacity(n)
+    loop 0..n
+    layout_grid-->>min: fit_w.min(fit_h)
+    layout_grid-->>max: CANVAS_W.max(CANVAS_H)
+    layout_grid-->>max: child_w.max(1)
+    layout_grid-->>max: child_h.max(1)
+    layout_grid-->>Rect__new: Rect::new(x, y, child_w.max(1), child_h.max(1))
+    layout_grid-->>push: out.push(Rect::new(x, y, child_w.max(1), child_h.max(1)))
+    end

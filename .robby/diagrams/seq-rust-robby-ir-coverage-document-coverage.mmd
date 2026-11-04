@@ -3,14 +3,23 @@ sequenceDiagram
     participant document_coverage as document_coverage()
     participant all_spans as all_spans
     participant Vec__new as Vec::new
+    participant as_str as as_str
+    participant get as get
+    participant cloned as cloned
     participant unwrap_or_default as unwrap_or_default
+    participant file_coverage as file_coverage
     participant push as push
+    participant cmp as cmp
     participant sort_by as sort_by
     document_coverage-->>all_spans: all_spans(doc)
     document_coverage-->>Vec__new: Vec::new()
     loop sources
+    document_coverage-->>as_str: path.as_str()
+    document_coverage-->>get: spans_by_file.get(path.as_str())
+    document_coverage-->>cloned: spans_by_file.get(path.as_str()).cloned()
     document_coverage-->>unwrap_or_default: spans_by_file.get(path.as_str()).cloned().unwrap_or_default()
+    document_coverage-->>file_coverage: file_coverage(path, source, &spans)
     document_coverage-->>push: files.push(file_coverage(path, source, &spans))
     end
+    document_coverage-->>cmp: a.file.cmp(&b.file)
     document_coverage-->>sort_by: files.sort_by(|a, b| a.file.cmp(&b.file))
-    document_coverage-->>document_coverage: CoverageReport { files }

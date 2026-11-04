@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant source as source()
+    participant String__new as String::new
+    participant trim_end as trim_end
+    participant lines as lines
+    participant push as push
+    source-->>String__new: String::new()
+    source-->>trim_end: view.text.trim_end()
+    source-->>lines: view.text.trim_end().lines()
+    loop view.text.trim_end().lines()
+    source-->>source: writeln!(out, ' {line}')
+    end
+    source-->>push: out.push('\n')

@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant import_spec as import_spec()
+    participant split_once as split_once
+    participant to_owned as to_owned
+    participant Some as Some
+    import_spec-->>split_once: node.fqn.split_once('import:')
+    import_spec-->>import_spec: ? (propagate)
+    import_spec-->>to_owned: rest.to_owned()
+    import_spec-->>Some: Some(rest.to_owned())

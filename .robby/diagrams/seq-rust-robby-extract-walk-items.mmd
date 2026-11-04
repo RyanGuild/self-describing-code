@@ -93,6 +93,7 @@ sequenceDiagram
     else else
     walk_items-->>merge: doc.merge(node)
     end
+    else Item::Const(c)
     walk_items-->>walk_items: format!('{fqn_base}::{}', c.ident)
     walk_items-->>merge: doc.merge(item_node(kind::code::CONST, &fqn, span, parent))
     else Item::Static(s)

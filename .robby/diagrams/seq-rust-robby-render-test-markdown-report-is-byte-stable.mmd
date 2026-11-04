@@ -2,8 +2,11 @@ sequenceDiagram
     autonumber
     participant report_is_byte_stable as report_is_byte_stable()
     participant fixture as fixture
+    participant Some as Some
     participant report as report
     report_is_byte_stable-->>fixture: fixture()
+    report_is_byte_stable-->>Some: Some(&sources)
     report_is_byte_stable-->>report: report(&doc, None, Some(&sources))
+    report_is_byte_stable-->>Some: Some(&sources)
     report_is_byte_stable-->>report: report(&doc, None, Some(&sources))
     report_is_byte_stable-->>report_is_byte_stable: assert_eq!(first, second)

@@ -1,0 +1,13 @@
+sequenceDiagram
+    autonumber
+    participant flyTo as flyTo()
+    participant remount as remount
+    participant cameraForFocus as cameraForFocus
+    participant tweenCamera as tweenCamera
+    alt if
+    return-->>caller: 
+    end
+    self-->>remount: 
+    self-->>cameraForFocus: 
+    self-->>tweenCamera: 
+    self-->>fn: 

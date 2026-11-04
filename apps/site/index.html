@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Robby map</title>
+    <link rel="stylesheet" href="/src/viewer.css" />
+  </head>
+  <body>
+    <header id="chrome">
+      <button type="button" id="zoom-out" title="Zoom out" disabled>← out</button>
+      <div id="org-toggle" role="group" aria-label="Organization">
+        <button type="button" id="org-structure" class="org-btn is-active" data-org="structure">
+          Structure
+        </button>
+        <button type="button" id="org-entrypoints" class="org-btn" data-org="entrypoints">
+          Entrypoints
+        </button>
+      </div>
+      <div id="crumb"></div>
+      <div id="hint">click a card to zoom · portals jump to related views</div>
+    </header>
+    <main id="viewport">
+      <div id="world"></div>
+    </main>
+    <script type="module" src="/src/viewer.ts"></script>
+  </body>
+</html>

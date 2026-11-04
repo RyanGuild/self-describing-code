@@ -24,18 +24,27 @@ sequenceDiagram
     autonumber
     participant fences_are_balanced as fences_are_balanced()
     participant fixture as fixture
+    participant Some as Some
     participant report as report
+    participant matches as matches
     participant count as count
     fences_are_balanced-->>fixture: fixture()
+    fences_are_balanced-->>Some: Some(&sources)
     fences_are_balanced-->>report: report(&doc, None, Some(&sources))
+    fences_are_balanced-->>matches: out.matches('```')
     fences_are_balanced-->>count: out.matches('```').count()
     fences_are_balanced-->>fences_are_balanced: assert_eq!(fences % 2, 0, 'unbalanced code fences:\n{out}')
 ```
 
-4 steps · 0 observed · 4 possible only
+6 steps · 0 observed · 6 possible only
 
 **Edges**
 
 - calls → [`robby_render::test_markdown::fixture`](fixture.md)
-- calls → [`robby_cli::report`](../../robby_cli/report.md)
+- calls → [`robby_render::markdown::report`](../markdown/report.md)
+
+## References
+
+- calls → [`robby_render::markdown`](../markdown/index.md) — report
+- calls → [`robby_render::test_markdown`](index.md) — fixture
 

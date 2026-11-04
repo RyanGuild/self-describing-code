@@ -202,3 +202,47 @@ fn document_coverage_is_union_at_any_depth() {
     );
 }
 
+#[test]
+fn typescript_comments_and_shebang_are_trivia() {
+    let file = "src/demo.ts";
+    let source = "#!/usr/bin/env node\n// leading\n\nexport function a() {}\n";
+    let start = source.find("export").unwrap() as u32;
+    let report = file_coverage(file, source, &[Span::new(file, source, start, source.len() as u32)]);
+
+    assert!(report.is_complete());
+    assert!(
+        report.gaps.iter().all(|g| !g.reason.is_failure()),
+        "TS shebang/comments must not fail the gate"
+    );
+}
+
+#[test]
+fn typescript_hash_is_not_a_rust_attribute() {
+    let file = "src/demo.ts";
+    // Private fields use `#name` — that is code, not Rust `#[…]` trivia.
+    let source = "class A { #x = 1 }\n";
+    let report = file_coverage(file, source, &[]);
+    assert!(!report.is_complete());
+    assert!(report.gaps.iter().any(|g| g.reason.is_failure()));
+}
+
+#[test]
+fn leaf_name_handles_path_and_dot_fqns() {
+    assert_eq!(robby_ir::leaf_name("demo::left::Point"), "Point");
+    assert_eq!(robby_ir::leaf_name("ts_mini/src/util"), "util");
+    assert_eq!(robby_ir::leaf_name("ts_mini.src.util.helper"), "helper");
+}
+
+#[test]
+fn typescript_node_sets_lang() {
+    let node = Node::with_lang(
+        NodeId::symbol("typescript", "pkg/src/a"),
+        kind::code::MODULE,
+        "pkg/src/a",
+        robby_ir::Lang::TypeScript,
+    );
+    assert_eq!(node.lang, robby_ir::Lang::TypeScript);
+    assert_eq!(node.name, "a");
+    assert_eq!(node.kind.as_str(), kind::code::MODULE);
+}
+

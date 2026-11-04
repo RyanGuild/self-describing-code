@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_one(v: &f32) -> bool` |
-| location | [`crates/robby-ir/src/model.rs:151`](../../../../crates/robby-ir/src/model.rs#L151) |
+| location | [`crates/robby-ir/src/model.rs:152`](../../../../crates/robby-ir/src/model.rs#L152) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,7 +19,8 @@ fn is_one(v: &f32) -> bool {
 sequenceDiagram
     autonumber
     participant is_one as is_one()
-    is_one-->>is_one: (*v - 1.0).abs() < f32::EPSILON
+    participant abs as abs
+    is_one-->>abs: (*v - 1.0).abs()
 ```
 
 1 steps · 0 observed · 1 possible only

@@ -2,13 +2,17 @@ sequenceDiagram
     autonumber
     participant frontier_spans as frontier_spans()
     participant BTreeMap__new as BTreeMap::new
+    participant has_span_descendant as has_span_descendant
+    participant clone as clone
+    participant entry as entry
+    participant or_default as or_default
     participant push as push
     frontier_spans-->>BTreeMap__new: BTreeMap::new()
     loop &doc.nodes
-    frontier_spans-->>frontier_spans: &node.span
-    alt has_span_descendant(doc, id)
-    frontier_spans-->>frontier_spans: continue
-    end
+    frontier_spans-->>has_span_descendant: has_span_descendant(doc, id)
+    frontier_spans-->>clone: span.file.clone()
+    frontier_spans-->>entry: out.entry(span.file.clone())
+    frontier_spans-->>or_default: out.entry(span.file.clone()).or_default()
+    frontier_spans-->>clone: span.clone()
     frontier_spans-->>push: out.entry(span.file.clone()).or_default().push(span.clone())
     end
-    frontier_spans-->>frontier_spans: out

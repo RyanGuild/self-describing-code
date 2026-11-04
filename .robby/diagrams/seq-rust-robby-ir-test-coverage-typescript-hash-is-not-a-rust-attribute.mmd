@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant typescript_hash_is_not_a_rust_attribute as typescript_hash_is_not_a_rust_attribute()
+    participant file_coverage as file_coverage
+    typescript_hash_is_not_a_rust_attribute-->>file_coverage: file_coverage(file, source, &[])
+    typescript_hash_is_not_a_rust_attribute-->>typescript_hash_is_not_a_rust_attribute: assert!(!report.is_complete())
+    typescript_hash_is_not_a_rust_attribute-->>typescript_hash_is_not_a_rust_attribute: assert!(report.gaps.iter().any(|g| g.reason.is_failure()))

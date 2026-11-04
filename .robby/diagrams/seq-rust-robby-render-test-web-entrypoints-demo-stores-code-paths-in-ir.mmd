@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant entrypoints_demo_stores_code_paths_in_ir as entrypoints_demo_stores_code_paths_in_ir()
+    participant entrypoints_demo_doc as entrypoints_demo_doc
+    entrypoints_demo_stores_code_paths_in_ir-->>entrypoints_demo_doc: entrypoints_demo_doc()
+    entrypoints_demo_stores_code_paths_in_ir-->>entrypoints_demo_stores_code_paths_in_ir: assert_eq!(doc.code_paths.len(), 2)
+    entrypoints_demo_stores_code_paths_in_ir-->>entrypoints_demo_stores_code_paths_in_ir: assert!( doc.code_paths .iter() .any(|p| p.entry == NodeId::symbol('r...

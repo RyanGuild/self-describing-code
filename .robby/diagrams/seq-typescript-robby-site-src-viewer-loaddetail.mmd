@@ -1,0 +1,71 @@
+sequenceDiagram
+    autonumber
+    participant loadDetail as loadDetail()
+    participant frame as frame
+    participant querySelector as querySelector
+    participant get as get
+    participant fetchJson as fetchJson
+    participant set as set
+    participant error as error
+    participant forEach as forEach
+    participant createElement as createElement
+    participant appendExecution as appendExecution
+    participant insertBefore as insertBefore
+    participant prepend as prepend
+    participant join as join
+    participant appendChild as appendChild
+    self-->>frame: 
+    self-->>querySelector: 
+    alt if
+    return-->>caller: 
+    end
+    self-->>get: 
+    alt if
+    self-->>fetchJson: 
+    self-->>await: 
+    self-->>set: 
+    alt catch
+    self-->>error: 
+    return-->>caller: 
+    end
+    self-->>forEach: 
+    self-->>fn: 
+    alt if
+    self-->>createElement: 
+    self-->>appendExecution: 
+    self-->>querySelector: 
+    alt if
+    self-->>insertBefore: 
+    end
+    alt else
+    self-->>prepend: 
+    end
+    end
+    return-->>caller: 
+    end
+    self-->>createElement: 
+    self-->>createElement: 
+    self-->>join: 
+    self-->>appendChild: 
+    alt if
+    self-->>createElement: 
+    self-->>appendChild: 
+    self-->>appendExecution: 
+    self-->>createElement: 
+    self-->>createElement: 
+    self-->>appendChild: 
+    alt if
+    self-->>createElement: 
+    self-->>appendChild: 
+    end
+    self-->>createElement: 
+    self-->>appendChild: 
+    self-->>appendChild: 
+    self-->>createElement: 
+    self-->>createElement: 
+    self-->>appendChild: 
+    self-->>appendChild: 
+    self-->>createElement: 
+    self-->>appendChild: 
+    end
+    self-->>appendChild: 

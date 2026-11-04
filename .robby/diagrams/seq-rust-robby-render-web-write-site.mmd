@@ -1,0 +1,62 @@
+sequenceDiagram
+    autonumber
+    participant write_site as write_site()
+    participant fs__create_dir_all as fs::create_dir_all
+    participant join as join
+    participant Scene__from_document as Scene::from_document
+    participant Scene__from_entrypoints as Scene::from_entrypoints
+    participant to_json as to_json
+    participant fs__write as fs::write
+    participant FrameDetail__for_workspace as FrameDetail::for_workspace
+    participant BTreeSet__new as BTreeSet::new
+    participant clone as clone
+    participant insert as insert
+    participant values as values
+    participant as_str as as_str
+    participant robby_ir__NodeId__from as robby_ir::NodeId::from
+    participant get as get
+    participant Some as Some
+    participant FrameDetail__from_node_in_doc as FrameDetail::from_node_in_doc
+    participant Ok as Ok
+    write_site-->>fs__create_dir_all: fs::create_dir_all(out)
+    write_site-->>write_site: ? (propagate)
+    write_site-->>join: out.join('frames')
+    write_site-->>fs__create_dir_all: fs::create_dir_all(&frames_dir)
+    write_site-->>write_site: ? (propagate)
+    write_site-->>Scene__from_document: Scene::from_document(doc)
+    write_site-->>Scene__from_entrypoints: Scene::from_entrypoints(doc)
+    write_site-->>join: out.join('scene.json')
+    write_site-->>to_json: structure.to_json()
+    write_site-->>fs__write: fs::write(out.join('scene.json'), structure.to_json())
+    write_site-->>write_site: ? (propagate)
+    write_site-->>join: out.join('scene-entrypoints.json')
+    write_site-->>to_json: entrypoints.to_json()
+    write_site-->>fs__write: fs::write(out.join('scene-entrypoints.json'), entrypoints.to_json())
+    write_site-->>write_site: ? (propagate)
+    write_site-->>FrameDetail__for_workspace: FrameDetail::for_workspace()
+    write_site-->>write_site: format!('{}.json', workspace.stable_id)
+    write_site-->>join: frames_dir.join(format!('{}.json', workspace.stable_id))
+    write_site-->>to_json: workspace.to_json()
+    write_site-->>fs__write: fs::write( frames_dir.join(format!('{}.json', workspace.stable_id)), ...
+    write_site-->>write_site: ? (propagate)
+    write_site-->>BTreeSet__new: BTreeSet::new()
+    write_site-->>clone: workspace.stable_id.clone()
+    write_site-->>insert: written.insert(workspace.stable_id.clone())
+    loop [&structure, &entrypoints]
+    write_site-->>values: scene.frames.values()
+    loop scene.frames.values()
+    write_site-->>clone: frame.stable_id.clone()
+    write_site-->>insert: written.insert(frame.stable_id.clone())
+    write_site-->>as_str: frame.id.as_str()
+    write_site-->>robby_ir__NodeId__from: robby_ir::NodeId::from(frame.id.as_str())
+    write_site-->>get: doc.get(&robby_ir::NodeId::from(frame.id.as_str()))
+    write_site-->>Some: Some(doc)
+    write_site-->>FrameDetail__from_node_in_doc: FrameDetail::from_node_in_doc(node, sources, Some(doc))
+    write_site-->>write_site: format!('{}.json', detail.stable_id)
+    write_site-->>join: frames_dir.join(format!('{}.json', detail.stable_id))
+    write_site-->>to_json: detail.to_json()
+    write_site-->>fs__write: fs::write( frames_dir.join(format!('{}.json', detail.stable_id)), det...
+    write_site-->>write_site: ? (propagate)
+    end
+    end
+    write_site-->>Ok: Ok(count)

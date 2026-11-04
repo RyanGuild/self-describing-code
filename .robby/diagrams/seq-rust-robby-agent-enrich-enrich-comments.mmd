@@ -1,0 +1,40 @@
+sequenceDiagram
+    autonumber
+    participant enrich_comments as enrich_comments()
+    participant collect_comment_contexts as collect_comment_contexts
+    participant len as len
+    participant truncate as truncate
+    participant DecisionModel__new as DecisionModel::new
+    participant NoteModel__new as NoteModel::new
+    participant saturating_sub as saturating_sub
+    participant Default__default as Default::default
+    participant decide as decide
+    participant insert_decision as insert_decision
+    participant write_note as write_note
+    participant Some as Some
+    participant Ok as Ok
+    enrich_comments-->>collect_comment_contexts: collect_comment_contexts(doc, sources)
+    enrich_comments-->>len: contexts.len()
+    alt let Some(limit) = opts.limit
+    enrich_comments-->>truncate: contexts.truncate(limit)
+    end
+    enrich_comments-->>DecisionModel__new: DecisionModel::new(client, &opts.decision_model)
+    enrich_comments-->>NoteModel__new: NoteModel::new(client, &opts.note_model)
+    enrich_comments-->>len: contexts.len()
+    enrich_comments-->>len: contexts.len()
+    enrich_comments-->>saturating_sub: total.saturating_sub(contexts.len())
+    enrich_comments-->>Default__default: Default::default()
+    loop contexts
+    enrich_comments-->>decide: decision.decide(&ctx)
+    enrich_comments-->>enrich_comments: ? (propagate)
+    alt match d.verdict
+    enrich_comments-->>insert_decision: insert_decision(doc, &ctx, &d, None, &opts.decision_model, None)
+    else Verdict::Relevant
+    enrich_comments-->>write_note: notes.write_note(&ctx)
+    enrich_comments-->>enrich_comments: ? (propagate)
+    enrich_comments-->>Some: Some(&note)
+    enrich_comments-->>Some: Some(&opts.note_model)
+    enrich_comments-->>insert_decision: insert_decision( doc, &ctx, &d, Some(&note), &opts.decision_model, So...
+    end
+    end
+    enrich_comments-->>Ok: Ok(stats)

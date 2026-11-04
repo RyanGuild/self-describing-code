@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/model.rs:185`](../../../../crates/robby-ir/src/model.rs#L185) |
+| location | [`crates/robby-ir/src/model.rs:186`](../../../../crates/robby-ir/src/model.rs#L186) |
 | provenance | extractor · confidence 1.00 |
 
 > A single described thing: a crate, a function, a statement, an observation.
@@ -44,19 +44,19 @@ pub struct Node {
 
 **Fields and variants**
 
-- `id` — `crates/robby-ir/src/model.rs:188:5`
-- `kind` — `crates/robby-ir/src/model.rs:189:5`
-- `name` — `crates/robby-ir/src/model.rs:190:5`
-- `fqn` — `crates/robby-ir/src/model.rs:191:5`
-- `lang` — `crates/robby-ir/src/model.rs:193:5`
-- `span` — `crates/robby-ir/src/model.rs:194:5`
-- `signature` — `crates/robby-ir/src/model.rs:196:5`
-- `docs` — `crates/robby-ir/src/model.rs:198:5`
-- `provenance` — `crates/robby-ir/src/model.rs:200:5`
-- `parent` — `crates/robby-ir/src/model.rs:201:5`
-- `children` — `crates/robby-ir/src/model.rs:203:5`
-- `edges` — `crates/robby-ir/src/model.rs:205:5`
-- `process` — `crates/robby-ir/src/model.rs:207:5`
-- `annotations` — `crates/robby-ir/src/model.rs:209:5`
-- `tags` — `crates/robby-ir/src/model.rs:211:5`
+- `id` — `crates/robby-ir/src/model.rs:189:5`
+- `kind` — `crates/robby-ir/src/model.rs:190:5`
+- `name` — `crates/robby-ir/src/model.rs:191:5`
+- `fqn` — `crates/robby-ir/src/model.rs:192:5`
+- `lang` — `crates/robby-ir/src/model.rs:194:5`
+- `span` — `crates/robby-ir/src/model.rs:195:5`
+- `signature` — `crates/robby-ir/src/model.rs:197:5`
+- `docs` — `crates/robby-ir/src/model.rs:199:5`
+- `provenance` — `crates/robby-ir/src/model.rs:201:5`
+- `parent` — `crates/robby-ir/src/model.rs:202:5`
+- `children` — `crates/robby-ir/src/model.rs:204:5`
+- `edges` — `crates/robby-ir/src/model.rs:206:5`
+- `process` — `crates/robby-ir/src/model.rs:208:5`
+- `annotations` — `crates/robby-ir/src/model.rs:210:5`
+- `tags` — `crates/robby-ir/src/model.rs:212:5`
 

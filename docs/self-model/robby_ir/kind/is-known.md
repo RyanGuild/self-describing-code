@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_known(kind: &Kind) -> bool` |
-| location | [`crates/robby-ir/src/kind.rs:99`](../../../../crates/robby-ir/src/kind.rs#L99) |
+| location | [`crates/robby-ir/src/kind.rs:104`](../../../../crates/robby-ir/src/kind.rs#L104) |
 | provenance | extractor · confidence 1.00 |
 
 > True when `kind` is understood by the current version of the tool.
@@ -32,4 +32,8 @@ sequenceDiagram
 ```
 
 1 steps · 0 observed · 1 possible only
+
+## Referenced by
+
+- calls ← [`robby_ir::model::validate`](../model/validate.md)
 

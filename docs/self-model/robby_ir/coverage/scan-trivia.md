@@ -5,25 +5,37 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn scan_trivia(bytes: &[u8], start: u32, end: u32) -> Result<TriviaFlags, u32>` |
-| location | [`crates/robby-ir/src/coverage.rs:296`](../../../../crates/robby-ir/src/coverage.rs#L296) |
+| signature | `fn scan_trivia(     bytes: &[u8],     start: u32,     end: u32,     mode: TriviaMode, ) -> Result<TriviaFlags, u32>` |
+| location | [`crates/robby-ir/src/coverage.rs:322`](../../../../crates/robby-ir/src/coverage.rs#L322) |
 | provenance | extractor · confidence 1.00 |
 
-> Walk a byte range, accepting only whitespace, comments and attributes.
+> Walk a byte range, accepting only whitespace, comments and (Rust) attributes.
 > 
 > Returns the byte offset of the first token that is none of those, which is
 > what makes the gap report actionable: it points at the exact byte that is
 > missing from the map.
 
 ```rust
-/// Walk a byte range, accepting only whitespace, comments and attributes.
+/// Walk a byte range, accepting only whitespace, comments and (Rust) attributes.
 ///
 /// Returns the byte offset of the first token that is none of those, which is
 /// what makes the gap report actionable: it points at the exact byte that is
 /// missing from the map.
-fn scan_trivia(bytes: &[u8], start: u32, end: u32) -> Result<TriviaFlags, u32> {
+fn scan_trivia(
+    bytes: &[u8],
+    start: u32,
+    end: u32,
+    mode: TriviaMode,
+) -> Result<TriviaFlags, u32> {
     let mut flags = TriviaFlags::default();
     let mut i = start;
+    // TypeScript shebang is trivia when it opens the file.
+    if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!' {
+        flags.comment = true;
+        while i < end && bytes[i as usize] != b'\n' {
+            i += 1;
+        }
+    }
     while i < end {
         let c = bytes[i as usize];
         if c.is_ascii_whitespace() {
@@ -49,7 +61,7 @@ fn scan_trivia(bytes: &[u8], start: u32, end: u32) -> Result<TriviaFlags, u32> {
                     i += 1;
                 }
             }
-        } else if c == b'#' {
+        } else if mode == TriviaMode::Rust && c == b'#' {
             match skip_attribute(bytes, i, end) {
                 Some(next) => {
                     flags.attribute = true;
@@ -70,46 +82,23 @@ sequenceDiagram
     autonumber
     participant scan_trivia as scan_trivia()
     participant TriviaFlags__default as TriviaFlags::default
+    participant is_ascii_whitespace as is_ascii_whitespace
+    participant skip_attribute as skip_attribute
     participant Err as Err
     participant Ok as Ok
     scan_trivia-->>TriviaFlags__default: TriviaFlags::default()
-    scan_trivia-->>scan_trivia: start
     loop i < end
-    scan_trivia-->>scan_trivia: bytes[i as usize]
+    scan_trivia-->>is_ascii_whitespace: c.is_ascii_whitespace()
     alt c.is_ascii_whitespace()
-    scan_trivia-->>scan_trivia: flags.whitespace = true
-    scan_trivia-->>scan_trivia: i += 1
-    else else
     alt c == b'/' && i + 1 < end && bytes[(i + 1) as usize] == b'/'
-    scan_trivia-->>scan_trivia: flags.comment = true
-    loop i < end && bytes[i as usize] != b'\n'
-    scan_trivia-->>scan_trivia: i += 1
-    end
     alt c == b'/' && i + 1 < end && bytes[(i + 1) as usize] == b'*'
-    scan_trivia-->>scan_trivia: flags.comment = true
-    scan_trivia-->>scan_trivia: 1u32
-    scan_trivia-->>scan_trivia: i += 2
-    loop i < end && depth > 0
-    alt i + 1 < end && bytes[i as usize] == b'/' && bytes[(i + 1) as usize] =...
-    scan_trivia-->>scan_trivia: depth += 1
-    scan_trivia-->>scan_trivia: i += 2
-    else else
-    alt i + 1 < end && bytes[i as usize] == b'*' && bytes[(i + 1) as usize] =...
-    scan_trivia-->>scan_trivia: depth -= 1
-    scan_trivia-->>scan_trivia: i += 2
-    else else
-    scan_trivia-->>scan_trivia: i += 1
-    end
-    end
-    end
-    alt c == b' '
+    alt mode == TriviaMode::Rust && c == b' '
+    scan_trivia-->>skip_attribute: skip_attribute(bytes, i, end)
     alt match skip_attribute(bytes, i, end)
-    scan_trivia-->>scan_trivia: flags.attribute = true
-    scan_trivia-->>scan_trivia: i = next
-    else None
     scan_trivia-->>Err: Err(i)
     scan_trivia-->>scan_trivia: return
     end
+    else else
     scan_trivia-->>Err: Err(i)
     scan_trivia-->>scan_trivia: return
     end
@@ -120,9 +109,19 @@ sequenceDiagram
     scan_trivia-->>Ok: Ok(flags)
 ```
 
-22 steps · 0 observed · 22 possible only
+8 steps · 0 observed · 8 possible only
 
 **Edges**
 
-- calls → [`robby_ir::model::impl Default for Provenance::default`](../model/index.md)
+- calls → [`robby_ir::process::impl Default for Process::default`](../process/index.md)
+- calls → [`robby_ir::coverage::skip_attribute`](skip-attribute.md)
+
+## References
+
+- calls → [`robby_ir::coverage`](index.md) — skip_attribute
+- calls → [`robby_ir::process`](../process/index.md) — default
+
+## Referenced by
+
+- calls ← [`robby_ir::coverage::make_gap`](make-gap.md)
 

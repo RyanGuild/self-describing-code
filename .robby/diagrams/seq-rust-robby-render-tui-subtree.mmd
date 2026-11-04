@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant subtree as subtree()
+    participant tree_children as tree_children
+    participant Tree__new as Tree::new
+    participant push as push
+    subtree-->>subtree: format!('{:<7} {}', kind_tag(&node.kind), node.name)
+    alt is_container(&node.kind)
+    subtree-->>subtree: write!(label, ' ({} nodes)', doc.subtree(&node.id).len())
+    else else
+    alt let Some(process) = &node.process
+    subtree-->>subtree: write!(label, ' · {} steps', process.steps.len())
+    end
+    end
+    subtree-->>tree_children: tree_children(doc, node, opts.all)
+    subtree-->>Tree__new: Tree::new(label)
+    alt depth < opts.depth
+    loop children
+    subtree-->>push: rendered.push(subtree(doc, child, opts, depth + 1))
+    end
+    else else
+    alt !children.is_empty()
+    subtree-->>push: rendered.push(Tree::new(format!( '{:<7} … {} more', '', children.len(...
+    end
+    end
+    subtree-->>subtree: rendered

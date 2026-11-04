@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use crate::codepath::{CodePath, DEFAULT_MAX_DEPTH, build_code_paths};
 use crate::kind::Kind;
 use crate::process::Process;
 use crate::span::Span;
@@ -214,14 +215,24 @@ pub struct Node {
 
 impl Node {
     pub fn new(id: impl Into<NodeId>, kind: impl Into<Kind>, fqn: impl Into<String>) -> Self {
+        Self::with_lang(id, kind, fqn, Lang::Rust)
+    }
+
+    /// Like [`Node::new`], with an explicit language tag.
+    pub fn with_lang(
+        id: impl Into<NodeId>,
+        kind: impl Into<Kind>,
+        fqn: impl Into<String>,
+        lang: Lang,
+    ) -> Self {
         let fqn = fqn.into();
-        let name = fqn.rsplit("::").next().unwrap_or(&fqn).to_owned();
+        let name = leaf_name(&fqn);
         Self {
             id: id.into(),
             kind: kind.into(),
             name,
             fqn,
-            lang: Lang::Rust,
+            lang,
             span: None,
             signature: None,
             docs: None,
@@ -259,6 +270,22 @@ impl Node {
         self.signature = Some(signature.into());
         self
     }
+
+    pub fn set_lang(mut self, lang: Lang) -> Self {
+        self.lang = lang;
+        self
+    }
+}
+
+/// Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms.
+pub fn leaf_name(fqn: &str) -> String {
+    let after_colon = fqn.rsplit("::").next().unwrap_or(fqn);
+    let after_slash = after_colon.rsplit('/').next().unwrap_or(after_colon);
+    after_slash
+        .rsplit('.')
+        .next()
+        .unwrap_or(after_slash)
+        .to_owned()
 }
 
 /// The whole graph for one workspace snapshot.
@@ -277,6 +304,9 @@ pub struct Document {
     /// than an absence.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub files: Vec<String>,
+    /// Entrypoint-rooted call trees derived from resolved `Calls` edges.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub code_paths: Vec<CodePath>,
 }
 
 impl Document {
@@ -287,7 +317,13 @@ impl Document {
             nodes: BTreeMap::new(),
             roots: Vec::new(),
             files: Vec::new(),
+            code_paths: Vec::new(),
         }
+    }
+
+    /// Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries.
+    pub fn rebuild_code_paths(&mut self) {
+        self.code_paths = build_code_paths(self, DEFAULT_MAX_DEPTH);
     }
 
     /// Record a source file as part of the map.
@@ -479,6 +515,38 @@ pub fn validate(doc: &Document) -> Vec<Diagnostic> {
                 )
                 .about(id.clone()),
             );
+        }
+    }
+
+    for path in &doc.code_paths {
+        if !doc.nodes.contains_key(&path.entry) {
+            out.push(
+                Diagnostic::error(
+                    "codepath/entry-missing",
+                    format!("code path entry {} is not in the document", path.entry),
+                )
+                .about(path.entry.clone()),
+            );
+        }
+        for edge in &path.edges {
+            if !doc.nodes.contains_key(&edge.from) {
+                out.push(
+                    Diagnostic::error(
+                        "codepath/from-missing",
+                        format!("code path edge from missing node {}", edge.from),
+                    )
+                    .about(edge.from.clone()),
+                );
+            }
+            if !doc.nodes.contains_key(&edge.to) {
+                out.push(
+                    Diagnostic::error(
+                        "codepath/to-missing",
+                        format!("code path edge to missing node {}", edge.to),
+                    )
+                    .about(edge.to.clone()),
+                );
+            }
         }
     }
 

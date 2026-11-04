@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant nearest_following_item as nearest_following_item()
+    participant as_ref as as_ref
+    participant get as get
+    participant and_then as and_then
+    participant Some as Some
+    participant map as map
+    nearest_following_item-->>as_ref: comment.parent.as_ref()
+    nearest_following_item-->>get: doc.get(id)
+    nearest_following_item-->>and_then: comment.parent.as_ref().and_then(|id| doc.get(id))
+    nearest_following_item-->>nearest_following_item: ? (propagate)
+    nearest_following_item-->>as_ref: comment.span.as_ref()
+    nearest_following_item-->>nearest_following_item: ? (propagate)
+    loop &parent.children
+    nearest_following_item-->>get: doc.get(child_id)
+    nearest_following_item-->>nearest_following_item: matches!( child.kind.as_str(), kind::code::COMMENT | kind::code::IMPO...
+    alt match best
+    nearest_following_item-->>Some: Some((child, span.start.byte))
+    end
+    end
+    nearest_following_item-->>map: best.map(|(n, _)| n)

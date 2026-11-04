@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant pick_call_target as pick_call_target()
+    participant len as len
+    participant clone as clone
+    participant module_prefix as module_prefix
+    participant iter as iter
+    participant id_fqn as id_fqn
+    participant shared_module_score as shared_module_score
+    participant map as map
+    participant collect as collect
+    participant sort as sort
+    pick_call_target-->>len: targets.len()
+    alt targets.len() == 1
+    pick_call_target-->>clone: targets[0].clone()
+    pick_call_target-->>pick_call_target: return
+    end
+    pick_call_target-->>module_prefix: module_prefix(caller_fqn)
+    pick_call_target-->>iter: targets .iter()
+    pick_call_target-->>id_fqn: id_fqn(target)
+    pick_call_target-->>module_prefix: module_prefix(target_fqn)
+    pick_call_target-->>shared_module_score: shared_module_score(caller_mod, target_mod)
+    pick_call_target-->>len: target_fqn.len()
+    pick_call_target-->>map: targets .iter() .map(|target| { let target_fqn = id_fqn(target) let ...
+    pick_call_target-->>collect: targets .iter() .map(|target| { let target_fqn = id_fqn(target) let ...
+    pick_call_target-->>sort: ranked.sort()
+    pick_call_target-->>clone: best.clone()

@@ -1,0 +1,12 @@
+sequenceDiagram
+    autonumber
+    participant entrypoints_scene_json_is_deterministic as entrypoints_scene_json_is_deterministic()
+    participant entrypoints_demo_doc as entrypoints_demo_doc
+    participant Scene__from_entrypoints as Scene::from_entrypoints
+    participant to_json as to_json
+    entrypoints_scene_json_is_deterministic-->>entrypoints_demo_doc: entrypoints_demo_doc()
+    entrypoints_scene_json_is_deterministic-->>Scene__from_entrypoints: Scene::from_entrypoints(&doc)
+    entrypoints_scene_json_is_deterministic-->>to_json: Scene::from_entrypoints(&doc).to_json()
+    entrypoints_scene_json_is_deterministic-->>Scene__from_entrypoints: Scene::from_entrypoints(&doc)
+    entrypoints_scene_json_is_deterministic-->>to_json: Scene::from_entrypoints(&doc).to_json()
+    entrypoints_scene_json_is_deterministic-->>entrypoints_scene_json_is_deterministic: assert_eq!(a, b)

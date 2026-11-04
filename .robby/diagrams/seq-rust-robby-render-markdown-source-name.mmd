@@ -1,14 +1,3 @@
 sequenceDiagram
     autonumber
     participant source_name as source_name()
-    alt match source
-    source_name-->>source_name: 'extractor'
-    else robby_ir::Source::Macro
-    source_name-->>source_name: 'macro'
-    else robby_ir::Source::Trace
-    source_name-->>source_name: 'trace'
-    else robby_ir::Source::Agent
-    source_name-->>source_name: 'agent'
-    else robby_ir::Source::Hand
-    source_name-->>source_name: 'hand'
-    end

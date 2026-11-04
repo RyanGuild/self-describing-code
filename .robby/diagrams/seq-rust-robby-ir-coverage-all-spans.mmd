@@ -2,11 +2,19 @@ sequenceDiagram
     autonumber
     participant all_spans as all_spans()
     participant BTreeMap__new as BTreeMap::new
+    participant values as values
+    participant clone as clone
+    participant entry as entry
+    participant or_default as or_default
     participant push as push
     all_spans-->>BTreeMap__new: BTreeMap::new()
+    all_spans-->>values: doc.nodes.values()
     loop doc.nodes.values()
     alt let Some(span) = &node.span
+    all_spans-->>clone: span.file.clone()
+    all_spans-->>entry: out.entry(span.file.clone())
+    all_spans-->>or_default: out.entry(span.file.clone()).or_default()
+    all_spans-->>clone: span.clone()
     all_spans-->>push: out.entry(span.file.clone()).or_default().push(span.clone())
     end
     end
-    all_spans-->>all_spans: out

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn print_human(loaded: &pipeline::Loaded)` |
-| location | [`crates/robby-cli/src/main.rs:141`](../../../crates/robby-cli/src/main.rs#L141) |
+| location | [`crates/robby-cli/src/main.rs:282`](../../../crates/robby-cli/src/main.rs#L282) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -56,14 +56,12 @@ fn print_human(loaded: &pipeline::Loaded) {
 sequenceDiagram
     autonumber
     participant print_human as print_human()
+    participant worst_first as worst_first
+    participant iter as iter
+    participant is_failure as is_failure
+    participant filter as filter
+    participant is_ok as is_ok
     loop &loaded.diagnostics
-    alt match diagnostic.severity
-    print_human-->>print_human: 'error'
-    else Severity::Warning
-    print_human-->>print_human: 'warn '
-    else Severity::Info
-    print_human-->>print_human: 'info '
-    end
     alt match &diagnostic.node
     print_human-->>print_human: println!('{tag} [{}] {} ({})', diagnostic.code, diagnostic.message, n...
     else None
@@ -72,13 +70,18 @@ sequenceDiagram
     end
     print_human-->>print_human: println!()
     print_human-->>print_human: println!('coverage')
+    print_human-->>worst_first: loaded.coverage.worst_first()
     loop loaded.coverage.worst_first()
     print_human-->>print_human: println!( ' code {:>6.1}% {:>6}/{:<6} claimed {:>5} trivia {}', file....
+    print_human-->>iter: file.gaps.iter()
+    print_human-->>is_failure: g.reason.is_failure()
+    print_human-->>filter: file.gaps.iter().filter(|g| g.reason.is_failure())
     loop file.gaps.iter().filter(|g| g.reason.is_failure())
     print_human-->>print_human: println!( ' missing at {} {:?}', gap.span.location(), gap.preview )
     end
     end
     print_human-->>print_human: println!()
+    print_human-->>is_ok: loaded.is_ok()
     alt loaded.is_ok()
     print_human-->>print_human: println!('ok: every byte is owned or classified')
     else else
@@ -86,5 +89,20 @@ sequenceDiagram
     end
 ```
 
-12 steps · 0 observed · 12 possible only
+14 steps · 0 observed · 14 possible only
+
+**Edges**
+
+- calls → [`robby_ir::coverage::impl CoverageReport::worst_first`](../robby_ir/coverage/index.md)
+- calls → [`robby_ir::coverage::impl GapReason::is_failure`](../robby_ir/coverage/index.md)
+- calls → [`robby_render::pipeline::impl Loaded::is_ok`](../robby_render/pipeline/index.md)
+
+## References
+
+- calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — is_failure, worst_first
+- calls → [`robby_render::pipeline`](../robby_render/pipeline/index.md) — is_ok
+
+## Referenced by
+
+- calls ← [`robby_cli::check`](check.md)
 

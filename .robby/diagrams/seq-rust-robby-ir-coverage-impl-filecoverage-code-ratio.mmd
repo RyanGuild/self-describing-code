@@ -1,9 +1,5 @@
 sequenceDiagram
     autonumber
     participant code_ratio as code_ratio()
-    code_ratio-->>code_ratio: self.covered_bytes + self.uncovered_bytes()
-    alt code == 0
-    code_ratio-->>code_ratio: 1.0
-    else else
-    code_ratio-->>code_ratio: self.covered_bytes as f32 / code as f32
-    end
+    participant uncovered_bytes as uncovered_bytes
+    code_ratio-->>uncovered_bytes: self.uncovered_bytes()

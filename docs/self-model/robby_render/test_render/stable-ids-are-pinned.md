@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn stable_ids_are_pinned()` |
-| location | [`crates/robby-render/tests/render.rs:127`](../../../../crates/robby-render/tests/render.rs#L127) |
+| location | [`crates/robby-render/tests/render.rs:131`](../../../../crates/robby-render/tests/render.rs#L131) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    participant main_process as main_process()
+    participant iter as iter
+    participant get as get
+    participant filter_map as filter_map
+    participant as_str as as_str
+    participant find as find
+    participant as_ref as as_ref
+    participant and_then as and_then
+    main_process-->>iter: node.children .iter()
+    main_process-->>get: doc.get(id)
+    main_process-->>filter_map: node.children .iter() .filter_map(|id| doc.get(id))
+    main_process-->>as_str: child.kind.as_str()
+    main_process-->>find: node.children .iter() .filter_map(|id| doc.get(id)) .find(|child| chi...
+    main_process-->>as_ref: main.process.as_ref()
+    main_process-->>and_then: node.children .iter() .filter_map(|id| doc.get(id)) .find(|child| chi...

@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant container_of as container_of()
+    participant get as get
+    participant is_container as is_container
+    participant Some as Some
+    container_of-->>get: doc.get(id)
+    container_of-->>container_of: ? (propagate)
+    container_of-->>is_container: is_container(current)
+    alt is_container(current)
+    container_of-->>Some: Some(current)
+    container_of-->>container_of: return
+    end
+    loop let Some(parent_id) = &current.parent
+    container_of-->>get: doc.get(parent_id)
+    container_of-->>container_of: ? (propagate)
+    container_of-->>is_container: is_container(parent)
+    alt is_container(parent)
+    container_of-->>Some: Some(parent)
+    container_of-->>container_of: return
+    end
+    end

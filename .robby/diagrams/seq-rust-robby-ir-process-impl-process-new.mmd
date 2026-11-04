@@ -1,4 +1,6 @@
 sequenceDiagram
     autonumber
     participant new as new()
-    new-->>new: Self { participants: Vec::new(), steps: Vec::new(), }
+    participant Vec__new as Vec::new
+    new-->>Vec__new: Vec::new()
+    new-->>Vec__new: Vec::new()

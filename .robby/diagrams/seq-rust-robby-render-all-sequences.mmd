@@ -1,8 +1,21 @@
 sequenceDiagram
     autonumber
     participant all_sequences as all_sequences()
+    participant values as values
+    participant as_ref as as_ref
+    participant clone as clone
+    participant sequence as sequence
+    participant map as map
+    participant filter_map as filter_map
     participant collect as collect
+    participant cmp as cmp
     participant sort_by as sort_by
+    all_sequences-->>values: doc .nodes .values()
+    all_sequences-->>as_ref: node.process .as_ref()
+    all_sequences-->>clone: node.id.clone()
+    all_sequences-->>sequence: sequence(p)
+    all_sequences-->>map: node.process .as_ref() .map(|p| (node.id.clone(), sequence(p)))
+    all_sequences-->>filter_map: doc .nodes .values() .filter_map(|node| { node.process .as_ref() .map...
     all_sequences-->>collect: doc .nodes .values() .filter_map(|node| { node.process .as_ref() .map...
+    all_sequences-->>cmp: a.0.cmp(&b.0)
     all_sequences-->>sort_by: out.sort_by(|a, b| a.0.cmp(&b.0))
-    all_sequences-->>all_sequences: out

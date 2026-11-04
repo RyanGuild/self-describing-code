@@ -5,25 +5,27 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-ir/src/kind.rs:85`](../../../../../crates/robby-ir/src/kind.rs#L85) |
+| declared at | [`crates/robby-ir/src/kind.rs:90`](../../../../../crates/robby-ir/src/kind.rs#L90) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 4 |
 
+## Package diagram
+
 ```mermaid
-flowchart TD
-    subgraph n_9bd6a0786f266df1["runtime [module]"]
-        direction TB
-        n_033c43cd4423b97c["TRACE [const]"]
-        n_dd501c97e8238e0b["SPAN [const]"]
-        n_49af21154241cd3d["EVENT [const]"]
-    end
+flowchart TB
+    n_9bd6a0786f266df1["runtime"]
 ```
 
+## Dependency matrix
+
+| | runtime |
+|---|---:|
+| **runtime** | · |
 ## Items
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`TRACE`](trace.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:87:5` |
-| [`SPAN`](span.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:88:5` |
-| [`EVENT`](event.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:89:5` |
+| [`TRACE`](trace.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:92:5` |
+| [`SPAN`](span.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:93:5` |
+| [`EVENT`](event.md) | `code.const` | — | `crates/robby-ir/src/kind.rs:94:5` |
 

@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant push as push()
+    participant is_blank as is_blank
+    push-->>is_blank: section.is_blank()
+    alt !section.is_blank()
+    push-->>push: self.sections.push(section)
+    end

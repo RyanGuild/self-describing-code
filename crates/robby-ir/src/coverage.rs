@@ -251,7 +251,8 @@ fn has_span_descendant(doc: &Document, id: &crate::model::NodeId) -> bool {
 }
 
 fn make_gap(file: &str, source: &str, bytes: &[u8], start: u32, end: u32) -> Gap {
-    let reason = match scan_trivia(bytes, start, end) {
+    let mode = TriviaMode::from_path(file);
+    let reason = match scan_trivia(bytes, start, end, mode) {
         Ok(flags) => flags.classify(),
         Err(at) => GapReason::Unknown {
             at: Position::at(source, at),
@@ -261,6 +262,31 @@ fn make_gap(file: &str, source: &str, bytes: &[u8], start: u32, end: u32) -> Gap
         span: Span::new(file, source, start, end),
         reason,
         preview: preview(source, start, end),
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum TriviaMode {
+    Rust,
+    TypeScript,
+}
+
+impl TriviaMode {
+    fn from_path(path: &str) -> Self {
+        let lower = path.to_ascii_lowercase();
+        if lower.ends_with(".ts")
+            || lower.ends_with(".tsx")
+            || lower.ends_with(".mts")
+            || lower.ends_with(".cts")
+            || lower.ends_with(".js")
+            || lower.ends_with(".jsx")
+            || lower.ends_with(".mjs")
+            || lower.ends_with(".cjs")
+        {
+            Self::TypeScript
+        } else {
+            Self::Rust
+        }
     }
 }
 
@@ -293,14 +319,26 @@ impl TriviaFlags {
     }
 }
 
-/// Walk a byte range, accepting only whitespace, comments and attributes.
+/// Walk a byte range, accepting only whitespace, comments and (Rust) attributes.
 ///
 /// Returns the byte offset of the first token that is none of those, which is
 /// what makes the gap report actionable: it points at the exact byte that is
 /// missing from the map.
-fn scan_trivia(bytes: &[u8], start: u32, end: u32) -> Result<TriviaFlags, u32> {
+fn scan_trivia(
+    bytes: &[u8],
+    start: u32,
+    end: u32,
+    mode: TriviaMode,
+) -> Result<TriviaFlags, u32> {
     let mut flags = TriviaFlags::default();
     let mut i = start;
+    // TypeScript shebang is trivia when it opens the file.
+    if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!' {
+        flags.comment = true;
+        while i < end && bytes[i as usize] != b'\n' {
+            i += 1;
+        }
+    }
     while i < end {
         let c = bytes[i as usize];
         if c.is_ascii_whitespace() {
@@ -326,7 +364,7 @@ fn scan_trivia(bytes: &[u8], start: u32, end: u32) -> Result<TriviaFlags, u32> {
                     i += 1;
                 }
             }
-        } else if c == b'#' {
+        } else if mode == TriviaMode::Rust && c == b'#' {
             match skip_attribute(bytes, i, end) {
                 Some(next) => {
                     flags.attribute = true;

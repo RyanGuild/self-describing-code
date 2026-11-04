@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/model.rs:134`](../../../../crates/robby-ir/src/model.rs#L134) |
+| location | [`crates/robby-ir/src/model.rs:135`](../../../../crates/robby-ir/src/model.rs#L135) |
 | provenance | extractor · confidence 1.00 |
 
 > A directed relationship between nodes.
@@ -31,9 +31,9 @@ pub struct Edge {
 
 **Fields and variants**
 
-- `to` — `crates/robby-ir/src/model.rs:137:5`
-- `kind` — `crates/robby-ir/src/model.rs:138:5`
-- `span` — `crates/robby-ir/src/model.rs:139:5`
-- `confidence` — `crates/robby-ir/src/model.rs:141:5`
-- `resolved` — `crates/robby-ir/src/model.rs:143:5`
+- `to` — `crates/robby-ir/src/model.rs:138:5`
+- `kind` — `crates/robby-ir/src/model.rs:139:5`
+- `span` — `crates/robby-ir/src/model.rs:140:5`
+- `confidence` — `crates/robby-ir/src/model.rs:142:5`
+- `resolved` — `crates/robby-ir/src/model.rs:144:5`
 

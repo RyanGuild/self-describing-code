@@ -1,0 +1,74 @@
+sequenceDiagram
+    autonumber
+    participant from_entry as from_entry()
+    participant get as get
+    participant is_none as is_none
+    participant Vec__new as Vec::new
+    participant BTreeSet__new as BTreeSet::new
+    participant clone as clone
+    participant insert as insert
+    participant VecDeque__new as VecDeque::new
+    participant push_back as push_back
+    participant pop_front as pop_front
+    participant iter as iter
+    participant filter as filter
+    participant is_some as is_some
+    participant map as map
+    participant collect as collect
+    participant as_str as as_str
+    participant unwrap_or as unwrap_or
+    participant cmp as cmp
+    participant then_with as then_with
+    participant sort_by as sort_by
+    participant dedup_by as dedup_by
+    participant push as push
+    participant Some as Some
+    from_entry-->>get: doc.get(entry)
+    from_entry-->>is_none: doc.get(entry).is_none()
+    alt doc.get(entry).is_none()
+    from_entry-->>from_entry: return
+    end
+    from_entry-->>Vec__new: Vec::new()
+    from_entry-->>BTreeSet__new: BTreeSet::new()
+    from_entry-->>clone: entry.clone()
+    from_entry-->>insert: placed.insert(entry.clone())
+    from_entry-->>VecDeque__new: VecDeque::new()
+    from_entry-->>clone: entry.clone()
+    from_entry-->>push_back: queue.push_back((entry.clone(), 0))
+    from_entry-->>pop_front: queue.pop_front()
+    loop let Some((from_id, depth)) = queue.pop_front()
+    from_entry-->>get: doc.get(&from_id)
+    from_entry-->>iter: from .edges .iter()
+    from_entry-->>filter: from .edges .iter() .filter(|e| e.kind == EdgeKind::Calls && e.resolved)
+    from_entry-->>get: doc.get(&e.to)
+    from_entry-->>is_some: doc.get(&e.to).is_some()
+    from_entry-->>filter: from .edges .iter() .filter(|e| e.kind == EdgeKind::Calls && e.resolv...
+    from_entry-->>clone: e.to.clone()
+    from_entry-->>map: from .edges .iter() .filter(|e| e.kind == EdgeKind::Calls && e.resolv...
+    from_entry-->>collect: from .edges .iter() .filter(|e| e.kind == EdgeKind::Calls && e.resolv...
+    from_entry-->>get: doc.get(a)
+    from_entry-->>as_str: n.fqn.as_str()
+    from_entry-->>map: doc.get(a).map(|n| n.fqn.as_str())
+    from_entry-->>unwrap_or: doc.get(a).map(|n| n.fqn.as_str()).unwrap_or('')
+    from_entry-->>get: doc.get(b)
+    from_entry-->>as_str: n.fqn.as_str()
+    from_entry-->>map: doc.get(b).map(|n| n.fqn.as_str())
+    from_entry-->>unwrap_or: doc.get(b).map(|n| n.fqn.as_str()).unwrap_or('')
+    from_entry-->>cmp: fa.cmp(fb)
+    from_entry-->>as_str: a.as_str()
+    from_entry-->>as_str: b.as_str()
+    from_entry-->>cmp: a.as_str().cmp(b.as_str())
+    from_entry-->>then_with: fa.cmp(fb).then_with(|| a.as_str().cmp(b.as_str()))
+    from_entry-->>sort_by: callees.sort_by(|(a, _), (b, _)| { let fa = doc.get(a).map(|n| n.fqn....
+    from_entry-->>dedup_by: callees.dedup_by(|(a, _), (b, _)| a == b)
+    loop callees
+    from_entry-->>clone: to.clone()
+    from_entry-->>insert: placed.insert(to.clone())
+    from_entry-->>clone: from_id.clone()
+    from_entry-->>clone: to.clone()
+    from_entry-->>push: edges.push(CodePathEdge { from: from_id.clone(), to: to.clone(), dept...
+    from_entry-->>push_back: queue.push_back((to, child_depth))
+    end
+    end
+    from_entry-->>clone: entry.clone()
+    from_entry-->>Some: Some(Self { entry: entry.clone(), edges, max_depth, })

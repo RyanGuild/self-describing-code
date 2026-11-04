@@ -1,0 +1,5 @@
+sequenceDiagram
+    autonumber
+    participant subtree_ids as subtree_ids()
+    participant collect as collect
+    subtree_ids-->>collect: doc.subtree(&root.id) .into_iter() .map(|node| node.id.clone()) .coll...

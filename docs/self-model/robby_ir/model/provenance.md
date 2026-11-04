@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/model.rs:93`](../../../../crates/robby-ir/src/model.rs#L93) |
+| location | [`crates/robby-ir/src/model.rs:94`](../../../../crates/robby-ir/src/model.rs#L94) |
 | provenance | extractor · confidence 1.00 |
 
 > Where a fact came from and how much to trust it.
@@ -26,7 +26,7 @@ pub struct Provenance {
 
 **Fields and variants**
 
-- `source` — `crates/robby-ir/src/model.rs:96:5`
-- `observed_at` — `crates/robby-ir/src/model.rs:97:5`
-- `confidence` — `crates/robby-ir/src/model.rs:100:5`
+- `source` — `crates/robby-ir/src/model.rs:97:5`
+- `observed_at` — `crates/robby-ir/src/model.rs:98:5`
+- `confidence` — `crates/robby-ir/src/model.rs:101:5`
 

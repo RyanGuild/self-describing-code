@@ -14,6 +14,7 @@ path = "src/main.rs"
 robby-ir.workspace = true
 robby-render.workspace = true
 robby-extract.workspace = true
+robby-agent.workspace = true
 clap.workspace = true
 anyhow.workspace = true
 serde_json.workspace = true

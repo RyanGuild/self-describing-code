@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant every_child_and_resolved_portal_is_a_frame as every_child_and_resolved_portal_is_a_frame()
+    participant demo_doc as demo_doc
+    participant Scene__from_document as Scene::from_document
+    participant values as values
+    every_child_and_resolved_portal_is_a_frame-->>demo_doc: demo_doc()
+    every_child_and_resolved_portal_is_a_frame-->>Scene__from_document: Scene::from_document(&doc)
+    every_child_and_resolved_portal_is_a_frame-->>values: scene.frames.values()
+    loop scene.frames.values()
+    loop &frame.children
+    every_child_and_resolved_portal_is_a_frame-->>every_child_and_resolved_portal_is_a_frame: assert!( scene.frames.contains_key(child), 'missing child frame {chil...
+    end
+    loop &frame.portals
+    alt let Some(target) = &portal.target
+    every_child_and_resolved_portal_is_a_frame-->>every_child_and_resolved_portal_is_a_frame: assert!( scene.frames.contains_key(target), 'portal target {target} m...
+    end
+    end
+    end
+    every_child_and_resolved_portal_is_a_frame-->>every_child_and_resolved_portal_is_a_frame: assert!(scene.frames.contains_key(&stable_id(WORKSPACE_ID)))

@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    participant new as new()
+    participant reqwest__blocking__Client__builder as reqwest::blocking::Client::builder
+    participant std__time__Duration__from_secs as std::time::Duration::from_secs
+    participant timeout as timeout
+    participant build as build
+    participant context as context
+    participant into as into
+    participant trim_end_matches as trim_end_matches
+    participant to_owned as to_owned
+    participant Ok as Ok
+    new-->>reqwest__blocking__Client__builder: reqwest::blocking::Client::builder()
+    new-->>std__time__Duration__from_secs: std::time::Duration::from_secs(60)
+    new-->>timeout: reqwest::blocking::Client::builder() .timeout(std::time::Duration::fr...
+    new-->>build: reqwest::blocking::Client::builder() .timeout(std::time::Duration::fr...
+    new-->>context: reqwest::blocking::Client::builder() .timeout(std::time::Duration::fr...
+    new-->>new: ? (propagate)
+    new-->>into: api_key.into()
+    new-->>into: base_url.into()
+    new-->>trim_end_matches: base_url.into().trim_end_matches('/')
+    new-->>to_owned: base_url.into().trim_end_matches('/').to_owned()
+    new-->>Ok: Ok(Self { http, api_key: api_key.into(), base_url: base_url.into().tr...

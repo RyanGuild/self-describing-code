@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    participant typescript_fixture_is_fully_covered as typescript_fixture_is_fully_covered()
+    participant fixture as fixture
+    participant robby_extract__extract as robby_extract::extract
+    participant expect as expect
+    participant BTreeMap__new as BTreeMap::new
+    participant join as join
+    participant std__fs__read_to_string as std::fs::read_to_string
+    participant unwrap_or_else as unwrap_or_else
+    participant clone as clone
+    participant insert as insert
+    participant robby_ir__coverage__document_coverage as robby_ir::coverage::document_coverage
+    participant failures as failures
+    participant map as map
+    participant collect as collect
+    typescript_fixture_is_fully_covered-->>fixture: fixture()
+    typescript_fixture_is_fully_covered-->>robby_extract__extract: robby_extract::extract(&root)
+    typescript_fixture_is_fully_covered-->>expect: robby_extract::extract(&root).expect('extract')
+    typescript_fixture_is_fully_covered-->>BTreeMap__new: BTreeMap::new()
+    loop &doc.files
+    typescript_fixture_is_fully_covered-->>join: root.join(file)
+    typescript_fixture_is_fully_covered-->>std__fs__read_to_string: std::fs::read_to_string(root.join(file))
+    typescript_fixture_is_fully_covered-->>typescript_fixture_is_fully_covered: panic!('reading {file}: {err}')
+    typescript_fixture_is_fully_covered-->>unwrap_or_else: std::fs::read_to_string(root.join(file)) .unwrap_or_else(|err| panic!...
+    typescript_fixture_is_fully_covered-->>clone: file.clone()
+    typescript_fixture_is_fully_covered-->>insert: sources.insert(file.clone(), text)
+    end
+    typescript_fixture_is_fully_covered-->>robby_ir__coverage__document_coverage: robby_ir::coverage::document_coverage(&doc, &sources)
+    typescript_fixture_is_fully_covered-->>failures: report .failures()
+    typescript_fixture_is_fully_covered-->>typescript_fixture_is_fully_covered: format!('{}:{} {:?}', file.file, gap.span.location(), gap.preview)
+    typescript_fixture_is_fully_covered-->>map: report .failures() .map(|(file, gap)| format!('{}:{} {:?}', file.file...
+    typescript_fixture_is_fully_covered-->>collect: report .failures() .map(|(file, gap)| format!('{}:{} {:?}', file.file...
+    typescript_fixture_is_fully_covered-->>typescript_fixture_is_fully_covered: assert!( report.is_complete(), 'unclaimed TypeScript: {failures: ?}' )

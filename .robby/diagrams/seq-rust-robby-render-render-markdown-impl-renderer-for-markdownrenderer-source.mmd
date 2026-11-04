@@ -1,0 +1,10 @@
+sequenceDiagram
+    autonumber
+    participant source as source()
+    participant String__from as String::from
+    participant trim_end as trim_end
+    participant push_str as push_str
+    source-->>String__from: String::from('```rust\n')
+    source-->>trim_end: view.text.trim_end()
+    source-->>push_str: out.push_str(view.text.trim_end())
+    source-->>push_str: out.push_str('\n```\n')

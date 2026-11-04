@@ -25,8 +25,20 @@ fn unused_participant_import_is_referenced() {
 sequenceDiagram
     autonumber
     participant unused_participant_import_is_referenced as unused_participant_import_is_referenced()
-    unused_participant_import_is_referenced-->>unused_participant_import_is_referenced: Participant { id: 'x'.to_owned(), label: 'x'.to_owned(), kind: Kind::...
+    participant to_owned as to_owned
+    participant Kind__from as Kind::from
+    unused_participant_import_is_referenced-->>to_owned: 'x'.to_owned()
+    unused_participant_import_is_referenced-->>to_owned: 'x'.to_owned()
+    unused_participant_import_is_referenced-->>Kind__from: Kind::from(code::FUNCTION)
 ```
 
-1 steps · 0 observed · 1 possible only
+3 steps · 0 observed · 3 possible only
+
+**Edges**
+
+- calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
+
+## References
+
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
 

@@ -1,0 +1,112 @@
+sequenceDiagram
+    autonumber
+    participant dsm_markdown_table as dsm_markdown_table()
+    participant is_empty as is_empty
+    participant String__new as String::new
+    participant std__collections__BTreeSet__new as std::collections::BTreeSet::new
+    participant Vec__new as Vec::new
+    participant module_by_stable as module_by_stable
+    participant clone as clone
+    participant insert as insert
+    participant push as push
+    participant iter as iter
+    participant enumerate as enumerate
+    participant as_str as as_str
+    participant map as map
+    participant collect as collect
+    participant len as len
+    participant get as get
+    participant push_str as push_str
+    participant filter_map as filter_map
+    participant join as join
+    dsm_markdown_table-->>is_empty: view.modules.is_empty()
+    alt view.modules.is_empty()
+    dsm_markdown_table-->>String__new: String::new()
+    dsm_markdown_table-->>dsm_markdown_table: return
+    end
+    dsm_markdown_table-->>std__collections__BTreeSet__new: std::collections::BTreeSet::new()
+    dsm_markdown_table-->>Vec__new: Vec::new()
+    loop &view.layers
+    loop layer
+    dsm_markdown_table-->>module_by_stable: view.module_by_stable(sid)
+    alt let Some(m) = view.module_by_stable(sid)
+    dsm_markdown_table-->>clone: sid.clone()
+    dsm_markdown_table-->>insert: seen.insert(sid.clone())
+    alt seen.insert(sid.clone())
+    dsm_markdown_table-->>push: ordered.push(m)
+    end
+    end
+    end
+    end
+    loop &view.modules
+    dsm_markdown_table-->>clone: m.stable_id.clone()
+    dsm_markdown_table-->>insert: seen.insert(m.stable_id.clone())
+    alt seen.insert(m.stable_id.clone())
+    dsm_markdown_table-->>push: ordered.push(m)
+    end
+    end
+    dsm_markdown_table-->>iter: order .iter()
+    dsm_markdown_table-->>enumerate: order .iter() .enumerate()
+    dsm_markdown_table-->>as_str: m.stable_id.as_str()
+    dsm_markdown_table-->>map: order .iter() .enumerate() .map(|(i, m)| (m.stable_id.as_str(), i))
+    dsm_markdown_table-->>collect: order .iter() .enumerate() .map(|(i, m)| (m.stable_id.as_str(), i)) ....
+    dsm_markdown_table-->>len: order.len()
+    dsm_markdown_table-->>dsm_markdown_table: vec![vec![0usize n] n]
+    dsm_markdown_table-->>dsm_markdown_table: vec![vec![false n] n]
+    loop &view.edges
+    dsm_markdown_table-->>as_str: edge.from.as_str()
+    dsm_markdown_table-->>get: index.get(edge.from.as_str())
+    dsm_markdown_table-->>as_str: edge.to.as_str()
+    dsm_markdown_table-->>get: index.get(edge.to.as_str())
+    end
+    dsm_markdown_table-->>String__new: String::new()
+    dsm_markdown_table-->>push_str: out.push_str('| |')
+    loop &order
+    dsm_markdown_table-->>dsm_markdown_table: write!(out, ' {} |', m.name)
+    end
+    dsm_markdown_table-->>push: out.push('\n')
+    dsm_markdown_table-->>push_str: out.push_str('|---|')
+    loop &order
+    dsm_markdown_table-->>push_str: out.push_str('---:|')
+    end
+    dsm_markdown_table-->>push: out.push('\n')
+    dsm_markdown_table-->>iter: order.iter()
+    dsm_markdown_table-->>enumerate: order.iter().enumerate()
+    loop order.iter().enumerate()
+    dsm_markdown_table-->>dsm_markdown_table: write!(out, '| **{}** |', row.name)
+    dsm_markdown_table-->>iter: order.iter()
+    dsm_markdown_table-->>enumerate: order.iter().enumerate()
+    loop order.iter().enumerate()
+    alt i == j
+    dsm_markdown_table-->>push_str: out.push_str(' · |')
+    else else
+    alt matrix[i][j] == 0
+    dsm_markdown_table-->>push_str: out.push_str(' |')
+    else else
+    alt cyclic[i][j]
+    dsm_markdown_table-->>dsm_markdown_table: write!(out, ' {}⇄ |', matrix[i][j])
+    else else
+    dsm_markdown_table-->>dsm_markdown_table: write!(out, ' {} |', matrix[i][j])
+    end
+    end
+    end
+    end
+    dsm_markdown_table-->>push: out.push('\n')
+    end
+    dsm_markdown_table-->>is_empty: view.cycles.is_empty()
+    alt !view.cycles.is_empty()
+    dsm_markdown_table-->>push_str: out.push_str('\nCycles: ')
+    dsm_markdown_table-->>iter: view .cycles .iter()
+    dsm_markdown_table-->>iter: scc.iter()
+    dsm_markdown_table-->>module_by_stable: view.module_by_stable(sid)
+    dsm_markdown_table-->>as_str: m.name.as_str()
+    dsm_markdown_table-->>map: view.module_by_stable(sid).map(|m| m.name.as_str())
+    dsm_markdown_table-->>filter_map: scc.iter() .filter_map(|sid| view.module_by_stable(sid).map(|m| m.nam...
+    dsm_markdown_table-->>collect: scc.iter() .filter_map(|sid| view.module_by_stable(sid).map(|m| m.nam...
+    dsm_markdown_table-->>join: scc.iter() .filter_map(|sid| view.module_by_stable(sid).map(|m| m.nam...
+    dsm_markdown_table-->>map: view .cycles .iter() .map(|scc| { scc.iter() .filter_map(|sid| view.m...
+    dsm_markdown_table-->>collect: view .cycles .iter() .map(|scc| { scc.iter() .filter_map(|sid| view.m...
+    dsm_markdown_table-->>join: names.join(' ')
+    dsm_markdown_table-->>push_str: out.push_str(&names.join(' '))
+    dsm_markdown_table-->>push: out.push('\n')
+    end

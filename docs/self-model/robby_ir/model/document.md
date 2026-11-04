@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/model.rs:264`](../../../../crates/robby-ir/src/model.rs#L264) |
+| location | [`crates/robby-ir/src/model.rs:291`](../../../../crates/robby-ir/src/model.rs#L291) |
 | provenance | extractor · confidence 1.00 |
 
 > The whole graph for one workspace snapshot.
@@ -27,14 +27,18 @@ pub struct Document {
     /// than an absence.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub files: Vec<String>,
+    /// Entrypoint-rooted call trees derived from resolved `Calls` edges.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub code_paths: Vec<CodePath>,
 }
 ```
 
 **Fields and variants**
 
-- `schema_version` — `crates/robby-ir/src/model.rs:267:5`
-- `generator` — `crates/robby-ir/src/model.rs:268:5`
-- `nodes` — `crates/robby-ir/src/model.rs:270:5`
-- `roots` — `crates/robby-ir/src/model.rs:271:5`
-- `files` — `crates/robby-ir/src/model.rs:273:5`
+- `schema_version` — `crates/robby-ir/src/model.rs:294:5`
+- `generator` — `crates/robby-ir/src/model.rs:295:5`
+- `nodes` — `crates/robby-ir/src/model.rs:297:5`
+- `roots` — `crates/robby-ir/src/model.rs:298:5`
+- `files` — `crates/robby-ir/src/model.rs:300:5`
+- `code_paths` — `crates/robby-ir/src/model.rs:307:5`
 

@@ -2,14 +2,20 @@ sequenceDiagram
     autonumber
     participant normalize as normalize()
     participant Vec__new as Vec::new
+    participant components as components
     participant pop as pop
+    participant to_string_lossy as to_string_lossy
+    participant to_string as to_string
     participant push as push
     participant join as join
     normalize-->>Vec__new: Vec::new()
+    normalize-->>components: path.components()
     loop path.components()
     alt match component
     normalize-->>pop: parts.pop()
     else Component::Normal(part)
+    normalize-->>to_string_lossy: part.to_string_lossy()
+    normalize-->>to_string: part.to_string_lossy().to_string()
     normalize-->>push: parts.push(part.to_string_lossy().to_string())
     end
     end

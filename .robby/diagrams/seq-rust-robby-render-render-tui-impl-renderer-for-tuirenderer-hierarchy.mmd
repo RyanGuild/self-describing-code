@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant hierarchy as hierarchy()
+    participant String__new as String::new
+    participant render as render
+    hierarchy-->>hierarchy: fn render(node: &HierarchyNode, prefix: &str, is_last: bool, out: &mu...
+    hierarchy-->>String__new: String::new()
+    hierarchy-->>render: render(&view.root, '', true, &mut out)

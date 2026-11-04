@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+    participant coupling_deps as coupling_deps()
+    participant String__from as String::from
+    participant is_empty as is_empty
+    participant emit_workspace_coupling as emit_workspace_coupling
+    participant std__collections__BTreeMap__new as std::collections::BTreeMap::new
+    participant as_str as as_str
+    participant entry as entry
+    participant or_default as or_default
+    participant push as push
+    participant emit_coupling_subgraph as emit_coupling_subgraph
+    coupling_deps-->>String__from: String::from('flowchart TB\n')
+    coupling_deps-->>is_empty: view.is_empty()
+    alt view.is_empty()
+    coupling_deps-->>coupling_deps: return
+    end
+    coupling_deps-->>is_empty: view.functions.is_empty()
+    alt view.functions.is_empty()
+    coupling_deps-->>emit_workspace_coupling: emit_workspace_coupling(&mut out, &view.root, 1)
+    else else
+    coupling_deps-->>std__collections__BTreeMap__new: std::collections::BTreeMap::new()
+    loop &view.functions
+    coupling_deps-->>as_str: leaf.parent_stable_id.as_str()
+    coupling_deps-->>entry: map.entry(leaf.parent_stable_id.as_str())
+    coupling_deps-->>or_default: map.entry(leaf.parent_stable_id.as_str()) .or_default()
+    coupling_deps-->>push: map.entry(leaf.parent_stable_id.as_str()) .or_default() .push(leaf)
+    end
+    coupling_deps-->>emit_coupling_subgraph: emit_coupling_subgraph(&mut out, &view.root, &by_parent, 1)
+    end
+    loop &view.edges
+    alt edge.in_cycle
+    coupling_deps-->>coupling_deps: writeln!( out, ' {} -.->|\'{} circular\'| {}', edge.from, edge.weight...
+    else else
+    alt edge.weight > 1
+    coupling_deps-->>coupling_deps: writeln!( out, ' {} -->|\'{}\'| {}', edge.from, edge.weight, edge.to )
+    else else
+    coupling_deps-->>coupling_deps: writeln!(out, ' {} --> {}', edge.from, edge.to)
+    end
+    end
+    end

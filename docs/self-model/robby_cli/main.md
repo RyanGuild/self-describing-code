@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn main() -> ExitCode` |
-| location | [`crates/robby-cli/src/main.rs:73`](../../../crates/robby-cli/src/main.rs#L73) |
+| location | [`crates/robby-cli/src/main.rs:143`](../../../crates/robby-cli/src/main.rs#L143) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -25,13 +25,20 @@ fn main() -> ExitCode {
 sequenceDiagram
     autonumber
     participant main as main()
+    participant run as run
+    main-->>run: run()
     alt match run()
-    main-->>main: code
-    else Err(err)
     main-->>main: eprintln!('error: {err: }')
-    main-->>main: ExitCode::FAILURE
     end
 ```
 
-3 steps · 0 observed · 3 possible only
+2 steps · 0 observed · 2 possible only
+
+**Edges**
+
+- calls → [`robby_cli::run`](run.md)
+
+## References
+
+- calls → [`robby_cli`](index.md) — run
 

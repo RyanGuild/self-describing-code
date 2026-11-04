@@ -1,0 +1,7 @@
+sequenceDiagram
+    autonumber
+    participant workspace as workspace()
+    participant PackageStructure__workspace as PackageStructure::workspace
+    participant CouplingGraph__workspace as CouplingGraph::workspace
+    workspace-->>PackageStructure__workspace: PackageStructure::workspace(doc)
+    workspace-->>CouplingGraph__workspace: CouplingGraph::workspace(doc)
