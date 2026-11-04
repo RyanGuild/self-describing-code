@@ -54,6 +54,6 @@ sequenceDiagram
     else Command::EnrichComments { ir, source_root, out, decision_model, note_...
     run-->>as_deref: out.as_deref()
     run-->>enrich_comments: enrich_comments(&ir, &source_root, out.as_deref(), decision_model, no...
-    else Command::Web { ir, source_root, out, }
-    run-->>web: web(&ir, &source_root, &out)
+    else Command::Web { ir, source_root, out, watch, watch_interval_ms, }
+    run-->>web: web(&ir, &source_root, &out, watch, watch_interval_ms)
     end

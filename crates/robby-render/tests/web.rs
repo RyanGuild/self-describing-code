@@ -277,6 +277,12 @@ fn write_site_emits_scene_and_frames() {
     assert!(dir.join("scene.json").is_file());
     assert!(dir.join("scene-entrypoints.json").is_file());
     assert!(dir.join("frames").is_dir());
+    let build_path = dir.join("build.json");
+    assert!(build_path.is_file());
+    let build: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&build_path).unwrap()).unwrap();
+    assert_eq!(build["frames"], count);
+    assert!(build["rebuilt_at"].as_u64().is_some());
     let workspace = dir.join(format!("frames/{}.json", stable_id(WORKSPACE_ID)));
     assert!(workspace.is_file());
     // No JavaScript in the site data output.

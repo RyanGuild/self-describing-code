@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:112`](../../../../../apps/site/src/viewer.ts#L112) |
+| location | [`apps/site/src/viewer.ts:124`](../../../../../apps/site/src/viewer.ts#L124) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -23,6 +23,7 @@ async function main(): Promise<void> {
 
   applyScene(scene);
   void prefetchEntrypoints();
+  void startBuildWatch();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));

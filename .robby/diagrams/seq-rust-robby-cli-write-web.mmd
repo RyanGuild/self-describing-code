@@ -1,0 +1,8 @@
+sequenceDiagram
+    autonumber
+    participant write_web as write_web()
+    participant pipeline__load as pipeline::load
+    participant robby_render__write_site as robby_render::write_site
+    write_web-->>pipeline__load: pipeline::load(ir, source_root)
+    write_web-->>write_web: ? (propagate)
+    write_web-->>robby_render__write_site: robby_render::write_site(&loaded.document, &loaded.sources, out)

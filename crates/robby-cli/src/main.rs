@@ -124,6 +124,12 @@ enum Command {
         /// Directory for `scene.json` and `frames/` (default: `apps/site/public`).
         #[arg(long, default_value = "apps/site/public")]
         out: PathBuf,
+        /// Rebuild when `--ir` changes; keep watching until Ctrl-C.
+        #[arg(long)]
+        watch: bool,
+        /// Poll interval for `--watch` (milliseconds).
+        #[arg(long, default_value_t = 750)]
+        watch_interval_ms: u64,
     },
 }
 
@@ -215,18 +221,58 @@ fn run() -> Result<ExitCode> {
             ir,
             source_root,
             out,
-        } => web(&ir, &source_root, &out),
+            watch,
+            watch_interval_ms,
+        } => web(&ir, &source_root, &out, watch, watch_interval_ms),
     }
 }
 
-fn web(ir: &std::path::Path, source_root: &std::path::Path, out: &std::path::Path) -> Result<ExitCode> {
-    let loaded = pipeline::load(ir, source_root)?;
-    let count = robby_render::write_site(&loaded.document, &loaded.sources, out)?;
+fn web(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    out: &std::path::Path,
+    watch: bool,
+    watch_interval_ms: u64,
+) -> Result<ExitCode> {
+    let count = write_web(ir, source_root, out)?;
     println!(
         "wrote {count} frame(s) to {}\nserve with: cd apps/site && npm install && npm run dev",
         out.display()
     );
-    Ok(ExitCode::SUCCESS)
+    if !watch {
+        return Ok(ExitCode::SUCCESS);
+    }
+
+    let mut last_mtime = ir_mtime(ir);
+    println!(
+        "watching {} every {watch_interval_ms}ms (Ctrl-C to stop)",
+        ir.display()
+    );
+    loop {
+        std::thread::sleep(std::time::Duration::from_millis(watch_interval_ms));
+        let mtime = ir_mtime(ir);
+        if mtime == last_mtime {
+            continue;
+        }
+        last_mtime = mtime;
+        match write_web(ir, source_root, out) {
+            Ok(count) => println!("rebuilt {count} frame(s) → {}", out.display()),
+            Err(err) => eprintln!("watch rebuild failed: {err:#}"),
+        }
+    }
+}
+
+fn write_web(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    out: &std::path::Path,
+) -> Result<usize> {
+    let loaded = pipeline::load(ir, source_root)?;
+    robby_render::write_site(&loaded.document, &loaded.sources, out)
+}
+
+fn ir_mtime(ir: &std::path::Path) -> Option<std::time::SystemTime> {
+    std::fs::metadata(ir).and_then(|m| m.modified()).ok()
 }
 
 fn enrich_comments(

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:642`](../../../../../apps/site/src/viewer.ts#L642) |
+| location | [`apps/site/src/viewer.ts:724`](../../../../../apps/site/src/viewer.ts#L724) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -35,4 +35,5 @@ sequenceDiagram
 - calls ← [`robby__site/src/viewer/loadDetail`](loaddetail.md)
 - calls ← [`robby__site/src/viewer/main`](main.md)
 - calls ← [`robby__site/src/viewer/prefetchEntrypoints`](prefetchentrypoints.md)
+- calls ← [`robby__site/src/viewer/reloadFromDisk`](reloadfromdisk.md)
 

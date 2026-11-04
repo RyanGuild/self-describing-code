@@ -143,12 +143,12 @@ flowchart TB
 | [`sibling_world_rects_do_not_collapse_onto_each_other`](sibling-world-rects-do-not-collapse-onto-each-other.md) | `code.function` | 15 | `crates/robby-render/tests/web.rs:213:1` |
 | [`leaf_payload_includes_source_and_process`](leaf-payload-includes-source-and-process.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:239:1` |
 | [`unresolved_portal_has_no_zoom_target`](unresolved-portal-has-no-zoom-target.md) | `code.function` | 10 | `crates/robby-render/tests/web.rs:254:1` |
-| [`write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md) | `code.function` | 12 | `crates/robby-render/tests/web.rs:271:1` |
-| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:286:1` |
-| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:298:1` |
-| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:317:1` |
-| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:374:1` |
-| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:382:1` |
+| [`write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md) | `code.function` | 20 | `crates/robby-render/tests/web.rs:271:1` |
+| [`entrypoints_demo_stores_code_paths_in_ir`](entrypoints-demo-stores-code-paths-in-ir.md) | `code.function` | 3 | `crates/robby-render/tests/web.rs:292:1` |
+| [`frame_detail_includes_execution_mermaid_for_call_path`](frame-detail-includes-execution-mermaid-for-call-path.md) | `code.function` | 11 | `crates/robby-render/tests/web.rs:304:1` |
+| [`entrypoints_scene_roots_mains_and_nests_callees`](entrypoints-scene-roots-mains-and-nests-callees.md) | `code.function` | 29 | `crates/robby-render/tests/web.rs:323:1` |
+| [`entrypoints_scene_json_is_deterministic`](entrypoints-scene-json-is-deterministic.md) | `code.function` | 6 | `crates/robby-render/tests/web.rs:380:1` |
+| [`tempfile_dir`](tempfile-dir.md) | `code.function` | 5 | `crates/robby-render/tests/web.rs:388:1` |
 
 ## Imports
 

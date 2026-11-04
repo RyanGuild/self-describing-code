@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn enrich_comments(     ir: &std::path::Path,     source_root: &std::path::Path,     out: Option<&std::path::Path>,     decision_model: Option<String>,     note_model: Option<String>,     limit: Option<usize>, ) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:232`](../../../crates/robby-cli/src/main.rs#L232) |
+| location | [`crates/robby-cli/src/main.rs:278`](../../../crates/robby-cli/src/main.rs#L278) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

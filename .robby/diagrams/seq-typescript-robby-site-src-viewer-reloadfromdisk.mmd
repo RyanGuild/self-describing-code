@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    participant reloadFromDisk as reloadFromDisk()
+    participant clear as clear
+    participant fetchJson as fetchJson
+    participant set as set
+    participant error as error
+    participant toggle as toggle
+    participant get as get
+    participant applyScene as applyScene
+    participant cameraForFocus as cameraForFocus
+    participant remount as remount
+    participant showWatchBadge as showWatchBadge
+    alt if
+    return-->>caller: 
+    end
+    self-->>clear: 
+    self-->>clear: 
+    self-->>fetchJson: 
+    self-->>await: 
+    self-->>set: 
+    self-->>fetchJson: 
+    self-->>await: 
+    self-->>set: 
+    alt catch
+    self-->>error: 
+    end
+    self-->>toggle: 
+    self-->>toggle: 
+    self-->>get: 
+    self-->>applyScene: 
+    alt if
+    self-->>cameraForFocus: 
+    self-->>remount: 
+    end
+    self-->>showWatchBadge: 
+    alt catch
+    self-->>error: 
+    end

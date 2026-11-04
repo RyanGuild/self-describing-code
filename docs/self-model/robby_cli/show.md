@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn show(     path: Option<&str>,     ir: Option<&std::path::Path>,     source_root: &std::path::Path,     depth: usize,     width: usize,     all: bool,     view: ViewKind,     no_source: bool, ) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:367`](../../../crates/robby-cli/src/main.rs#L367) |
+| location | [`crates/robby-cli/src/main.rs:413`](../../../crates/robby-cli/src/main.rs#L413) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

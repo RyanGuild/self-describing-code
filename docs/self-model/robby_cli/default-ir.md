@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn default_ir() -> PathBuf` |
-| location | [`crates/robby-cli/src/main.rs:418`](../../../crates/robby-cli/src/main.rs#L418) |
+| location | [`crates/robby-cli/src/main.rs:464`](../../../crates/robby-cli/src/main.rs#L464) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

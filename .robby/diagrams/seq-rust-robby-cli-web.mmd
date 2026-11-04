@@ -1,12 +1,28 @@
 sequenceDiagram
     autonumber
     participant web as web()
-    participant pipeline__load as pipeline::load
-    participant robby_render__write_site as robby_render::write_site
+    participant write_web as write_web
     participant Ok as Ok
-    web-->>pipeline__load: pipeline::load(ir, source_root)
-    web-->>web: ? (propagate)
-    web-->>robby_render__write_site: robby_render::write_site(&loaded.document, &loaded.sources, out)
+    participant ir_mtime as ir_mtime
+    participant std__time__Duration__from_millis as std::time::Duration::from_millis
+    participant std__thread__sleep as std::thread::sleep
+    web-->>write_web: write_web(ir, source_root, out)
     web-->>web: ? (propagate)
     web-->>web: println!( 'wrote {count} frame(s) to {}\nserve with: cd apps/site && ...
+    alt !watch
     web-->>Ok: Ok(ExitCode::SUCCESS)
+    web-->>web: return
+    end
+    web-->>ir_mtime: ir_mtime(ir)
+    web-->>web: println!( 'watching {} every {watch_interval_ms}ms (Ctrl-C to stop)',...
+    loop loop
+    web-->>std__time__Duration__from_millis: std::time::Duration::from_millis(watch_interval_ms)
+    web-->>std__thread__sleep: std::thread::sleep(std::time::Duration::from_millis(watch_interval_ms))
+    web-->>ir_mtime: ir_mtime(ir)
+    web-->>write_web: write_web(ir, source_root, out)
+    alt match write_web(ir, source_root, out)
+    web-->>web: println!('rebuilt {count} frame(s) → {}', out.display())
+    else Err(err)
+    web-->>web: eprintln!('watch rebuild failed: {err: }')
+    end
+    end

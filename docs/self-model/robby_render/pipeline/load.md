@@ -51,5 +51,5 @@ sequenceDiagram
 - calls ← [`robby_cli::report`](../../robby_cli/report.md)
 - calls ← [`robby_cli::run`](../../robby_cli/run.md)
 - calls ← [`robby_cli::show`](../../robby_cli/show.md)
-- calls ← [`robby_cli::web`](../../robby_cli/web.md)
+- calls ← [`robby_cli::write_web`](../../robby_cli/write-web.md)
 

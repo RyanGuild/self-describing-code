@@ -90,12 +90,22 @@ interface Camera {
 
 type OrgMode = "structure" | "entrypoints";
 
+interface BuildStamp {
+  rebuilt_at: number;
+  frames: number;
+  nodes?: number;
+  files?: number;
+  generator?: string;
+}
+
 const HINT_STRUCTURE = "click a card to zoom · portals jump to related views";
 const HINT_ENTRYPOINTS = "drill by call path · portals jump across shared callees";
+const WATCH_POLL_MS = 1500;
 
 const worldEl = document.getElementById("world")!;
 const crumbEl = document.getElementById("crumb")!;
 const hintEl = document.getElementById("hint")!;
+const watchBadgeEl = document.getElementById("watch-badge")!;
 const zoomOutBtn = document.getElementById("zoom-out") as HTMLButtonElement;
 const orgStructureBtn = document.getElementById("org-structure") as HTMLButtonElement;
 const orgEntrypointsBtn = document.getElementById("org-entrypoints") as HTMLButtonElement;
@@ -108,6 +118,8 @@ const detailCache = new Map<string, FrameDetail>();
 let flying = false;
 let camera: Camera = { scale: 1, tx: 0, ty: 0 };
 let cameraRaf = 0;
+let lastBuildAt: number | null = null;
+let reloading = false;
 
 async function main(): Promise<void> {
   try {
@@ -123,6 +135,7 @@ async function main(): Promise<void> {
 
   applyScene(scene);
   void prefetchEntrypoints();
+  void startBuildWatch();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));
@@ -137,6 +150,75 @@ async function main(): Promise<void> {
       zoomOut();
     }
   });
+}
+
+/** Poll `build.json` written by `robby web` / `--watch`; remount when IR site rebuilds. */
+async function startBuildWatch(): Promise<void> {
+  const tick = async () => {
+    try {
+      const stamp = await fetchJson<BuildStamp>(`build.json?t=${Date.now()}`);
+      if (lastBuildAt === null) {
+        lastBuildAt = stamp.rebuilt_at;
+        showWatchBadge(stamp, false);
+      } else if (stamp.rebuilt_at !== lastBuildAt) {
+        lastBuildAt = stamp.rebuilt_at;
+        await reloadFromDisk(stamp);
+      }
+    } catch {
+      // build.json optional until first `robby web` with stamp support
+    }
+  };
+  await tick();
+  window.setInterval(() => {
+    void tick();
+  }, WATCH_POLL_MS);
+}
+
+async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
+  if (reloading || flying) {
+    return;
+  }
+  reloading = true;
+  const keepFocus = focusId;
+  const keepOrg = orgMode;
+  try {
+    detailCache.clear();
+    sceneCache.clear();
+    const structure = await fetchJson<Scene>(`scene.json?t=${Date.now()}`);
+    sceneCache.set("structure", structure);
+    try {
+      const entrypoints = await fetchJson<Scene>(`scene-entrypoints.json?t=${Date.now()}`);
+      sceneCache.set("entrypoints", entrypoints);
+    } catch (err) {
+      console.error(err);
+    }
+    orgMode = keepOrg;
+    orgStructureBtn.classList.toggle("is-active", keepOrg === "structure");
+    orgEntrypointsBtn.classList.toggle("is-active", keepOrg === "entrypoints");
+    hintEl.textContent = keepOrg === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
+    const next = sceneCache.get(keepOrg) ?? structure;
+    applyScene(next);
+    if (keepFocus && next.frames[keepFocus]) {
+      focusId = keepFocus;
+      camera = cameraForFocus(focusId);
+      remount();
+      void loadDetail(focusId);
+    }
+    showWatchBadge(stamp, true);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    reloading = false;
+  }
+}
+
+function showWatchBadge(stamp: BuildStamp, justRebuilt: boolean): void {
+  const nodes = stamp.nodes ?? "?";
+  const label = justRebuilt
+    ? `IR rebuilt · ${stamp.frames} frames · ${nodes} nodes`
+    : `live · ${stamp.frames} frames · ${nodes} nodes`;
+  watchBadgeEl.textContent = label;
+  watchBadgeEl.hidden = false;
 }
 
 async function prefetchEntrypoints(): Promise<void> {

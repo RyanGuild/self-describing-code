@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn report(     ir: &std::path::Path,     source_root: &std::path::Path,     out: Option<PathBuf>, ) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:344`](../../../crates/robby-cli/src/main.rs#L344) |
+| location | [`crates/robby-cli/src/main.rs:390`](../../../crates/robby-cli/src/main.rs#L390) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn print_human(loaded: &pipeline::Loaded)` |
-| location | [`crates/robby-cli/src/main.rs:282`](../../../crates/robby-cli/src/main.rs#L282) |
+| location | [`crates/robby-cli/src/main.rs:328`](../../../crates/robby-cli/src/main.rs#L328) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

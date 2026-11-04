@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn run() -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:153`](../../../crates/robby-cli/src/main.rs#L153) |
+| location | [`crates/robby-cli/src/main.rs:159`](../../../crates/robby-cli/src/main.rs#L159) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -75,7 +75,9 @@ fn run() -> Result<ExitCode> {
             ir,
             source_root,
             out,
-        } => web(&ir, &source_root, &out),
+            watch,
+            watch_interval_ms,
+        } => web(&ir, &source_root, &out, watch, watch_interval_ms),
     }
 }
 ```
@@ -137,8 +139,8 @@ sequenceDiagram
     else Command::EnrichComments { ir, source_root, out, decision_model, note_...
     run-->>as_deref: out.as_deref()
     run-->>enrich_comments: enrich_comments(&ir, &source_root, out.as_deref(), decision_model, no...
-    else Command::Web { ir, source_root, out, }
-    run-->>web: web(&ir, &source_root, &out)
+    else Command::Web { ir, source_root, out, watch, watch_interval_ms, }
+    run-->>web: web(&ir, &source_root, &out, watch, watch_interval_ms)
     end
 ```
 

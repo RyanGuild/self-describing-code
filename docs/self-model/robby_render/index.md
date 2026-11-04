@@ -3600,6 +3600,20 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           }
       }
   
+      // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
+      let rebuilt_at = std::time::SystemTime::now()
+          .duration_since(std::time::UNIX_EPOCH)
+          .map(|d| d.as_millis())
+          .unwrap_or(0);
+      let build = serde_json::json!({
+          "rebuilt_at": rebuilt_at,
+          "frames": count,
+          "nodes": doc.nodes.len(),
+          "files": doc.files.len(),
+          "generator": doc.generator,
+      });
+      fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+  
       Ok(count)
   }
   ```
@@ -3708,8 +3722,8 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - calls ← [`robby_cli::resolve`](../robby_cli/resolve.md)
 - calls ← [`robby_cli::run`](../robby_cli/run.md)
 - calls ← [`robby_cli::show`](../robby_cli/show.md)
-- calls ← [`robby_cli::web`](../robby_cli/web.md)
 - calls ← [`robby_cli::workspace`](../robby_cli/workspace.md)
+- calls ← [`robby_cli::write_web`](../robby_cli/write-web.md)
 - calls ← [`robby_extract::rust::collect_rs`](../robby_extract/rust/collect-rs.md)
 - calls ← [`robby_extract::rust::discover_crates`](../robby_extract/rust/discover-crates.md)
 - calls ← [`robby_extract::rust::docs_of`](../robby_extract/rust/docs-of.md)

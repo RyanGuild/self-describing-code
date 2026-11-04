@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:650`](../../../../../apps/site/src/viewer.ts#L650) |
+| location | [`apps/site/src/viewer.ts:732`](../../../../../apps/site/src/viewer.ts#L732) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

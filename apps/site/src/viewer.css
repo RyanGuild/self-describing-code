@@ -101,6 +101,21 @@ body {
   color: var(--muted);
 }
 
+#watch-badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid var(--frame-border);
+  background: var(--chip);
+  border-radius: 6px;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+#watch-badge[hidden] {
+  display: none;
+}
+
 #viewport {
   position: absolute;
   inset: 0;

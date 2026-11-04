@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 62 |
+| nodes | 64 |
 
 ## Entry
 
@@ -95,6 +95,7 @@ flowchart TB
         n_0b19cbdc9c790728["check"]
         n_6173b9031ddd73f8["enrich_comments"]
         n_b685ee67ac4f2f21["extract"]
+        n_62203b68bec8803a["ir_mtime"]
         n_eb50e92e5843791d["main"]
         n_e3b7ee2025a4b7a1["print_human"]
         n_310da90f0204c1aa["report"]
@@ -102,6 +103,7 @@ flowchart TB
         n_5fb1bc1f5dbdeb45["run"]
         n_c3f69457e875b2e9["show"]
         n_8ac47b1f7612cc06["web"]
+        n_4da64169426da816["write_web"]
     end
     n_0b19cbdc9c790728 --> n_e3b7ee2025a4b7a1
     n_32b42d0d55443cd4 --> n_b685ee67ac4f2f21
@@ -112,6 +114,8 @@ flowchart TB
     n_5fb1bc1f5dbdeb45 --> n_8ac47b1f7612cc06
     n_5fb1bc1f5dbdeb45 --> n_b685ee67ac4f2f21
     n_5fb1bc1f5dbdeb45 --> n_c3f69457e875b2e9
+    n_8ac47b1f7612cc06 -->|"2"| n_4da64169426da816
+    n_8ac47b1f7612cc06 -->|"2"| n_62203b68bec8803a
     n_c3f69457e875b2e9 --> n_ca2aecbbe65eed5c
     n_e71db130b1d88ff9 --> n_b685ee67ac4f2f21
     n_eb50e92e5843791d --> n_5fb1bc1f5dbdeb45
@@ -130,7 +134,7 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-cli/src/main.rs:441:1` (docs, `robby_cli::resolve`): "Resolve an exact fqn, an id, or a unique suffix / bare name."
+- `crates/robby-cli/src/main.rs:487:1` (docs, `robby_cli::resolve`): "Resolve an exact fqn, an id, or a unique suffix / bare name."
   ```
   /// Resolve an exact fqn, an id, or a unique suffix / bare name.
   fn resolve<'a>(doc: &'a Document, path: &str) -> Result<&'a Node> {
@@ -195,19 +199,21 @@ flowchart TB
 |---|---|---:|---|
 | [`Cli`](cli.md) | `code.struct` | — | `crates/robby-cli/src/main.rs:16:1` |
 | [`Command`](command.md) | `code.enum` | — | `crates/robby-cli/src/main.rs:27:1` |
-| [`ViewKind`](viewkind.md) | `code.enum` | — | `crates/robby-cli/src/main.rs:130:1` |
-| [`main`](main.md) | `code.function` | 2 | `crates/robby-cli/src/main.rs:143:1` |
-| [`run`](run.md) | `code.function` | 26 | `crates/robby-cli/src/main.rs:153:1` |
-| [`web`](web.md) | `code.function` | 6 | `crates/robby-cli/src/main.rs:222:1` |
-| [`enrich_comments`](enrich-comments.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:232:1` |
-| [`check`](check.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:261:1` |
-| [`print_human`](print-human.md) | `code.function` | 14 | `crates/robby-cli/src/main.rs:282:1` |
-| [`extract`](extract.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:323:1` |
-| [`report`](report.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:344:1` |
-| [`show`](show.md) | `code.function` | 21 | `crates/robby-cli/src/main.rs:367:1` |
-| [`default_ir`](default-ir.md) | `code.function` | 1 | `crates/robby-cli/src/main.rs:418:1` |
-| [`workspace`](workspace.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:422:1` |
-| [`resolve`](resolve.md) | `code.function` | 23 | `crates/robby-cli/src/main.rs:441:1` |
+| [`ViewKind`](viewkind.md) | `code.enum` | — | `crates/robby-cli/src/main.rs:136:1` |
+| [`main`](main.md) | `code.function` | 2 | `crates/robby-cli/src/main.rs:149:1` |
+| [`run`](run.md) | `code.function` | 26 | `crates/robby-cli/src/main.rs:159:1` |
+| [`web`](web.md) | `code.function` | 13 | `crates/robby-cli/src/main.rs:230:1` |
+| [`write_web`](write-web.md) | `code.function` | 3 | `crates/robby-cli/src/main.rs:265:1` |
+| [`ir_mtime`](ir-mtime.md) | `code.function` | 4 | `crates/robby-cli/src/main.rs:274:1` |
+| [`enrich_comments`](enrich-comments.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:278:1` |
+| [`check`](check.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:307:1` |
+| [`print_human`](print-human.md) | `code.function` | 14 | `crates/robby-cli/src/main.rs:328:1` |
+| [`extract`](extract.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:369:1` |
+| [`report`](report.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:390:1` |
+| [`show`](show.md) | `code.function` | 21 | `crates/robby-cli/src/main.rs:413:1` |
+| [`default_ir`](default-ir.md) | `code.function` | 1 | `crates/robby-cli/src/main.rs:464:1` |
+| [`workspace`](workspace.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:468:1` |
+| [`resolve`](resolve.md) | `code.function` | 23 | `crates/robby-cli/src/main.rs:487:1` |
 
 ## Imports
 

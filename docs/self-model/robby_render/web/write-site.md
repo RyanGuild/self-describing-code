@@ -67,6 +67,20 @@ pub fn write_site(
         }
     }
 
+    // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
+    let rebuilt_at = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0);
+    let build = serde_json::json!({
+        "rebuilt_at": rebuilt_at,
+        "frames": count,
+        "nodes": doc.nodes.len(),
+        "files": doc.files.len(),
+        "generator": doc.generator,
+    });
+    fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+
     Ok(count)
 }
 ```
@@ -91,6 +105,12 @@ sequenceDiagram
     participant get as get
     participant Some as Some
     participant FrameDetail__from_node_in_doc as FrameDetail::from_node_in_doc
+    participant std__time__SystemTime__now as std::time::SystemTime::now
+    participant duration_since as duration_since
+    participant as_millis as as_millis
+    participant map as map
+    participant unwrap_or as unwrap_or
+    participant serde_json__to_string_pretty as serde_json::to_string_pretty
     participant Ok as Ok
     write_site-->>fs__create_dir_all: fs::create_dir_all(out)
     write_site-->>write_site: ? (propagate)
@@ -133,10 +153,21 @@ sequenceDiagram
     write_site-->>write_site: ? (propagate)
     end
     end
+    write_site-->>std__time__SystemTime__now: std::time::SystemTime::now()
+    write_site-->>duration_since: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH)
+    write_site-->>as_millis: d.as_millis()
+    write_site-->>map: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH) ....
+    write_site-->>unwrap_or: std::time::SystemTime::now() .duration_since(std::time::UNIX_EPOCH) ....
+    write_site-->>write_site: serde_json::json!({ 'rebuilt_at': rebuilt_at, 'frames': count, 'nodes...
+    write_site-->>join: out.join('build.json')
+    write_site-->>serde_json__to_string_pretty: serde_json::to_string_pretty(&build)
+    write_site-->>write_site: ? (propagate)
+    write_site-->>fs__write: fs::write(out.join('build.json'), serde_json::to_string_pretty(&build)?)
+    write_site-->>write_site: ? (propagate)
     write_site-->>Ok: Ok(count)
 ```
 
-38 steps · 0 observed · 38 possible only
+49 steps · 0 observed · 49 possible only
 
 **Edges**
 
@@ -167,6 +198,6 @@ sequenceDiagram
 
 ## Referenced by
 
-- calls ← [`robby_cli::web`](../../robby_cli/web.md)
+- calls ← [`robby_cli::write_web`](../../robby_cli/write-web.md)
 - calls ← [`robby_render::test_web::write_site_emits_scene_and_frames`](../test_web/write-site-emits-scene-and-frames.md)
 

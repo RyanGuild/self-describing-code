@@ -109,6 +109,12 @@ enum Command {
         /// Directory for `scene.json` and `frames/` (default: `apps/site/public`).
         #[arg(long, default_value = "apps/site/public")]
         out: PathBuf,
+        /// Rebuild when `--ir` changes; keep watching until Ctrl-C.
+        #[arg(long)]
+        watch: bool,
+        /// Poll interval for `--watch` (milliseconds).
+        #[arg(long, default_value_t = 750)]
+        watch_interval_ms: u64,
     },
 }
 ```

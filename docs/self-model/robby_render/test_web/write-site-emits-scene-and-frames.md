@@ -19,6 +19,12 @@ fn write_site_emits_scene_and_frames() {
     assert!(dir.join("scene.json").is_file());
     assert!(dir.join("scene-entrypoints.json").is_file());
     assert!(dir.join("frames").is_dir());
+    let build_path = dir.join("build.json");
+    assert!(build_path.is_file());
+    let build: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&build_path).unwrap()).unwrap();
+    assert_eq!(build["frames"], count);
+    assert!(build["rebuilt_at"].as_u64().is_some());
     let workspace = dir.join(format!("frames/{}.json", stable_id(WORKSPACE_ID)));
     assert!(workspace.is_file());
     // No JavaScript in the site data output.
@@ -35,6 +41,9 @@ sequenceDiagram
     participant write_site as write_site
     participant expect as expect
     participant join as join
+    participant std__fs__read_to_string as std::fs::read_to_string
+    participant unwrap as unwrap
+    participant serde_json__from_str as serde_json::from_str
     write_site_emits_scene_and_frames-->>demo_doc: demo_doc()
     write_site_emits_scene_and_frames-->>tempfile_dir: tempfile_dir()
     write_site_emits_scene_and_frames-->>write_site: write_site(&doc, &sources, &dir)
@@ -43,13 +52,21 @@ sequenceDiagram
     write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert!(dir.join('scene.json').is_file())
     write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert!(dir.join('scene-entrypoints.json').is_file())
     write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert!(dir.join('frames').is_dir())
+    write_site_emits_scene_and_frames-->>join: dir.join('build.json')
+    write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert!(build_path.is_file())
+    write_site_emits_scene_and_frames-->>std__fs__read_to_string: std::fs::read_to_string(&build_path)
+    write_site_emits_scene_and_frames-->>unwrap: std::fs::read_to_string(&build_path).unwrap()
+    write_site_emits_scene_and_frames-->>serde_json__from_str: serde_json::from_str(&std::fs::read_to_string(&build_path).unwrap())
+    write_site_emits_scene_and_frames-->>unwrap: serde_json::from_str(&std::fs::read_to_string(&build_path).unwrap())....
+    write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert_eq!(build['frames'], count)
+    write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert!(build['rebuilt_at'].as_u64().is_some())
     write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: format!('frames/{}.json', stable_id(WORKSPACE_ID))
     write_site_emits_scene_and_frames-->>join: dir.join(format!('frames/{}.json', stable_id(WORKSPACE_ID)))
     write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert!(workspace.is_file())
     write_site_emits_scene_and_frames-->>write_site_emits_scene_and_frames: assert!(!dir.join('viewer.js').exists())
 ```
 
-12 steps · 0 observed · 12 possible only
+20 steps · 0 observed · 20 possible only
 
 **Edges**
 

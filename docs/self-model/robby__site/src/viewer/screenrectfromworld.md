@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:228`](../../../../../apps/site/src/viewer.ts#L228) |
+| location | [`apps/site/src/viewer.ts:310`](../../../../../apps/site/src/viewer.ts#L310) |
 | provenance | extractor · confidence 1.00 |
 
 > * Absolute screen rect for a frame from its world coordinates + camera.

@@ -277,7 +277,7 @@ flowchart TB
 - calls ← [`robby_cli::report`](../../robby_cli/report.md)
 - calls ← [`robby_cli::run`](../../robby_cli/run.md)
 - calls ← [`robby_cli::show`](../../robby_cli/show.md)
-- calls ← [`robby_cli::web`](../../robby_cli/web.md)
+- calls ← [`robby_cli::write_web`](../../robby_cli/write-web.md)
 - calls ← [`robby_render::test_web::child_world_rects_lie_inside_parent_world`](../test_web/child-world-rects-lie-inside-parent-world.md)
 - calls ← [`robby_render::test_web::every_child_and_resolved_portal_is_a_frame`](../test_web/every-child-and-resolved-portal-is-a-frame.md)
 - calls ← [`robby_render::test_web::scene_json_is_byte_identical_across_runs`](../test_web/scene-json-is-byte-identical-across-runs.md)

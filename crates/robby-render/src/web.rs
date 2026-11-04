@@ -272,5 +272,19 @@ pub fn write_site(
         }
     }
 
+    // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
+    let rebuilt_at = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis())
+        .unwrap_or(0);
+    let build = serde_json::json!({
+        "rebuilt_at": rebuilt_at,
+        "frames": count,
+        "nodes": doc.nodes.len(),
+        "files": doc.files.len(),
+        "generator": doc.generator,
+    });
+    fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+
     Ok(count)
 }
