@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn flowchart(doc: &Document, root: &NodeId) -> String` |
-| location | [`crates/robby-render/src/lib.rs:37`](../../../crates/robby-render/src/lib.rs#L37) |
+| location | [`crates/robby-render/src/lib.rs:39`](../../../crates/robby-render/src/lib.rs#L39) |
 | provenance | extractor · confidence 1.00 |
 
 > Legacy sibling inventory flowchart.

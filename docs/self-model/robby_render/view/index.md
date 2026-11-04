@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-render/src/lib.rs:17`](../../../../crates/robby-render/src/lib.rs#L17) |
+| declared at | [`crates/robby-render/src/lib.rs:18`](../../../../crates/robby-render/src/lib.rs#L18) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 224 |
 
@@ -760,6 +760,7 @@ Cycles: select ↔ scene ↔ types
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::process`](../render/tui/index.md)
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::sibling_graph`](../render/tui/index.md)
 - calls ← [`robby_render::render::tui::impl TuiRenderer::show`](../render/tui/index.md)
+- calls ← [`robby_render::runs::stage_process`](../runs/stage-process.md)
 - calls ← [`robby_render::sequence`](../sequence.md)
 - calls ← [`robby_render::test_render::externals_and_comments_sections_render`](../test_render/externals-and-comments-sections-render.md)
 - calls ← [`robby_render::test_tree::every_internal_link_resolves`](../test_tree/every-internal-link-resolves.md)
@@ -769,6 +770,7 @@ Cycles: select ↔ scene ↔ types
 - calls ← [`robby_render::test_web::sibling_local_rects_do_not_overlap`](../test_web/sibling-local-rects-do-not-overlap.md)
 - calls ← [`robby_render::test_web::sibling_world_rects_do_not_collapse_onto_each_other`](../test_web/sibling-world-rects-do-not-collapse-onto-each-other.md)
 - calls ← [`robby_render::test_web::unresolved_portal_has_no_zoom_target`](../test_web/unresolved-portal-has-no-zoom-target.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](../test_web/write-site-emits-run-records.md)
 - calls ← [`robby_render::tree::item_children`](../tree/item-children.md)
 - calls ← [`robby_render::tree::module_page`](../tree/module-page.md)
 - calls ← [`robby_render::tree::page_paths`](../tree/page-paths.md)

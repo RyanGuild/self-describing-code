@@ -158,6 +158,7 @@ flowchart TB
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::process`](../../render/tui/index.md)
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::sibling_graph`](../../render/tui/index.md)
 - calls ← [`robby_render::test_web::entrypoints_scene_roots_mains_and_nests_callees`](../../test_web/entrypoints-scene-roots-mains-and-nests-callees.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](../../test_web/write-site-emits-run-records.md)
 - calls ← [`robby_render::tree::count_modules`](../../tree/count-modules.md)
 - calls ← [`robby_render::tree::is_module`](../../tree/is-module.md)
 - calls ← [`robby_render::tree::item_children`](../../tree/item-children.md)

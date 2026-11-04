@@ -70,7 +70,7 @@ pub fn write_site(
     // Stamp for `robby web --watch` / viewer poll: changes when the site is rewritten.
     let rebuilt_at = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_millis())
+        .map(|d| d.as_millis() as u64)
         .unwrap_or(0);
     let build = serde_json::json!({
         "rebuilt_at": rebuilt_at,
@@ -80,6 +80,9 @@ pub fn write_site(
         "generator": doc.generator,
     });
     fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+
+    // Completed pipeline history for Runs mode (synthetic extract + this web build).
+    crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
 
     Ok(count)
 }
@@ -111,6 +114,7 @@ sequenceDiagram
     participant map as map
     participant unwrap_or as unwrap_or
     participant serde_json__to_string_pretty as serde_json::to_string_pretty
+    participant crate__runs__write_site_runs as crate::runs::write_site_runs
     participant Ok as Ok
     write_site-->>fs__create_dir_all: fs::create_dir_all(out)
     write_site-->>write_site: ? (propagate)
@@ -164,10 +168,12 @@ sequenceDiagram
     write_site-->>write_site: ? (propagate)
     write_site-->>fs__write: fs::write(out.join('build.json'), serde_json::to_string_pretty(&build)?)
     write_site-->>write_site: ? (propagate)
+    write_site-->>crate__runs__write_site_runs: crate::runs::write_site_runs(doc, out, count, rebuilt_at)
+    write_site-->>write_site: ? (propagate)
     write_site-->>Ok: Ok(count)
 ```
 
-49 steps · 0 observed · 49 possible only
+51 steps · 0 observed · 51 possible only
 
 **Edges**
 
@@ -185,6 +191,7 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
 - calls → [`robby_render::web::impl FrameDetail::from_node_in_doc`](index.md)
 - calls → [`robby_render::web::impl FrameDetail::to_json`](index.md)
+- calls → [`robby_render::runs::write_site_runs`](../runs/write-site-runs.md)
 
 ## References
 
@@ -192,6 +199,7 @@ sequenceDiagram
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert
 - calls → [`robby_render::pipeline`](../pipeline/index.md) — from_document
 - calls → [`robby_render::report`](../report/index.md) — new
+- calls → [`robby_render::runs`](../runs/index.md) — write_site_runs
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::scene`](../view/scene/index.md) — from_entrypoints
 - calls → [`robby_render::web`](index.md) — for_workspace, from_node_in_doc, to_json
@@ -199,5 +207,6 @@ sequenceDiagram
 ## Referenced by
 
 - calls ← [`robby_cli::write_web`](../../robby_cli/write-web.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](../test_web/write-site-emits-run-records.md)
 - calls ← [`robby_render::test_web::write_site_emits_scene_and_frames`](../test_web/write-site-emits-scene-and-frames.md)
 

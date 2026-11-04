@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    participant web_build_run as web_build_run()
+    participant saturating_sub as saturating_sub
+    participant serde_json__Map__new as serde_json::Map::new
+    participant into as into
+    participant insert as insert
+    participant to_owned as to_owned
+    participant Some as Some
+    participant stage_process as stage_process
+    web_build_run-->>saturating_sub: finished_at.saturating_sub(500)
+    web_build_run-->>serde_json__Map__new: serde_json::Map::new()
+    web_build_run-->>into: 'frames'.into()
+    web_build_run-->>web_build_run: serde_json::json!(frames)
+    web_build_run-->>insert: stats.insert('frames'.into(), serde_json::json!(frames))
+    web_build_run-->>into: 'nodes'.into()
+    web_build_run-->>web_build_run: serde_json::json!(doc.nodes.len())
+    web_build_run-->>insert: stats.insert('nodes'.into(), serde_json::json!(doc.nodes.len()))
+    web_build_run-->>into: 'files'.into()
+    web_build_run-->>web_build_run: serde_json::json!(doc.files.len())
+    web_build_run-->>insert: stats.insert('files'.into(), serde_json::json!(doc.files.len()))
+    web_build_run-->>to_owned: 'latest-web'.to_owned()
+    web_build_run-->>to_owned: recipe::WEB.to_owned()
+    web_build_run-->>to_owned: 'workspace:'.to_owned()
+    web_build_run-->>to_owned: status::PASS.to_owned()
+    web_build_run-->>Some: Some(0)
+    web_build_run-->>web_build_run: format!('wrote {frames} frame(s) to site public/')
+    web_build_run-->>Some: Some(format!('wrote {frames} frame(s) to site public/'))
+    web_build_run-->>web_build_run: vec![ 'path:apps/site/public/scene.json'.to_owned(), 'path:apps/site/...
+    web_build_run-->>stage_process: stage_process(&['load_ir', 'scene', 'frames', 'runs'])
+    web_build_run-->>Some: Some(stage_process(&['load_ir', 'scene', 'frames', 'runs']))

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn entrypoints_scene_json_is_deterministic()` |
-| location | [`crates/robby-render/tests/web.rs:380`](../../../../crates/robby-render/tests/web.rs#L380) |
+| location | [`crates/robby-render/tests/web.rs:411`](../../../../crates/robby-render/tests/web.rs#L411) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -40,13 +40,13 @@ sequenceDiagram
 
 - calls → [`robby_render::test_web::entrypoints_demo_doc`](entrypoints-demo-doc.md)
 - calls → [`robby_render::view::scene::impl Scene::from_entrypoints`](../view/scene/index.md)
-- calls → [`robby_render::web::impl FrameDetail::to_json`](../web/index.md)
+- calls → [`robby_render::runs::impl RunRecord::to_json`](../runs/index.md)
 - calls → [`robby_render::view::scene::impl Scene::from_entrypoints`](../view/scene/index.md)
-- calls → [`robby_render::web::impl FrameDetail::to_json`](../web/index.md)
+- calls → [`robby_render::runs::impl RunRecord::to_json`](../runs/index.md)
 
 ## References
 
+- calls → [`robby_render::runs`](../runs/index.md) — to_json
 - calls → [`robby_render::test_web`](index.md) — entrypoints_demo_doc
 - calls → [`robby_render::view::scene`](../view/scene/index.md) — from_entrypoints
-- calls → [`robby_render::web`](../web/index.md) — to_json
 

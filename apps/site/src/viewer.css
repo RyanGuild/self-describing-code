@@ -429,3 +429,191 @@ body {
   font-size: 15px;
   padding: 16px 0;
 }
+
+/* Runs mode: list + detail over the map (map stays dimmed underneath). */
+#viewport.runs-open #world {
+  opacity: 0.18;
+  pointer-events: none;
+  filter: saturate(0.4);
+}
+
+#runs-panel {
+  position: absolute;
+  z-index: 10;
+  inset: 56px 16px 16px;
+  display: grid;
+  grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+  gap: 16px;
+  pointer-events: none;
+}
+
+#runs-panel[hidden] {
+  display: none;
+}
+
+#runs-list,
+#runs-detail {
+  pointer-events: auto;
+  background: rgba(14, 17, 22, 0.92);
+  border: 1px solid var(--frame-border);
+  border-radius: 10px;
+  overflow: auto;
+}
+
+#runs-list {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.run-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px 12px;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: var(--frame);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.run-row:hover {
+  border-color: var(--portal-border);
+}
+
+.run-row.is-selected {
+  border-color: var(--accent);
+  background: var(--chip);
+}
+
+.run-status {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #1e3a2f;
+  color: #8fd6a8;
+}
+
+.run-status.is-fail,
+.run-status.is-error {
+  background: #3a1e1e;
+  color: #e8a0a0;
+}
+
+.run-status.is-running,
+.run-status.is-queued {
+  background: #2a3348;
+  color: var(--accent);
+}
+
+.run-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.run-recipe {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.run-subject {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.run-time {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+#runs-detail {
+  padding: 16px 18px;
+}
+
+#runs-detail[hidden] {
+  display: none;
+}
+
+#runs-detail h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+#runs-detail .meta {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+#runs-detail .run-kv {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 6px 12px;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+#runs-detail .run-kv dt {
+  color: var(--muted);
+}
+
+#runs-detail .run-kv dd {
+  margin: 0;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  word-break: break-all;
+}
+
+#runs-detail .stdout {
+  margin-top: 12px;
+  background: var(--source-bg);
+  border: 1px solid var(--frame-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  white-space: pre-wrap;
+  color: var(--muted);
+}
+
+#runs-detail .stages {
+  margin-top: 14px;
+}
+
+#runs-detail .stages ol {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.runs-empty {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 16px;
+}
+
+@media (max-width: 720px) {
+  #runs-panel {
+    grid-template-columns: 1fr;
+    inset: 64px 10px 10px;
+  }
+}

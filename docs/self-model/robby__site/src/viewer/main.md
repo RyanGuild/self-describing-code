@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:124`](../../../../../apps/site/src/viewer.ts#L124) |
+| location | [`apps/site/src/viewer.ts:170`](../../../../../apps/site/src/viewer.ts#L170) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -23,18 +23,26 @@ async function main(): Promise<void> {
 
   applyScene(scene);
   void prefetchEntrypoints();
+  void prefetchRuns();
   void startBuildWatch();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));
   orgEntrypointsBtn.addEventListener("click", () => void setOrgMode("entrypoints"));
+  orgRunsBtn.addEventListener("click", () => void setOrgMode("runs"));
   window.addEventListener("resize", () => {
+    if (orgMode === "runs" || !scene) {
+      return;
+    }
     camera = cameraForFocus(focusId);
     placeAllFrames();
   });
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" || e.key === "Backspace") {
       e.preventDefault();
+      if (orgMode === "runs") {
+        return;
+      }
       zoomOut();
     }
   });
@@ -68,9 +76,11 @@ sequenceDiagram
     self-->>fn: 
     self-->>addEventListener: 
     self-->>fn: 
+    self-->>addEventListener: 
+    self-->>fn: 
 ```
 
-16 steps · 0 observed · 16 possible only
+18 steps · 0 observed · 18 possible only
 
 **Edges**
 

@@ -9,6 +9,6 @@
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-type OrgMode = "structure" | "entrypoints";
+type OrgMode = "structure" | "entrypoints" | "runs";
 ```
 

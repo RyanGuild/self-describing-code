@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-render/src/lib.rs:16`](../../../../crates/robby-render/src/lib.rs#L16) |
+| declared at | [`crates/robby-render/src/lib.rs:17`](../../../../crates/robby-render/src/lib.rs#L17) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 13 |
 

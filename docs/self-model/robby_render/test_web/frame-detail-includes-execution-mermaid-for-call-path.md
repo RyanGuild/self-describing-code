@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn frame_detail_includes_execution_mermaid_for_call_path()` |
-| location | [`crates/robby-render/tests/web.rs:304`](../../../../crates/robby-render/tests/web.rs#L304) |
+| location | [`crates/robby-render/tests/web.rs:335`](../../../../crates/robby-render/tests/web.rs#L335) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

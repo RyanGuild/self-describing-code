@@ -5,7 +5,9 @@ sequenceDiagram
     participant fetchJson as fetchJson
     participant set as set
     participant error as error
-    participant toggle as toggle
+    participant prefetchRuns as prefetchRuns
+    participant syncOrgChrome as syncOrgChrome
+    participant showRunsPanel as showRunsPanel
     participant get as get
     participant applyScene as applyScene
     participant cameraForFocus as cameraForFocus
@@ -14,6 +16,7 @@ sequenceDiagram
     alt if
     return-->>caller: 
     end
+    self-->>clear: 
     self-->>clear: 
     self-->>clear: 
     self-->>fetchJson: 
@@ -25,13 +28,20 @@ sequenceDiagram
     alt catch
     self-->>error: 
     end
-    self-->>toggle: 
-    self-->>toggle: 
+    self-->>prefetchRuns: 
+    self-->>await: 
+    self-->>syncOrgChrome: 
+    alt if
+    self-->>showRunsPanel: 
+    end
+    alt else
     self-->>get: 
     self-->>applyScene: 
+    self-->>syncOrgChrome: 
     alt if
     self-->>cameraForFocus: 
     self-->>remount: 
+    end
     end
     self-->>showWatchBadge: 
     alt catch
