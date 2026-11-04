@@ -76,7 +76,8 @@ impl SiteRunsStore {
     }
 
     pub fn record_path(&self, run_id: &str) -> PathBuf {
-        self.runs_dir().join(format!("{run_id}.json"))
+        self.runs_dir()
+            .join(format!("{}.json", run_file_stem(run_id)))
     }
 
     /// Ensure `runs/` + empty index exist (idempotent; does not wipe records).
@@ -308,6 +309,14 @@ fn stage_process(stages: &[&str]) -> Process {
         });
     }
     process
+}
+
+/// Filesystem-safe stem for `runs/<stem>.json`.
+///
+/// `run_id` may contain `:` (e.g. `cursor:bc-…`); Vite/static servers do not
+/// reliably serve colon filenames, so on-disk names map `:` → `_`.
+pub fn run_file_stem(run_id: &str) -> String {
+    run_id.replace(':', "_")
 }
 
 /// Ensure empty `runs/index.json` beside scene payloads.

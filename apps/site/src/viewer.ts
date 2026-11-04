@@ -14,7 +14,7 @@
  * API → `public/runs/`). Runs mode can Allow or Cancel pending reviews.
  */
 
-import { RECIPE_REVIEW_VIEW } from "./runRecord";
+import { RECIPE_CURSOR_CLOUD, RECIPE_REVIEW_VIEW, runFileStem } from "./runRecord";
 
 const CANVAS_W = 1600;
 const CANVAS_H = 1000;
@@ -155,8 +155,11 @@ interface RunRecord {
   };
 }
 
-const HINT_RUNS = "pipeline + reviews · Allow/Cancel pending review_view · click a run for detail";
+const HINT_RUNS = "pipeline + cursor.cloud + reviews · Allow/Cancel review_view · live rows poll";
 const WATCH_POLL_MS = 1500;
+const RUNS_POLL_MS = 2000;
+
+type RunsFilter = "all" | "live" | "cursor" | "reviews";
 
 const worldEl = requireElement("world");
 const viewportEl = requireElement("viewport");
@@ -184,7 +187,8 @@ let reloading = false;
 let runsIndex: RunsIndex | null = null;
 let selectedRunId: string | null = null;
 const runDetailCache = new Map<string, RunRecord>();
-let runsFilter: "reviews" | "all" = "reviews";
+let runsFilter: RunsFilter = "all";
+let lastRunsIndexJson = "";
 const cancelCooldownUntil = new Map<string, number>();
 
 async function main(): Promise<void> {
@@ -225,7 +229,9 @@ async function main(): Promise<void> {
     applyScene(scene, resolveFocusId(scene, saved.frame));
   }
   void startBuildWatch();
+  void startRunsWatch();
   initRunsFilters();
+  syncRunsFilterButtons();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));
@@ -338,25 +344,77 @@ async function prefetchEntrypoints(): Promise<void> {
   }
 }
 
-async function prefetchRuns(force = false): Promise<void> {
+async function prefetchRuns(force = false): Promise<boolean> {
   if (runsIndex && !force) {
-    return;
+    return false;
   }
   try {
+    let raw: string;
     try {
-      runsIndex = await fetchJson<RunsIndex>(`/api/runs?t=${Date.now()}`);
+      raw = await fetchText(`/api/runs?t=${Date.now()}`);
     } catch {
-      runsIndex = await fetchJson<RunsIndex>(`runs/index.json?t=${Date.now()}`);
+      raw = await fetchText(`runs/index.json?t=${Date.now()}`);
     }
+    const changed = raw !== lastRunsIndexJson;
+    if (!force && !changed) {
+      return false;
+    }
+    lastRunsIndexJson = raw;
+    runsIndex = JSON.parse(raw) as RunsIndex;
     orgRunsBtn.disabled = false;
     orgRunsBtn.title = "";
+    updateRunsLiveChrome();
   } catch (err) {
     console.error(err);
     runsIndex = { runs: [] };
+    lastRunsIndexJson = "";
     orgRunsBtn.title = "runs/index.json missing — re-run robby web";
+    return false;
   }
   if (orgMode === "runs") {
     renderRunsList();
+  }
+  return true;
+}
+
+/** Poll runs so cursor.cloud live rows refresh without an IR rebuild. */
+async function startRunsWatch(): Promise<void> {
+  window.setInterval(() => {
+    void (async () => {
+      const changed = await prefetchRuns(true);
+      if (changed && orgMode === "runs") {
+        runDetailCache.clear();
+        showRunsPanel();
+      } else {
+        updateRunsLiveChrome();
+      }
+    })();
+  }, RUNS_POLL_MS);
+}
+
+function updateRunsLiveChrome(): void {
+  const live = (runsIndex?.runs ?? []).filter(
+    (r) => r.status === "running" || r.status === "queued",
+  ).length;
+  if (live > 0) {
+    orgRunsBtn.dataset.live = String(live);
+    orgRunsBtn.title = `${live} live run${live === 1 ? "" : "s"}`;
+  } else {
+    delete orgRunsBtn.dataset.live;
+  }
+}
+
+async function fetchText(path: string): Promise<string> {
+  const res = await fetch(path);
+  if (!res.ok) {
+    throw new Error(`${path}: ${res.status}`);
+  }
+  return res.text();
+}
+
+function syncRunsFilterButtons(): void {
+  for (const btn of runsPanelEl.querySelectorAll<HTMLButtonElement>(".runs-filter")) {
+    btn.classList.toggle("is-active", btn.dataset.filter === runsFilter);
   }
 }
 
@@ -534,19 +592,34 @@ function filteredRunEntries(): RunIndexEntry[] {
   if (runsFilter === "all") {
     return runs;
   }
+  if (runsFilter === "live") {
+    return runs.filter((r) => r.status === "running" || r.status === "queued");
+  }
+  if (runsFilter === "cursor") {
+    return runs.filter((r) => r.recipe === RECIPE_CURSOR_CLOUD || r.recipe.startsWith("cursor."));
+  }
   return runs.filter((r) => r.recipe === RECIPE_REVIEW_VIEW);
 }
 
 function renderRunsList(): void {
   runsListEl.innerHTML = "";
+  const all = runsIndex?.runs ?? [];
   const runs = filteredRunEntries();
+  if (all.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "runs-empty";
+    empty.textContent =
+      "No RunRecords yet. Run `robby web` or `robby ingest cursor --from agents.json`.";
+    runsListEl.appendChild(empty);
+    return;
+  }
   if (runs.length === 0) {
     const empty = document.createElement("div");
     empty.className = "runs-empty";
     empty.textContent =
       runsFilter === "reviews"
         ? "No reviews yet. Focus a map frame to soft-queue robby.review_view."
-        : "No RunRecords yet. Run `robby web` to emit runs/index.json.";
+        : "No runs match this filter.";
     runsListEl.appendChild(empty);
     return;
   }
@@ -555,21 +628,32 @@ function renderRunsList(): void {
     btn.type = "button";
     btn.className = `run-row${entry.run_id === selectedRunId ? " is-selected" : ""}`;
     btn.setAttribute("role", "listitem");
-    const subject = entry.subject ?? "—";
+    const subject = shortRunLabel(entry);
     const started = entry.started_at ?? 0;
     const finished = entry.finished_at ?? entry.started_at ?? 0;
+    const live = entry.status === "running" || entry.status === "queued";
+    const timeLabel = live
+      ? "live"
+      : `${formatDuration(started, finished)} · ${formatRelative(finished || started)}`;
     btn.innerHTML =
       `<span class="run-status ${statusClass(entry.status)}">${escapeHtml(entry.status)}</span>` +
       `<span class="run-main">` +
       `<span class="run-recipe">${escapeHtml(entry.recipe)}</span>` +
       `<span class="run-subject">${escapeHtml(subject)}</span>` +
       `</span>` +
-      `<span class="run-time">${escapeHtml(formatDuration(started, finished))} · ${escapeHtml(formatRelative(finished || started))}</span>`;
+      `<span class="run-time">${escapeHtml(timeLabel)}</span>`;
     btn.addEventListener("click", () => {
       void selectRun(entry.run_id);
     });
     runsListEl.appendChild(btn);
   }
+}
+
+function shortRunLabel(entry: RunIndexEntry): string {
+  if (entry.run_id.startsWith("cursor:")) {
+    return entry.run_id.slice("cursor:".length);
+  }
+  return entry.subject ?? "—";
 }
 
 async function selectRun(runId: string): Promise<void> {
@@ -578,12 +662,13 @@ async function selectRun(runId: string): Promise<void> {
   let detail = runDetailCache.get(runId);
   if (!detail) {
     try {
-      detail = await fetchJson<RunRecord>(`runs/${encodeURIComponent(runId)}.json?t=${Date.now()}`);
+      const stem = runFileStem(runId);
+      detail = await fetchJson<RunRecord>(`runs/${encodeURIComponent(stem)}.json?t=${Date.now()}`);
       runDetailCache.set(runId, detail);
     } catch (err) {
       console.error(err);
       runsDetailEl.hidden = false;
-      runsDetailEl.innerHTML = `<div class="runs-empty">Could not load runs/${escapeHtml(runId)}.json</div>`;
+      runsDetailEl.innerHTML = `<div class="runs-empty">Could not load runs/${escapeHtml(runFileStem(runId))}.json</div>`;
       return;
     }
   }
@@ -594,13 +679,22 @@ function renderRunDetail(detail: RunRecord): void {
   runsDetailEl.hidden = false;
   const started = detail.started_at ?? 0;
   const finished = detail.finished_at ?? detail.started_at ?? 0;
-  const duration = formatDuration(started, finished);
+  const live = detail.status === "running" || detail.status === "queued";
+  const duration = live ? "live" : formatDuration(started, finished);
   const stats = detail.stats
     ? Object.entries(detail.stats)
         .map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(String(v))}</dd>`)
         .join("")
     : "";
-  const products = (detail.products ?? []).map((p) => `<li>${escapeHtml(p)}</li>`).join("");
+  const products = (detail.products ?? [])
+    .map((p) => {
+      if (p.startsWith("url:")) {
+        const href = p.slice(4);
+        return `<li><a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(href)}</a></li>`;
+      }
+      return `<li>${escapeHtml(p)}</li>`;
+    })
+    .join("");
   const stages = (detail.process?.steps ?? [])
     .map(
       (s) =>
@@ -612,7 +706,7 @@ function renderRunDetail(detail: RunRecord): void {
     .join("");
   const canGate =
     detail.recipe === RECIPE_REVIEW_VIEW &&
-    (detail.status === "queued" || detail.status === "running");
+    (detail.status === "running" || detail.status === "queued");
   runsDetailEl.innerHTML =
     `<h2>${escapeHtml(detail.recipe)}</h2>` +
     `<div class="meta"><span class="run-status ${statusClass(detail.status)}">${escapeHtml(detail.status)}</span>` +
@@ -623,7 +717,7 @@ function renderRunDetail(detail: RunRecord): void {
     `<dl class="run-kv">` +
     `<dt>subject</dt><dd>${escapeHtml(detail.subject ?? "—")}</dd>` +
     `<dt>started</dt><dd>${escapeHtml(formatAbsolute(started))}</dd>` +
-    `<dt>finished</dt><dd>${escapeHtml(detail.finished_at !== undefined ? formatAbsolute(detail.finished_at) : "—")}</dd>` +
+    `<dt>${live ? "updated" : "finished"}</dt><dd>${escapeHtml(detail.finished_at !== undefined ? formatAbsolute(detail.finished_at) : "—")}</dd>` +
     (detail.exit_code !== undefined
       ? `<dt>exit_code</dt><dd>${escapeHtml(String(detail.exit_code))}</dd>`
       : "") +
@@ -1199,13 +1293,11 @@ function initRunsFilters(): void {
   for (const btn of runsPanelEl.querySelectorAll<HTMLButtonElement>(".runs-filter")) {
     btn.addEventListener("click", () => {
       const filter = btn.dataset.filter;
-      if (filter !== "reviews" && filter !== "all") {
+      if (filter !== "reviews" && filter !== "all" && filter !== "live" && filter !== "cursor") {
         return;
       }
       runsFilter = filter;
-      for (const other of runsPanelEl.querySelectorAll(".runs-filter")) {
-        other.classList.toggle("is-active", other === btn);
-      }
+      syncRunsFilterButtons();
       renderRunsList();
     });
   }

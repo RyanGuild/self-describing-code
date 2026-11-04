@@ -186,6 +186,15 @@ pub mod recipes {
     pub const CI_ARTIFACTS: &str = "ci.artifacts";
     /// Site biome + `tsc --noEmit` (`npm run check`).
     pub const CI_SITE: &str = "ci.site";
+
+    /// Cursor cloud / Project worker (poll MCP / API → site `runs/`).
+    pub const CURSOR_CLOUD: &str = "cursor.cloud";
+    /// Cursor desktop / local agent session files (when available).
+    pub const CURSOR_LOCAL: &str = "cursor.local";
+    pub const OPENCODE_SESSION: &str = "opencode.session";
+    pub const CLAUDE_CODE: &str = "claude.code";
+    pub const CODEX_SESSION: &str = "codex.session";
+    pub const EXTERNAL_GENERIC: &str = "external.generic";
 }
 
 /// First-party recipe catalog (pipelines.json / `agent.pipeline` ids).
@@ -238,6 +247,36 @@ pub fn builtin_recipes() -> Vec<Recipe> {
             id: RecipeId::from(recipes::METRIC_TEST),
             label: "Metric test".into(),
             allowlist: Some("test".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CURSOR_CLOUD),
+            label: "Cursor cloud agent".into(),
+            allowlist: Some("cursor".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CURSOR_LOCAL),
+            label: "Cursor local agent".into(),
+            allowlist: Some("cursor".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::OPENCODE_SESSION),
+            label: "OpenCode session".into(),
+            allowlist: Some("opencode".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CLAUDE_CODE),
+            label: "Claude Code".into(),
+            allowlist: Some("claude".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::CODEX_SESSION),
+            label: "Codex session".into(),
+            allowlist: Some("codex".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::EXTERNAL_GENERIC),
+            label: "External agent".into(),
+            allowlist: None,
         },
         Recipe {
             id: RecipeId::from(recipes::CI_RUST),
