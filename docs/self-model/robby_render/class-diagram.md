@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn class_diagram(doc: &Document, root: &NodeId) -> String` |
-| location | [`crates/robby-render/src/lib.rs:42`](../../../crates/robby-render/src/lib.rs#L42) |
+| location | [`crates/robby-render/src/lib.rs:44`](../../../crates/robby-render/src/lib.rs#L44) |
 | provenance | extractor · confidence 1.00 |
 
 > UML class diagram for a module's types.

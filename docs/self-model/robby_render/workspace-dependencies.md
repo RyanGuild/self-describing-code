@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn workspace_dependencies(doc: &Document) -> String` |
-| location | [`crates/robby-render/src/lib.rs:83`](../../../crates/robby-render/src/lib.rs#L83) |
+| location | [`crates/robby-render/src/lib.rs:85`](../../../crates/robby-render/src/lib.rs#L85) |
 | provenance | extractor · confidence 1.00 |
 
 > Workspace-wide dependency formalisms (crates).

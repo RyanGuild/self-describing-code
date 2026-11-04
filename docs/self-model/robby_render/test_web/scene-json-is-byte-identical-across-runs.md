@@ -40,13 +40,13 @@ sequenceDiagram
 
 - calls → [`robby_render::test_web::demo_doc`](demo-doc.md)
 - calls → [`robby_render::pipeline::from_document`](../pipeline/from-document.md)
-- calls → [`robby_render::web::impl FrameDetail::to_json`](../web/index.md)
+- calls → [`robby_render::runs::impl RunRecord::to_json`](../runs/index.md)
 - calls → [`robby_render::pipeline::from_document`](../pipeline/from-document.md)
-- calls → [`robby_render::web::impl FrameDetail::to_json`](../web/index.md)
+- calls → [`robby_render::runs::impl RunRecord::to_json`](../runs/index.md)
 
 ## References
 
 - calls → [`robby_render::pipeline`](../pipeline/index.md) — from_document
+- calls → [`robby_render::runs`](../runs/index.md) — to_json
 - calls → [`robby_render::test_web`](index.md) — demo_doc
-- calls → [`robby_render::web`](../web/index.md) — to_json
 

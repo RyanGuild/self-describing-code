@@ -88,7 +88,7 @@ interface Camera {
   ty: number;
 }
 
-type OrgMode = "structure" | "entrypoints";
+type OrgMode = "structure" | "entrypoints" | "runs";
 
 interface BuildStamp {
   rebuilt_at: number;
@@ -98,21 +98,64 @@ interface BuildStamp {
   generator?: string;
 }
 
+interface RunIndexEntry {
+  run_id: string;
+  recipe: string;
+  subject: string;
+  status: string;
+  started_at: number;
+  finished_at: number;
+}
+
+interface RunsIndex {
+  runs: RunIndexEntry[];
+}
+
+interface RunStep {
+  from: string;
+  to: string;
+  label: string;
+  observed?: boolean;
+}
+
+interface RunRecord {
+  run_id: string;
+  recipe: string;
+  subject: string;
+  status: string;
+  started_at: number;
+  finished_at: number;
+  exit_code?: number;
+  stdout_tail?: string;
+  stats?: Record<string, unknown>;
+  products?: string[];
+  process?: {
+    participants: { id: string; label: string }[];
+    steps: RunStep[];
+  };
+}
+
 const HINT_STRUCTURE = "click a card to zoom · portals jump to related views";
 const HINT_ENTRYPOINTS = "drill by call path · portals jump across shared callees";
+const HINT_RUNS = "pipeline history · click a run for status, recipe, timing";
 const WATCH_POLL_MS = 1500;
 
 const worldEl = document.getElementById("world")!;
+const viewportEl = document.getElementById("viewport")!;
 const crumbEl = document.getElementById("crumb")!;
 const hintEl = document.getElementById("hint")!;
 const watchBadgeEl = document.getElementById("watch-badge")!;
 const zoomOutBtn = document.getElementById("zoom-out") as HTMLButtonElement;
 const orgStructureBtn = document.getElementById("org-structure") as HTMLButtonElement;
 const orgEntrypointsBtn = document.getElementById("org-entrypoints") as HTMLButtonElement;
+const orgRunsBtn = document.getElementById("org-runs") as HTMLButtonElement;
+const runsPanelEl = document.getElementById("runs-panel")!;
+const runsListEl = document.getElementById("runs-list")!;
+const runsDetailEl = document.getElementById("runs-detail")!;
 
 let scene: Scene | null = null;
 let orgMode: OrgMode = "structure";
-const sceneCache = new Map<OrgMode, Scene>();
+const sceneCache = new Map<"structure" | "entrypoints", Scene>();
 let focusId = "";
 const detailCache = new Map<string, FrameDetail>();
 let flying = false;
@@ -120,6 +163,9 @@ let camera: Camera = { scale: 1, tx: 0, ty: 0 };
 let cameraRaf = 0;
 let lastBuildAt: number | null = null;
 let reloading = false;
+let runsIndex: RunsIndex | null = null;
+let selectedRunId: string | null = null;
+const runDetailCache = new Map<string, RunRecord>();
 
 async function main(): Promise<void> {
   try {
@@ -135,18 +181,26 @@ async function main(): Promise<void> {
 
   applyScene(scene);
   void prefetchEntrypoints();
+  void prefetchRuns();
   void startBuildWatch();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));
   orgEntrypointsBtn.addEventListener("click", () => void setOrgMode("entrypoints"));
+  orgRunsBtn.addEventListener("click", () => void setOrgMode("runs"));
   window.addEventListener("resize", () => {
+    if (orgMode === "runs" || !scene) {
+      return;
+    }
     camera = cameraForFocus(focusId);
     placeAllFrames();
   });
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" || e.key === "Backspace") {
       e.preventDefault();
+      if (orgMode === "runs") {
+        return;
+      }
       zoomOut();
     }
   });
@@ -184,6 +238,7 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
   try {
     detailCache.clear();
     sceneCache.clear();
+    runDetailCache.clear();
     const structure = await fetchJson<Scene>(`scene.json?t=${Date.now()}`);
     sceneCache.set("structure", structure);
     try {
@@ -192,17 +247,23 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     } catch (err) {
       console.error(err);
     }
+    await prefetchRuns(true);
     orgMode = keepOrg;
-    orgStructureBtn.classList.toggle("is-active", keepOrg === "structure");
-    orgEntrypointsBtn.classList.toggle("is-active", keepOrg === "entrypoints");
-    hintEl.textContent = keepOrg === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
-    const next = sceneCache.get(keepOrg) ?? structure;
-    applyScene(next);
-    if (keepFocus && next.frames[keepFocus]) {
-      focusId = keepFocus;
-      camera = cameraForFocus(focusId);
-      remount();
-      void loadDetail(focusId);
+    syncOrgChrome(keepOrg);
+    if (keepOrg === "runs") {
+      showRunsPanel();
+    } else {
+      const next =
+        sceneCache.get(keepOrg === "entrypoints" ? "entrypoints" : "structure") ??
+        structure;
+      applyScene(next);
+      syncOrgChrome(keepOrg);
+      if (keepFocus && next.frames[keepFocus]) {
+        focusId = keepFocus;
+        camera = cameraForFocus(focusId);
+        remount();
+        void loadDetail(focusId);
+      }
     }
     showWatchBadge(stamp, true);
   } catch (err) {
@@ -235,8 +296,54 @@ async function prefetchEntrypoints(): Promise<void> {
   }
 }
 
+async function prefetchRuns(force = false): Promise<void> {
+  if (runsIndex && !force) {
+    return;
+  }
+  try {
+    runsIndex = await fetchJson<RunsIndex>(`runs/index.json?t=${Date.now()}`);
+    orgRunsBtn.disabled = false;
+    orgRunsBtn.title = "";
+  } catch (err) {
+    console.error(err);
+    runsIndex = { runs: [] };
+    orgRunsBtn.title = "runs/index.json missing — re-run robby web";
+  }
+}
+
+function syncOrgChrome(mode: OrgMode): void {
+  orgStructureBtn.classList.toggle("is-active", mode === "structure");
+  orgEntrypointsBtn.classList.toggle("is-active", mode === "entrypoints");
+  orgRunsBtn.classList.toggle("is-active", mode === "runs");
+  if (mode === "runs") {
+    hintEl.textContent = HINT_RUNS;
+  } else if (mode === "entrypoints") {
+    hintEl.textContent = HINT_ENTRYPOINTS;
+  } else {
+    hintEl.textContent = HINT_STRUCTURE;
+  }
+  viewportEl.classList.toggle("runs-open", mode === "runs");
+  runsPanelEl.hidden = mode !== "runs";
+  zoomOutBtn.disabled = mode === "runs" || !scene || !frameSafeParent();
+}
+
+function frameSafeParent(): boolean {
+  try {
+    return Boolean(scene && frame(focusId).parent);
+  } catch {
+    return false;
+  }
+}
+
 async function setOrgMode(next: OrgMode): Promise<void> {
   if (next === orgMode || flying) {
+    return;
+  }
+  if (next === "runs") {
+    await prefetchRuns();
+    orgMode = "runs";
+    syncOrgChrome("runs");
+    showRunsPanel();
     return;
   }
   let cached = sceneCache.get(next);
@@ -250,9 +357,7 @@ async function setOrgMode(next: OrgMode): Promise<void> {
     }
   }
   orgMode = next;
-  orgStructureBtn.classList.toggle("is-active", next === "structure");
-  orgEntrypointsBtn.classList.toggle("is-active", next === "entrypoints");
-  hintEl.textContent = next === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
+  syncOrgChrome(next);
   applyScene(cached);
 }
 
@@ -264,6 +369,153 @@ function applyScene(next: Scene): void {
   camera = cameraForFocus(focusId);
   remount();
   void loadDetail(focusId);
+}
+
+function showRunsPanel(): void {
+  syncOrgChrome("runs");
+  crumbEl.textContent = "Runs";
+  renderRunsList();
+  if (selectedRunId) {
+    void selectRun(selectedRunId);
+  } else {
+    runsDetailEl.hidden = true;
+    runsDetailEl.innerHTML = "";
+  }
+}
+
+function renderRunsList(): void {
+  runsListEl.innerHTML = "";
+  const runs = runsIndex?.runs ?? [];
+  if (runs.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "runs-empty";
+    empty.textContent =
+      "No RunRecords yet. Run `robby web` to emit runs/index.json.";
+    runsListEl.appendChild(empty);
+    return;
+  }
+  for (const entry of runs) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "run-row" + (entry.run_id === selectedRunId ? " is-selected" : "");
+    btn.setAttribute("role", "listitem");
+    btn.innerHTML =
+      `<span class="run-status ${statusClass(entry.status)}">${escapeHtml(entry.status)}</span>` +
+      `<span class="run-main">` +
+      `<span class="run-recipe">${escapeHtml(entry.recipe)}</span>` +
+      `<span class="run-subject">${escapeHtml(entry.subject)}</span>` +
+      `</span>` +
+      `<span class="run-time">${escapeHtml(formatDuration(entry.started_at, entry.finished_at))} · ${escapeHtml(formatRelative(entry.finished_at))}</span>`;
+    btn.addEventListener("click", () => {
+      void selectRun(entry.run_id);
+    });
+    runsListEl.appendChild(btn);
+  }
+}
+
+async function selectRun(runId: string): Promise<void> {
+  selectedRunId = runId;
+  renderRunsList();
+  let detail = runDetailCache.get(runId);
+  if (!detail) {
+    try {
+      detail = await fetchJson<RunRecord>(`runs/${encodeURIComponent(runId)}.json?t=${Date.now()}`);
+      runDetailCache.set(runId, detail);
+    } catch (err) {
+      console.error(err);
+      runsDetailEl.hidden = false;
+      runsDetailEl.innerHTML = `<div class="runs-empty">Could not load runs/${escapeHtml(runId)}.json</div>`;
+      return;
+    }
+  }
+  renderRunDetail(detail);
+}
+
+function renderRunDetail(detail: RunRecord): void {
+  runsDetailEl.hidden = false;
+  const duration = formatDuration(detail.started_at, detail.finished_at);
+  const stats = detail.stats
+    ? Object.entries(detail.stats)
+        .map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(String(v))}</dd>`)
+        .join("")
+    : "";
+  const products = (detail.products ?? [])
+    .map((p) => `<li>${escapeHtml(p)}</li>`)
+    .join("");
+  const stages = (detail.process?.steps ?? [])
+    .map(
+      (s) =>
+        `<li>${escapeHtml(s.from)} → ${escapeHtml(s.to)}` +
+        (s.label && s.label !== s.to ? ` · ${escapeHtml(s.label)}` : "") +
+        (s.observed ? "" : " (planned)") +
+        `</li>`,
+    )
+    .join("");
+  runsDetailEl.innerHTML =
+    `<h2>${escapeHtml(detail.recipe)}</h2>` +
+    `<div class="meta"><span class="run-status ${statusClass(detail.status)}">${escapeHtml(detail.status)}</span>` +
+    ` · ${escapeHtml(detail.run_id)} · ${escapeHtml(duration)}</div>` +
+    `<dl class="run-kv">` +
+    `<dt>subject</dt><dd>${escapeHtml(detail.subject)}</dd>` +
+    `<dt>started</dt><dd>${escapeHtml(formatAbsolute(detail.started_at))}</dd>` +
+    `<dt>finished</dt><dd>${escapeHtml(formatAbsolute(detail.finished_at))}</dd>` +
+    (detail.exit_code !== undefined
+      ? `<dt>exit_code</dt><dd>${escapeHtml(String(detail.exit_code))}</dd>`
+      : "") +
+    stats +
+    `</dl>` +
+    (detail.stdout_tail
+      ? `<div class="stdout">${escapeHtml(detail.stdout_tail)}</div>`
+      : "") +
+    (products
+      ? `<div class="stages"><h2>Products</h2><ol>${products}</ol></div>`
+      : "") +
+    (stages
+      ? `<div class="stages"><h2>Stages</h2><ol>${stages}</ol></div>`
+      : "");
+}
+
+function statusClass(status: string): string {
+  if (status === "fail" || status === "error") {
+    return `is-${status}`;
+  }
+  if (status === "running" || status === "queued") {
+    return `is-${status}`;
+  }
+  return "is-pass";
+}
+
+function formatDuration(startedAt: number, finishedAt: number): string {
+  const ms = Math.max(0, finishedAt - startedAt);
+  if (ms < 1000) {
+    return `${ms}ms`;
+  }
+  if (ms < 60_000) {
+    return `${(ms / 1000).toFixed(1)}s`;
+  }
+  return `${Math.round(ms / 60_000)}m`;
+}
+
+function formatRelative(ts: number): string {
+  const delta = Date.now() - ts;
+  if (delta < 60_000) {
+    return "just now";
+  }
+  if (delta < 3_600_000) {
+    return `${Math.round(delta / 60_000)}m ago`;
+  }
+  if (delta < 86_400_000) {
+    return `${Math.round(delta / 3_600_000)}h ago`;
+  }
+  return `${Math.round(delta / 86_400_000)}d ago`;
+}
+
+function formatAbsolute(ts: number): string {
+  try {
+    return new Date(ts).toISOString();
+  } catch {
+    return String(ts);
+  }
 }
 
 function frame(id: string): SceneFrame {

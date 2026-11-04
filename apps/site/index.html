@@ -16,6 +16,9 @@
         <button type="button" id="org-entrypoints" class="org-btn" data-org="entrypoints">
           Entrypoints
         </button>
+        <button type="button" id="org-runs" class="org-btn" data-org="runs">
+          Runs
+        </button>
       </div>
       <div id="crumb"></div>
       <div id="hint">click a card to zoom · portals jump to related views</div>
@@ -23,6 +26,10 @@
     </header>
     <main id="viewport">
       <div id="world"></div>
+      <aside id="runs-panel" hidden aria-label="Pipeline runs">
+        <div id="runs-list" role="list"></div>
+        <div id="runs-detail" hidden></div>
+      </aside>
     </main>
     <script type="module" src="/src/viewer.ts"></script>
   </body>

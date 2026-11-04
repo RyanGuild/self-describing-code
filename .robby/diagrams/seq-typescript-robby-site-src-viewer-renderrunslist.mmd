@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant renderRunsList as renderRunsList()
+    participant createElement as createElement
+    participant appendChild as appendChild
+    participant setAttribute as setAttribute
+    participant addEventListener as addEventListener
+    self-->>optional: 
+    alt if
+    self-->>createElement: 
+    self-->>appendChild: 
+    return-->>caller: 
+    end
+    loop for-of
+    self-->>createElement: 
+    self-->>setAttribute: 
+    self-->>addEventListener: 
+    self-->>fn: 
+    self-->>appendChild: 
+    end

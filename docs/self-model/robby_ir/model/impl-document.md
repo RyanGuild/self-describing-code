@@ -166,6 +166,8 @@ impl Document {
 - calls ← [`robby_render::render::tui::ascii_package_structure`](../../robby_render/render/tui/ascii-package-structure.md)
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::process`](../../robby_render/render/tui/index.md)
 - calls ← [`robby_render::render::tui::impl Renderer for TuiRenderer::sibling_graph`](../../robby_render/render/tui/index.md)
+- calls ← [`robby_render::runs::synthetic_extract_run`](../../robby_render/runs/synthetic-extract-run.md)
+- calls ← [`robby_render::runs::web_build_run`](../../robby_render/runs/web-build-run.md)
 - calls ← [`robby_render::test_markdown::fixture`](../../robby_render/test_markdown/fixture.md)
 - calls ← [`robby_render::test_render::class_diagram_marks_traits_as_interfaces`](../../robby_render/test_render/class-diagram-marks-traits-as-interfaces.md)
 - calls ← [`robby_render::test_render::dependencies_emits_package_weighted_and_dsm`](../../robby_render/test_render/dependencies-emits-package-weighted-and-dsm.md)

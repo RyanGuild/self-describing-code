@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn dependencies(doc: &Document, root: &NodeId) -> String` |
-| location | [`crates/robby-render/src/lib.rs:51`](../../../crates/robby-render/src/lib.rs#L51) |
+| location | [`crates/robby-render/src/lib.rs:53`](../../../crates/robby-render/src/lib.rs#L53) |
 | provenance | extractor · confidence 1.00 |
 
 > Nested package-structure digraph (Mermaid) for a module/crate root.

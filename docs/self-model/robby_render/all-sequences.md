@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn all_sequences(doc: &Document) -> Vec<(NodeId, String)>` |
-| location | [`crates/robby-render/src/lib.rs:102`](../../../crates/robby-render/src/lib.rs#L102) |
+| location | [`crates/robby-render/src/lib.rs:104`](../../../crates/robby-render/src/lib.rs#L104) |
 | provenance | extractor · confidence 1.00 |
 
 > Every process in the document as Mermaid, keyed by node id.

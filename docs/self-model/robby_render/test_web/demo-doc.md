@@ -244,5 +244,6 @@ sequenceDiagram
 - calls ← [`robby_render::test_web::sibling_local_rects_do_not_overlap`](sibling-local-rects-do-not-overlap.md)
 - calls ← [`robby_render::test_web::sibling_world_rects_do_not_collapse_onto_each_other`](sibling-world-rects-do-not-collapse-onto-each-other.md)
 - calls ← [`robby_render::test_web::unresolved_portal_has_no_zoom_target`](unresolved-portal-has-no-zoom-target.md)
+- calls ← [`robby_render::test_web::write_site_emits_run_records`](write-site-emits-run-records.md)
 - calls ← [`robby_render::test_web::write_site_emits_scene_and_frames`](write-site-emits-scene-and-frames.md)
 

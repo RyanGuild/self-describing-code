@@ -290,6 +290,37 @@ fn write_site_emits_scene_and_frames() {
 }
 
 #[test]
+fn write_site_emits_run_records() {
+    let (doc, sources) = demo_doc();
+    let dir = tempfile_dir();
+    write_site(&doc, &sources, &dir).expect("write_site");
+    let index_path = dir.join("runs/index.json");
+    assert!(index_path.is_file());
+    let index: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&index_path).unwrap()).unwrap();
+    let runs = index["runs"].as_array().expect("runs array");
+    assert!(
+        runs.len() >= 2,
+        "expected extract + web runs, got {runs:?}"
+    );
+    let recipes: Vec<_> = runs
+        .iter()
+        .filter_map(|r| r["recipe"].as_str())
+        .collect();
+    assert!(recipes.contains(&"robby.extract"));
+    assert!(recipes.contains(&"robby.web"));
+    assert!(dir.join("runs/synthetic-extract.json").is_file());
+    assert!(dir.join("runs/latest-web.json").is_file());
+    let extract: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(dir.join("runs/synthetic-extract.json")).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(extract["status"], "pass");
+    assert_eq!(extract["recipe"], "robby.extract");
+    assert!(extract["stats"]["nodes"].as_u64().unwrap() >= 1);
+}
+
+#[test]
 fn entrypoints_demo_stores_code_paths_in_ir() {
     let doc = entrypoints_demo_doc();
     assert_eq!(doc.code_paths.len(), 2);

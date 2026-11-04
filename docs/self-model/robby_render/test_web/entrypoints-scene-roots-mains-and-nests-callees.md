@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn entrypoints_scene_roots_mains_and_nests_callees()` |
-| location | [`crates/robby-render/tests/web.rs:323`](../../../../crates/robby-render/tests/web.rs#L323) |
+| location | [`crates/robby-render/tests/web.rs:354`](../../../../crates/robby-render/tests/web.rs#L354) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

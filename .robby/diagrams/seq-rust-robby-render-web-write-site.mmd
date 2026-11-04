@@ -23,6 +23,7 @@ sequenceDiagram
     participant map as map
     participant unwrap_or as unwrap_or
     participant serde_json__to_string_pretty as serde_json::to_string_pretty
+    participant crate__runs__write_site_runs as crate::runs::write_site_runs
     participant Ok as Ok
     write_site-->>fs__create_dir_all: fs::create_dir_all(out)
     write_site-->>write_site: ? (propagate)
@@ -75,5 +76,7 @@ sequenceDiagram
     write_site-->>serde_json__to_string_pretty: serde_json::to_string_pretty(&build)
     write_site-->>write_site: ? (propagate)
     write_site-->>fs__write: fs::write(out.join('build.json'), serde_json::to_string_pretty(&build)?)
+    write_site-->>write_site: ? (propagate)
+    write_site-->>crate__runs__write_site_runs: crate::runs::write_site_runs(doc, out, count, rebuilt_at)
     write_site-->>write_site: ? (propagate)
     write_site-->>Ok: Ok(count)
