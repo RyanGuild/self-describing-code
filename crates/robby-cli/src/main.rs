@@ -410,7 +410,6 @@ fn sample_opportunities_cmd(
     Ok(ExitCode::SUCCESS)
 }
 
-
 fn web(
     ir: &std::path::Path,
     source_root: &std::path::Path,

@@ -32,7 +32,9 @@ pub const STAT_SAMPLE_CANDIDATES: &str = "sample_candidates";
 pub const STRATEGY_RANDOM: &str = "random";
 
 /// Why a node is an improvement opportunity candidate.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum OpportunityReason {
     /// `code.function` / `code.method` that already carries a [`crate::Process`].
@@ -83,19 +85,13 @@ impl OpportunitySample {
             STAT_SAMPLE_CANDIDATES.to_owned(),
             self.candidate_count.to_string(),
         );
-        stats.insert(
-            "sample_drawn".to_owned(),
-            self.subjects.len().to_string(),
-        );
+        stats.insert("sample_drawn".to_owned(), self.subjects.len().to_string());
         stats
     }
 
     /// Subject node ids in draw order (for `--subjects` / queue wiring).
     pub fn subject_ids(&self) -> Vec<&str> {
-        self.subjects
-            .iter()
-            .map(|o| o.subject.as_str())
-            .collect()
+        self.subjects.iter().map(|o| o.subject.as_str()).collect()
     }
 }
 
@@ -130,10 +126,7 @@ pub fn collect_opportunities(doc: &Document) -> Vec<Opportunity> {
             });
         for root_id in &doc.roots {
             if let Some(node) = doc.nodes.get(root_id) {
-                let is_pkg = matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                );
+                let is_pkg = matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE);
                 if is_pkg {
                     insert_opportunity(&mut by_id, node, OpportunityReason::WorkspaceRoot);
                 }
@@ -143,17 +136,15 @@ pub fn collect_opportunities(doc: &Document) -> Vec<Opportunity> {
 
     for subject_id in containers_with_unresolved_calls(doc) {
         if let Some(node) = doc.nodes.get(&subject_id) {
-            insert_opportunity(
-                &mut by_id,
-                node,
-                OpportunityReason::FileUnresolvedCalls,
-            );
+            insert_opportunity(&mut by_id, node, OpportunityReason::FileUnresolvedCalls);
         } else {
-            by_id.entry(subject_id.clone()).or_insert_with(|| Opportunity {
-                subject: subject_id.clone(),
-                reason: OpportunityReason::FileUnresolvedCalls,
-                name: leaf_name_of(&subject_id),
-            });
+            by_id
+                .entry(subject_id.clone())
+                .or_insert_with(|| Opportunity {
+                    subject: subject_id.clone(),
+                    reason: OpportunityReason::FileUnresolvedCalls,
+                    name: leaf_name_of(&subject_id),
+                });
         }
     }
 
@@ -163,11 +154,7 @@ pub fn collect_opportunities(doc: &Document) -> Vec<Opportunity> {
             kind::code::FUNCTION | kind::code::METHOD
         );
         if is_callable && node.process.as_ref().is_some_and(|p| !p.steps.is_empty()) {
-            insert_opportunity(
-                &mut by_id,
-                node,
-                OpportunityReason::FunctionWithProcess,
-            );
+            insert_opportunity(&mut by_id, node, OpportunityReason::FunctionWithProcess);
         }
     }
 
@@ -373,8 +360,8 @@ mod tests {
             blocks: vec![],
         });
 
-        let mut fn_ok = Node::new("rust://ws/a.rs#f1", kind::code::FUNCTION, "f1")
-            .with_process(proc);
+        let mut fn_ok =
+            Node::new("rust://ws/a.rs#f1", kind::code::FUNCTION, "f1").with_process(proc);
         fn_ok.parent = Some(NodeId::from("rust://ws/a.rs"));
 
         let mut fn_plain = Node::new("rust://ws/a.rs#f2", kind::code::FUNCTION, "f2");
@@ -405,8 +392,8 @@ mod tests {
                 span: None,
                 blocks: vec![],
             });
-            let mut node = Node::new(id.clone(), kind::code::FUNCTION, format!("extra{i}"))
-                .with_process(p);
+            let mut node =
+                Node::new(id.clone(), kind::code::FUNCTION, format!("extra{i}")).with_process(p);
             node.parent = Some(NodeId::from("rust://ws/a.rs"));
             node.lang = Lang::Rust;
             extras.push(node);
@@ -439,17 +426,14 @@ mod tests {
         assert!(reasons.contains(&OpportunityReason::FileUnresolvedCalls));
         // Plain function without process is not a candidate.
         assert!(
-            opps
-                .iter()
+            opps.iter()
                 .all(|o| o.subject.as_str() != "rust://ws/a.rs#f2")
         );
         // Unresolved call contributes the *file*, not only the function.
-        assert!(
-            opps.iter().any(|o| {
-                o.reason == OpportunityReason::FileUnresolvedCalls
-                    && o.subject.as_str() == "rust://ws/b.rs"
-            })
-        );
+        assert!(opps.iter().any(|o| {
+            o.reason == OpportunityReason::FileUnresolvedCalls
+                && o.subject.as_str() == "rust://ws/b.rs"
+        }));
     }
 
     #[test]
@@ -508,23 +492,18 @@ mod tests {
             span: None,
             blocks: vec![],
         });
-        let mut func = Node::new("rust://demo::main", kind::code::FUNCTION, "main")
-            .with_process(process);
+        let mut func =
+            Node::new("rust://demo::main", kind::code::FUNCTION, "main").with_process(process);
         func.parent = Some(NodeId::from("rust://demo"));
         doc.insert(func);
 
         let opps = collect_opportunities(&doc);
-        assert!(
-            opps.iter().any(|o| {
-                o.reason == OpportunityReason::WorkspaceRoot
-                    && o.subject.as_str() == WORKSPACE_SUBJECT
-            })
-        );
-        assert!(
-            opps.iter().any(|o| {
-                o.reason == OpportunityReason::WorkspaceRoot && o.subject.as_str() == "rust://demo"
-            })
-        );
+        assert!(opps.iter().any(|o| {
+            o.reason == OpportunityReason::WorkspaceRoot && o.subject.as_str() == WORKSPACE_SUBJECT
+        }));
+        assert!(opps.iter().any(|o| {
+            o.reason == OpportunityReason::WorkspaceRoot && o.subject.as_str() == "rust://demo"
+        }));
         let sample = sample_opportunities(&doc, 3, 2);
         let reasons: BTreeSet<_> = sample.subjects.iter().map(|o| o.reason).collect();
         assert!(reasons.contains(&OpportunityReason::WorkspaceRoot));

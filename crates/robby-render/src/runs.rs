@@ -480,11 +480,11 @@ mod tests {
 
     #[test]
     fn queue_sampled_review_views_stamps_sample_stats() {
-        use robby_ir::sample::{
-            Opportunity, OpportunityReason, OpportunitySample, STRATEGY_RANDOM, STAT_SAMPLE_N,
-            STAT_SAMPLE_SEED,
-        };
         use robby_ir::NodeId;
+        use robby_ir::sample::{
+            Opportunity, OpportunityReason, OpportunitySample, STAT_SAMPLE_N, STAT_SAMPLE_SEED,
+            STRATEGY_RANDOM,
+        };
 
         let store = temp_store();
         let sample = OpportunitySample {

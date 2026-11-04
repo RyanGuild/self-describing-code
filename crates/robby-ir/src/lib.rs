@@ -46,9 +46,9 @@ pub use run::{
     Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus, builtin_recipes, pipelines_json,
 };
 pub use sample::{
-    DEFAULT_SAMPLE_N, Opportunity, OpportunityReason, OpportunitySample, STRATEGY_RANDOM,
-    STAT_SAMPLE_CANDIDATES, STAT_SAMPLE_N, STAT_SAMPLE_SEED, STAT_SAMPLE_STRATEGY,
-    WORKSPACE_SUBJECT, collect_opportunities, sample_opportunities,
+    DEFAULT_SAMPLE_N, Opportunity, OpportunityReason, OpportunitySample, STAT_SAMPLE_CANDIDATES,
+    STAT_SAMPLE_N, STAT_SAMPLE_SEED, STAT_SAMPLE_STRATEGY, STRATEGY_RANDOM, WORKSPACE_SUBJECT,
+    collect_opportunities, sample_opportunities,
 };
 pub use span::{Position, Span};
 pub use vocab::{Highlight, NoteKind, Verdict};
