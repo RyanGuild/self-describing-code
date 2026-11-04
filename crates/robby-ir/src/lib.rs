@@ -19,6 +19,7 @@ pub mod codepath;
 pub mod contract;
 pub mod coverage;
 pub mod kind;
+pub mod metrics;
 pub mod model;
 pub mod process;
 pub mod run;
@@ -31,6 +32,10 @@ pub use coverage::{
     CoverageReport, FileCoverage, Gap, GapReason, document_coverage, file_coverage,
 };
 pub use kind::Kind;
+pub use metrics::{
+    Direction, MetricMeasurement, UnknownMetric, doc_coverage_complete, edge_resolve_rate,
+    edge_resolve_rate_at, stamp_first_slice, write_into_stats,
+};
 pub use model::{
     Diagnostic, Document, Edge, EdgeKind, Lang, Node, NodeId, Provenance, SCHEMA_VERSION, Severity,
     Source, leaf_name, validate,
