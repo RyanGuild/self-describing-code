@@ -166,11 +166,7 @@ pub fn synthetic_extract_run(doc: &Document, finished_at: u64) -> RunRecord {
         )),
         stats,
         products: vec!["path:.robby/robby.ir.json".to_owned()],
-        process: Some(stage_process(&[
-            "extract",
-            "validate",
-            "write_document",
-        ])),
+        process: Some(stage_process(&["extract", "validate", "write_document"])),
     }
 }
 
@@ -222,7 +218,11 @@ pub fn write_runs(out: &Path, records: &[RunRecord]) -> Result<()> {
 
 /// Emit extract + web RunRecords under `out/runs` for a site rebuild.
 pub fn write_site_runs(doc: &Document, out: &Path, frames: usize, rebuilt_at: u64) -> Result<()> {
-    let finished = if rebuilt_at == 0 { now_ms() } else { rebuilt_at };
+    let finished = if rebuilt_at == 0 {
+        now_ms()
+    } else {
+        rebuilt_at
+    };
     let extract = synthetic_extract_run(doc, finished.saturating_sub(1_000));
     let web = web_build_run(doc, frames, finished);
     write_runs(out, &[extract, web])

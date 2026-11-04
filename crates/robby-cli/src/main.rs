@@ -216,7 +216,14 @@ fn run() -> Result<ExitCode> {
             decision_model,
             note_model,
             limit,
-        } => enrich_comments(&ir, &source_root, out.as_deref(), decision_model, note_model, limit),
+        } => enrich_comments(
+            &ir,
+            &source_root,
+            out.as_deref(),
+            decision_model,
+            note_model,
+            limit,
+        ),
         Command::Web {
             ir,
             source_root,
@@ -294,12 +301,17 @@ fn enrich_comments(
     }
     opts.limit = limit;
 
-    let stats = robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
+    let stats =
+        robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
     let out_path = out.unwrap_or(ir);
     pipeline::write_document(&loaded.document, out_path)?;
     println!(
         "enriched {} comment(s): {} relevant, {} noise, {} noted → {}",
-        stats.decided, stats.relevant, stats.noise, stats.noted, out_path.display()
+        stats.decided,
+        stats.relevant,
+        stats.noise,
+        stats.noted,
+        out_path.display()
     );
     Ok(ExitCode::SUCCESS)
 }
@@ -333,7 +345,10 @@ fn print_human(loaded: &pipeline::Loaded) {
             Severity::Info => "info ",
         };
         match &diagnostic.node {
-            Some(node) => println!("{tag} [{}] {} ({})", diagnostic.code, diagnostic.message, node),
+            Some(node) => println!(
+                "{tag} [{}] {} ({})",
+                diagnostic.code, diagnostic.message, node
+            ),
             None => println!("{tag} [{}] {}", diagnostic.code, diagnostic.message),
         }
     }

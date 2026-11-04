@@ -304,14 +304,8 @@ fn write_site_emits_run_records() {
     let index: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(&index_path).unwrap()).unwrap();
     let runs = index["runs"].as_array().expect("runs array");
-    assert!(
-        runs.len() >= 2,
-        "expected extract + web runs, got {runs:?}"
-    );
-    let recipes: Vec<_> = runs
-        .iter()
-        .filter_map(|r| r["recipe"].as_str())
-        .collect();
+    assert!(runs.len() >= 2, "expected extract + web runs, got {runs:?}");
+    let recipes: Vec<_> = runs.iter().filter_map(|r| r["recipe"].as_str()).collect();
     assert!(recipes.contains(&"robby.extract"));
     assert!(recipes.contains(&"robby.web"));
     assert!(dir.join("runs/synthetic-extract.json").is_file());

@@ -183,8 +183,7 @@ async function main(): Promise<void> {
     sceneCache.set("structure", structure);
     scene = structure;
   } catch (err) {
-    worldEl.textContent =
-      "Could not load scene.json. Run `robby web` then serve this app (Vite).";
+    worldEl.textContent = "Could not load scene.json. Run `robby web` then serve this app (Vite).";
     console.error(err);
     return;
   }
@@ -252,9 +251,7 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     const structure = await fetchJson<Scene>(`${ORG_MODES.structure.file}?t=${Date.now()}`);
     sceneCache.set("structure", structure);
     try {
-      const entrypoints = await fetchJson<Scene>(
-        `${ORG_MODES.entrypoints.file}?t=${Date.now()}`,
-      );
+      const entrypoints = await fetchJson<Scene>(`${ORG_MODES.entrypoints.file}?t=${Date.now()}`);
       sceneCache.set("entrypoints", entrypoints);
     } catch (err) {
       console.error(err);
@@ -397,15 +394,14 @@ function renderRunsList(): void {
   if (runs.length === 0) {
     const empty = document.createElement("div");
     empty.className = "runs-empty";
-    empty.textContent =
-      "No RunRecords yet. Run `robby web` to emit runs/index.json.";
+    empty.textContent = "No RunRecords yet. Run `robby web` to emit runs/index.json.";
     runsListEl.appendChild(empty);
     return;
   }
   for (const entry of runs) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "run-row" + (entry.run_id === selectedRunId ? " is-selected" : "");
+    btn.className = `run-row${entry.run_id === selectedRunId ? " is-selected" : ""}`;
     btn.setAttribute("role", "listitem");
     btn.innerHTML =
       `<span class="run-status ${statusClass(entry.status)}">${escapeHtml(entry.status)}</span>` +
@@ -447,9 +443,7 @@ function renderRunDetail(detail: RunRecord): void {
         .map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(String(v))}</dd>`)
         .join("")
     : "";
-  const products = (detail.products ?? [])
-    .map((p) => `<li>${escapeHtml(p)}</li>`)
-    .join("");
+  const products = (detail.products ?? []).map((p) => `<li>${escapeHtml(p)}</li>`).join("");
   const stages = (detail.process?.steps ?? [])
     .map(
       (s) =>
@@ -472,15 +466,9 @@ function renderRunDetail(detail: RunRecord): void {
       : "") +
     stats +
     `</dl>` +
-    (detail.stdout_tail
-      ? `<div class="stdout">${escapeHtml(detail.stdout_tail)}</div>`
-      : "") +
-    (products
-      ? `<div class="stages"><h2>Products</h2><ol>${products}</ol></div>`
-      : "") +
-    (stages
-      ? `<div class="stages"><h2>Stages</h2><ol>${stages}</ol></div>`
-      : "");
+    (detail.stdout_tail ? `<div class="stdout">${escapeHtml(detail.stdout_tail)}</div>` : "") +
+    (products ? `<div class="stages"><h2>Products</h2><ol>${products}</ol></div>` : "") +
+    (stages ? `<div class="stages"><h2>Stages</h2><ol>${stages}</ol></div>` : "");
 }
 
 function statusClass(status: string): string {
@@ -615,7 +603,9 @@ function placeAllFrames(): void {
   // Only top-level world cards (the focus). Children live in the body's grid.
   for (const el of worldEl.querySelectorAll<HTMLElement>(":scope > .frame-wrap")) {
     const id = el.dataset.id;
-    if (!id) continue;
+    if (!id) {
+      continue;
+    }
     placeFrame(el, frame(id), camera);
   }
 }
@@ -649,10 +639,8 @@ const PORTAL_PREVIEW = 8;
 function portalButton(portal: Portal): HTMLButtonElement {
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = "portal" + (portal.target ? "" : " unresolved");
-  btn.innerHTML =
-    `<span class="pk">${escapeHtml(portal.kind_label)}</span>` +
-    escapeHtml(portal.label);
+  btn.className = `portal${portal.target ? "" : " unresolved"}`;
+  btn.innerHTML = `<span class="pk">${escapeHtml(portal.kind_label)}</span>${escapeHtml(portal.label)}`;
   btn.title = portal.target_name || portal.label;
   if (portal.target) {
     const target = portal.target;
@@ -716,14 +704,11 @@ function buildPortalStrip(f: SceneFrame): HTMLElement {
 function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLElement {
   const f = frame(id);
   const wrap = document.createElement("div");
-  wrap.className =
-    "frame-wrap" +
-    (isFocus ? " is-focus" : "") +
-    (isAncestor ? " is-ancestor" : "");
+  wrap.className = `frame-wrap${isFocus ? " is-focus" : ""}${isAncestor ? " is-ancestor" : ""}`;
   wrap.dataset.id = id;
 
   const inner = document.createElement("div");
-  inner.className = "frame" + (isFocus ? " is-focus" : "");
+  inner.className = `frame${isFocus ? " is-focus" : ""}`;
 
   const header = document.createElement("div");
   header.className = "frame-header";
@@ -735,9 +720,12 @@ function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLEle
   if (isFocus && f.parent) {
     header.style.cursor = "pointer";
     header.title = "Zoom out";
+    const parentId = f.parent;
     header.addEventListener("click", (e) => {
       e.stopPropagation();
-      flyTo(f.parent!);
+      if (parentId) {
+        flyTo(parentId);
+      }
     });
   }
   inner.appendChild(header);
@@ -766,7 +754,7 @@ function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLEle
 }
 
 function flyTo(id: string): void {
-  if (!scene!.frames[id] || id === focusId || flying) {
+  if (!scene?.frames[id] || id === focusId || flying) {
     return;
   }
   flying = true;
@@ -792,7 +780,7 @@ function zoomOut(): void {
 }
 
 function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
+  return 1 - (1 - t) ** 3;
 }
 
 function tweenCamera(next: Camera, onDone?: () => void): void {
@@ -848,7 +836,9 @@ async function loadDetail(id: string): Promise<void> {
   const isContainer = f.children.length > 0;
   // Containers keep the child grid — inject execution above it.
   if (isContainer) {
-    host.querySelectorAll(":scope > .detail").forEach((el) => el.remove());
+    for (const el of host.querySelectorAll(":scope > .detail")) {
+      el.remove();
+    }
     if (detail.execution_mermaid) {
       const panel = document.createElement("div");
       panel.className = "detail detail-execution";
@@ -915,12 +905,7 @@ async function loadDetail(id: string): Promise<void> {
     panel.appendChild(src);
   }
 
-  if (
-    !detail.execution_mermaid &&
-    !detail.process_mermaid &&
-    !detail.source &&
-    !detail.docs
-  ) {
+  if (!detail.execution_mermaid && !detail.process_mermaid && !detail.source && !detail.docs) {
     const empty = document.createElement("div");
     empty.className = "empty-leaf";
     empty.textContent = "No process or source on this node.";
@@ -930,11 +915,7 @@ async function loadDetail(id: string): Promise<void> {
   host.appendChild(panel);
 }
 
-function appendExecution(
-  panel: HTMLElement,
-  mermaidSrc: string,
-  frameId: string,
-): void {
+function appendExecution(panel: HTMLElement, mermaidSrc: string, frameId: string): void {
   const proc = document.createElement("div");
   proc.className = "process process-execution";
   const heading = document.createElement("h2");

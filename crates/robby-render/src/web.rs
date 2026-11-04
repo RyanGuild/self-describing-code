@@ -176,7 +176,10 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
         "files": doc.files.len(),
         "generator": doc.generator,
     });
-    fs::write(out.join("build.json"), serde_json::to_string_pretty(&build)?)?;
+    fs::write(
+        out.join("build.json"),
+        serde_json::to_string_pretty(&build)?,
+    )?;
 
     // Completed pipeline history for Runs mode (synthetic extract + this web build).
     crate::runs::write_site_runs(doc, out, count, rebuilt_at)?;
