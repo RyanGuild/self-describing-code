@@ -37,7 +37,8 @@ pub use model::{
 };
 pub use process::{Block, BlockKind, Participant, Process, Step, StepKind};
 pub use run::{
-    Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus, builtin_recipes, pipelines_json,
+    LiveRunSource, LiveRunTransport, Recipe, RecipeCatalog, RecipeId, RunRecord, RunStatus,
+    builtin_recipes, default_live_run_sources, pipelines_json,
 };
 pub use span::{Position, Span};
 pub use vocab::{Highlight, NoteKind, Verdict};

@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use crate::codepath::{CodePath, DEFAULT_MAX_DEPTH, build_code_paths};
 use crate::kind::Kind;
 use crate::process::Process;
+use crate::run::LiveRunSource;
 use crate::span::Span;
 
 /// Bumped only on breaking changes. Additive fields do not bump it.
@@ -344,6 +345,12 @@ pub struct Document {
     /// Entrypoint-rooted call trees derived from resolved `Calls` edges.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub code_paths: Vec<CodePath>,
+    /// Runtime-fetchable live run feeds (Cursor cloud dump, later Claude/…).
+    ///
+    /// Written to site `runs/sources.json` so Vite / the viewer can poll without
+    /// re-extract. Empty in IR means use [`crate::run::default_live_run_sources`].
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub live_run_sources: Vec<LiveRunSource>,
     /// Children whose parent node is not in the document yet.
     ///
     /// Not part of the schema. Flushed when the parent is inserted so a child
@@ -366,6 +373,7 @@ impl Document {
             roots: Vec::new(),
             files: Vec::new(),
             code_paths: Vec::new(),
+            live_run_sources: Vec::new(),
             pending_children: BTreeMap::new(),
             pending_parents: BTreeMap::new(),
         }
