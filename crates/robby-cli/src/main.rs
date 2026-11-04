@@ -508,21 +508,20 @@ fn metric_test(
         robby_render::write_metric_test_run(runs_out, &loaded.document, &loaded.coverage, &req)?;
     print_metric_result(&record, json);
 
-    if let Some(parent_id) = parent_run {
-        if let Ok(mut parent) = store.read(parent_id) {
-            if !robby_render::SiteRunsStore::blocks_downstream(&parent) {
-                let product = format!("run:{}", record.run_id);
-                if !parent.products.contains(&product) {
-                    parent.products.push(product);
-                    parent
-                        .products
-                        .push(format!("recipe:{}", robby_ir::run::recipes::METRIC_TEST));
-                    parent
-                        .stats
-                        .insert("metric_test_run_id".to_owned(), record.run_id.clone());
-                    store.put(&parent)?;
-                }
-            }
+    if let Some(parent_id) = parent_run
+        && let Ok(mut parent) = store.read(parent_id)
+        && !robby_render::SiteRunsStore::blocks_downstream(&parent)
+    {
+        let product = format!("run:{}", record.run_id);
+        if !parent.products.contains(&product) {
+            parent.products.push(product);
+            parent
+                .products
+                .push(format!("recipe:{}", robby_ir::run::recipes::METRIC_TEST));
+            parent
+                .stats
+                .insert("metric_test_run_id".to_owned(), record.run_id.clone());
+            store.put(&parent)?;
         }
     }
 
@@ -546,7 +545,7 @@ fn print_metric_result(record: &robby_ir::RunRecord, json: bool) {
         if let Some(tail) = &record.stdout_tail {
             println!("{tail}");
         }
-        println!("wrote {}", format!("runs/{}.json", record.run_id));
+        println!("wrote runs/{}.json", record.run_id);
     }
 }
 

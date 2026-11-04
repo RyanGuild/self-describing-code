@@ -86,7 +86,7 @@ pub fn build_metric_test_run(
     }
     record.started_at = Some(started);
     record.finished_at = Some(now_ms());
-    record.exit_code = Some(if all_pass { 0 } else { 1 });
+    record.exit_code = Some(i32::from(!all_pass));
     record.process = Some(metric_test_process());
     record.stdout_tail = Some(summarize(&observations, &errors));
     metrics::write_into_stats(&mut record, &observations);
@@ -231,13 +231,13 @@ fn compute_one(
     coverage: &CoverageReport,
     subject: Option<&str>,
 ) -> Result<MetricMeasurement, String> {
-    if id == ids::EDGE_RESOLVE_RATE {
-        if let Some(subject) = subject {
-            let node_id = resolve_subject(doc, subject)
-                .ok_or_else(|| format!("subject `{subject}` not found for edge.resolve_rate"))?;
-            return metrics::edge_resolve_rate_at(doc, &node_id)
-                .ok_or_else(|| format!("subject `{subject}` missing from document"));
-        }
+    if id == ids::EDGE_RESOLVE_RATE
+        && let Some(subject) = subject
+    {
+        let node_id = resolve_subject(doc, subject)
+            .ok_or_else(|| format!("subject `{subject}` not found for edge.resolve_rate"))?;
+        return metrics::edge_resolve_rate_at(doc, &node_id)
+            .ok_or_else(|| format!("subject `{subject}` missing from document"));
     }
     metrics::compute(id, doc, coverage).map_err(|e| e.to_string())
 }
@@ -309,8 +309,7 @@ fn summarize(observations: &[MetricMeasurement], errors: &[String]) -> String {
 fn now_ms() -> i64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis() as i64)
-        .unwrap_or(0)
+        .map_or(0, |d| d.as_millis() as i64)
 }
 
 fn mint_run_id(prefix: &str) -> String {

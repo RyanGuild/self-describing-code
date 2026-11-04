@@ -6,22 +6,21 @@
  * Try Live is optional.
  */
 
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
 import type { Connect, Plugin, ViteDevServer } from "vite";
 
-import { spawnSync } from "node:child_process";
-
 import {
+  blocksDownstream,
+  isTerminal,
   RECIPE_METRIC_TEST,
   RECIPE_REVIEW_VIEW,
   REVIEW_METRIC_AGENT_PROCESS_STAGE,
   REVIEW_METRIC_AGENT_PROCESS_STAGE_TEST,
   REVIEW_METRIC_UI_RUNRECORD_SHAPE,
   REVIEW_METRIC_UI_RUNRECORD_SHAPE_TEST,
-  blocksDownstream,
-  isTerminal,
   type RunIndexEntry,
   type RunRecord,
   type RunsIndex,
@@ -294,11 +293,11 @@ function spawnMetricTestViaCli(
   ];
   const result = bin
     ? spawnSync(bin, args, { cwd: repoRoot, encoding: "utf8", timeout: 120_000 })
-    : spawnSync(
-        "cargo",
-        ["run", "-q", "-p", "robby-cli", "--", ...args],
-        { cwd: repoRoot, encoding: "utf8", timeout: 300_000 },
-      );
+    : spawnSync("cargo", ["run", "-q", "-p", "robby-cli", "--", ...args], {
+        cwd: repoRoot,
+        encoding: "utf8",
+        timeout: 300_000,
+      });
   if (result.error) {
     return { ok: false, detail: result.error.message };
   }
@@ -330,22 +329,28 @@ function edgeResolveRateFromIr(
   if (subject && nodes[subject]) {
     scope = new Set<string>();
     const stack = [subject];
-    while (stack.length) {
-      const id = stack.pop()!;
-      if (scope.has(id)) continue;
-      scope.add(id);
-      for (const child of nodes[id]?.children ?? []) {
-        stack.push(child);
+    let id = stack.pop();
+    while (id !== undefined) {
+      if (!scope.has(id)) {
+        scope.add(id);
+        for (const child of nodes[id]?.children ?? []) {
+          stack.push(child);
+        }
       }
+      id = stack.pop();
     }
   }
   let total = 0;
   let resolved = 0;
   for (const [id, node] of Object.entries(nodes)) {
-    if (scope && !scope.has(id)) continue;
+    if (scope && !scope.has(id)) {
+      continue;
+    }
     for (const edge of node.edges ?? []) {
       total += 1;
-      if (edge.resolved !== false) resolved += 1;
+      if (edge.resolved !== false) {
+        resolved += 1;
+      }
     }
   }
   const value = total === 0 ? 1 : resolved / total;
@@ -357,10 +362,7 @@ function edgeResolveRateFromIr(
   };
 }
 
-function spawnMetricTestLocalFallback(
-  publicDir: string,
-  review: RunRecord,
-): RunRecord {
+function spawnMetricTestLocalFallback(publicDir: string, review: RunRecord): RunRecord {
   const repoRoot = repoRootFromPublic(publicDir);
   const irPath = defaultIrPath(repoRoot);
   const started = nowMs();
