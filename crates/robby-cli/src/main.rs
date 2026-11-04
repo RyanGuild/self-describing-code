@@ -445,8 +445,7 @@ fn review_doc_cmd(
         metrics,
         max_subjects,
     };
-    let result =
-        robby_agent::review_doc(&mut loaded.document, &markdown, &loaded.sources, &opts)?;
+    let result = robby_agent::review_doc(&mut loaded.document, &markdown, &loaded.sources, &opts)?;
 
     let out_path = out.unwrap_or(ir);
     pipeline::write_document(&loaded.document, out_path)?;
@@ -454,9 +453,10 @@ fn review_doc_cmd(
     let artifact_rel = robby_agent::review_artifact_relpath(&doc_display);
     let artifact_path = match reviews_out {
         Some(dir) => {
-            let stem = std::path::Path::new(&artifact_rel)
-                .file_name()
-                .map_or_else(|| std::ffi::OsString::from("review.json"), OsStr::to_os_string);
+            let stem = std::path::Path::new(&artifact_rel).file_name().map_or_else(
+                || std::ffi::OsString::from("review.json"),
+                OsStr::to_os_string,
+            );
             dir.join(stem)
         }
         None => source_root.join(&artifact_rel),
@@ -486,7 +486,10 @@ fn review_doc_cmd(
         })).collect::<Vec<_>>(),
         "record": result.record,
     });
-    std::fs::write(&artifact_path, format!("{}\n", serde_json::to_string_pretty(&artifact)?))?;
+    std::fs::write(
+        &artifact_path,
+        format!("{}\n", serde_json::to_string_pretty(&artifact)?),
+    )?;
 
     if let Some(runs_dir) = runs_out {
         let store = robby_render::SiteRunsStore::new(runs_dir);
@@ -495,10 +498,7 @@ fn review_doc_cmd(
 
     println!(
         "robby.review_doc {}: {} finding(s), {} relevant, {} subject(s)",
-        result.record.run_id,
-        result.stats.findings,
-        result.stats.relevant,
-        result.stats.subjects
+        result.record.run_id, result.stats.findings, result.stats.relevant, result.stats.subjects
     );
     println!("  ir → {}", out_path.display());
     println!("  review → {}", artifact_path.display());

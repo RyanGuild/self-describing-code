@@ -141,8 +141,12 @@ pub fn review_doc(
         "robby.review_doc · {} finding(s) · {} relevant · {} subject(s)",
         stats.findings, stats.relevant, stats.subjects
     ));
-    record.stats.insert("findings".into(), stats.findings.to_string());
-    record.stats.insert("relevant".into(), stats.relevant.to_string());
+    record
+        .stats
+        .insert("findings".into(), stats.findings.to_string());
+    record
+        .stats
+        .insert("relevant".into(), stats.relevant.to_string());
     record
         .stats
         .insert("metrics_claimed".into(), stats.metrics_claimed.to_string());
@@ -295,7 +299,10 @@ fn bind_subjects(
         }
     };
 
-    push(&mut subjects, format!("path:{}", normalize_doc_path(doc_path)));
+    push(
+        &mut subjects,
+        format!("path:{}", normalize_doc_path(doc_path)),
+    );
 
     for root in &doc.roots {
         push(&mut subjects, root.as_str().to_owned());
@@ -352,7 +359,23 @@ fn bind_subjects(
 fn looks_like_metric(token: &str) -> bool {
     matches!(
         token.split('.').next(),
-        Some("doc" | "edge" | "fn" | "file" | "module" | "type" | "comment" | "process" | "path" | "agent" | "ui" | "prov" | "runtime" | "leaf" | "import")
+        Some(
+            "doc"
+                | "edge"
+                | "fn"
+                | "file"
+                | "module"
+                | "type"
+                | "comment"
+                | "process"
+                | "path"
+                | "agent"
+                | "ui"
+                | "prov"
+                | "runtime"
+                | "leaf"
+                | "import"
+        )
     )
 }
 
@@ -448,8 +471,8 @@ fn insert_metric_decision(
     let parent_lang = parent.lang;
 
     let score_str = format_score(claim.score);
-    let measured = claim.metric == METRIC_DOC_COVERAGE_COMPLETE
-        || claim.metric == METRIC_EDGE_RESOLVE_RATE;
+    let measured =
+        claim.metric == METRIC_DOC_COVERAGE_COMPLETE || claim.metric == METRIC_EDGE_RESOLVE_RATE;
     let verdict = if measured && claim.score >= 1.0 {
         Verdict::Noise
     } else {
@@ -504,11 +527,7 @@ fn insert_metric_decision(
 
 fn review_doc_process() -> Process {
     let mut process = Process::new();
-    process.participant(
-        "reviewer",
-        "review_doc",
-        Kind::from(kind::agent::PIPELINE),
-    );
+    process.participant("reviewer", "review_doc", Kind::from(kind::agent::PIPELINE));
     process.participant("ir", "Document", Kind::from(kind::code::WORKSPACE));
     let stages = [
         "read_doc",
@@ -605,10 +624,7 @@ mod tests {
         doc.insert(fn_node);
 
         let mut sources = BTreeMap::new();
-        sources.insert(
-            "demo.rs".into(),
-            "fn draw() {\n    missing();\n}\n".into(),
-        );
+        sources.insert("demo.rs".into(), "fn draw() {\n    missing();\n}\n".into());
         (doc, sources)
     }
 
@@ -692,16 +708,13 @@ mod tests {
                 .any(|p| p.starts_with("ir:agent://"))
         );
         assert!(
-            result.record.products.iter().any(|p| {
-                p == "path:.robby/reviews/immersive-web-view-features.json"
-            })
-        );
-        assert!(
             result
-                .subjects
+                .record
+                .products
                 .iter()
-                .any(|s| s == "rust://demo::draw")
+                .any(|p| { p == "path:.robby/reviews/immersive-web-view-features.json" })
         );
+        assert!(result.subjects.iter().any(|s| s == "rust://demo::draw"));
     }
 
     #[test]
