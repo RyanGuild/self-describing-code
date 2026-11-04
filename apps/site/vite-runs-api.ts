@@ -101,8 +101,12 @@ function nowMs(): number {
   return Date.now();
 }
 
+/** Monotonic suffix so burst mints in the same ms never share a path. */
+let runIdSeq = 0;
+
 function mintRunId(): string {
-  return `review-${nowMs()}`;
+  const seq = runIdSeq++;
+  return `review-${nowMs()}-${seq}`;
 }
 
 function reviewProcess(

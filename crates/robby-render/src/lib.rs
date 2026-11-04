@@ -29,7 +29,7 @@ pub use report::{Report, Section};
 pub use robby_ir::RunRecord;
 pub use runs::{
     RunIndexEntry, RunsIndex, ScoredDecisionProduct, SiteRunsStore, ensure_runs_layout,
-    review_metrics, run_file_stem, synthetic_extract_run, web_build_run, write_runs,
+    mint_run_id, review_metrics, run_file_stem, synthetic_extract_run, web_build_run, write_runs,
     write_site_runs,
 };
 pub use view::{
