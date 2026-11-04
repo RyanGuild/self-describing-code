@@ -8,11 +8,17 @@
  * Frames stay laid out at full canvas resolution (1600×1000). A single
  * screen-space transform per frame (camera × world placement) avoids the
  * downscale-then-upscale rasterization that keeps text pixelated after zoom.
+ *
+ * Soft-queues `robby.review_view` RunRecords on frame focus (Mac-local Vite
+ * API → `public/runs/`). Runs mode can Allow or Cancel pending reviews.
  */
+
+import { RECIPE_REVIEW_VIEW } from "./runRecord";
 
 const CANVAS_W = 1600;
 const CANVAS_H = 1000;
 const TWEEN_MS = 500;
+const REVIEW_CANCEL_COOLDOWN_MS = 8_000;
 
 interface Rect {
   x: number;
@@ -113,10 +119,10 @@ interface BuildStamp {
 interface RunIndexEntry {
   run_id: string;
   recipe: string;
-  subject: string;
   status: string;
-  started_at: number;
-  finished_at: number;
+  subject?: string;
+  started_at?: number;
+  finished_at?: number;
 }
 
 interface RunsIndex {
@@ -130,24 +136,26 @@ interface RunStep {
   observed?: boolean;
 }
 
+/** Mirrors `robby_ir::run::RunRecord` (site JSON). */
 interface RunRecord {
   run_id: string;
   recipe: string;
-  subject: string;
+  subject?: string;
   status: string;
-  started_at: number;
-  finished_at: number;
+  started_at?: number;
+  finished_at?: number;
   exit_code?: number;
   stdout_tail?: string;
-  stats?: Record<string, unknown>;
+  stats?: Record<string, string>;
   products?: string[];
   process?: {
-    participants: { id: string; label: string }[];
+    participants: { id: string; label: string; kind?: string }[];
     steps: RunStep[];
   };
 }
 
-const HINT_RUNS = "pipeline history · click a run for status, recipe, timing";
+const HINT_RUNS =
+  "pipeline + reviews · Allow/Cancel pending review_view · click a run for detail";
 const WATCH_POLL_MS = 1500;
 
 const worldEl = requireElement("world");
@@ -176,6 +184,8 @@ let reloading = false;
 let runsIndex: RunsIndex | null = null;
 let selectedRunId: string | null = null;
 const runDetailCache = new Map<string, RunRecord>();
+let runsFilter: "reviews" | "all" = "reviews";
+const cancelCooldownUntil = new Map<string, number>();
 
 async function main(): Promise<void> {
   try {
@@ -183,7 +193,8 @@ async function main(): Promise<void> {
     sceneCache.set("structure", structure);
     scene = structure;
   } catch (err) {
-    worldEl.textContent = "Could not load scene.json. Run `robby web` then serve this app (Vite).";
+    worldEl.textContent =
+      "Could not load scene.json. Run `robby web` then serve this app (Vite).";
     console.error(err);
     return;
   }
@@ -192,6 +203,7 @@ async function main(): Promise<void> {
   void prefetchEntrypoints();
   void prefetchRuns();
   void startBuildWatch();
+  initRunsFilters();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));
@@ -251,7 +263,9 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     const structure = await fetchJson<Scene>(`${ORG_MODES.structure.file}?t=${Date.now()}`);
     sceneCache.set("structure", structure);
     try {
-      const entrypoints = await fetchJson<Scene>(`${ORG_MODES.entrypoints.file}?t=${Date.now()}`);
+      const entrypoints = await fetchJson<Scene>(
+        `${ORG_MODES.entrypoints.file}?t=${Date.now()}`,
+      );
       sceneCache.set("entrypoints", entrypoints);
     } catch (err) {
       console.error(err);
@@ -308,13 +322,20 @@ async function prefetchRuns(force = false): Promise<void> {
     return;
   }
   try {
-    runsIndex = await fetchJson<RunsIndex>(`runs/index.json?t=${Date.now()}`);
+    try {
+      runsIndex = await fetchJson<RunsIndex>(`/api/runs?t=${Date.now()}`);
+    } catch {
+      runsIndex = await fetchJson<RunsIndex>(`runs/index.json?t=${Date.now()}`);
+    }
     orgRunsBtn.disabled = false;
     orgRunsBtn.title = "";
   } catch (err) {
     console.error(err);
     runsIndex = { runs: [] };
     orgRunsBtn.title = "runs/index.json missing — re-run robby web";
+  }
+  if (orgMode === "runs") {
+    renderRunsList();
   }
 }
 
@@ -388,28 +409,42 @@ function showRunsPanel(): void {
   }
 }
 
+function filteredRunEntries(): RunIndexEntry[] {
+  const runs = runsIndex?.runs ?? [];
+  if (runsFilter === "all") {
+    return runs;
+  }
+  return runs.filter((r) => r.recipe === RECIPE_REVIEW_VIEW);
+}
+
 function renderRunsList(): void {
   runsListEl.innerHTML = "";
-  const runs = runsIndex?.runs ?? [];
+  const runs = filteredRunEntries();
   if (runs.length === 0) {
     const empty = document.createElement("div");
     empty.className = "runs-empty";
-    empty.textContent = "No RunRecords yet. Run `robby web` to emit runs/index.json.";
+    empty.textContent =
+      runsFilter === "reviews"
+        ? "No reviews yet. Focus a map frame to soft-queue robby.review_view."
+        : "No RunRecords yet. Run `robby web` to emit runs/index.json.";
     runsListEl.appendChild(empty);
     return;
   }
   for (const entry of runs) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = `run-row${entry.run_id === selectedRunId ? " is-selected" : ""}`;
+    btn.className = "run-row" + (entry.run_id === selectedRunId ? " is-selected" : "");
     btn.setAttribute("role", "listitem");
+    const subject = entry.subject ?? "—";
+    const started = entry.started_at ?? 0;
+    const finished = entry.finished_at ?? entry.started_at ?? 0;
     btn.innerHTML =
       `<span class="run-status ${statusClass(entry.status)}">${escapeHtml(entry.status)}</span>` +
       `<span class="run-main">` +
       `<span class="run-recipe">${escapeHtml(entry.recipe)}</span>` +
-      `<span class="run-subject">${escapeHtml(entry.subject)}</span>` +
+      `<span class="run-subject">${escapeHtml(subject)}</span>` +
       `</span>` +
-      `<span class="run-time">${escapeHtml(formatDuration(entry.started_at, entry.finished_at))} · ${escapeHtml(formatRelative(entry.finished_at))}</span>`;
+      `<span class="run-time">${escapeHtml(formatDuration(started, finished))} · ${escapeHtml(formatRelative(finished || started))}</span>`;
     btn.addEventListener("click", () => {
       void selectRun(entry.run_id);
     });
@@ -437,13 +472,17 @@ async function selectRun(runId: string): Promise<void> {
 
 function renderRunDetail(detail: RunRecord): void {
   runsDetailEl.hidden = false;
-  const duration = formatDuration(detail.started_at, detail.finished_at);
+  const started = detail.started_at ?? 0;
+  const finished = detail.finished_at ?? detail.started_at ?? 0;
+  const duration = formatDuration(started, finished);
   const stats = detail.stats
     ? Object.entries(detail.stats)
         .map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(String(v))}</dd>`)
         .join("")
     : "";
-  const products = (detail.products ?? []).map((p) => `<li>${escapeHtml(p)}</li>`).join("");
+  const products = (detail.products ?? [])
+    .map((p) => `<li>${escapeHtml(p)}</li>`)
+    .join("");
   const stages = (detail.process?.steps ?? [])
     .map(
       (s) =>
@@ -453,22 +492,54 @@ function renderRunDetail(detail: RunRecord): void {
         `</li>`,
     )
     .join("");
+  const canGate =
+    detail.recipe === RECIPE_REVIEW_VIEW &&
+    (detail.status === "queued" || detail.status === "running");
   runsDetailEl.innerHTML =
     `<h2>${escapeHtml(detail.recipe)}</h2>` +
     `<div class="meta"><span class="run-status ${statusClass(detail.status)}">${escapeHtml(detail.status)}</span>` +
     ` · ${escapeHtml(detail.run_id)} · ${escapeHtml(duration)}</div>` +
+    (canGate ? `<div class="run-actions" data-run-actions="${escapeHtml(detail.run_id)}"></div>` : "") +
     `<dl class="run-kv">` +
-    `<dt>subject</dt><dd>${escapeHtml(detail.subject)}</dd>` +
-    `<dt>started</dt><dd>${escapeHtml(formatAbsolute(detail.started_at))}</dd>` +
-    `<dt>finished</dt><dd>${escapeHtml(formatAbsolute(detail.finished_at))}</dd>` +
+    `<dt>subject</dt><dd>${escapeHtml(detail.subject ?? "—")}</dd>` +
+    `<dt>started</dt><dd>${escapeHtml(formatAbsolute(started))}</dd>` +
+    `<dt>finished</dt><dd>${escapeHtml(detail.finished_at !== undefined ? formatAbsolute(detail.finished_at) : "—")}</dd>` +
     (detail.exit_code !== undefined
       ? `<dt>exit_code</dt><dd>${escapeHtml(String(detail.exit_code))}</dd>`
       : "") +
     stats +
     `</dl>` +
-    (detail.stdout_tail ? `<div class="stdout">${escapeHtml(detail.stdout_tail)}</div>` : "") +
-    (products ? `<div class="stages"><h2>Products</h2><ol>${products}</ol></div>` : "") +
-    (stages ? `<div class="stages"><h2>Stages</h2><ol>${stages}</ol></div>` : "");
+    (detail.stdout_tail
+      ? `<div class="stdout">${escapeHtml(detail.stdout_tail)}</div>`
+      : "") +
+    (products
+      ? `<div class="stages"><h2>Products</h2><ol>${products}</ol></div>`
+      : "") +
+    (stages
+      ? `<div class="stages"><h2>Stages</h2><ol>${stages}</ol></div>`
+      : "");
+
+  const actions = runsDetailEl.querySelector("[data-run-actions]");
+  if (actions && canGate) {
+    if (detail.status === "queued") {
+      const allow = document.createElement("button");
+      allow.type = "button";
+      allow.textContent = "Allow / Continue";
+      allow.title = "Start review (LLM stubbed in this slice)";
+      allow.addEventListener("click", () => {
+        void postRunAction(detail.run_id, "allow");
+      });
+      actions.appendChild(allow);
+    }
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "danger";
+    cancel.textContent = "Cancel";
+    cancel.addEventListener("click", () => {
+      void postRunAction(detail.run_id, "cancel");
+    });
+    actions.appendChild(cancel);
+  }
 }
 
 function statusClass(status: string): string {
@@ -603,9 +674,7 @@ function placeAllFrames(): void {
   // Only top-level world cards (the focus). Children live in the body's grid.
   for (const el of worldEl.querySelectorAll<HTMLElement>(":scope > .frame-wrap")) {
     const id = el.dataset.id;
-    if (!id) {
-      continue;
-    }
+    if (!id) continue;
     placeFrame(el, frame(id), camera);
   }
 }
@@ -639,8 +708,10 @@ const PORTAL_PREVIEW = 8;
 function portalButton(portal: Portal): HTMLButtonElement {
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = `portal${portal.target ? "" : " unresolved"}`;
-  btn.innerHTML = `<span class="pk">${escapeHtml(portal.kind_label)}</span>${escapeHtml(portal.label)}`;
+  btn.className = "portal" + (portal.target ? "" : " unresolved");
+  btn.innerHTML =
+    `<span class="pk">${escapeHtml(portal.kind_label)}</span>` +
+    escapeHtml(portal.label);
   btn.title = portal.target_name || portal.label;
   if (portal.target) {
     const target = portal.target;
@@ -704,11 +775,14 @@ function buildPortalStrip(f: SceneFrame): HTMLElement {
 function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLElement {
   const f = frame(id);
   const wrap = document.createElement("div");
-  wrap.className = `frame-wrap${isFocus ? " is-focus" : ""}${isAncestor ? " is-ancestor" : ""}`;
+  wrap.className =
+    "frame-wrap" +
+    (isFocus ? " is-focus" : "") +
+    (isAncestor ? " is-ancestor" : "");
   wrap.dataset.id = id;
 
   const inner = document.createElement("div");
-  inner.className = `frame${isFocus ? " is-focus" : ""}`;
+  inner.className = "frame" + (isFocus ? " is-focus" : "");
 
   const header = document.createElement("div");
   header.className = "frame-header";
@@ -720,12 +794,9 @@ function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLEle
   if (isFocus && f.parent) {
     header.style.cursor = "pointer";
     header.title = "Zoom out";
-    const parentId = f.parent;
     header.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (parentId) {
-        flyTo(parentId);
-      }
+      flyTo(f.parent!);
     });
   }
   inner.appendChild(header);
@@ -754,7 +825,7 @@ function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLEle
 }
 
 function flyTo(id: string): void {
-  if (!scene?.frames[id] || id === focusId || flying) {
+  if (!scene!.frames[id] || id === focusId || flying) {
     return;
   }
   flying = true;
@@ -768,6 +839,7 @@ function flyTo(id: string): void {
     remount();
     flying = false;
     void loadDetail(focusId);
+    void maybeQueueReviewForFocus(focusId);
   });
 }
 
@@ -780,7 +852,7 @@ function zoomOut(): void {
 }
 
 function easeOutCubic(t: number): number {
-  return 1 - (1 - t) ** 3;
+  return 1 - Math.pow(1 - t, 3);
 }
 
 function tweenCamera(next: Camera, onDone?: () => void): void {
@@ -836,9 +908,7 @@ async function loadDetail(id: string): Promise<void> {
   const isContainer = f.children.length > 0;
   // Containers keep the child grid — inject execution above it.
   if (isContainer) {
-    for (const el of host.querySelectorAll(":scope > .detail")) {
-      el.remove();
-    }
+    host.querySelectorAll(":scope > .detail").forEach((el) => el.remove());
     if (detail.execution_mermaid) {
       const panel = document.createElement("div");
       panel.className = "detail detail-execution";
@@ -905,7 +975,12 @@ async function loadDetail(id: string): Promise<void> {
     panel.appendChild(src);
   }
 
-  if (!detail.execution_mermaid && !detail.process_mermaid && !detail.source && !detail.docs) {
+  if (
+    !detail.execution_mermaid &&
+    !detail.process_mermaid &&
+    !detail.source &&
+    !detail.docs
+  ) {
     const empty = document.createElement("div");
     empty.className = "empty-leaf";
     empty.textContent = "No process or source on this node.";
@@ -915,7 +990,11 @@ async function loadDetail(id: string): Promise<void> {
   host.appendChild(panel);
 }
 
-function appendExecution(panel: HTMLElement, mermaidSrc: string, frameId: string): void {
+function appendExecution(
+  panel: HTMLElement,
+  mermaidSrc: string,
+  frameId: string,
+): void {
   const proc = document.createElement("div");
   proc.className = "process process-execution";
   const heading = document.createElement("h2");
@@ -1006,6 +1085,87 @@ function cssEscape(s: string): string {
     return CSS.escape(s);
   }
   return s.replace(/"/g, '\\"');
+}
+
+
+function initRunsFilters(): void {
+  for (const btn of runsPanelEl.querySelectorAll<HTMLButtonElement>(".runs-filter")) {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter;
+      if (filter !== "reviews" && filter !== "all") {
+        return;
+      }
+      runsFilter = filter;
+      for (const other of runsPanelEl.querySelectorAll(".runs-filter")) {
+        other.classList.toggle("is-active", other === btn);
+      }
+      renderRunsList();
+    });
+  }
+}
+
+async function postRunAction(runId: string, action: "allow" | "cancel"): Promise<void> {
+  try {
+    const res = await fetch(`/api/runs/${encodeURIComponent(runId)}/${action}`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(body?.error ?? `${action} failed: ${res.status}`);
+    }
+    const record = (await res.json()) as RunRecord;
+    runDetailCache.set(runId, record);
+    if (action === "cancel" && record.subject) {
+      cancelCooldownUntil.set(record.subject, Date.now() + REVIEW_CANCEL_COOLDOWN_MS);
+    }
+    await prefetchRuns(true);
+    if (selectedRunId === runId) {
+      renderRunDetail(record);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function maybeQueueReviewForFocus(id: string): Promise<void> {
+  if (!scene || !scene.frames[id] || id === scene.root) {
+    return;
+  }
+  const until = cancelCooldownUntil.get(id) ?? 0;
+  if (Date.now() < until) {
+    return;
+  }
+  const f = frame(id);
+  try {
+    const res = await fetch("/api/reviews/queue", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject: id,
+        trigger: "frame_focus",
+        subject_name: f.name,
+      }),
+    });
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      throw new Error(body?.error ?? `queue failed: ${res.status}`);
+    }
+    const record = (await res.json()) as RunRecord;
+    runDetailCache.set(record.run_id, record);
+    await prefetchRuns(true);
+    // Surface the pending review in Runs mode.
+    if (orgMode !== "runs") {
+      await setOrgMode("runs");
+    }
+    runsFilter = "reviews";
+    for (const btn of runsPanelEl.querySelectorAll(".runs-filter")) {
+      btn.classList.toggle("is-active", (btn as HTMLElement).dataset.filter === "reviews");
+    }
+    selectedRunId = record.run_id;
+    showRunsPanel();
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 void main();

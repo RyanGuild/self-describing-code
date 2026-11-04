@@ -16,7 +16,7 @@
         <button type="button" id="org-entrypoints" class="org-btn" data-org="entrypoints">
           Entrypoints
         </button>
-        <button type="button" id="org-runs" class="org-btn" data-org="runs">
+        <button type="button" id="org-runs" class="org-btn" data-org="runs" title="Runs / Reviews">
           Runs
         </button>
       </fieldset>
@@ -27,8 +27,18 @@
     <main id="viewport">
       <div id="world"></div>
       <aside id="runs-panel" hidden aria-label="Pipeline runs">
-        <div id="runs-list"></div>
-        <div id="runs-detail" hidden></div>
+        <div class="runs-panel-header">
+          <div class="runs-dock-filters" role="group" aria-label="Filter">
+            <button type="button" class="runs-filter" data-filter="all">All</button>
+            <button type="button" class="runs-filter is-active" data-filter="reviews">
+              Reviews
+            </button>
+          </div>
+        </div>
+        <div class="runs-panel-body">
+          <div id="runs-list" role="list"></div>
+          <div id="runs-detail" hidden></div>
+        </div>
       </aside>
     </main>
     <script type="module" src="/src/viewer.ts"></script>

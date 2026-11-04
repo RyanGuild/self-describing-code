@@ -170,6 +170,12 @@ pub mod recipes {
     pub const ENRICH_COMMENTS: &str = "robby.enrich_comments";
     pub const CARGO_TEST: &str = "cargo.test";
     pub const TRACE: &str = "robby.trace";
+    /// View-triggered self-improvement review (map focus / rebuild).
+    pub const REVIEW_VIEW: &str = "robby.review_view";
+    /// Markdown-doc review (metrics loop sibling of [`REVIEW_VIEW`]).
+    pub const REVIEW_DOC: &str = "robby.review_doc";
+    /// Empirical gate spawned only after an allowed review.
+    pub const METRIC_TEST: &str = "robby.metric_test";
 }
 
 /// Lookup over a recipe catalog (pipelines.json, in-memory, …).

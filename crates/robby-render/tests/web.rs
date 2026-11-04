@@ -290,6 +290,10 @@ fn write_site_emits_scene_and_frames() {
     assert!(build["rebuilt_at"].as_u64().is_some());
     let workspace = dir.join(format!("frames/{}.json", stable_id(WORKSPACE_ID)));
     assert!(workspace.is_file());
+    // Shared RunRecord index for Runs / Reviews (extract + web from write_site).
+    assert!(dir.join("runs/index.json").is_file());
+    let index_raw = std::fs::read_to_string(dir.join("runs/index.json")).unwrap();
+    assert!(index_raw.contains("\"runs\""));
     // No JavaScript in the site data output.
     assert!(!dir.join("viewer.js").exists());
 }
@@ -316,7 +320,9 @@ fn write_site_emits_run_records() {
     .unwrap();
     assert_eq!(extract["status"], "pass");
     assert_eq!(extract["recipe"], "robby.extract");
-    assert!(extract["stats"]["nodes"].as_u64().unwrap() >= 1);
+    // Shared RunRecord stats are stringly (BTreeMap<String, String>).
+    let nodes = extract["stats"]["nodes"].as_str().unwrap_or("");
+    assert!(nodes.parse::<u64>().unwrap_or(0) >= 1);
 }
 
 #[test]
