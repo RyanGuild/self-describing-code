@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant module_by_stable as module_by_stable()
-    participant iter as iter
-    participant find as find
-    module_by_stable-->>iter: self.modules.iter()
-    module_by_stable-->>find: self.modules.iter().find(|m| m.stable_id == id)

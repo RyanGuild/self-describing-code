@@ -19,9 +19,17 @@ jobs:
         run: cargo clippy --workspace --all-targets --all-features -- -D warnings
       - name: test
         # robby_render/index.md is already over the 1000-line page budget on main.
+        # build.rs regenerates .robby/ and docs/self-model/ locally; they are gitignored.
         run: cargo test --workspace -- --skip no_page_is_a_wall_of_text
-      - name: generated artifacts are fresh
-        run: git diff --exit-code
+      - name: no tracked generated artifacts
+        run: |
+          tracked="$(git ls-files .robby docs/self-model apps/site/public/scene.json apps/site/public/scene-entrypoints.json apps/site/public/frames)"
+          if [ -n "$tracked" ]; then
+            echo "generated paths must not be tracked:" >&2
+            echo "$tracked" >&2
+            exit 1
+          fi
+          git diff --exit-code
 
   site:
     name: site

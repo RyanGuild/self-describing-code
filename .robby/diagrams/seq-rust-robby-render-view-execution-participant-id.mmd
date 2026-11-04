@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant participant_id as participant_id()
-    participant as_str as as_str
-    participant alias as alias
-    participant_id-->>as_str: node.fqn.as_str()
-    participant_id-->>alias: alias(node.fqn.as_str())

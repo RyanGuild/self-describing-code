@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant show as show()
-    participant select_opts as select_opts
-    participant collect as collect
-    participant render_report as render_report
-    show-->>select_opts: opts.select_opts()
-    show-->>collect: collect(doc, node, sources, &opts.select_opts())
-    show-->>render_report: self.render_report(&views)

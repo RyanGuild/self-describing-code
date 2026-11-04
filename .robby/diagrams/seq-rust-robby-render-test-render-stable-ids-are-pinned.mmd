@@ -1,6 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant stable_ids_are_pinned as stable_ids_are_pinned()
-    stable_ids_are_pinned-->>stable_ids_are_pinned: assert_eq!(stable_id('rust://demo::a'), stable_id('rust://demo::a'))
-    stable_ids_are_pinned-->>stable_ids_are_pinned: assert_ne!(stable_id('rust://demo::a'), stable_id('rust://demo::b'))
-    stable_ids_are_pinned-->>stable_ids_are_pinned: assert_eq!(stable_id('').len(), 18)

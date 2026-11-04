@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant get as get()
-    participant as_slice as as_slice
-    participant RecipeCatalog__get as RecipeCatalog::get
-    get-->>as_slice: self.as_slice()
-    get-->>RecipeCatalog__get: RecipeCatalog::get(self.as_slice(), id)

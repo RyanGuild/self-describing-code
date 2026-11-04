@@ -43,7 +43,7 @@ cargo test --workspace
 cd apps/site && npm install && npm run check
 ```
 
-`cargo test` regenerates `docs/self-model/` and `.robby/`. A clean tree after the test run means those artifacts match the source. `no_page_is_a_wall_of_text` already fails: the `robby_render` crate index is over the 1000-line page budget.
+`cargo test` / `build.rs` regenerate `docs/self-model/` and `.robby/` locally; those trees (and site `scene*.json` / `frames/`) are **not** committed — see the Project doc `docs/artifact-commit-policy.md`. `no_page_is_a_wall_of_text` already fails: the `robby_render` crate index is over the 1000-line page budget.
 
 ## Run it
 
@@ -56,8 +56,8 @@ and writes the generated tree under `docs/self-model/`. If any byte of source is
 unclaimed, **the build fails** — Robby cannot be compiled from a codebase that is
 invisible to its own map.
 
-Start reading at [`docs/self-model/README.md`](docs/self-model/README.md). It
-links to one page per crate, one per module, and one per item.
+After a build, start reading at `docs/self-model/README.md` (generated locally).
+It links to one page per crate, one per module, and one per item.
 
 When the build itself is what is broken, the example is the escape hatch:
 
@@ -98,5 +98,5 @@ cd apps/site && npm install && npm run dev
 3. **Open kinds.** `code.*`, `runtime.*`, `agent.*` share one schema.
 4. **Edges are never dropped.** Unresolved edges survive with confidence scores.
 
-See `docs/00-bootstrap.md` for the build log and
-[`docs/self-model/README.md`](docs/self-model/README.md) for the generated map.
+See `docs/00-bootstrap.md` for the build log. The generated map appears under
+`docs/self-model/` after `cargo build -p robby-cli`.

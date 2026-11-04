@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant from_root as from_root()
-    participant PackageStructure__from_root as PackageStructure::from_root
-    participant CouplingGraph__from_root as CouplingGraph::from_root
-    from_root-->>PackageStructure__from_root: PackageStructure::from_root(doc, root)
-    from_root-->>CouplingGraph__from_root: CouplingGraph::from_root(doc, root)

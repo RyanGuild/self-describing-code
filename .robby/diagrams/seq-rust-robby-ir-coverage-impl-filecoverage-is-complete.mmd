@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant is_complete as is_complete()
-    participant iter as iter
-    participant is_failure as is_failure
-    participant any as any
-    is_complete-->>iter: self.gaps.iter()
-    is_complete-->>is_failure: g.reason.is_failure()
-    is_complete-->>any: self.gaps.iter().any(|g| g.reason.is_failure())

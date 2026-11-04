@@ -1,9 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant tree as tree()
-    participant HierarchyView__from_node as HierarchyView::from_node
-    participant TuiRenderer__new as TuiRenderer::new
-    participant hierarchy as hierarchy
-    tree-->>HierarchyView__from_node: HierarchyView::from_node(doc, root, opts.depth, opts.all)
-    tree-->>TuiRenderer__new: TuiRenderer::new(opts.width)
-    tree-->>hierarchy: TuiRenderer::new(opts.width).hierarchy(&view)

@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant push_titled as push_titled()
-    participant Section__titled as Section::titled
-    participant push as push
-    push_titled-->>Section__titled: Section::titled(title, body)
-    push_titled-->>push: self.push(Section::titled(title, body))

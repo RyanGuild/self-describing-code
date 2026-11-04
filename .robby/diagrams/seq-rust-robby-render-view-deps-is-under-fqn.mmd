@@ -1,6 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant is_under_fqn as is_under_fqn()
-    participant starts_with as starts_with
-    is_under_fqn-->>is_under_fqn: format!('{}::', root.fqn)
-    is_under_fqn-->>starts_with: candidate.fqn.starts_with(&format!('{}::', root.fqn))

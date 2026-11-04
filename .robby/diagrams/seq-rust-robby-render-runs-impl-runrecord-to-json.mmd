@@ -1,7 +1,0 @@
-sequenceDiagram
-    autonumber
-    participant to_json as to_json()
-    participant serde_json__to_string_pretty as serde_json::to_string_pretty
-    participant expect as expect
-    to_json-->>serde_json__to_string_pretty: serde_json::to_string_pretty(self)
-    to_json-->>expect: serde_json::to_string_pretty(self).expect('run record serializes')
