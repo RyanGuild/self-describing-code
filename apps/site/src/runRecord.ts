@@ -14,6 +14,27 @@ export function runFileStem(runId: string): string {
   return runId.replaceAll(":", "_");
 }
 
+/** Catalog metrics scored on Allow for `robby.review_view` (mirrors robby_render::review_metrics). */
+export const REVIEW_METRIC_UI_RUNRECORD_SHAPE = "ui.runrecord_shape_compliance";
+export const REVIEW_METRIC_UI_RUNRECORD_SHAPE_TEST = "metric_test.ui.runrecord_shape_compliance";
+export const REVIEW_METRIC_AGENT_PROCESS_STAGE = "agent.action_or_process_stage_rate";
+export const REVIEW_METRIC_AGENT_PROCESS_STAGE_TEST =
+  "metric_test.agent.action_or_process_stage_rate";
+
+export interface ScoredDecisionProduct {
+  kind: string;
+  verdict: string;
+  metric: string;
+  score: string;
+  test_id: string;
+  direction: string;
+  subject: string;
+  run_id: string;
+  trigger: string;
+  source_recipe: string;
+  reason: string;
+}
+
 export interface RunRecord {
   run_id: string;
   recipe: string;

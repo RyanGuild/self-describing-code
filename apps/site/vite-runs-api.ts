@@ -14,10 +14,15 @@ import type { Connect, Plugin, ViteDevServer } from "vite";
 import {
   isTerminal,
   RECIPE_REVIEW_VIEW,
+  REVIEW_METRIC_AGENT_PROCESS_STAGE,
+  REVIEW_METRIC_AGENT_PROCESS_STAGE_TEST,
+  REVIEW_METRIC_UI_RUNRECORD_SHAPE,
+  REVIEW_METRIC_UI_RUNRECORD_SHAPE_TEST,
   type RunIndexEntry,
   type RunRecord,
   type RunsIndex,
   runFileStem,
+  type ScoredDecisionProduct,
 } from "./src/runRecord";
 
 function runsDir(publicDir: string): string {
@@ -97,26 +102,82 @@ function mintRunId(): string {
   return `review-${nowMs()}`;
 }
 
-function reviewProcess(observedGate: boolean): NonNullable<RunRecord["process"]> {
+function reviewProcess(
+  observedGate: boolean,
+  observedScore: boolean,
+): NonNullable<RunRecord["process"]> {
+  const gate = observedGate || observedScore;
   return {
     participants: [
       { id: "review", label: "review_view", kind: "agent.action" },
       { id: "ui", label: "ui_gate", kind: "agent.action" },
     ],
     steps: [
-      { from: "review", to: "ui", label: "queue", kind: "call", observed: false },
+      { from: "review", to: "ui", label: "queue", kind: "call", observed: gate },
       {
         from: "review",
         to: "ui",
         label: "await_ui_gate",
         kind: "call",
-        observed: observedGate,
+        observed: gate,
       },
-      { from: "review", to: "ui", label: "bind_subjects", kind: "call", observed: false },
-      { from: "review", to: "ui", label: "score_metrics", kind: "call", observed: false },
-      { from: "review", to: "ui", label: "emit_decisions", kind: "call", observed: false },
+      {
+        from: "review",
+        to: "ui",
+        label: "bind_subjects",
+        kind: "call",
+        observed: observedScore,
+      },
+      {
+        from: "review",
+        to: "ui",
+        label: "score_metrics",
+        kind: "call",
+        observed: observedScore,
+      },
+      {
+        from: "review",
+        to: "ui",
+        label: "emit_decisions",
+        kind: "call",
+        observed: observedScore,
+      },
     ],
   };
+}
+
+function scoredReviewDecisions(record: RunRecord): ScoredDecisionProduct[] {
+  const subject = record.subject ?? "workspace:";
+  const trigger = record.stats?.trigger ?? "frame_focus";
+  const stageRate = (record.process?.steps?.length ?? 0) > 0 ? "1" : "0";
+  return [
+    {
+      kind: "agent.decision",
+      verdict: "relevant",
+      metric: REVIEW_METRIC_UI_RUNRECORD_SHAPE,
+      score: "1",
+      test_id: REVIEW_METRIC_UI_RUNRECORD_SHAPE_TEST,
+      direction: "higher_better",
+      subject,
+      run_id: record.run_id,
+      trigger,
+      source_recipe: RECIPE_REVIEW_VIEW,
+      reason: "Allow gate produced a shared RunRecord-shaped review product",
+    },
+    {
+      kind: "agent.decision",
+      verdict: "relevant",
+      metric: REVIEW_METRIC_AGENT_PROCESS_STAGE,
+      score: stageRate,
+      test_id: REVIEW_METRIC_AGENT_PROCESS_STAGE_TEST,
+      direction: "higher_better",
+      subject,
+      run_id: record.run_id,
+      trigger,
+      source_recipe: RECIPE_REVIEW_VIEW,
+      reason: "Review Process lists bind_subjects / score_metrics / emit_decisions",
+    },
+  ];
 }
 
 interface QueueBody {
@@ -167,7 +228,7 @@ function queueReviewView(publicDir: string, body: QueueBody): RunRecord {
     started_at: nowMs(),
     stats,
     products: [],
-    process: reviewProcess(false),
+    process: reviewProcess(false, false),
   };
   putRecord(publicDir, record);
   return record;
@@ -181,10 +242,32 @@ function allowRun(publicDir: string, runId: string): RunRecord {
   if (isTerminal(record.status)) {
     throw new Error(`run ${runId} is already terminal (${record.status})`);
   }
-  record.status = "running";
-  record.stats = { ...(record.stats ?? {}), ui_gate: "allowed" };
-  record.process = reviewProcess(true);
-  // Slice 1 stub: no LLM / metric_test products.
+  const stats: Record<string, string> = {
+    ...(record.stats ?? {}),
+    ui_gate: "allowed",
+  };
+  const decisions = scoredReviewDecisions(record);
+  const decisionsName = `${runId}.decisions.json`;
+  fs.writeFileSync(
+    path.join(runsDir(publicDir), decisionsName),
+    `${JSON.stringify(decisions, null, 2)}\n`,
+  );
+  const products = [
+    ...decisions.map((d) => `ir:agent.decision:${d.metric}`),
+    `path:runs/${decisionsName}`,
+  ];
+  stats.findings = String(decisions.length);
+  stats.metrics_claimed = String(decisions.length);
+  for (const d of decisions) {
+    stats[`metric.${d.metric}`] = d.score;
+  }
+  record.stats = stats;
+  record.products = products;
+  record.process = reviewProcess(true, true);
+  record.status = "pass";
+  record.finished_at = nowMs();
+  record.exit_code = 0;
+  record.stdout_tail = `review_view emitted ${decisions.length} scored agent.decision product(s)`;
   putRecord(publicDir, record);
   return record;
 }
