@@ -7,7 +7,7 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use robby_ir::{CoverageReport, Document, EdgeKind, Node, NodeId};
+use robby_ir::{CoverageReport, Document, Node, NodeId};
 
 use crate::render::{MarkdownRenderer, Renderer};
 use crate::report::Report;
@@ -170,7 +170,7 @@ fn node_section(
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     if !node.tags.is_empty() {
@@ -213,7 +213,7 @@ fn node_section(
         let _ = writeln!(out, "**Edges**\n");
         for edge in &node.edges {
             let marker = if edge.resolved { "" } else { " (unresolved)" };
-            let _ = writeln!(out, "- {} → `{}`{marker}", edge_name(edge.kind), edge.to);
+            let _ = writeln!(out, "- {} → `{}`{marker}", edge.kind.as_str(), edge.to);
         }
         out.push('\n');
     }
@@ -241,30 +241,6 @@ fn heading_depth(doc: &Document, node: &Node) -> usize {
 
 pub(crate) fn cell(input: &str) -> String {
     input.replace('|', "\\|").replace('\n', " ")
-}
-
-pub(crate) fn source_name(source: robby_ir::Source) -> &'static str {
-    match source {
-        robby_ir::Source::Extractor => "extractor",
-        robby_ir::Source::Macro => "macro",
-        robby_ir::Source::Trace => "trace",
-        robby_ir::Source::Agent => "agent",
-        robby_ir::Source::Hand => "hand",
-    }
-}
-
-pub(crate) fn edge_name(kind: EdgeKind) -> &'static str {
-    match kind {
-        EdgeKind::Contains => "contains",
-        EdgeKind::Calls => "calls",
-        EdgeKind::Uses => "uses",
-        EdgeKind::Imports => "imports",
-        EdgeKind::Implements => "implements",
-        EdgeKind::Extends => "extends",
-        EdgeKind::Returns => "returns",
-        EdgeKind::Field => "field",
-        EdgeKind::References => "references",
-    }
 }
 
 /// A compact index of every node, for the top of the report.

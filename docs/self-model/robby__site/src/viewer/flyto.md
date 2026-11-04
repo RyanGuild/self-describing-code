@@ -5,12 +5,12 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:419`](../../../../../apps/site/src/viewer.ts#L419) |
+| location | [`apps/site/src/viewer.ts:400`](../../../../../apps/site/src/viewer.ts#L400) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function flyTo(id: string): void {
-  if (!scene!.frames[id] || id === focusId || flying) {
+function flyTo(id: string) {
+  if (!currentScene().frames[id] || id === focusId || flying) {
     return;
   }
   flying = true;

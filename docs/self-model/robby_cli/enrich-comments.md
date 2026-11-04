@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn enrich_comments(     ir: &std::path::Path,     source_root: &std::path::Path,     out: Option<&std::path::Path>,     decision_model: Option<String>,     note_model: Option<String>,     limit: Option<usize>, ) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:232`](../../../crates/robby-cli/src/main.rs#L232) |
+| location | [`crates/robby-cli/src/main.rs:243`](../../../crates/robby-cli/src/main.rs#L243) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -29,12 +29,17 @@ fn enrich_comments(
     }
     opts.limit = limit;
 
-    let stats = robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
+    let stats =
+        robby_agent::enrich_comments(&mut loaded.document, &loaded.sources, &client, &opts)?;
     let out_path = out.unwrap_or(ir);
     pipeline::write_document(&loaded.document, out_path)?;
     println!(
         "enriched {} comment(s): {} relevant, {} noise, {} noted → {}",
-        stats.decided, stats.relevant, stats.noise, stats.noted, out_path.display()
+        stats.decided,
+        stats.relevant,
+        stats.noise,
+        stats.noted,
+        out_path.display()
     );
     Ok(ExitCode::SUCCESS)
 }

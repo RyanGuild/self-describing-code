@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn check(ir: &std::path::Path, source_root: &std::path::Path, json: bool) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:261`](../../../crates/robby-cli/src/main.rs#L261) |
+| location | [`crates/robby-cli/src/main.rs:277`](../../../crates/robby-cli/src/main.rs#L277) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

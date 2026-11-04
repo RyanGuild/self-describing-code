@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn collect_cross_edges(     doc: &Document,     placed: &BTreeSet<NodeId>,     tree_edges: &BTreeSet<(NodeId, NodeId)>, ) -> Vec<(NodeId, NodeId)>` |
-| location | [`crates/robby-render/src/view/entrypoints.rs:98`](../../../../../crates/robby-render/src/view/entrypoints.rs#L98) |
+| location | [`crates/robby-render/src/view/entrypoints.rs:93`](../../../../../crates/robby-render/src/view/entrypoints.rs#L93) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -94,10 +94,10 @@ sequenceDiagram
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 
 ## References
 

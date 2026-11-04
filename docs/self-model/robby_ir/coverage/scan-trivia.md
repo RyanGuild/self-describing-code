@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn scan_trivia(     bytes: &[u8],     start: u32,     end: u32,     mode: TriviaMode, ) -> Result<TriviaFlags, u32>` |
-| location | [`crates/robby-ir/src/coverage.rs:322`](../../../../crates/robby-ir/src/coverage.rs#L322) |
+| signature | `fn scan_trivia(bytes: &[u8], start: u32, end: u32, mode: TriviaMode) -> Result<TriviaFlags, u32>` |
+| location | [`crates/robby-ir/src/coverage.rs:316`](../../../../crates/robby-ir/src/coverage.rs#L316) |
 | provenance | extractor · confidence 1.00 |
 
 > Walk a byte range, accepting only whitespace, comments and (Rust) attributes.
@@ -21,16 +21,12 @@
 /// Returns the byte offset of the first token that is none of those, which is
 /// what makes the gap report actionable: it points at the exact byte that is
 /// missing from the map.
-fn scan_trivia(
-    bytes: &[u8],
-    start: u32,
-    end: u32,
-    mode: TriviaMode,
-) -> Result<TriviaFlags, u32> {
+fn scan_trivia(bytes: &[u8], start: u32, end: u32, mode: TriviaMode) -> Result<TriviaFlags, u32> {
     let mut flags = TriviaFlags::default();
     let mut i = start;
     // TypeScript shebang is trivia when it opens the file.
-    if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!' {
+    if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!'
+    {
         flags.comment = true;
         while i < end && bytes[i as usize] != b'\n' {
             i += 1;
@@ -54,7 +50,10 @@ fn scan_trivia(
                 if i + 1 < end && bytes[i as usize] == b'/' && bytes[(i + 1) as usize] == b'*' {
                     depth += 1;
                     i += 2;
-                } else if i + 1 < end && bytes[i as usize] == b'*' && bytes[(i + 1) as usize] == b'/' {
+                } else if i + 1 < end
+                    && bytes[i as usize] == b'*'
+                    && bytes[(i + 1) as usize] == b'/'
+                {
                     depth -= 1;
                     i += 2;
                 } else {

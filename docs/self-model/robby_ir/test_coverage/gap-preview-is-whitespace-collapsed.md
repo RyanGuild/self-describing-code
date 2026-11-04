@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn gap_preview_is_whitespace_collapsed()` |
-| location | [`crates/robby-ir/tests/coverage.rs:158`](../../../../crates/robby-ir/tests/coverage.rs#L158) |
+| location | [`crates/robby-ir/tests/coverage.rs:163`](../../../../crates/robby-ir/tests/coverage.rs#L163) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

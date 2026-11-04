@@ -17,8 +17,8 @@ sequenceDiagram
     end
     absorb-->>absorb: vec![false observed.steps.len()]
     loop &mut self.steps
-    absorb-->>iter: observed.steps.iter()
-    absorb-->>position: observed.steps.iter().position(|o| { o.from == step.from && o.to == s...
+    absorb-->>iter: observed .steps .iter()
+    absorb-->>position: observed .steps .iter() .position(|o| o.from == step.from && o.to == ...
     end
     absorb-->>iter: observed.steps.iter()
     absorb-->>enumerate: observed.steps.iter().enumerate()

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/process.rs:42`](../../../../crates/robby-ir/src/process.rs#L42) |
+| location | [`crates/robby-ir/src/process.rs:55`](../../../../crates/robby-ir/src/process.rs#L55) |
 | provenance | extractor · confidence 1.00 |
 
 > A control-flow frame enclosing a step.
@@ -32,7 +32,7 @@ pub struct Block {
 
 **Fields and variants**
 
-- `kind` — `crates/robby-ir/src/process.rs:49:5`
-- `label` — `crates/robby-ir/src/process.rs:50:5`
-- `branch` — `crates/robby-ir/src/process.rs:51:5`
+- `kind` — `crates/robby-ir/src/process.rs:62:5`
+- `label` — `crates/robby-ir/src/process.rs:63:5`
+- `branch` — `crates/robby-ir/src/process.rs:64:5`
 

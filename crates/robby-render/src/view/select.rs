@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use robby_ir::{Document, Node, Source, kind};
+use robby_ir::{Document, Node, kind};
 
 use super::comments::CommentsView;
 use super::deps::DependencyViews;
@@ -109,7 +109,7 @@ pub fn collect(
         kind: node.kind.as_str().to_owned(),
         signature: node.signature.clone(),
         location: node.span.as_ref().map(robby_ir::Span::location),
-        provenance_source: source_name(node.provenance.source),
+        provenance_source: node.provenance.source.as_str(),
         confidence: node.provenance.confidence,
         docs: node.docs.clone(),
         node_count: doc.subtree(&node.id).len(),
@@ -210,14 +210,4 @@ pub fn main_process<'a>(doc: &'a Document, node: &Node) -> Option<&'a robby_ir::
         .filter_map(|id| doc.get(id))
         .find(|child| child.name == "main" && child.kind.as_str() == kind::code::FUNCTION)
         .and_then(|main| main.process.as_ref())
-}
-
-fn source_name(source: Source) -> &'static str {
-    match source {
-        Source::Extractor => "extractor",
-        Source::Macro => "macro",
-        Source::Trace => "trace",
-        Source::Agent => "agent",
-        Source::Hand => "hand",
-    }
 }

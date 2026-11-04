@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn report_orders_worst_files_first()` |
-| location | [`crates/robby-ir/tests/coverage.rs:142`](../../../../crates/robby-ir/tests/coverage.rs#L142) |
+| location | [`crates/robby-ir/tests/coverage.rs:143`](../../../../crates/robby-ir/tests/coverage.rs#L143) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,7 +22,11 @@ fn report_orders_worst_files_first() {
     doc.insert(a);
 
     let report = document_coverage(&doc, &sources);
-    let order: Vec<&str> = report.worst_first().iter().map(|f| f.file.as_str()).collect();
+    let order: Vec<&str> = report
+        .worst_first()
+        .iter()
+        .map(|f| f.file.as_str())
+        .collect();
     assert_eq!(order, vec!["b.rs", "a.rs"]);
 }
 ```
@@ -59,11 +63,11 @@ sequenceDiagram
     report_orders_worst_files_first-->>Some: Some(Span::new('a.rs', 'fn a() {}', 0, 9))
     report_orders_worst_files_first-->>insert: doc.insert(a)
     report_orders_worst_files_first-->>document_coverage: document_coverage(&doc, &sources)
-    report_orders_worst_files_first-->>worst_first: report.worst_first()
-    report_orders_worst_files_first-->>iter: report.worst_first().iter()
+    report_orders_worst_files_first-->>worst_first: report .worst_first()
+    report_orders_worst_files_first-->>iter: report .worst_first() .iter()
     report_orders_worst_files_first-->>as_str: f.file.as_str()
-    report_orders_worst_files_first-->>map: report.worst_first().iter().map(|f| f.file.as_str())
-    report_orders_worst_files_first-->>collect: report.worst_first().iter().map(|f| f.file.as_str()).collect()
+    report_orders_worst_files_first-->>map: report .worst_first() .iter() .map(|f| f.file.as_str())
+    report_orders_worst_files_first-->>collect: report .worst_first() .iter() .map(|f| f.file.as_str()) .collect()
     report_orders_worst_files_first-->>report_orders_worst_files_first: assert_eq!(order, vec!['b.rs', 'a.rs'])
 ```
 

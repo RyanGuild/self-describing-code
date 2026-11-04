@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use robby_ir::{Document, Node, NodeId, kind};
+use robby_ir::{Document, Highlight, Node, NodeId, NoteKind, Verdict, kind};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CommentsView {
@@ -28,18 +28,6 @@ pub enum CommentKind {
     Line,
     Block,
     Docs,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Verdict {
-    Relevant,
-    Noise,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum NoteKind {
-    UsageExample,
-    ImplementationNote,
 }
 
 impl CommentsView {
@@ -153,22 +141,6 @@ impl CommentKind {
     }
 }
 
-impl NoteKind {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::UsageExample => "usage_example",
-            Self::ImplementationNote => "implementation_note",
-        }
-    }
-
-    pub fn label(self) -> &'static str {
-        match self {
-            Self::UsageExample => "usage example",
-            Self::ImplementationNote => "implementation note",
-        }
-    }
-}
-
 fn decision_child<'a>(doc: &'a Document, node: &Node) -> Option<&'a Node> {
     node.children.iter().find_map(|id| {
         let child = doc.get(id)?;
@@ -177,11 +149,7 @@ fn decision_child<'a>(doc: &'a Document, node: &Node) -> Option<&'a Node> {
 }
 
 fn parse_verdict(decision: &Node) -> Option<Verdict> {
-    match decision.annotations.get("verdict")?.as_str() {
-        "relevant" => Some(Verdict::Relevant),
-        "noise" => Some(Verdict::Noise),
-        _ => None,
-    }
+    Verdict::parse(decision.annotations.get("verdict")?.as_str())
 }
 
 fn enrichment_fields(
@@ -191,28 +159,18 @@ fn enrichment_fields(
     let note_kind = decision
         .annotations
         .get("note_kind")
-        .and_then(|s| match s.as_str() {
-            "usage_example" => Some(NoteKind::UsageExample),
-            "implementation_note" => Some(NoteKind::ImplementationNote),
-            _ => None,
-        });
+        .and_then(|s| NoteKind::parse(s));
     let note = decision.docs.clone();
     let highlights = decision
         .annotations
         .get("highlights")
-        .and_then(|raw| serde_json::from_str::<Vec<HighlightJson>>(raw).ok())
+        .and_then(|raw| serde_json::from_str::<Vec<Highlight>>(raw).ok())
         .unwrap_or_default()
         .into_iter()
         .filter(|h| h.start < h.end)
         .map(|h| (h.start, h.end))
         .collect();
     (note_kind, note, highlights)
-}
-
-#[derive(serde::Deserialize)]
-struct HighlightJson {
-    start: u32,
-    end: u32,
 }
 
 fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {

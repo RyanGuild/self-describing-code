@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn empty_file_is_trivially_complete()` |
-| location | [`crates/robby-ir/tests/coverage.rs:92`](../../../../crates/robby-ir/tests/coverage.rs#L92) |
+| location | [`crates/robby-ir/tests/coverage.rs:93`](../../../../crates/robby-ir/tests/coverage.rs#L93) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

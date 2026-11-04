@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn package_edges<'a>(     doc: &Document,     scope: &BTreeSet<NodeId>,     nodes: impl Iterator<Item = &'a Node>,     both_in_scope: bool,     _root_hint: &Node, ) -> (     Vec<WeightedEdge>,     Vec<DepModule>,     Vec<DepModule>,     Vec<Vec<String>>,     Vec<Vec<String>>, )` |
-| location | [`crates/robby-render/src/view/deps.rs:461`](../../../../../crates/robby-render/src/view/deps.rs#L461) |
+| location | [`crates/robby-render/src/view/deps.rs:453`](../../../../../crates/robby-render/src/view/deps.rs#L453) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -55,12 +55,7 @@ fn package_edges<'a>(
             let from_sid = stable_id(from_mod.id.as_str());
             let to_sid = stable_id(to_mod.id.as_str());
             insert_module(&mut modules, from_mod, false, doc);
-            insert_module(
-                &mut modules,
-                to_mod,
-                !scope.contains(&to_mod.id),
-                doc,
-            );
+            insert_module(&mut modules, to_mod, !scope.contains(&to_mod.id), doc);
             *weights.entry((from_sid, to_sid)).or_default() += 1;
         }
     }
@@ -70,7 +65,7 @@ fn package_edges<'a>(
         for sid in modules.keys() {
             adj.entry(sid.clone()).or_default();
         }
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             adj.entry(from.clone()).or_default().insert(to.clone());
         }
         adj
@@ -89,7 +84,7 @@ fn package_edges<'a>(
             continue;
         }
         let set: BTreeSet<_> = scc.iter().cloned().collect();
-        for ((from, to), _) in &weights {
+        for (from, to) in weights.keys() {
             if set.contains(from) && set.contains(to) {
                 edge_in_cycle.insert((from.clone(), to.clone()));
             }
@@ -120,11 +115,7 @@ fn package_edges<'a>(
 
     let mut module_list: Vec<DepModule> = modules.into_values().collect();
     module_list.sort_by(|a, b| a.name.cmp(&b.name));
-    let externals: Vec<DepModule> = module_list
-        .iter()
-        .filter(|m| m.external)
-        .cloned()
-        .collect();
+    let externals: Vec<DepModule> = module_list.iter().filter(|m| m.external).cloned().collect();
 
     (edges, externals, module_list, layers, cycles)
 }
@@ -192,7 +183,7 @@ sequenceDiagram
     package_edges-->>stable_id: stable_id(to_mod.id.as_str())
     package_edges-->>insert_module: insert_module(&mut modules, from_mod, false, doc)
     package_edges-->>contains: scope.contains(&to_mod.id)
-    package_edges-->>insert_module: insert_module( &mut modules, to_mod, !scope.contains(&to_mod.id), doc, )
+    package_edges-->>insert_module: insert_module(&mut modules, to_mod, !scope.contains(&to_mod.id), doc)
     package_edges-->>entry: weights.entry((from_sid, to_sid))
     package_edges-->>or_default: weights.entry((from_sid, to_sid)).or_default()
     end
@@ -204,7 +195,8 @@ sequenceDiagram
     package_edges-->>entry: adj.entry(sid.clone())
     package_edges-->>or_default: adj.entry(sid.clone()).or_default()
     end
-    loop &weights
+    package_edges-->>keys: weights.keys()
+    loop weights.keys()
     package_edges-->>clone: from.clone()
     package_edges-->>entry: adj.entry(from.clone())
     package_edges-->>or_default: adj.entry(from.clone()).or_default()
@@ -225,7 +217,8 @@ sequenceDiagram
     package_edges-->>iter: scc.iter()
     package_edges-->>cloned: scc.iter().cloned()
     package_edges-->>collect: scc.iter().cloned().collect()
-    loop &weights
+    package_edges-->>keys: weights.keys()
+    loop weights.keys()
     package_edges-->>contains: set.contains(from)
     package_edges-->>contains: set.contains(to)
     alt set.contains(from) && set.contains(to)
@@ -254,13 +247,13 @@ sequenceDiagram
     package_edges-->>collect: modules.into_values().collect()
     package_edges-->>cmp: a.name.cmp(&b.name)
     package_edges-->>sort_by: module_list.sort_by(|a, b| a.name.cmp(&b.name))
-    package_edges-->>iter: module_list .iter()
-    package_edges-->>filter: module_list .iter() .filter(|m| m.external)
-    package_edges-->>cloned: module_list .iter() .filter(|m| m.external) .cloned()
-    package_edges-->>collect: module_list .iter() .filter(|m| m.external) .cloned() .collect()
+    package_edges-->>iter: module_list.iter()
+    package_edges-->>filter: module_list.iter().filter(|m| m.external)
+    package_edges-->>cloned: module_list.iter().filter(|m| m.external).cloned()
+    package_edges-->>collect: module_list.iter().filter(|m| m.external).cloned().collect()
 ```
 
-71 steps · 0 observed · 71 possible only
+73 steps · 0 observed · 73 possible only
 
 **Edges**
 
@@ -272,9 +265,9 @@ sequenceDiagram
 - calls → [`robby_render::view::deps::container_of`](container-of.md)
 - calls → [`robby_render::view::deps::lift_to_scope`](lift-to-scope.md)
 - calls → [`robby_render::view::deps::crate_of`](crate-of.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_render::view::deps::insert_module`](insert-module.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)

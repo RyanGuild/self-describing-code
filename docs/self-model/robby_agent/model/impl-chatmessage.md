@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-agent/src/model.rs:24`](../../../../crates/robby-agent/src/model.rs#L24) |
+| location | [`crates/robby-agent/src/model.rs:26`](../../../../crates/robby-agent/src/model.rs#L26) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -37,7 +37,7 @@ impl ChatMessage {
 |---|---|
 | kind | `code.method` |
 | signature | `fn system(1)` |
-| location | [`crates/robby-agent/src/model.rs:25`](../../../../crates/robby-agent/src/model.rs#L25) |
+| location | [`crates/robby-agent/src/model.rs:27`](../../../../crates/robby-agent/src/model.rs#L27) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -65,7 +65,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn user(1)` |
-| location | [`crates/robby-agent/src/model.rs:32`](../../../../crates/robby-agent/src/model.rs#L32) |
+| location | [`crates/robby-agent/src/model.rs:34`](../../../../crates/robby-agent/src/model.rs#L34) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

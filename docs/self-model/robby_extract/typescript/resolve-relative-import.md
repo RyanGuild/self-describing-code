@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn resolve_relative_import(from_module: &str, spec: &str) -> Option<String>` |
-| location | [`crates/robby-extract/src/typescript.rs:513`](../../../../crates/robby-extract/src/typescript.rs#L513) |
+| location | [`crates/robby-extract/src/typescript.rs:503`](../../../../crates/robby-extract/src/typescript.rs#L503) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -17,7 +17,10 @@ fn resolve_relative_import(from_module: &str, spec: &str) -> Option<String> {
     let pkg = from_module.split('/').next()?;
     let from_dir = {
         let path = from_module.strip_prefix(&format!("{pkg}/")).unwrap_or("");
-        Path::new(path).parent().map(|p| p.to_path_buf()).unwrap_or_default()
+        Path::new(path)
+            .parent()
+            .map(std::path::Path::to_path_buf)
+            .unwrap_or_default()
     };
     let joined = from_dir.join(spec);
     let mut parts = Vec::new();
@@ -51,7 +54,6 @@ sequenceDiagram
     participant unwrap_or as unwrap_or
     participant Path__new as Path::new
     participant parent as parent
-    participant to_path_buf as to_path_buf
     participant map as map
     participant unwrap_or_default as unwrap_or_default
     participant join as join
@@ -77,10 +79,9 @@ sequenceDiagram
     resolve_relative_import-->>strip_prefix: from_module.strip_prefix(&format!('{pkg}/'))
     resolve_relative_import-->>unwrap_or: from_module.strip_prefix(&format!('{pkg}/')).unwrap_or('')
     resolve_relative_import-->>Path__new: Path::new(path)
-    resolve_relative_import-->>parent: Path::new(path).parent()
-    resolve_relative_import-->>to_path_buf: p.to_path_buf()
-    resolve_relative_import-->>map: Path::new(path).parent().map(|p| p.to_path_buf())
-    resolve_relative_import-->>unwrap_or_default: Path::new(path).parent().map(|p| p.to_path_buf()).unwrap_or_default()
+    resolve_relative_import-->>parent: Path::new(path) .parent()
+    resolve_relative_import-->>map: Path::new(path) .parent() .map(std::path::Path::to_path_buf)
+    resolve_relative_import-->>unwrap_or_default: Path::new(path) .parent() .map(std::path::Path::to_path_buf) .unwrap_...
     resolve_relative_import-->>join: from_dir.join(spec)
     resolve_relative_import-->>Vec__new: Vec::new()
     resolve_relative_import-->>components: joined.components()
@@ -105,7 +106,7 @@ sequenceDiagram
     end
 ```
 
-28 steps · 0 observed · 28 possible only
+27 steps · 0 observed · 27 possible only
 
 **Edges**
 

@@ -74,7 +74,6 @@ flowchart TB
     n_c58f68f7fc449f63 --> n_356bf2c23da68961
     n_c58f68f7fc449f63 --> n_9c636b098ca4450e
     n_c58f68f7fc449f63 --> n_a331a60ee1568354
-    n_c58f68f7fc449f63 --> n_f3e9f97d91a4f4af
 ```
 
 ## Module coupling
@@ -122,15 +121,15 @@ flowchart TB
 | | build | example_self_model | robby_cli | robby_ir | robby_render | robby_agent |
 |---|---:|---:|---:|---:|---:|---:|
 | **build** | · | | 1 | 2 | 5 | |
-| **example_self_model** | | · | 1 | 1 | 6 | 1 |
-| **robby_cli** | | | · | 8 | 15 | 2 |
+| **example_self_model** | | · | 1 | 2 | 6 | |
+| **robby_cli** | | | · | 9 | 15 | 1 |
 | **robby_ir** | | | | · | | |
 | **robby_render** | | | | | · | |
 | **robby_agent** | | | | | | · |
 
 ## Comments
 
-- `crates/robby-cli/src/main.rs:441:1` (docs, `robby_cli::resolve`): "Resolve an exact fqn, an id, or a unique suffix / bare name."
+- `crates/robby-cli/src/main.rs:460:1` (docs, `robby_cli::resolve`): "Resolve an exact fqn, an id, or a unique suffix / bare name."
   ```
   /// Resolve an exact fqn, an id, or a unique suffix / bare name.
   fn resolve<'a>(doc: &'a Document, path: &str) -> Result<&'a Node> {
@@ -168,12 +167,12 @@ flowchart TB
   ```
 ## References
 
-- calls → [`robby_agent::model`](../robby_agent/model/index.md) — parse
 - calls → [`robby_agent::openrouter`](../robby_agent/openrouter/index.md) — from_env
 - calls → [`robby_ir`](../robby_ir/index.md) — schema_json
 - calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — failures, is_failure, worst_first
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — as_str, from, new
 - calls → [`robby_ir::process`](../robby_ir/process/index.md) — default
+- calls → [`robby_ir::vocab`](../robby_ir/vocab/index.md) — parse
 - calls → [`robby_render::pipeline`](../robby_render/pipeline/index.md) — 6 items
 - calls → [`robby_render::report`](../robby_render/report/index.md) — push
 - calls → [`robby_render::tui`](../robby_render/tui/index.md) — tree
@@ -198,16 +197,16 @@ flowchart TB
 | [`ViewKind`](viewkind.md) | `code.enum` | — | `crates/robby-cli/src/main.rs:130:1` |
 | [`main`](main.md) | `code.function` | 2 | `crates/robby-cli/src/main.rs:143:1` |
 | [`run`](run.md) | `code.function` | 26 | `crates/robby-cli/src/main.rs:153:1` |
-| [`web`](web.md) | `code.function` | 6 | `crates/robby-cli/src/main.rs:222:1` |
-| [`enrich_comments`](enrich-comments.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:232:1` |
-| [`check`](check.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:261:1` |
-| [`print_human`](print-human.md) | `code.function` | 14 | `crates/robby-cli/src/main.rs:282:1` |
-| [`extract`](extract.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:323:1` |
-| [`report`](report.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:344:1` |
-| [`show`](show.md) | `code.function` | 21 | `crates/robby-cli/src/main.rs:367:1` |
-| [`default_ir`](default-ir.md) | `code.function` | 1 | `crates/robby-cli/src/main.rs:418:1` |
-| [`workspace`](workspace.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:422:1` |
-| [`resolve`](resolve.md) | `code.function` | 23 | `crates/robby-cli/src/main.rs:441:1` |
+| [`web`](web.md) | `code.function` | 6 | `crates/robby-cli/src/main.rs:229:1` |
+| [`enrich_comments`](enrich-comments.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:243:1` |
+| [`check`](check.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:277:1` |
+| [`print_human`](print-human.md) | `code.function` | 14 | `crates/robby-cli/src/main.rs:298:1` |
+| [`extract`](extract.md) | `code.function` | 12 | `crates/robby-cli/src/main.rs:342:1` |
+| [`report`](report.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:363:1` |
+| [`show`](show.md) | `code.function` | 20 | `crates/robby-cli/src/main.rs:386:1` |
+| [`default_ir`](default-ir.md) | `code.function` | 1 | `crates/robby-cli/src/main.rs:437:1` |
+| [`workspace`](workspace.md) | `code.function` | 7 | `crates/robby-cli/src/main.rs:441:1` |
+| [`resolve`](resolve.md) | `code.function` | 23 | `crates/robby-cli/src/main.rs:460:1` |
 
 ## Imports
 

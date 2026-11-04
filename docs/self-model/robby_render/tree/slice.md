@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn slice<'a>(sources: &'a BTreeMap<String, String>, span: &robby_ir::Span) -> Option<&'a str>` |
-| location | [`crates/robby-render/src/tree.rs:803`](../../../../crates/robby-render/src/tree.rs#L803) |
+| location | [`crates/robby-render/src/tree.rs:799`](../../../../crates/robby-render/src/tree.rs#L799) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

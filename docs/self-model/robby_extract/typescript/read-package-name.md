@@ -6,14 +6,14 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn read_package_name(path: &Path) -> Result<Option<String>>` |
-| location | [`crates/robby-extract/src/typescript.rs:122`](../../../../crates/robby-extract/src/typescript.rs#L122) |
+| location | [`crates/robby-extract/src/typescript.rs:119`](../../../../crates/robby-extract/src/typescript.rs#L119) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn read_package_name(path: &Path) -> Result<Option<String>> {
     let text = fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
-    let value: Value = serde_json::from_str(&text)
-        .with_context(|| format!("parsing {}", path.display()))?;
+    let value: Value =
+        serde_json::from_str(&text).with_context(|| format!("parsing {}", path.display()))?;
     Ok(value
         .get("name")
         .and_then(|v| v.as_str())
@@ -41,7 +41,7 @@ sequenceDiagram
     read_package_name-->>read_package_name: ? (propagate)
     read_package_name-->>serde_json__from_str: serde_json::from_str(&text)
     read_package_name-->>read_package_name: format!('parsing {}', path.display())
-    read_package_name-->>with_context: serde_json::from_str(&text) .with_context(|| format!('parsing {}', pa...
+    read_package_name-->>with_context: serde_json::from_str(&text).with_context(|| format!('parsing {}', pat...
     read_package_name-->>read_package_name: ? (propagate)
     read_package_name-->>get: value .get('name')
     read_package_name-->>as_str: v.as_str()

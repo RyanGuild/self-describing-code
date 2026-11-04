@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    participant adopt_parent as adopt_parent()
+    participant get as get
+    participant is_some as is_some
+    participant is_some_and as is_some_and
+    participant iter as iter
+    participant contains as contains
+    participant find as find
+    participant clone as clone
+    participant map as map
+    participant record_child as record_child
+    adopt_parent-->>get: self.nodes.get(id)
+    adopt_parent-->>is_some: node.parent.is_some()
+    adopt_parent-->>is_some_and: self.nodes.get(id).is_some_and(|node| node.parent.is_some())
+    alt self.nodes.get(id).is_some_and(|node| node.parent.is_some())
+    adopt_parent-->>adopt_parent: return
+    end
+    adopt_parent-->>iter: self .nodes .iter()
+    adopt_parent-->>contains: node.children.contains(id)
+    adopt_parent-->>find: self .nodes .iter() .find(|(parent_id, node)| *parent_id != id && nod...
+    adopt_parent-->>clone: parent_id.clone()
+    adopt_parent-->>map: self .nodes .iter() .find(|(parent_id, node)| *parent_id != id && nod...
+    alt let Some(parent) = listed
+    adopt_parent-->>record_child: self.record_child(&parent, id)
+    end

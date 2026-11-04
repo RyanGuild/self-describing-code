@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn item_slug(name: &str, id: &NodeId, used: &mut BTreeSet<String>) -> String` |
-| location | [`crates/robby-render/src/tree.rs:827`](../../../../crates/robby-render/src/tree.rs#L827) |
+| location | [`crates/robby-render/src/tree.rs:823`](../../../../crates/robby-render/src/tree.rs#L823) |
 | provenance | extractor · confidence 1.00 |
 
 > A filesystem-safe, human-readable page name, disambiguated on collision.
@@ -102,7 +102,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::stable_id`](../stable-id.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 

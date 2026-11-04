@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 
 use robby_ir::{CoverageReport, Document, Node, NodeId, kind};
 
-use crate::markdown::{cell, coverage_section, edge_name, source_name};
+use crate::markdown::{cell, coverage_section};
 use crate::render::{MarkdownRenderer, Renderer};
 use crate::report::Report;
 use crate::view::{LinkGraph, SelectOpts, collect};
@@ -232,7 +232,7 @@ fn module_page(
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     let _ = writeln!(out, "| nodes | {} |", doc.subtree(&node.id).len());
@@ -461,7 +461,7 @@ fn render_node(
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     out.push('\n');
@@ -506,13 +506,13 @@ fn render_node(
                     let _ = writeln!(
                         out,
                         "- {} → [`{}`]({}){marker}",
-                        edge_name(edge.kind),
+                        edge.kind.as_str(),
                         target.map_or(edge.to.as_str(), |t| t.fqn.as_str()),
                         rel_link(page, &target_page)
                     );
                 }
                 None => {
-                    let _ = writeln!(out, "- {} → `{}`{marker}", edge_name(edge.kind), edge.to);
+                    let _ = writeln!(out, "- {} → `{}`{marker}", edge.kind.as_str(), edge.to);
                 }
             }
         }

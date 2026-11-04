@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-ir/src/lib.rs:21`](../../../../crates/robby-ir/src/lib.rs#L21) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 118 |
+| nodes | 132 |
 
 ## Types
 
@@ -26,6 +26,7 @@ classDiagram
         Trace
         Agent
         Hand
+        +as_str()
         +precedence()
     }
     class Provenance {
@@ -60,6 +61,7 @@ classDiagram
         Returns
         Field
         References
+        +as_str()
     }
     class Node {
         +id
@@ -93,12 +95,16 @@ classDiagram
         +roots
         +files
         +code_paths
+        +pending_children
+        +pending_parents
+        +adopt_parent()
         +declare_file()
         +get()
         +insert()
         +merge()
         +new()
         +rebuild_code_paths()
+        +record_child()
         +subtree()
         +walk()
     }
@@ -135,7 +141,10 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    n_48c15551e2e91996["model"]
+    subgraph n_48c15551e2e91996["model"]
+        direction TB
+        n_7a7533aa2a3d72ab["tests"]
+    end
     n_356bf2c23da68961(["robby_ir"])
     n_9c636b098ca4450e(["robby_render"])
     n_48c15551e2e91996 --> n_356bf2c23da68961
@@ -149,8 +158,13 @@ flowchart TB
     subgraph n_48c15551e2e91996["model"]
         direction TB
         n_e546d71fa4f69654["about"]
+        n_ddc9818664b59506["adopt_parent"]
+        n_317d9bbb461fd85d["as_str"]
+        n_ff1fbfa917a1654a["child_inserted_before_its_parent_is_linked"]
+        n_e5604f2828b34961["declared_children_set_the_child_parent"]
         n_ec2e46958b5dc892["default"]
         n_b3489a259ec30e17["error"]
+        n_286e217fcb95c453["from"]
         n_80b75adcd8002383["get"]
         n_8a5415d7daf6e60c["insert"]
         n_6311e7084b287418["leaf_name"]
@@ -158,38 +172,75 @@ flowchart TB
         n_4d88a60cf9d4a01e["new"]
         n_ccd6dcdd0298397d["new"]
         n_d5fd1809d274d7a9["new"]
+        n_a3e20cf4c683a862["parent_pointer_builds_the_child_index"]
+        n_212a1b1aafdbc6f5["record_child"]
         n_e246ceacf9164349["subtree"]
         n_ea6373866a29c8d4["validate"]
         n_3f94f0bb1c5a653c["walk"]
         n_ba675cd10b655ae1["warning"]
+        n_266e66de4d980727["wire"]
         n_0e9544ad390cedd5["with_lang"]
     end
     n_0e9544ad390cedd5 -.->|"4 circular"| n_4d88a60cf9d4a01e
     n_0e9544ad390cedd5 --> n_6311e7084b287418
     n_0e9544ad390cedd5 --> n_ec2e46958b5dc892
+    n_212a1b1aafdbc6f5 --> n_80b75adcd8002383
+    n_266e66de4d980727 --> n_317d9bbb461fd85d
     n_3f94f0bb1c5a653c --> n_80b75adcd8002383
     n_4d88a60cf9d4a01e -.->|"1 circular"| n_0e9544ad390cedd5
-    n_9655ec8c7f78876b --> n_8a5415d7daf6e60c
+    n_8a5415d7daf6e60c -.->|"1 circular"| n_9655ec8c7f78876b
+    n_9655ec8c7f78876b -->|"3"| n_212a1b1aafdbc6f5
+    n_9655ec8c7f78876b --> n_80b75adcd8002383
+    n_9655ec8c7f78876b -.->|"1 circular"| n_8a5415d7daf6e60c
+    n_9655ec8c7f78876b --> n_ddc9818664b59506
+    n_a3e20cf4c683a862 --> n_286e217fcb95c453
+    n_a3e20cf4c683a862 -->|"2"| n_8a5415d7daf6e60c
+    n_a3e20cf4c683a862 -->|"3"| n_d5fd1809d274d7a9
+    n_ddc9818664b59506 --> n_212a1b1aafdbc6f5
+    n_ddc9818664b59506 --> n_80b75adcd8002383
     n_e246ceacf9164349 --> n_3f94f0bb1c5a653c
     n_e246ceacf9164349 --> n_ccd6dcdd0298397d
-    n_ea6373866a29c8d4 -->|"7"| n_b3489a259ec30e17
+    n_e5604f2828b34961 --> n_286e217fcb95c453
+    n_e5604f2828b34961 --> n_80b75adcd8002383
+    n_e5604f2828b34961 -->|"2"| n_8a5415d7daf6e60c
+    n_e5604f2828b34961 -->|"3"| n_d5fd1809d274d7a9
+    n_ea6373866a29c8d4 -->|"2"| n_80b75adcd8002383
+    n_ea6373866a29c8d4 -->|"9"| n_b3489a259ec30e17
     n_ea6373866a29c8d4 -->|"2"| n_ba675cd10b655ae1
     n_ea6373866a29c8d4 --> n_d5fd1809d274d7a9
-    n_ea6373866a29c8d4 -->|"8"| n_e546d71fa4f69654
+    n_ea6373866a29c8d4 -->|"10"| n_e546d71fa4f69654
     n_ec2e46958b5dc892 --> n_d5fd1809d274d7a9
+    n_ff1fbfa917a1654a --> n_286e217fcb95c453
+    n_ff1fbfa917a1654a -->|"2"| n_8a5415d7daf6e60c
+    n_ff1fbfa917a1654a -->|"3"| n_d5fd1809d274d7a9
 ```
 
 ## Dependency matrix
 
-| | model | robby_ir | robby_render |
-|---|---:|---:|---:|
-| **model** | · | 2 | 21 |
-| **robby_ir** | | · | |
-| **robby_render** | | | · |
+| | model | tests | robby_ir | robby_render |
+|---|---:|---:|---:|---:|
+| **model** | · | | 2 | 24 |
+| **tests** | | · | | |
+| **robby_ir** | | | · | |
+| **robby_render** | | | | · |
 
 ## Comments
 
-- `crates/robby-ir/src/model.rs:135:1` (docs, `robby_ir::model::Edge`): "A directed relationship between nodes."
+- `crates/robby-ir/src/model.rs:107:1` (docs, `robby_ir::model::Provenance`): "Where a fact came from and how much to trust it."
+  ```
+  /// Where a fact came from and how much to trust it.
+  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
+  pub struct Provenance {
+      pub source: Source,
+      /// Unix milliseconds. `None` means the fact is timeless (static analysis).
+      #[serde(default, skip_serializing_if = "Option::is_none")]
+      pub observed_at: Option<i64>,
+      /// `0.0..=1.0`. Static resolution that could not disambiguate a path
+      /// records its uncertainty here rather than dropping the edge.
+      pub confidence: f32,
+  }
+  ```
+- `crates/robby-ir/src/model.rs:148:1` (docs, `robby_ir::model::Edge`): "A directed relationship between nodes."
   ```
   /// A directed relationship between nodes.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -216,11 +267,30 @@ flowchart TB
   /// use `parent#ordinal`. Ordinal-based ids are stable within a run but shift
   /// when earlier siblings change; that is documented and accepted, because
   /// byte-offset ids would shift on every edit above them instead.
-  #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]
+  #[derive(
+      Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+  )]
   #[serde(transparent)]
   pub struct NodeId(String);
   ```
-- `crates/robby-ir/src/model.rs:186:1` (docs, `robby_ir::model::Node`): "A single described thing: a crate, a function, a statement, an observation."
+- `crates/robby-ir/src/model.rs:204:5` (docs, `robby_ir::model::impl EdgeKind::as_str`): "Serde name (`references`, not the short diagram label)."
+  ```
+  /// Serde name (`references`, not the short diagram label).
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Contains => "contains",
+              Self::Calls => "calls",
+              Self::Uses => "uses",
+              Self::Imports => "imports",
+              Self::Implements => "implements",
+              Self::Extends => "extends",
+              Self::Returns => "returns",
+              Self::Field => "field",
+              Self::References => "references",
+          }
+      }
+  ```
+- `crates/robby-ir/src/model.rs:220:1` (docs, `robby_ir::model::Node`): "A single described thing: a crate, a function, a statement, an observation."
   ```
   /// A single described thing: a crate, a function, a statement, an observation.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -238,8 +308,11 @@ flowchart TB
       #[serde(default, skip_serializing_if = "Option::is_none")]
       pub docs: Option<String>,
       pub provenance: Provenance,
+      /// Parent in the containment tree. This is the link callers set.
+      /// [`Document::merge`] maintains [`Self::children`] from it.
       #[serde(default, skip_serializing_if = "Option::is_none")]
       pub parent: Option<NodeId>,
+      /// Child ids in insertion order. Written only by [`Document::merge`].
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
       pub children: Vec<NodeId>,
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -252,7 +325,7 @@ flowchart TB
       pub tags: Vec<String>,
   }
   ```
-- `crates/robby-ir/src/model.rs:221:5` (docs, `robby_ir::model::impl Node::with_lang`): "Like [`Node::new`], with an explicit language tag."
+- `crates/robby-ir/src/model.rs:258:5` (docs, `robby_ir::model::impl Node::with_lang`): "Like [`Node::new`], with an explicit language tag."
   ```
   /// Like [`Node::new`], with an explicit language tag.
       pub fn with_lang(
@@ -282,7 +355,7 @@ flowchart TB
           }
       }
   ```
-- `crates/robby-ir/src/model.rs:280:1` (docs, `robby_ir::model::leaf_name`): "Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms."
+- `crates/robby-ir/src/model.rs:317:1` (docs, `robby_ir::model::leaf_name`): "Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms."
   ```
   /// Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms.
   pub fn leaf_name(fqn: &str) -> String {
@@ -295,7 +368,7 @@ flowchart TB
           .to_owned()
   }
   ```
-- `crates/robby-ir/src/model.rs:291:1` (docs, `robby_ir::model::Document`): "The whole graph for one workspace snapshot."
+- `crates/robby-ir/src/model.rs:328:1` (docs, `robby_ir::model::Document`): "The whole graph for one workspace snapshot."
   ```
   /// The whole graph for one workspace snapshot.
   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
@@ -316,16 +389,27 @@ flowchart TB
       /// Entrypoint-rooted call trees derived from resolved `Calls` edges.
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
       pub code_paths: Vec<CodePath>,
+      /// Children whose parent node is not in the document yet.
+      ///
+      /// Not part of the schema. Flushed when the parent is inserted so a child
+      /// can be recorded before its parent without a second writer.
+      #[serde(skip)]
+      #[schemars(skip)]
+      pending_children: BTreeMap<NodeId, Vec<NodeId>>,
+      /// Parent declared for a child node that has not been inserted yet.
+      #[serde(skip)]
+      #[schemars(skip)]
+      pending_parents: BTreeMap<NodeId, NodeId>,
   }
   ```
-- `crates/robby-ir/src/model.rs:324:5` (docs, `robby_ir::model::impl Document::rebuild_code_paths`): "Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries."
+- `crates/robby-ir/src/model.rs:374:5` (docs, `robby_ir::model::impl Document::rebuild_code_paths`): "Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries."
   ```
   /// Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries.
       pub fn rebuild_code_paths(&mut self) {
           self.code_paths = build_code_paths(self, DEFAULT_MAX_DEPTH);
       }
   ```
-- `crates/robby-ir/src/model.rs:329:5` (docs, `robby_ir::model::impl Document::declare_file`): "Record a source file as part of the map."
+- `crates/robby-ir/src/model.rs:379:5` (docs, `robby_ir::model::impl Document::declare_file`): "Record a source file as part of the map."
   ```
   /// Record a source file as part of the map.
       pub fn declare_file(&mut self, path: impl Into<String>) {
@@ -336,23 +420,29 @@ flowchart TB
           }
       }
   ```
-- `crates/robby-ir/src/model.rs:352:5` (docs, `robby_ir::model::impl Document::merge`): "Insert, or merge into an existing node with the same id. Merging matters for modules: a `mod foo;` declaration and the …"
+- `crates/robby-ir/src/model.rs:392:5` (docs, `robby_ir::model::impl Document::merge`): "Insert, or merge into an existing node with the same id. Merging matters for modules: a `mod foo;` declaration and the …"
   ```
   /// Insert, or merge into an existing node with the same id.
       ///
       /// Merging matters for modules: a `mod foo;` declaration and the file
       /// `foo.rs` both describe `crate::foo`. The declaration carries the span,
       /// the file carries the contents, and they must not overwrite each other.
-      pub fn merge(&mut self, node: Node) {
+      ///
+      /// Containment has one writer: this method. Set [`Node::parent`] on the
+      /// child. A `children` list passed in is normalized into that same index,
+      /// including when the child node arrives later.
+      pub fn merge(&mut self, mut node: Node) {
           let id = node.id.clone();
-          if let Some(existing) = self.nodes.get_mut(&id) {
+          let declared_children = std::mem::take(&mut node.children);
+          let incoming_parent = node.parent.clone();
+  
+          let adopted_parent = if let Some(existing) = self.nodes.get_mut(&id) {
               if existing.span.is_none() {
                   existing.span = node.span;
               }
-              for child in node.children {
-                  if !existing.children.contains(&child) {
-                      existing.children.push(child);
-                  }
+              let adopted = existing.parent.is_none() && incoming_parent.is_some();
+              if adopted {
+                  existing.parent = incoming_parent;
               }
               for edge in node.edges {
                   if !existing.edges.contains(&edge) {
@@ -367,12 +457,91 @@ flowchart TB
                       existing.tags.push(tag);
                   }
               }
-              return;
+              adopted
+          } else {
+              if node.parent.is_none()
+                  && let Some(parent) = self.pending_parents.remove(&id)
+              {
+                  node.parent = Some(parent);
+              }
+              if node.parent.is_none() {
+                  self.roots.push(id.clone());
+              }
+              self.nodes.insert(id.clone(), node);
+              if let Some(waiting) = self.pending_children.remove(&id) {
+                  for child in waiting {
+                      self.record_child(&id, &child);
+                  }
+              }
+              false
+          };
+  
+          if let Some(parent) = self.nodes.get(&id).and_then(|n| n.parent.clone()) {
+              self.record_child(&parent, &id);
           }
-          self.insert(node);
+          if adopted_parent {
+              self.roots.retain(|root| root != &id);
+          }
+          for child in declared_children {
+              self.record_child(&id, &child);
+          }
+          // A children list can name a node that is inserted later, with no parent
+          // of its own. Point that node back so the two fields cannot diverge.
+          self.adopt_parent(&id);
       }
   ```
-- `crates/robby-ir/src/model.rs:390:5` (docs, `robby_ir::model::impl Document::subtree`): "All nodes under `root`, depth-first, deterministic order."
+- `crates/robby-ir/src/model.rs:460:5` (docs, `robby_ir::model::impl Document::adopt_parent`): "If some node already lists `id` and `id` has no parent, adopt that link."
+  ```
+  /// If some node already lists `id` and `id` has no parent, adopt that link.
+      fn adopt_parent(&mut self, id: &NodeId) {
+          if self.nodes.get(id).is_some_and(|node| node.parent.is_some()) {
+              return;
+          }
+          let listed = self
+              .nodes
+              .iter()
+              .find(|(parent_id, node)| *parent_id != id && node.children.contains(id))
+              .map(|(parent_id, _)| parent_id.clone());
+          if let Some(parent) = listed {
+              self.record_child(&parent, id);
+          }
+      }
+  ```
+- `crates/robby-ir/src/model.rs:475:5` (docs, `robby_ir::model::impl Document::record_child`): "Record `child` under `parent`, and point the child back if it has no parent yet."
+  ```
+  /// Record `child` under `parent`, and point the child back if it has no parent yet.
+      fn record_child(&mut self, parent: &NodeId, child: &NodeId) {
+          if parent == child {
+              return;
+          }
+          if let Some(parent_node) = self.nodes.get_mut(parent) {
+              if !parent_node.children.contains(child) {
+                  parent_node.children.push(child.clone());
+              }
+          } else {
+              let pending = self.pending_children.entry(parent.clone()).or_default();
+              if !pending.contains(child) {
+                  pending.push(child.clone());
+              }
+          }
+          if !self.nodes.contains_key(child) {
+              self.pending_parents
+                  .entry(child.clone())
+                  .or_insert_with(|| parent.clone());
+          }
+          let needs_parent = self
+              .nodes
+              .get(child)
+              .is_some_and(|node| node.parent.is_none());
+          if needs_parent {
+              if let Some(node) = self.nodes.get_mut(child) {
+                  node.parent = Some(parent.clone());
+              }
+              self.roots.retain(|root| root != child);
+          }
+      }
+  ```
+- `crates/robby-ir/src/model.rs:511:5` (docs, `robby_ir::model::impl Document::subtree`): "All nodes under `root`, depth-first, deterministic order."
   ```
   /// All nodes under `root`, depth-first, deterministic order.
       pub fn subtree(&self, root: &NodeId) -> Vec<&Node> {
@@ -381,7 +550,7 @@ flowchart TB
           out
       }
   ```
-- `crates/robby-ir/src/model.rs:450:1` (docs, `robby_ir::model::validate`): "Structural checks that do not depend on source text. Returns diagnostics rather than a `Result`: a graph with warnings …"
+- `crates/robby-ir/src/model.rs:571:1` (docs, `robby_ir::model::validate`): "Structural checks that do not depend on source text. Returns diagnostics rather than a `Result`: a graph with warnings …"
   ```
   /// Structural checks that do not depend on source text.
   ///
@@ -401,16 +570,28 @@ flowchart TB
       }
   
       for (id, node) in &doc.nodes {
-          if let Some(parent) = &node.parent {
-              if !doc.nodes.contains_key(parent) {
-                  out.push(
-                      Diagnostic::error(
-                          "node/parent-missing",
-                          format!("parent {parent} is not in the document"),
-                      )
-                      .about(id.clone()),
-                  );
-              }
+          if let Some(parent) = &node.parent
+              && !doc.nodes.contains_key(parent)
+          {
+              out.push(
+                  Diagnostic::error(
+                      "node/parent-missing",
+                      format!("parent {parent} is not in the document"),
+                  )
+                  .about(id.clone()),
+              );
+          }
+          if let Some(parent) = &node.parent
+              && let Some(parent_node) = doc.nodes.get(parent)
+              && !parent_node.children.iter().any(|child| child == id)
+          {
+              out.push(
+                  Diagnostic::error(
+                      "node/parent-link",
+                      format!("parent {parent} does not list this node"),
+                  )
+                  .about(id.clone()),
+              );
           }
           for child in &node.children {
               if !doc.nodes.contains_key(child) {
@@ -418,6 +599,14 @@ flowchart TB
                       Diagnostic::error(
                           "node/child-missing",
                           format!("child {child} is not in the document"),
+                      )
+                      .about(id.clone()),
+                  );
+              } else if doc.nodes.get(child).and_then(|n| n.parent.as_ref()) != Some(id) {
+                  out.push(
+                      Diagnostic::error(
+                          "node/child-link",
+                          format!("child {child} does not point at this parent"),
                       )
                       .about(id.clone()),
                   );
@@ -489,7 +678,7 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-ir/src/model.rs:62:1` (docs, `robby_ir::model::Source`): "Which producer contributed a fact."
+- `crates/robby-ir/src/model.rs:64:1` (docs, `robby_ir::model::Source`): "Which producer contributed a fact."
   ```
   /// Which producer contributed a fact.
   #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -507,7 +696,7 @@ flowchart TB
       Hand,
   }
   ```
-- `crates/robby-ir/src/model.rs:79:5` (docs, `robby_ir::model::impl Source::precedence`): "Lower numbers win when two producers disagree about the same fact. Runtime beats static because observation is ground t…"
+- `crates/robby-ir/src/model.rs:81:5` (docs, `robby_ir::model::impl Source::precedence`): "Lower numbers win when two producers disagree about the same fact. Runtime beats static because observation is ground t…"
   ```
   /// Lower numbers win when two producers disagree about the same fact.
       ///
@@ -523,19 +712,18 @@ flowchart TB
           }
       }
   ```
-- `crates/robby-ir/src/model.rs:94:1` (docs, `robby_ir::model::Provenance`): "Where a fact came from and how much to trust it."
+- `crates/robby-ir/src/model.rs:95:5` (docs, `robby_ir::model::impl Source::as_str`): "Serde name. Views display this rather than keeping a second match."
   ```
-  /// Where a fact came from and how much to trust it.
-  #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
-  pub struct Provenance {
-      pub source: Source,
-      /// Unix milliseconds. `None` means the fact is timeless (static analysis).
-      #[serde(default, skip_serializing_if = "Option::is_none")]
-      pub observed_at: Option<i64>,
-      /// `0.0..=1.0`. Static resolution that could not disambiguate a path
-      /// records its uncertainty here rather than dropping the edge.
-      pub confidence: f32,
-  }
+  /// Serde name. Views display this rather than keeping a second match.
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Extractor => "extractor",
+              Self::Macro => "macro",
+              Self::Trace => "trace",
+              Self::Agent => "agent",
+              Self::Hand => "hand",
+          }
+      }
   ```
 ## References
 
@@ -684,36 +872,41 @@ flowchart TB
 - calls ← [`robby_render::view::types::impl_methods`](../../robby_render/view/types/impl-methods.md)
 - calls ← [`robby_render::web::write_site`](../../robby_render/web/write-site.md)
 
+## Modules
+
+- [`model::tests`](tests/index.md) — 7 nodes
+
 ## Items
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
 | [`SCHEMA_VERSION`](schema-version.md) | `code.const` | — | `crates/robby-ir/src/model.rs:13:1` |
 | [`NodeId`](nodeid.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:16:1` |
-| [`impl NodeId`](impl-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:26:1` |
-| [`Display for NodeId`](display-for-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:44:1` |
-| [`impl From<&str> for NodeId`](impl-from-str-for-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:50:1` |
-| [`impl From<String> for NodeId`](impl-from-string-for-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:56:1` |
-| [`Source`](source.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:62:1` |
-| [`impl Source`](impl-source.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:78:1` |
-| [`Provenance`](provenance.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:94:1` |
-| [`impl Provenance`](impl-provenance.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:106:1` |
-| [`impl Default for Provenance`](impl-default-for-provenance.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:121:1` |
-| [`Lang`](lang.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:127:1` |
-| [`Edge`](edge.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:135:1` |
-| [`is_one`](is-one.md) | `code.function` | 1 | `crates/robby-ir/src/model.rs:152:1` |
-| [`default_true`](default-true.md) | `code.function` | 0 | `crates/robby-ir/src/model.rs:156:1` |
-| [`impl Edge`](impl-edge.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:160:1` |
-| [`EdgeKind`](edgekind.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:172:1` |
-| [`Node`](node.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:186:1` |
-| [`impl Node`](impl-node.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:216:1` |
-| [`leaf_name`](leaf-name.md) | `code.function` | 10 | `crates/robby-ir/src/model.rs:280:1` |
-| [`Document`](document.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:291:1` |
-| [`impl Document`](impl-document.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:312:1` |
-| [`Severity`](severity.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:407:1` |
-| [`Diagnostic`](diagnostic.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:415:1` |
-| [`impl Diagnostic`](impl-diagnostic.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:425:1` |
-| [`validate`](validate.md) | `code.function` | 51 | `crates/robby-ir/src/model.rs:450:1` |
+| [`impl NodeId`](impl-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:28:1` |
+| [`Display for NodeId`](display-for-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:46:1` |
+| [`impl From<&str> for NodeId`](impl-from-str-for-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:52:1` |
+| [`impl From<String> for NodeId`](impl-from-string-for-nodeid.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:58:1` |
+| [`Source`](source.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:64:1` |
+| [`impl Source`](impl-source.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:80:1` |
+| [`Provenance`](provenance.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:107:1` |
+| [`impl Provenance`](impl-provenance.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:119:1` |
+| [`impl Default for Provenance`](impl-default-for-provenance.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:134:1` |
+| [`Lang`](lang.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:140:1` |
+| [`Edge`](edge.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:148:1` |
+| [`is_one`](is-one.md) | `code.function` | 1 | `crates/robby-ir/src/model.rs:166:1` |
+| [`default_true`](default-true.md) | `code.function` | 0 | `crates/robby-ir/src/model.rs:171:1` |
+| [`impl Edge`](impl-edge.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:175:1` |
+| [`EdgeKind`](edgekind.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:187:1` |
+| [`impl EdgeKind`](impl-edgekind.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:203:1` |
+| [`Node`](node.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:220:1` |
+| [`impl Node`](impl-node.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:253:1` |
+| [`leaf_name`](leaf-name.md) | `code.function` | 10 | `crates/robby-ir/src/model.rs:317:1` |
+| [`Document`](document.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:328:1` |
+| [`impl Document`](impl-document.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:360:1` |
+| [`Severity`](severity.md) | `code.enum` | — | `crates/robby-ir/src/model.rs:528:1` |
+| [`Diagnostic`](diagnostic.md) | `code.struct` | — | `crates/robby-ir/src/model.rs:536:1` |
+| [`impl Diagnostic`](impl-diagnostic.md) | `code.impl` | — | `crates/robby-ir/src/model.rs:546:1` |
+| [`validate`](validate.md) | `code.function` | 68 | `crates/robby-ir/src/model.rs:571:1` |
 
 ## Imports
 

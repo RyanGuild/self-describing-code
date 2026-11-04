@@ -5,21 +5,21 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:142`](../../../../../apps/site/src/viewer.ts#L142) |
+| location | [`apps/site/src/viewer.ts:127`](../../../../../apps/site/src/viewer.ts#L127) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-async function prefetchEntrypoints(): Promise<void> {
+async function prefetchEntrypoints() {
   if (sceneCache.has("entrypoints")) {
     return;
   }
   try {
-    const entrypoints = await fetchJson<Scene>("scene-entrypoints.json");
+    const entrypoints = await fetchJson<Scene>(ORG_MODES.entrypoints.file);
     sceneCache.set("entrypoints", entrypoints);
   } catch (err) {
     console.error(err);
     orgEntrypointsBtn.disabled = true;
-    orgEntrypointsBtn.title = "scene-entrypoints.json missing — re-run robby web";
+    orgEntrypointsBtn.title = `${ORG_MODES.entrypoints.file} missing — re-run robby web`;
   }
 }
 ```

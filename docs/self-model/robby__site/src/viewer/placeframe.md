@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:256`](../../../../../apps/site/src/viewer.ts#L256) |
+| location | [`apps/site/src/viewer.ts:242`](../../../../../apps/site/src/viewer.ts#L242) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function placeFrame(el: HTMLElement, f: SceneFrame, cam: Camera): void {
+function placeFrame(el: HTMLElement, f: SceneFrame, cam: Camera) {
   const r = screenRectFor(f, cam);
   el.style.width = `${r.w}px`;
   el.style.height = `${r.h}px`;

@@ -5,11 +5,12 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-render/src/view/process.rs:22`](../../../../../crates/robby-render/src/view/process.rs#L22) |
+| location | [`crates/robby-render/src/view/process.rs:25`](../../../../../crates/robby-render/src/view/process.rs#L25) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(tag = "type", rename_all = "snake_case")]
 pub enum ProcessEvent {
     End,
     Else {
@@ -32,8 +33,8 @@ pub enum ProcessEvent {
 
 **Fields and variants**
 
-- `End` — `crates/robby-render/src/view/process.rs:24:5`
-- `Else` — `crates/robby-render/src/view/process.rs:25:5`
-- `Begin` — `crates/robby-render/src/view/process.rs:28:5`
-- `Interaction` — `crates/robby-render/src/view/process.rs:32:5`
+- `End` — `crates/robby-render/src/view/process.rs:28:5`
+- `Else` — `crates/robby-render/src/view/process.rs:29:5`
+- `Begin` — `crates/robby-render/src/view/process.rs:32:5`
+- `Interaction` — `crates/robby-render/src/view/process.rs:36:5`
 

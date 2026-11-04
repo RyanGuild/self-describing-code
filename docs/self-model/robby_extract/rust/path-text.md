@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn path_text(path: &syn::Path) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:407`](../../../../crates/robby-extract/src/rust.rs#L407) |
+| location | [`crates/robby-extract/src/rust.rs:410`](../../../../crates/robby-extract/src/rust.rs#L410) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

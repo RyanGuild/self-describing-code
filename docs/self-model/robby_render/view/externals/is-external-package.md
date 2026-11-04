@@ -15,7 +15,11 @@ fn is_external_package(node: &Node) -> bool {
         return false;
     }
     node.tags.iter().any(|t| t == "external")
-        || node.annotations.get("external").map(|v| v.as_str()) == Some("true")
+        || node
+            .annotations
+            .get("external")
+            .map(std::string::String::as_str)
+            == Some("true")
         || node.fqn.starts_with("npm/")
 }
 ```
@@ -37,20 +41,18 @@ sequenceDiagram
     end
     is_external_package-->>iter: node.tags.iter()
     is_external_package-->>any: node.tags.iter().any(|t| t == 'external')
-    is_external_package-->>get: node.annotations.get('external')
-    is_external_package-->>as_str: v.as_str()
-    is_external_package-->>map: node.annotations.get('external').map(|v| v.as_str())
+    is_external_package-->>get: node .annotations .get('external')
+    is_external_package-->>map: node .annotations .get('external') .map(std::string::String::as_str)
     is_external_package-->>Some: Some('true')
     is_external_package-->>starts_with: node.fqn.starts_with('npm/')
 ```
 
-9 steps · 0 observed · 9 possible only
+8 steps · 0 observed · 8 possible only
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
 
 ## References
 

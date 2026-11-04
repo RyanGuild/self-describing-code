@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr)` |
-| location | [`crates/robby-extract/src/rust.rs:652`](../../../../crates/robby-extract/src/rust.rs#L652) |
+| location | [`crates/robby-extract/src/rust.rs:662`](../../../../crates/robby-extract/src/rust.rs#L662) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -16,7 +16,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
             let span = span_of(expr, builder.ctx);
             let display = callee_display(&call.func);
             let key = callee_name(&call.func);
-            let label = label_of(builder.ctx, span.clone());
+            let label = label_of(builder.ctx, &span);
             // Walk the callee expression (e.g. `(get_fn())()` ) and args for nested calls.
             walk_expr(builder, &call.func);
             for arg in &call.args {
@@ -32,7 +32,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         Expr::MethodCall(m) => {
             let span = span_of(expr, builder.ctx);
             let name = m.method.to_string();
-            let label = label_of(builder.ctx, span.clone());
+            let label = label_of(builder.ctx, &span);
             walk_expr(builder, &m.receiver);
             for arg in &m.args {
                 walk_expr(builder, arg);
@@ -46,7 +46,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         }
         Expr::If(if_expr) => {
             walk_expr(builder, &if_expr.cond);
-            let cond = label_of(builder.ctx, span_of(&if_expr.cond, builder.ctx));
+            let cond = label_of(builder.ctx, &span_of(&if_expr.cond, builder.ctx));
             builder.push_block(BlockKind::Alt, cond);
             walk_stmts(builder, &if_expr.then_branch.stmts);
             if let Some((_, else_expr)) = &if_expr.else_branch {
@@ -57,14 +57,14 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         }
         Expr::ForLoop(f) => {
             walk_expr(builder, &f.expr);
-            let label = label_of(builder.ctx, span_of(&f.expr, builder.ctx));
+            let label = label_of(builder.ctx, &span_of(&f.expr, builder.ctx));
             builder.push_block(BlockKind::Loop, label);
             walk_stmts(builder, &f.body.stmts);
             builder.pop_block();
         }
         Expr::While(w) => {
             walk_expr(builder, &w.cond);
-            let label = label_of(builder.ctx, span_of(&w.cond, builder.ctx));
+            let label = label_of(builder.ctx, &span_of(&w.cond, builder.ctx));
             builder.push_block(BlockKind::Loop, label);
             walk_stmts(builder, &w.body.stmts);
             builder.pop_block();
@@ -77,11 +77,11 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         Expr::Match(m) => {
             // Scrutinee holds real calls (`match run() { ... }`) — walk it.
             walk_expr(builder, &m.expr);
-            let label = label_of(builder.ctx, span_of(&m.expr, builder.ctx));
+            let label = label_of(builder.ctx, &span_of(&m.expr, builder.ctx));
             builder.push_block(BlockKind::Alt, format!("match {label}"));
             for (i, arm) in m.arms.iter().enumerate() {
                 if i > 0 {
-                    let pat = label_of(builder.ctx, span_of(&arm.pat, builder.ctx));
+                    let pat = label_of(builder.ctx, &span_of(&arm.pat, builder.ctx));
                     builder.branch(pat);
                 }
                 walk_expr(builder, &arm.body);
@@ -171,7 +171,7 @@ fn walk_expr(builder: &mut ProcBuilder<'_, '_>, expr: &Expr) {
         _ => {
             let span = span_of(expr, builder.ctx);
             let me = builder.me.clone();
-            builder.emit(&me, label_of(builder.ctx, span.clone()), StepKind::Note, span);
+            builder.emit(&me, label_of(builder.ctx, &span), StepKind::Note, span);
         }
     }
 }
@@ -184,8 +184,8 @@ sequenceDiagram
     participant span_of as span_of
     participant callee_display as callee_display
     participant callee_name as callee_name
-    participant clone as clone
     participant label_of as label_of
+    participant clone as clone
     participant emit as emit
     participant NodeId__symbol as NodeId::symbol
     participant push as push
@@ -201,8 +201,7 @@ sequenceDiagram
     walk_expr-->>span_of: span_of(expr, builder.ctx)
     walk_expr-->>callee_display: callee_display(&call.func)
     walk_expr-->>callee_name: callee_name(&call.func)
-    walk_expr-->>clone: span.clone()
-    walk_expr-->>label_of: label_of(builder.ctx, span.clone())
+    walk_expr-->>label_of: label_of(builder.ctx, &span)
     walk_expr-->>walk_expr: walk_expr(builder, &call.func)
     loop &call.args
     walk_expr-->>walk_expr: walk_expr(builder, arg)
@@ -214,8 +213,7 @@ sequenceDiagram
     else Expr::MethodCall(m)
     walk_expr-->>span_of: span_of(expr, builder.ctx)
     walk_expr-->>to_string: m.method.to_string()
-    walk_expr-->>clone: span.clone()
-    walk_expr-->>label_of: label_of(builder.ctx, span.clone())
+    walk_expr-->>label_of: label_of(builder.ctx, &span)
     walk_expr-->>walk_expr: walk_expr(builder, &m.receiver)
     loop &m.args
     walk_expr-->>walk_expr: walk_expr(builder, arg)
@@ -227,7 +225,7 @@ sequenceDiagram
     else Expr::If(if_expr)
     walk_expr-->>walk_expr: walk_expr(builder, &if_expr.cond)
     walk_expr-->>span_of: span_of(&if_expr.cond, builder.ctx)
-    walk_expr-->>label_of: label_of(builder.ctx, span_of(&if_expr.cond, builder.ctx))
+    walk_expr-->>label_of: label_of(builder.ctx, &span_of(&if_expr.cond, builder.ctx))
     walk_expr-->>push_block: builder.push_block(BlockKind::Alt, cond)
     walk_expr-->>walk_stmts: walk_stmts(builder, &if_expr.then_branch.stmts)
     alt let Some((_, else_expr)) = &if_expr.else_branch
@@ -239,14 +237,14 @@ sequenceDiagram
     else Expr::ForLoop(f)
     walk_expr-->>walk_expr: walk_expr(builder, &f.expr)
     walk_expr-->>span_of: span_of(&f.expr, builder.ctx)
-    walk_expr-->>label_of: label_of(builder.ctx, span_of(&f.expr, builder.ctx))
+    walk_expr-->>label_of: label_of(builder.ctx, &span_of(&f.expr, builder.ctx))
     walk_expr-->>push_block: builder.push_block(BlockKind::Loop, label)
     walk_expr-->>walk_stmts: walk_stmts(builder, &f.body.stmts)
     walk_expr-->>pop_block: builder.pop_block()
     else Expr::While(w)
     walk_expr-->>walk_expr: walk_expr(builder, &w.cond)
     walk_expr-->>span_of: span_of(&w.cond, builder.ctx)
-    walk_expr-->>label_of: label_of(builder.ctx, span_of(&w.cond, builder.ctx))
+    walk_expr-->>label_of: label_of(builder.ctx, &span_of(&w.cond, builder.ctx))
     walk_expr-->>push_block: builder.push_block(BlockKind::Loop, label)
     walk_expr-->>walk_stmts: walk_stmts(builder, &w.body.stmts)
     walk_expr-->>pop_block: builder.pop_block()
@@ -258,7 +256,7 @@ sequenceDiagram
     else Expr::Match(m)
     walk_expr-->>walk_expr: walk_expr(builder, &m.expr)
     walk_expr-->>span_of: span_of(&m.expr, builder.ctx)
-    walk_expr-->>label_of: label_of(builder.ctx, span_of(&m.expr, builder.ctx))
+    walk_expr-->>label_of: label_of(builder.ctx, &span_of(&m.expr, builder.ctx))
     walk_expr-->>walk_expr: format!('match {label}')
     walk_expr-->>push_block: builder.push_block(BlockKind::Alt, format!('match {label}'))
     walk_expr-->>iter: m.arms.iter()
@@ -266,7 +264,7 @@ sequenceDiagram
     loop m.arms.iter().enumerate()
     alt i > 0
     walk_expr-->>span_of: span_of(&arm.pat, builder.ctx)
-    walk_expr-->>label_of: label_of(builder.ctx, span_of(&arm.pat, builder.ctx))
+    walk_expr-->>label_of: label_of(builder.ctx, &span_of(&arm.pat, builder.ctx))
     walk_expr-->>branch: builder.branch(pat)
     end
     walk_expr-->>walk_expr: walk_expr(builder, &arm.body)
@@ -357,13 +355,12 @@ sequenceDiagram
     else _
     walk_expr-->>span_of: span_of(expr, builder.ctx)
     walk_expr-->>clone: builder.me.clone()
-    walk_expr-->>clone: span.clone()
-    walk_expr-->>label_of: label_of(builder.ctx, span.clone())
-    walk_expr-->>emit: builder.emit(&me, label_of(builder.ctx, span.clone()), StepKind::Note...
+    walk_expr-->>label_of: label_of(builder.ctx, &span)
+    walk_expr-->>emit: builder.emit(&me, label_of(builder.ctx, &span), StepKind::Note, span)
     end
 ```
 
-105 steps · 0 observed · 105 possible only
+102 steps · 0 observed · 102 possible only
 
 **Edges**
 

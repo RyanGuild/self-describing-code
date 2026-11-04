@@ -5,21 +5,21 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:318`](../../../../../apps/site/src/viewer.ts#L318) |
+| location | [`apps/site/src/viewer.ts:304`](../../../../../apps/site/src/viewer.ts#L304) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function buildPortalStrip(f: SceneFrame): HTMLElement {
+function buildPortalStrip(f: SceneFrame) {
   const strip = document.createElement("div");
   strip.className = "portal-strip";
   let expanded = false;
 
-  const syncFocusClass = (): void => {
+  const syncFocusClass = () => {
     const focusWrap = strip.closest(".frame-wrap");
     focusWrap?.classList.toggle("portals-expanded", expanded);
   };
 
-  const render = (): void => {
+  const render = () => {
     strip.innerHTML = "";
     strip.classList.toggle("is-expanded", expanded);
     syncFocusClass();

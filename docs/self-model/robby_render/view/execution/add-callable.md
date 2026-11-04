@@ -6,16 +6,12 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn add_callable(process: &mut Process, node: &Node)` |
-| location | [`crates/robby-render/src/view/execution.rs:80`](../../../../../crates/robby-render/src/view/execution.rs#L80) |
+| location | [`crates/robby-render/src/view/execution.rs:76`](../../../../../crates/robby-render/src/view/execution.rs#L76) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn add_callable(process: &mut Process, node: &Node) {
-    process.participant(
-        participant_id(node),
-        node.fqn.clone(),
-        node.kind.clone(),
-    );
+    process.participant(participant_id(node), node.fqn.clone(), node.kind.clone());
 }
 ```
 
@@ -29,7 +25,7 @@ sequenceDiagram
     add_callable-->>participant_id: participant_id(node)
     add_callable-->>clone: node.fqn.clone()
     add_callable-->>clone: node.kind.clone()
-    add_callable-->>participant: process.participant( participant_id(node), node.fqn.clone(), node.kin...
+    add_callable-->>participant: process.participant(participant_id(node), node.fqn.clone(), node.kind...
 ```
 
 4 steps · 0 observed · 4 possible only

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn owning_container_fqn(doc: &Document, node: &Node) -> Option<String>` |
-| location | [`crates/robby-render/src/view/externals.rs:86`](../../../../../crates/robby-render/src/view/externals.rs#L86) |
+| location | [`crates/robby-render/src/view/externals.rs:90`](../../../../../crates/robby-render/src/view/externals.rs#L90) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -55,7 +55,7 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::links::is_module_kind`](../links/is-module-kind.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
 

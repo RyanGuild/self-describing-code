@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn emit_coupling_subgraph(     out: &mut String,     node: &CouplingModule,     by_parent: &std::collections::BTreeMap<&str, Vec<&CouplingFn>>,     depth: usize, )` |
-| location | [`crates/robby-render/src/render/mermaid.rs:253`](../../../../../crates/robby-render/src/render/mermaid.rs#L253) |
+| location | [`crates/robby-render/src/render/mermaid.rs:249`](../../../../../crates/robby-render/src/render/mermaid.rs#L249) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -17,7 +17,10 @@ fn emit_coupling_subgraph(
     depth: usize,
 ) {
     let indent = "    ".repeat(depth);
-    let leaves = by_parent.get(node.stable_id.as_str()).cloned().unwrap_or_default();
+    let leaves = by_parent
+        .get(node.stable_id.as_str())
+        .cloned()
+        .unwrap_or_default();
     if node.children.is_empty() && leaves.is_empty() {
         return;
     }
@@ -32,11 +35,7 @@ fn emit_coupling_subgraph(
         emit_coupling_subgraph(out, child, by_parent, depth + 1);
     }
     for leaf in &leaves {
-        let _ = writeln!(
-            out,
-            "{indent}    {}[\"{}\"]",
-            leaf.stable_id, leaf.name
-        );
+        let _ = writeln!(out, "{indent}    {}[\"{}\"]", leaf.stable_id, leaf.name);
     }
     let _ = writeln!(out, "{indent}end");
 }
@@ -54,9 +53,9 @@ sequenceDiagram
     participant is_empty as is_empty
     emit_coupling_subgraph-->>repeat: ' '.repeat(depth)
     emit_coupling_subgraph-->>as_str: node.stable_id.as_str()
-    emit_coupling_subgraph-->>get: by_parent.get(node.stable_id.as_str())
-    emit_coupling_subgraph-->>cloned: by_parent.get(node.stable_id.as_str()).cloned()
-    emit_coupling_subgraph-->>unwrap_or_default: by_parent.get(node.stable_id.as_str()).cloned().unwrap_or_default()
+    emit_coupling_subgraph-->>get: by_parent .get(node.stable_id.as_str())
+    emit_coupling_subgraph-->>cloned: by_parent .get(node.stable_id.as_str()) .cloned()
+    emit_coupling_subgraph-->>unwrap_or_default: by_parent .get(node.stable_id.as_str()) .cloned() .unwrap_or_default()
     emit_coupling_subgraph-->>is_empty: node.children.is_empty()
     emit_coupling_subgraph-->>is_empty: leaves.is_empty()
     alt node.children.is_empty() && leaves.is_empty()
@@ -68,7 +67,7 @@ sequenceDiagram
     emit_coupling_subgraph-->>emit_coupling_subgraph: emit_coupling_subgraph(out, child, by_parent, depth + 1)
     end
     loop &leaves
-    emit_coupling_subgraph-->>emit_coupling_subgraph: writeln!( out, '{indent} {}[\'{}\']', leaf.stable_id, leaf.name )
+    emit_coupling_subgraph-->>emit_coupling_subgraph: writeln!(out, '{indent} {}[\'{}\']', leaf.stable_id, leaf.name)
     end
     emit_coupling_subgraph-->>emit_coupling_subgraph: writeln!(out, '{indent}end')
 ```
@@ -77,7 +76,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../../view/links/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../../view/links/index.md)

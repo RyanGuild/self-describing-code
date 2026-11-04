@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn module_page(     doc: &Document,     node: &Node,     crate_dir: &str,     sources: Option<&BTreeMap<String, String>>,     out_rel: &str, ) -> String` |
-| location | [`crates/robby-render/src/tree.rs:214`](../../../../crates/robby-render/src/tree.rs#L214) |
+| location | [`crates/robby-render/src/tree.rs:208`](../../../../crates/robby-render/src/tree.rs#L208) |
 | provenance | extractor · confidence 1.00 |
 
 > A module page: what is in here, and where to go next.
@@ -30,12 +30,16 @@ fn module_page(
     let _ = writeln!(out, "|---|---|");
     let _ = writeln!(out, "| kind | `{}` |", node.kind);
     if let Some(span) = &node.span {
-        let _ = writeln!(out, "| declared at | {} |", source_link(&page, out_rel, span));
+        let _ = writeln!(
+            out,
+            "| declared at | {} |",
+            source_link(&page, out_rel, span)
+        );
     }
     let _ = writeln!(
         out,
         "| provenance | {} · confidence {:.2} |",
-        source_name(node.provenance.source),
+        node.provenance.source.as_str(),
         node.provenance.confidence
     );
     let _ = writeln!(out, "| nodes | {} |", doc.subtree(&node.id).len());
@@ -130,18 +134,18 @@ fn module_page(
         out.push_str("## Items\n\n");
         out.push_str("| Item | Kind | Steps | Location |\n|---|---|---:|---|\n");
         for item in items {
-            let Some(slug) = slugs.get(&item.id) else { continue };
+            let Some(slug) = slugs.get(&item.id) else {
+                continue;
+            };
             let target = module_dir.join(format!("{slug}.md"));
             let location = item
                 .span
                 .as_ref()
-                .map(|span| span.location())
-                .unwrap_or_else(|| "—".to_owned());
+                .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
             let steps = item
                 .process
                 .as_ref()
-                .map(|process| process.steps.len().to_string())
-                .unwrap_or_else(|| "—".to_owned());
+                .map_or_else(|| "—".to_owned(), |process| process.steps.len().to_string());
             let _ = writeln!(
                 out,
                 "| [`{}`]({}) | `{}` | {} | `{}` |",
@@ -160,8 +164,7 @@ fn module_page(
         for import in imports {
             let text = sources
                 .and_then(|s| import.span.as_ref().and_then(|span| slice(s, span)))
-                .map(|text| first_line(&text))
-                .unwrap_or_else(|| import.name.clone());
+                .map_or_else(|| import.name.clone(), first_line);
             let _ = writeln!(out, "- {}", linked_import(doc, &page, &text));
         }
         out.push('\n');
@@ -208,14 +211,12 @@ sequenceDiagram
     participant item_slugs as item_slugs
     participant join as join
     participant as_ref as as_ref
-    participant location as location
-    participant map as map
     participant to_owned as to_owned
+    participant map_or_else as map_or_else
     participant len as len
     participant to_string as to_string
     participant slice as slice
     participant and_then as and_then
-    participant first_line as first_line
     participant clone as clone
     module_page-->>String__new: String::new()
     module_page-->>module_index_path: module_index_path(node, crate_dir)
@@ -228,9 +229,9 @@ sequenceDiagram
     module_page-->>module_page: writeln!(out, '|---|---|')
     module_page-->>module_page: writeln!(out, '| kind | `{}` |', node.kind)
     alt let Some(span) = &node.span
-    module_page-->>module_page: writeln!(out, '| declared at | {} |', source_link(&page, out_rel, span))
+    module_page-->>module_page: writeln!( out, '| declared at | {} |', source_link(&page, out_rel, sp...
     end
-    module_page-->>module_page: writeln!( out, '| provenance | {} · confidence {:.2} |', source_name(...
+    module_page-->>module_page: writeln!( out, '| provenance | {} · confidence {:.2} |', node.provena...
     module_page-->>module_page: writeln!(out, '| nodes | {} |', doc.subtree(&node.id).len())
     module_page-->>push: out.push('\n')
     alt let Some(docs) = &node.docs
@@ -311,16 +312,13 @@ sequenceDiagram
     module_page-->>module_page: format!('{slug}.md')
     module_page-->>join: module_dir.join(format!('{slug}.md'))
     module_page-->>as_ref: item .span .as_ref()
-    module_page-->>location: span.location()
-    module_page-->>map: item .span .as_ref() .map(|span| span.location())
     module_page-->>to_owned: '—'.to_owned()
-    module_page-->>unwrap_or_else: item .span .as_ref() .map(|span| span.location()) .unwrap_or_else(|| ...
+    module_page-->>map_or_else: item .span .as_ref() .map_or_else(|| '—'.to_owned(), robby_ir::Span::...
     module_page-->>as_ref: item .process .as_ref()
+    module_page-->>to_owned: '—'.to_owned()
     module_page-->>len: process.steps.len()
     module_page-->>to_string: process.steps.len().to_string()
-    module_page-->>map: item .process .as_ref() .map(|process| process.steps.len().to_string())
-    module_page-->>to_owned: '—'.to_owned()
-    module_page-->>unwrap_or_else: item .process .as_ref() .map(|process| process.steps.len().to_string(...
+    module_page-->>map_or_else: item .process .as_ref() .map_or_else(|| '—'.to_owned(), |process| pro...
     module_page-->>module_page: writeln!( out, '| [`{}`]({}) | `{}` | {} | `{}` |', item.name, rel_li...
     end
     module_page-->>push: out.push('\n')
@@ -333,17 +331,15 @@ sequenceDiagram
     module_page-->>slice: slice(s, span)
     module_page-->>and_then: import.span.as_ref().and_then(|span| slice(s, span))
     module_page-->>and_then: sources .and_then(|s| import.span.as_ref().and_then(|span| slice(s, s...
-    module_page-->>first_line: first_line(&text)
-    module_page-->>map: sources .and_then(|s| import.span.as_ref().and_then(|span| slice(s, s...
     module_page-->>clone: import.name.clone()
-    module_page-->>unwrap_or_else: sources .and_then(|s| import.span.as_ref().and_then(|span| slice(s, s...
+    module_page-->>map_or_else: sources .and_then(|s| import.span.as_ref().and_then(|span| slice(s, s...
     module_page-->>module_page: writeln!(out, '- {}', linked_import(doc, &page, &text))
     end
     module_page-->>push: out.push('\n')
     end
 ```
 
-87 steps · 0 observed · 87 possible only
+82 steps · 0 observed · 82 possible only
 
 **Edges**
 
@@ -377,29 +373,26 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::tree::item_slugs`](item-slugs.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::span::impl Span::location`](../../robby_ir/span/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../view/links/index.md)
 - calls → [`robby_render::tree::slice`](slice.md)
-- calls → [`robby_render::tree::first_line`](first-line.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 
 ## References
 
 - calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
-- calls → [`robby_ir::span`](../../robby_ir/span/index.md) — location
 - calls → [`robby_render::render`](../render/index.md) — comments, dependency_sections, externals, types
 - calls → [`robby_render::report`](../report/index.md) — new, push, push_titled, to_markdown
 - calls → [`robby_render::test_render`](../test_render/index.md) — process
-- calls → [`robby_render::tree`](index.md) — 7 items
+- calls → [`robby_render::tree`](index.md) — 6 items
 - calls → [`robby_render::view::comments`](../view/comments/index.md) — as_str
 - calls → [`robby_render::view::links`](../view/links/index.md) — is_empty
 - calls → [`robby_render::view::select`](../view/select/index.md) — collect

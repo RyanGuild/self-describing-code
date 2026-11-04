@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn lift_to_scope<'a>(     doc: &'a Document,     node: &'a Node,     scope: &BTreeSet<NodeId>, ) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/deps.rs:743`](../../../../../crates/robby-render/src/view/deps.rs#L743) |
+| location | [`crates/robby-render/src/view/deps.rs:723`](../../../../../crates/robby-render/src/view/deps.rs#L723) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

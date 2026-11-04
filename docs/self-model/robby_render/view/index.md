@@ -48,6 +48,7 @@ flowchart TB
     n_534805da25f902cb --> n_af0e6cd35d46a66e
     n_534805da25f902cb --> n_d98da197ad772974
     n_534805da25f902cb -.-> n_f7b09b6570bc03a0
+    n_6b09e2da2b3d3ec0 --> n_2bf7728895532b9d
     n_6b09e2da2b3d3ec0 --> n_534805da25f902cb
     n_6b09e2da2b3d3ec0 --> n_9c636b098ca4450e
     n_6b09e2da2b3d3ec0 --> n_f006da06b5256ba9
@@ -74,7 +75,7 @@ flowchart TB
         direction TB
         subgraph n_2bf7728895532b9d["comments"]
             direction TB
-            n_fab4eeebb9766d7f["as_str"]
+            n_ff7778a79352f45c["as_str"]
         end
         subgraph n_55531c5d49993a41["deps"]
             direction TB
@@ -117,7 +118,6 @@ flowchart TB
             n_737bc7514c5fccaa["is_binary_module"]
             n_7debed98e7d8376c["main_process"]
             n_d02d0abf1c3600ac["markdown"]
-            n_11f6d2fb700cd378["source_name"]
             n_f5a635ba7e165c71["tui_all"]
         end
         subgraph n_3d4b89e4d03574c3["sibling"]
@@ -139,24 +139,25 @@ flowchart TB
         end
     end
     n_116ac437ecee9baf -.->|"1 circular"| n_bb9971de7b6aa277
-    n_116ac437ecee9baf --> n_fab4eeebb9766d7f
+    n_116ac437ecee9baf --> n_ff7778a79352f45c
     n_1923d2917a857926 --> n_362f706ada15eb10
     n_1923d2917a857926 --> n_43e14e4cbda3060d
     n_1923d2917a857926 --> n_4958b0fbabca34bc
     n_1923d2917a857926 --> n_79bed59b1a79eb84
     n_1923d2917a857926 -->|"3"| n_bb9971de7b6aa277
     n_1923d2917a857926 -->|"2"| n_f2c21d1aff51beb3
-    n_1923d2917a857926 -->|"2"| n_fab4eeebb9766d7f
+    n_1923d2917a857926 -->|"2"| n_ff7778a79352f45c
     n_25dacce096110768 --> n_570e2c532788087a
     n_25dacce096110768 --> n_bb9971de7b6aa277
     n_25dacce096110768 -->|"2"| n_f2c21d1aff51beb3
+    n_25dacce096110768 --> n_ff7778a79352f45c
     n_28988dd039e06d31 --> n_f2c21d1aff51beb3
-    n_28988dd039e06d31 -->|"14"| n_fab4eeebb9766d7f
+    n_28988dd039e06d31 -->|"14"| n_ff7778a79352f45c
     n_30b6d0144b0642cc -->|"2"| n_4958b0fbabca34bc
     n_30b6d0144b0642cc --> n_b8cfed370f7630fa
     n_30b6d0144b0642cc -->|"2"| n_bb9971de7b6aa277
     n_30b6d0144b0642cc -->|"2"| n_f2c21d1aff51beb3
-    n_30b6d0144b0642cc -->|"11"| n_fab4eeebb9766d7f
+    n_30b6d0144b0642cc -->|"11"| n_ff7778a79352f45c
     n_362f706ada15eb10 --> n_f2c21d1aff51beb3
     n_5d0e4314e8ae7165 --> n_30b6d0144b0642cc
     n_5d0e4314e8ae7165 --> n_362f706ada15eb10
@@ -165,12 +166,12 @@ flowchart TB
     n_5d0e4314e8ae7165 -->|"2"| n_bb9971de7b6aa277
     n_5d0e4314e8ae7165 --> n_ca5056d43b6f5293
     n_5d0e4314e8ae7165 --> n_f2c21d1aff51beb3
-    n_5d0e4314e8ae7165 -->|"3"| n_fab4eeebb9766d7f
-    n_737bc7514c5fccaa --> n_fab4eeebb9766d7f
+    n_5d0e4314e8ae7165 -->|"3"| n_ff7778a79352f45c
+    n_737bc7514c5fccaa --> n_ff7778a79352f45c
     n_79bed59b1a79eb84 -->|"2"| n_f2c21d1aff51beb3
-    n_7debed98e7d8376c --> n_fab4eeebb9766d7f
+    n_7debed98e7d8376c --> n_ff7778a79352f45c
     n_93c94be41cee362e --> n_f2c21d1aff51beb3
-    n_93c94be41cee362e -->|"5"| n_fab4eeebb9766d7f
+    n_93c94be41cee362e -->|"5"| n_ff7778a79352f45c
     n_98e09a50ba136685 --> n_362f706ada15eb10
     n_98e09a50ba136685 --> n_5d0e4314e8ae7165
     n_98e09a50ba136685 --> n_79bed59b1a79eb84
@@ -184,7 +185,6 @@ flowchart TB
     n_a226e41874f80197 --> n_98e09a50ba136685
     n_a226e41874f80197 -->|"5"| n_f2c21d1aff51beb3
     n_bb9971de7b6aa277 -->|"6"| n_0b2e754c404da854
-    n_bb9971de7b6aa277 --> n_11f6d2fb700cd378
     n_bb9971de7b6aa277 --> n_52efbca52123222c
     n_bb9971de7b6aa277 --> n_737bc7514c5fccaa
     n_bb9971de7b6aa277 --> n_7debed98e7d8376c
@@ -193,17 +193,17 @@ flowchart TB
     n_bb9971de7b6aa277 -.->|"1 circular"| n_c7c36b72a1b4ae90
     n_bb9971de7b6aa277 -->|"4"| n_ca5056d43b6f5293
     n_bb9971de7b6aa277 -->|"2"| n_daf5ef70c3eb6dee
-    n_bb9971de7b6aa277 -->|"2"| n_fab4eeebb9766d7f
+    n_bb9971de7b6aa277 -->|"3"| n_ff7778a79352f45c
     n_c4e6114e4ad3d4ea --> n_4958b0fbabca34bc
     n_c4e6114e4ad3d4ea -->|"4"| n_bb9971de7b6aa277
     n_c4e6114e4ad3d4ea --> n_f2c21d1aff51beb3
-    n_c4e6114e4ad3d4ea -->|"4"| n_fab4eeebb9766d7f
+    n_c4e6114e4ad3d4ea -->|"4"| n_ff7778a79352f45c
     n_c7c36b72a1b4ae90 -.->|"1 circular"| n_116ac437ecee9baf
     n_c7c36b72a1b4ae90 --> n_796acf395b92fc32
     n_c7c36b72a1b4ae90 -->|"2"| n_93c94be41cee362e
     n_c7c36b72a1b4ae90 -.->|"4 circular"| n_bb9971de7b6aa277
     n_c7c36b72a1b4ae90 -->|"4"| n_f2c21d1aff51beb3
-    n_c7c36b72a1b4ae90 --> n_fab4eeebb9766d7f
+    n_c7c36b72a1b4ae90 --> n_ff7778a79352f45c
     n_d02d0abf1c3600ac --> n_52efbca52123222c
     n_d8f08dd1d2200ed6 --> n_0b2e754c404da854
     n_d8f08dd1d2200ed6 -->|"2"| n_bb9971de7b6aa277
@@ -217,13 +217,13 @@ flowchart TB
 | **sibling** | · | | | | | | | | | 4 | 2 | 4 | | 10 | | | | 2 |
 | **execution** | | · | | | | | | | | | | | | | | | | |
 | **externals** | | | · | | | | | | | | | | | | | | | |
-| **process** | | | | · | | | | | | 1 | 2 | | | 6 | | | | |
+| **process** | | | | · | | | | | | 1 | 2 | 1 | | 5 | | | | |
 | **tests** | | | | | · | | | | | | | | | | | | | |
 | **view** | | | | | | · | | | | | | | | | | | | |
 | **hierarchy** | | | | | | | · | | | | | | | | | | | |
 | **tests** | | | | | | | | · | | | | | | | | | | |
 | **types** | | | | | | | | | · | 5⇄ | 5⇄ | 7 | | 24 | | | | 11 |
-| **select** | | | | | | | | | 1⇄ | · | | 4 | 4 | | | 2 | 8 | 4 |
+| **select** | | | | | | | | | 1⇄ | · | | 5 | 4 | | | 2 | 8 | 3 |
 | **scene** | | | | | | | | | | 10⇄ | · | 30 | 1 | 25 | 1 | | 2 | 15 |
 | **comments** | | | | | | | | | | | | · | | | | | | |
 | **deps** | | | | | | | | | | | | | · | | | | | |
@@ -237,10 +237,13 @@ Cycles: select ↔ scene ↔ types
 
 ## Comments
 
-- `crates/robby-render/src/view/process.rs:7:1` (docs, `robby_render::view::process::ProcessView`): "Format-agnostic process diagram data."
+- `crates/robby-render/src/view/process.rs:7:1` (docs, `robby_render::view::process::ProcessView`): "Format-agnostic process diagram data. This is also the JSON shape under `FrameDetail.process`. There is no second DTO."
   ```
   /// Format-agnostic process diagram data.
-  #[derive(Debug, Clone, PartialEq, Eq)]
+  ///
+  /// This is also the JSON shape under `FrameDetail.process`. There is no
+  /// second DTO.
+  #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
   pub struct ProcessView {
       pub participants: Vec<ParticipantView>,
       pub events: Vec<ProcessEvent>,
@@ -365,14 +368,10 @@ Cycles: select ↔ scene ↔ types
       pub frames: BTreeMap<String, Frame>,
   }
   ```
-- `crates/robby-render/src/view/scene.rs:377:1` (docs, `robby_render::view::scene::attach_call_portals`): "Portals for every Calls hop among placed frames (tree children + cross edges)."
+- `crates/robby-render/src/view/scene.rs:368:1` (docs, `robby_render::view::scene::attach_call_portals`): "Portals for every Calls hop among placed frames (tree children + cross edges)."
   ```
   /// Portals for every Calls hop among placed frames (tree children + cross edges).
-  fn attach_call_portals(
-      doc: &Document,
-      tree: &CallTree,
-      frames: &mut BTreeMap<String, Frame>,
-  ) {
+  fn attach_call_portals(doc: &Document, tree: &CallTree, frames: &mut BTreeMap<String, Frame>) {
       let mut pairs: Vec<(NodeId, NodeId)> = Vec::new();
       for (from_id, kids) in &tree.children {
           for to_id in kids {
@@ -395,12 +394,10 @@ Cycles: select ↔ scene ↔ types
           }
           let to_name = doc
               .get(to_id)
-              .map(|n| n.fqn.clone())
-              .unwrap_or_else(|| to_id.as_str().to_owned());
+              .map_or_else(|| to_id.as_str().to_owned(), |n| n.fqn.clone());
           let from_name = doc
               .get(from_id)
-              .map(|n| n.fqn.clone())
-              .unwrap_or_else(|| from_id.as_str().to_owned());
+              .map_or_else(|| from_id.as_str().to_owned(), |n| n.fqn.clone());
   
           if let Some(from_frame) = frames.get_mut(&from_sid) {
               from_frame.portals.push(Portal {
@@ -450,7 +447,7 @@ Cycles: select ↔ scene ↔ types
       pub h: i64,
   }
   ```
-- `crates/robby-render/src/view/scene.rs:522:1` (docs, `robby_render::view::scene::layout_grid`): "Place `n` children in a grid on the local canvas (below the header, above portals)."
+- `crates/robby-render/src/view/scene.rs:507:1` (docs, `robby_render::view::scene::layout_grid`): "Place `n` children in a grid on the local canvas (below the header, above portals)."
   ```
   /// Place `n` children in a grid on the local canvas (below the header, above portals).
   fn layout_grid(n: usize) -> Vec<Rect> {
@@ -484,7 +481,7 @@ Cycles: select ↔ scene ↔ types
       out
   }
   ```
-- `crates/robby-render/src/view/scene.rs:554:1` (docs, `robby_render::view::scene::is_scene_skipped`): "Comments stay in the IR and markdown tree, but are not Prezi frames."
+- `crates/robby-render/src/view/scene.rs:539:1` (docs, `robby_render::view::scene::is_scene_skipped`): "Comments stay in the IR and markdown tree, but are not Prezi frames."
   ```
   /// Comments stay in the IR and markdown tree, but are not Prezi frames.
   fn is_scene_skipped(kind_name: &str) -> bool {
@@ -588,8 +585,8 @@ Cycles: select ↔ scene ↔ types
           fqn: node.fqn.clone(),
           kind: node.kind.as_str().to_owned(),
           signature: node.signature.clone(),
-          location: node.span.as_ref().map(|s| s.location()),
-          provenance_source: source_name(node.provenance.source),
+          location: node.span.as_ref().map(robby_ir::Span::location),
+          provenance_source: node.provenance.source.as_str(),
           confidence: node.provenance.confidence,
           docs: node.docs.clone(),
           node_count: doc.subtree(&node.id).len(),
@@ -603,44 +600,28 @@ Cycles: select ↔ scene ↔ types
   
       let types = if opts.types && is_module {
           let model = TypeModel::from_module(doc, &node.id);
-          if model.is_empty() {
-              None
-          } else {
-              Some(model)
-          }
+          if model.is_empty() { None } else { Some(model) }
       } else {
           None
       };
   
       let dependencies = if opts.dependencies && is_module {
           let views = DependencyViews::from_root(doc, &node.id);
-          if views.is_empty() {
-              None
-          } else {
-              Some(views)
-          }
+          if views.is_empty() { None } else { Some(views) }
       } else {
           None
       };
   
       let externals = if opts.externals && is_module {
           let view = ExternalsView::from_root(doc, &node.id);
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
   
       let comments = if opts.comments && is_module {
           let view = CommentsView::from_root(doc, &node.id, sources);
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
@@ -652,17 +633,9 @@ Cycles: select ↔ scene ↔ types
       };
   
       let hierarchy = if opts.hierarchy {
-          let view = HierarchyView::from_node(
-              doc,
-              &node.id,
-              opts.hierarchy_depth,
-              opts.hierarchy_all,
-          );
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          let view =
+              HierarchyView::from_node(doc, &node.id, opts.hierarchy_depth, opts.hierarchy_all);
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
@@ -675,11 +648,7 @@ Cycles: select ↔ scene ↔ types
   
       let sibling = if opts.sibling {
           let graph = SiblingGraph::from_root(doc, &node.id);
-          if graph.is_empty() {
-              None
-          } else {
-              Some(graph)
-          }
+          if graph.is_empty() { None } else { Some(graph) }
       } else {
           None
       };
@@ -708,10 +677,9 @@ Cycles: select ↔ scene ↔ types
 ## References
 
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get, insert, subtree
-- calls → [`robby_ir::span`](../../robby_ir/span/index.md) — location
 - calls → [`robby_render`](../index.md) — stable_id
 - calls → [`robby_render::report`](../report/index.md) — push
-- calls → [`robby_render::util`](../util/index.md) — 8 items
+- calls → [`robby_render::util`](../util/index.md) — 7 items
 - calls → [`robby_render::view::comments`](comments/index.md) — as_str
 - calls → [`robby_render::view::deps`](deps/index.md) — from_root
 - calls → [`robby_render::view::entrypoints`](entrypoints/index.md) — children_of
@@ -743,9 +711,10 @@ Cycles: select ↔ scene ↔ types
 - calls ← [`robby_ir::coverage::file_coverage`](../../robby_ir/coverage/file-coverage.md)
 - calls ← [`robby_ir::coverage::impl CoverageReport::worst_first`](../../robby_ir/coverage/index.md)
 - calls ← [`robby_ir::coverage::preview`](../../robby_ir/coverage/preview.md)
+- calls ← [`robby_ir::model::impl Document::adopt_parent`](../../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::declare_file`](../../robby_ir/model/index.md)
-- calls ← [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::merge`](../../robby_ir/model/index.md)
+- calls ← [`robby_ir::model::impl Document::record_child`](../../robby_ir/model/index.md)
 - calls ← [`robby_ir::test_coverage::report_orders_worst_files_first`](../../robby_ir/test_coverage/report-orders-worst-files-first.md)
 - calls ← [`robby_render::all_sequences`](../all-sequences.md)
 - calls ← [`robby_render::class_diagram`](../class-diagram.md)
@@ -816,25 +785,25 @@ Cycles: select ↔ scene ↔ types
 
 - [`view::process`](process/index.md) — 20 nodes
 - [`view::scene`](scene/index.md) — 71 nodes
-- [`view::select`](select/index.md) — 55 nodes
+- [`view::select`](select/index.md) — 54 nodes
 - [`view::sibling`](sibling/index.md) — 23 nodes
-- [`view::source`](source/index.md) — 8 nodes
+- [`view::source`](source/index.md) — 9 nodes
 - [`view::types`](types/index.md) — 32 nodes
 
 ## Imports
 
-- `pub use comments::{`
+- `pub use comments::{CommentEntry, CommentKind, CommentsView, apply_highlights};`
 - `pub use deps::{`
 - `pub use entrypoints::{CallTree, MAX_CALL_DEPTH};`
 - `pub use execution::{execution_process, from_code_path as execution_from_code_path};`
-- [`pub use robby_ir::find_entrypoints;`](../../robby_ir/index.md)
 - `pub use externals::{ExternalEntry, ExternalsView};`
 - `pub use hierarchy::{HierarchyNode, HierarchyView};`
 - `pub use links::{InboundRef, LinkGraph, OutboundRef};`
 - `pub use process::{ParticipantView, ProcessEvent, ProcessView};`
+- [`pub use robby_ir::{NoteKind, Verdict, find_entrypoints};`](../../robby_ir/index.md)
 - `pub use scene::{`
 - `pub use select::{NodeMeta, NodeViews, SelectOpts, collect, is_binary_module, main_process};`
 - `pub use sibling::{SiblingEdge, SiblingGraph, SiblingNode};`
 - `pub use source::SourceSlice;`
-- `pub use types::{`
+- `pub use types::{ClassMember, ClassStereotype, ClassView, RelationKind, TypeModel, TypeRelation};`
 

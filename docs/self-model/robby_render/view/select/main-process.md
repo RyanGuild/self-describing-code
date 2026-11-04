@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn main_process<'a>(doc: &'a Document, node: &Node) -> Option<&'a robby_ir::Process>` |
-| location | [`crates/robby-render/src/view/select.rs:234`](../../../../../crates/robby-render/src/view/select.rs#L234) |
+| location | [`crates/robby-render/src/view/select.rs:207`](../../../../../crates/robby-render/src/view/select.rs#L207) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -44,7 +44,7 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 
 ## References
 

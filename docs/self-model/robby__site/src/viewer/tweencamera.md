@@ -5,16 +5,16 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:449`](../../../../../apps/site/src/viewer.ts#L449) |
+| location | [`apps/site/src/viewer.ts:430`](../../../../../apps/site/src/viewer.ts#L430) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function tweenCamera(next: Camera, onDone?: () => void): void {
+function tweenCamera(next: Camera, onDone?: () => void) {
   window.cancelAnimationFrame(cameraRaf);
   const from = { ...camera };
   const start = performance.now();
 
-  const tick = (now: number): void => {
+  const tick = (now: number) => {
     const t = Math.min(1, (now - start) / TWEEN_MS);
     const e = easeOutCubic(t);
     camera = {

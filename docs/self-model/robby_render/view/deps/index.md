@@ -180,7 +180,7 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-render/src/view/deps.rs:204:5` (docs, `robby_render::view::deps::impl CouplingGraph::from_root`): "Function-level internal Calls under `root`."
+- `crates/robby-render/src/view/deps.rs:198:5` (docs, `robby_render::view::deps::impl CouplingGraph::from_root`): "Function-level internal Calls under `root`."
   ```
   /// Function-level internal Calls under `root`.
       pub fn from_root(doc: &Document, root: &NodeId) -> Self {
@@ -192,8 +192,7 @@ flowchart TB
               .nodes
               .values()
               .filter(|node| {
-                  is_container(node)
-                      && (node.id == root_node.id || is_under_fqn(root_node, node))
+                  is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
               })
               .collect();
           let package_scope: BTreeSet<NodeId> = packages.iter().map(|p| p.id.clone()).collect();
@@ -225,18 +224,22 @@ flowchart TB
   
                   let from_sid = stable_id(node.id.as_str());
                   let to_sid = stable_id(target.id.as_str());
-                  participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn {
-                      id: node.id.clone(),
-                      stable_id: from_sid.clone(),
-                      name: node.name.clone(),
-                      parent_stable_id: stable_id(from_mod.id.as_str()),
-                  });
-                  participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn {
-                      id: target.id.clone(),
-                      stable_id: to_sid.clone(),
-                      name: target.name.clone(),
-                      parent_stable_id: stable_id(to_mod.id.as_str()),
-                  });
+                  participants
+                      .entry(from_sid.clone())
+                      .or_insert_with(|| CouplingFn {
+                          id: node.id.clone(),
+                          stable_id: from_sid.clone(),
+                          name: node.name.clone(),
+                          parent_stable_id: stable_id(from_mod.id.as_str()),
+                      });
+                  participants
+                      .entry(to_sid.clone())
+                      .or_insert_with(|| CouplingFn {
+                          id: target.id.clone(),
+                          stable_id: to_sid.clone(),
+                          name: target.name.clone(),
+                          parent_stable_id: stable_id(to_mod.id.as_str()),
+                      });
                   if from_sid != to_sid {
                       *weights.entry((from_sid, to_sid)).or_default() += 1;
                   }
@@ -281,19 +284,14 @@ flowchart TB
           }
       }
   ```
-- `crates/robby-render/src/view/deps.rs:303:5` (docs, `robby_render::view::deps::impl CouplingGraph::workspace`): "Crates as subgraphs; direct modules as nodes; call-weighted module edges."
+- `crates/robby-render/src/view/deps.rs:300:5` (docs, `robby_render::view::deps::impl CouplingGraph::workspace`): "Crates as subgraphs; direct modules as nodes; call-weighted module edges."
   ```
   /// Crates as subgraphs; direct modules as nodes; call-weighted module edges.
       pub fn workspace(doc: &Document) -> Self {
           let crates: Vec<&Node> = doc
               .nodes
               .values()
-              .filter(|node| {
-                  matches!(
-                      node.kind.as_str(),
-                      kind::code::CRATE | kind::code::PACKAGE
-                  )
-              })
+              .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
               .collect();
           if crates.is_empty() {
               return Self::empty();
@@ -488,24 +486,24 @@ flowchart TB
 | [`CouplingModule`](couplingmodule.md) | `code.struct` | — | `crates/robby-render/src/view/deps.rs:85:1` |
 | [`CouplingFn`](couplingfn.md) | `code.struct` | — | `crates/robby-render/src/view/deps.rs:94:1` |
 | [`impl PackageStructure`](impl-packagestructure.md) | `code.impl` | — | `crates/robby-render/src/view/deps.rs:103:1` |
-| [`impl CouplingGraph`](impl-couplinggraph.md) | `code.impl` | — | `crates/robby-render/src/view/deps.rs:203:1` |
-| [`package_edges`](package-edges.md) | `code.function` | 71 | `crates/robby-render/src/view/deps.rs:461:1` |
-| [`finalize_edges`](finalize-edges.md) | `code.function` | 28 | `crates/robby-render/src/view/deps.rs:580:1` |
-| [`build_package_tree`](build-package-tree.md) | `code.function` | 7 | `crates/robby-render/src/view/deps.rs:615:1` |
-| [`build_coupling_tree`](build-coupling-tree.md) | `code.function` | 3 | `crates/robby-render/src/view/deps.rs:639:1` |
-| [`package_leaf`](package-leaf.md) | `code.function` | 6 | `crates/robby-render/src/view/deps.rs:653:1` |
-| [`insert_module`](insert-module.md) | `code.function` | 11 | `crates/robby-render/src/view/deps.rs:663:1` |
-| [`is_callable`](is-callable.md) | `code.function` | 1 | `crates/robby-render/src/view/deps.rs:680:1` |
-| [`is_under_fqn`](is-under-fqn.md) | `code.function` | 2 | `crates/robby-render/src/view/deps.rs:687:1` |
-| [`under_root_fqn`](under-root-fqn.md) | `code.function` | 1 | `crates/robby-render/src/view/deps.rs:691:1` |
-| [`owning_in_scope`](owning-in-scope.md) | `code.function` | 12 | `crates/robby-render/src/view/deps.rs:695:1` |
-| [`container_of`](container-of.md) | `code.function` | 10 | `crates/robby-render/src/view/deps.rs:714:1` |
-| [`crate_of`](crate-of.md) | `code.function` | 7 | `crates/robby-render/src/view/deps.rs:729:1` |
-| [`lift_to_scope`](lift-to-scope.md) | `code.function` | 10 | `crates/robby-render/src/view/deps.rs:743:1` |
-| [`best_scope_prefix`](best-scope-prefix.md) | `code.function` | 8 | `crates/robby-render/src/view/deps.rs:761:1` |
-| [`is_direct_package`](is-direct-package.md) | `code.function` | 4 | `crates/robby-render/src/view/deps.rs:784:1` |
-| [`tarjan`](tarjan.md) | `code.function` | 9 | `crates/robby-render/src/view/deps.rs:792:1` |
-| [`topological_layers`](topological-layers.md) | `code.function` | 45 | `crates/robby-render/src/view/deps.rs:863:1` |
+| [`impl CouplingGraph`](impl-couplinggraph.md) | `code.impl` | — | `crates/robby-render/src/view/deps.rs:197:1` |
+| [`package_edges`](package-edges.md) | `code.function` | 73 | `crates/robby-render/src/view/deps.rs:453:1` |
+| [`finalize_edges`](finalize-edges.md) | `code.function` | 30 | `crates/robby-render/src/view/deps.rs:563:1` |
+| [`build_package_tree`](build-package-tree.md) | `code.function` | 7 | `crates/robby-render/src/view/deps.rs:598:1` |
+| [`build_coupling_tree`](build-coupling-tree.md) | `code.function` | 3 | `crates/robby-render/src/view/deps.rs:622:1` |
+| [`package_leaf`](package-leaf.md) | `code.function` | 6 | `crates/robby-render/src/view/deps.rs:636:1` |
+| [`insert_module`](insert-module.md) | `code.function` | 11 | `crates/robby-render/src/view/deps.rs:646:1` |
+| [`is_callable`](is-callable.md) | `code.function` | 1 | `crates/robby-render/src/view/deps.rs:663:1` |
+| [`is_under_fqn`](is-under-fqn.md) | `code.function` | 2 | `crates/robby-render/src/view/deps.rs:670:1` |
+| [`under_root_fqn`](under-root-fqn.md) | `code.function` | 1 | `crates/robby-render/src/view/deps.rs:674:1` |
+| [`owning_in_scope`](owning-in-scope.md) | `code.function` | 12 | `crates/robby-render/src/view/deps.rs:678:1` |
+| [`container_of`](container-of.md) | `code.function` | 10 | `crates/robby-render/src/view/deps.rs:697:1` |
+| [`crate_of`](crate-of.md) | `code.function` | 7 | `crates/robby-render/src/view/deps.rs:712:1` |
+| [`lift_to_scope`](lift-to-scope.md) | `code.function` | 10 | `crates/robby-render/src/view/deps.rs:723:1` |
+| [`best_scope_prefix`](best-scope-prefix.md) | `code.function` | 8 | `crates/robby-render/src/view/deps.rs:741:1` |
+| [`is_direct_package`](is-direct-package.md) | `code.function` | 4 | `crates/robby-render/src/view/deps.rs:764:1` |
+| [`tarjan`](tarjan.md) | `code.function` | 9 | `crates/robby-render/src/view/deps.rs:772:1` |
+| [`topological_layers`](topological-layers.md) | `code.function` | 45 | `crates/robby-render/src/view/deps.rs:843:1` |
 
 ## Imports
 

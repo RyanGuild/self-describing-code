@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-extract/src/rust.rs:581`](../../../../crates/robby-extract/src/rust.rs#L581) |
+| location | [`crates/robby-extract/src/rust.rs:584`](../../../../crates/robby-extract/src/rust.rs#L584) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -14,11 +14,17 @@ impl ProcBuilder<'_, '_> {
         let from = sanitize(&self.me);
         let to_id = sanitize(to);
         if from == to_id {
-            self.process
-                .participant(to_id.clone(), self.me.clone(), Kind::from(kind::code::FUNCTION));
+            self.process.participant(
+                to_id.clone(),
+                self.me.clone(),
+                Kind::from(kind::code::FUNCTION),
+            );
         } else {
-            self.process
-                .participant(to_id.clone(), to.to_owned(), Kind::from(kind::code::FUNCTION));
+            self.process.participant(
+                to_id.clone(),
+                to.to_owned(),
+                Kind::from(kind::code::FUNCTION),
+            );
         }
         self.process.step(Step {
             from,
@@ -70,7 +76,7 @@ impl ProcBuilder<'_, '_> {
 |---|---|
 | kind | `code.method` |
 | signature | `fn emit(5)` |
-| location | [`crates/robby-extract/src/rust.rs:582`](../../../../crates/robby-extract/src/rust.rs#L582) |
+| location | [`crates/robby-extract/src/rust.rs:585`](../../../../crates/robby-extract/src/rust.rs#L585) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -78,11 +84,17 @@ fn emit(&mut self, to: &str, label: String, step_kind: StepKind, span: Span) {
         let from = sanitize(&self.me);
         let to_id = sanitize(to);
         if from == to_id {
-            self.process
-                .participant(to_id.clone(), self.me.clone(), Kind::from(kind::code::FUNCTION));
+            self.process.participant(
+                to_id.clone(),
+                self.me.clone(),
+                Kind::from(kind::code::FUNCTION),
+            );
         } else {
-            self.process
-                .participant(to_id.clone(), to.to_owned(), Kind::from(kind::code::FUNCTION));
+            self.process.participant(
+                to_id.clone(),
+                to.to_owned(),
+                Kind::from(kind::code::FUNCTION),
+            );
         }
         self.process.step(Step {
             from,
@@ -113,12 +125,12 @@ sequenceDiagram
     emit-->>clone: to_id.clone()
     emit-->>clone: self.me.clone()
     emit-->>Kind__from: Kind::from(kind::code::FUNCTION)
-    emit-->>participant: self.process .participant(to_id.clone(), self.me.clone(), Kind::from(...
+    emit-->>participant: self.process.participant( to_id.clone(), self.me.clone(), Kind::from(...
     else else
     emit-->>clone: to_id.clone()
     emit-->>to_owned: to.to_owned()
     emit-->>Kind__from: Kind::from(kind::code::FUNCTION)
-    emit-->>participant: self.process .participant(to_id.clone(), to.to_owned(), Kind::from(ki...
+    emit-->>participant: self.process.participant( to_id.clone(), to.to_owned(), Kind::from(ki...
     end
     emit-->>Some: Some(span)
     emit-->>clone: self.blocks.clone()
@@ -143,7 +155,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn push_block(3)` |
-| location | [`crates/robby-extract/src/rust.rs:603`](../../../../crates/robby-extract/src/rust.rs#L603) |
+| location | [`crates/robby-extract/src/rust.rs:612`](../../../../crates/robby-extract/src/rust.rs#L612) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -176,7 +188,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn branch(2)` |
-| location | [`crates/robby-extract/src/rust.rs:611`](../../../../crates/robby-extract/src/rust.rs#L611) |
+| location | [`crates/robby-extract/src/rust.rs:620`](../../../../crates/robby-extract/src/rust.rs#L620) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -207,7 +219,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn pop_block(1)` |
-| location | [`crates/robby-extract/src/rust.rs:617`](../../../../crates/robby-extract/src/rust.rs#L617) |
+| location | [`crates/robby-extract/src/rust.rs:626`](../../../../crates/robby-extract/src/rust.rs#L626) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

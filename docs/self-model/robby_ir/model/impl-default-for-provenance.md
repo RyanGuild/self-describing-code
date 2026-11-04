@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:121`](../../../../crates/robby-ir/src/model.rs#L121) |
+| location | [`crates/robby-ir/src/model.rs:134`](../../../../crates/robby-ir/src/model.rs#L134) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -30,7 +30,7 @@ impl Default for Provenance {
 |---|---|
 | kind | `code.method` |
 | signature | `fn default(0)` |
-| location | [`crates/robby-ir/src/model.rs:122`](../../../../crates/robby-ir/src/model.rs#L122) |
+| location | [`crates/robby-ir/src/model.rs:135`](../../../../crates/robby-ir/src/model.rs#L135) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

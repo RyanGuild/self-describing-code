@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn frame_detail_includes_execution_mermaid_for_call_path()` |
-| location | [`crates/robby-render/tests/web.rs:298`](../../../../crates/robby-render/tests/web.rs#L298) |
+| location | [`crates/robby-render/tests/web.rs:303`](../../../../crates/robby-render/tests/web.rs#L303) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,7 +18,10 @@ fn frame_detail_includes_execution_mermaid_for_call_path() {
         .get(&NodeId::symbol("rust", "demo::bin_a::main"))
         .expect("main");
     let detail = FrameDetail::from_node_in_doc(node, &sources, Some(&doc));
-    let mermaid = detail.execution_mermaid.as_deref().expect("execution_mermaid");
+    let mermaid = detail
+        .execution_mermaid
+        .as_deref()
+        .expect("execution_mermaid");
     assert!(
         mermaid.starts_with("sequenceDiagram"),
         "expected sequenceDiagram, got {mermaid:?}"
@@ -49,8 +52,8 @@ sequenceDiagram
     frame_detail_includes_execution_mermaid_for_call_path-->>expect: doc .get(&NodeId::symbol('rust', 'demo::bin_a::main')) .expect('main')
     frame_detail_includes_execution_mermaid_for_call_path-->>Some: Some(&doc)
     frame_detail_includes_execution_mermaid_for_call_path-->>FrameDetail__from_node_in_doc: FrameDetail::from_node_in_doc(node, &sources, Some(&doc))
-    frame_detail_includes_execution_mermaid_for_call_path-->>as_deref: detail.execution_mermaid.as_deref()
-    frame_detail_includes_execution_mermaid_for_call_path-->>expect: detail.execution_mermaid.as_deref().expect('execution_mermaid')
+    frame_detail_includes_execution_mermaid_for_call_path-->>as_deref: detail .execution_mermaid .as_deref()
+    frame_detail_includes_execution_mermaid_for_call_path-->>expect: detail .execution_mermaid .as_deref() .expect('execution_mermaid')
     frame_detail_includes_execution_mermaid_for_call_path-->>frame_detail_includes_execution_mermaid_for_call_path: assert!( mermaid.starts_with('sequenceDiagram'), 'expected sequenceDi...
     frame_detail_includes_execution_mermaid_for_call_path-->>frame_detail_includes_execution_mermaid_for_call_path: assert!( mermaid.contains('shared') || mermaid.contains('helper'), 'e...
 ```

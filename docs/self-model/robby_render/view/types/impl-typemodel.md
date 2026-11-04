@@ -113,7 +113,8 @@ impl TypeModel {
             }
         }
 
-        relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
+        relations
+            .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
         relations.dedup();
 
         Self { classes, relations }
@@ -253,7 +254,8 @@ pub fn from_module(doc: &Document, root: &NodeId) -> Self {
             }
         }
 
-        relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
+        relations
+            .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind)));
         relations.dedup();
 
         Self { classes, relations }
@@ -366,7 +368,7 @@ sequenceDiagram
     end
     end
     from_module-->>cmp: (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from_id, &b.to_id, b.kind))
-    from_module-->>sort_by: relations.sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.from...
+    from_module-->>sort_by: relations .sort_by(|a, b| (&a.from_id, &a.to_id, a.kind).cmp(&(&b.fro...
     from_module-->>dedup: relations.dedup()
 ```
 
@@ -379,7 +381,7 @@ sequenceDiagram
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::util::is_type`](../../util/is-type.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
 - calls → [`robby_render::util::strip_generics`](../../util/strip-generics.md)
 - calls → [`robby_render::view::select::collect`](../select/collect.md)
@@ -416,7 +418,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-render/src/view/types.rs:160`](../../../../../crates/robby-render/src/view/types.rs#L160) |
+| location | [`crates/robby-render/src/view/types.rs:161`](../../../../../crates/robby-render/src/view/types.rs#L161) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

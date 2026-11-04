@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:242`](../../../../../apps/site/src/viewer.ts#L242) |
+| location | [`apps/site/src/viewer.ts:227`](../../../../../apps/site/src/viewer.ts#L227) |
 | provenance | extractor · confidence 1.00 |
 
 > *
@@ -14,15 +14,16 @@
 >  * local grid on the 1600×1000 canvas does not.
 
 ```rust
-function screenRectFor(f: SceneFrame, cam: Camera): ScreenRect {
-  if (f.parent === focusId && f.local_in_parent) {
+function screenRectFor(f: SceneFrame, cam: Camera) {
+  if (f.parent === focusId && f.local_in_parent && scene) {
     const parent = screenRectFromWorld(frame(focusId), cam);
     const loc = f.local_in_parent;
+    const { w, h } = scene.canvas;
     return {
-      x: parent.x + (loc.x / CANVAS_W) * parent.w,
-      y: parent.y + (loc.y / CANVAS_H) * parent.h,
-      w: Math.max((loc.w / CANVAS_W) * parent.w, 1),
-      h: Math.max((loc.h / CANVAS_H) * parent.h, 1),
+      x: parent.x + (loc.x / w) * parent.w,
+      y: parent.y + (loc.y / h) * parent.h,
+      w: Math.max((loc.w / w) * parent.w, 1),
+      h: Math.max((loc.h / h) * parent.h, 1),
     };
   }
   return screenRectFromWorld(f, cam);

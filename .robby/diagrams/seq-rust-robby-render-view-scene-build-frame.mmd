@@ -59,7 +59,7 @@ sequenceDiagram
     build_frame-->>map_local_to_world: map_local_to_world(&world, &local)
     build_frame-->>clone: sid.clone()
     build_frame-->>Some: Some(sid.clone())
-    build_frame-->>build_frame: build_frame( doc, child, Some(sid.clone()), local, child_world, frame...
+    build_frame-->>build_frame: build_frame(doc, child, Some(sid.clone()), local, child_world, frames)
     build_frame-->>push: frame.children.push(child_sid)
     end
     build_frame-->>clone: sid.clone()

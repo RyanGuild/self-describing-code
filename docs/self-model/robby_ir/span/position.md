@@ -12,7 +12,9 @@
 
 ```rust
 /// A single point in a source file.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, JsonSchema,
+)]
 pub struct Position {
     /// 1-based line number.
     pub line: u32,
@@ -25,7 +27,7 @@ pub struct Position {
 
 **Fields and variants**
 
-- `line` — `crates/robby-ir/src/span.rs:13:5`
-- `column` — `crates/robby-ir/src/span.rs:15:5`
-- `byte` — `crates/robby-ir/src/span.rs:17:5`
+- `line` — `crates/robby-ir/src/span.rs:15:5`
+- `column` — `crates/robby-ir/src/span.rs:17:5`
+- `byte` — `crates/robby-ir/src/span.rs:19:5`
 

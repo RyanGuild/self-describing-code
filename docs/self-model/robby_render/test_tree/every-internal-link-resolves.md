@@ -23,7 +23,10 @@ fn every_internal_link_resolves() {
         let dir = page.path.parent().unwrap_or(Path::new(""));
         for link in markdown_links(&page.body) {
             let target = link.split('#').next().unwrap_or("");
-            if !target.ends_with(".md") {
+            if !std::path::Path::new(target)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
+            {
                 continue;
             }
             let resolved = normalize(&dir.join(target));
@@ -54,7 +57,10 @@ sequenceDiagram
     participant markdown_links as markdown_links
     participant split as split
     participant next as next
-    participant ends_with as ends_with
+    participant std__path__Path__new as std::path::Path::new
+    participant extension as extension
+    participant eq_ignore_ascii_case as eq_ignore_ascii_case
+    participant is_some_and as is_some_and
     participant join as join
     participant normalize as normalize
     participant contains as contains
@@ -75,7 +81,10 @@ sequenceDiagram
     every_internal_link_resolves-->>split: link.split(' ')
     every_internal_link_resolves-->>next: link.split(' ').next()
     every_internal_link_resolves-->>unwrap_or: link.split(' ').next().unwrap_or('')
-    every_internal_link_resolves-->>ends_with: target.ends_with('.md')
+    every_internal_link_resolves-->>std__path__Path__new: std::path::Path::new(target)
+    every_internal_link_resolves-->>extension: std::path::Path::new(target) .extension()
+    every_internal_link_resolves-->>eq_ignore_ascii_case: ext.eq_ignore_ascii_case('md')
+    every_internal_link_resolves-->>is_some_and: std::path::Path::new(target) .extension() .is_some_and(|ext| ext.eq_i...
     every_internal_link_resolves-->>join: dir.join(target)
     every_internal_link_resolves-->>normalize: normalize(&dir.join(target))
     every_internal_link_resolves-->>contains: known.contains(&resolved)
@@ -88,7 +97,7 @@ sequenceDiagram
     every_internal_link_resolves-->>every_internal_link_resolves: assert!(broken.is_empty(), 'broken links:\n{}', broken.join('\n'))
 ```
 
-21 steps · 0 observed · 21 possible only
+24 steps · 0 observed · 24 possible only
 
 **Edges**
 
@@ -97,6 +106,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::test_tree::markdown_links`](markdown-links.md)
+- calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::test_tree::normalize`](normalize.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../view/scene/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)

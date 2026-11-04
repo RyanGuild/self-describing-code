@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn extract_file(     doc: &mut Document,     krate: &Krate,     file: &Path,     pending: &mut Vec<PendingCall>, ) -> Result<()>` |
-| location | [`crates/robby-extract/src/rust.rs:132`](../../../../crates/robby-extract/src/rust.rs#L132) |
+| location | [`crates/robby-extract/src/rust.rs:142`](../../../../crates/robby-extract/src/rust.rs#L142) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,7 +18,13 @@ fn extract_file(
 ) -> Result<()> {
     let source = fs::read_to_string(file).with_context(|| format!("reading {}", file.display()))?;
     let rel = file
-        .strip_prefix(krate.dir.parent().and_then(|p| p.parent()).unwrap_or(&krate.dir))
+        .strip_prefix(
+            krate
+                .dir
+                .parent()
+                .and_then(|p| p.parent())
+                .unwrap_or(&krate.dir),
+        )
         .unwrap_or(file)
         .to_string_lossy()
         .replace('\\', "/");
@@ -79,14 +85,14 @@ sequenceDiagram
     extract_file-->>extract_file: format!('reading {}', file.display())
     extract_file-->>with_context: fs::read_to_string(file).with_context(|| format!('reading {}', file.d...
     extract_file-->>extract_file: ? (propagate)
-    extract_file-->>parent: krate.dir.parent()
+    extract_file-->>parent: krate .dir .parent()
     extract_file-->>parent: p.parent()
-    extract_file-->>and_then: krate.dir.parent().and_then(|p| p.parent())
-    extract_file-->>unwrap_or: krate.dir.parent().and_then(|p| p.parent()).unwrap_or(&krate.dir)
-    extract_file-->>strip_prefix: file .strip_prefix(krate.dir.parent().and_then(|p| p.parent()).unwrap...
-    extract_file-->>unwrap_or: file .strip_prefix(krate.dir.parent().and_then(|p| p.parent()).unwrap...
-    extract_file-->>to_string_lossy: file .strip_prefix(krate.dir.parent().and_then(|p| p.parent()).unwrap...
-    extract_file-->>replace: file .strip_prefix(krate.dir.parent().and_then(|p| p.parent()).unwrap...
+    extract_file-->>and_then: krate .dir .parent() .and_then(|p| p.parent())
+    extract_file-->>unwrap_or: krate .dir .parent() .and_then(|p| p.parent()) .unwrap_or(&krate.dir)
+    extract_file-->>strip_prefix: file .strip_prefix( krate .dir .parent() .and_then(|p| p.parent()) .u...
+    extract_file-->>unwrap_or: file .strip_prefix( krate .dir .parent() .and_then(|p| p.parent()) .u...
+    extract_file-->>to_string_lossy: file .strip_prefix( krate .dir .parent() .and_then(|p| p.parent()) .u...
+    extract_file-->>replace: file .strip_prefix( krate .dir .parent() .and_then(|p| p.parent()) .u...
     extract_file-->>clone: rel.clone()
     extract_file-->>declare_file: doc.declare_file(rel.clone())
     extract_file-->>syn__parse_file: syn::parse_file(&source)

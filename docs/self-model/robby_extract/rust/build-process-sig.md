@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn build_process_sig(     sig: &syn::Signature,     block: &syn::Block,     ctx: &Ctx<'_>,     fqn: &str,     pending: &mut Vec<PendingCall>, ) -> Process` |
-| location | [`crates/robby-extract/src/rust.rs:546`](../../../../crates/robby-extract/src/rust.rs#L546) |
+| location | [`crates/robby-extract/src/rust.rs:549`](../../../../crates/robby-extract/src/rust.rs#L549) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -28,7 +28,7 @@ fn build_process_sig(
     };
     builder.process.participant(
         sanitize(&me),
-        format!("{}()", me),
+        format!("{me}()"),
         Kind::from(kind::code::FUNCTION),
     );
     let _ = sig;
@@ -61,9 +61,9 @@ sequenceDiagram
     build_process_sig-->>clone: me.clone()
     build_process_sig-->>to_owned: fqn.to_owned()
     build_process_sig-->>sanitize: sanitize(&me)
-    build_process_sig-->>build_process_sig: format!('{}()', me)
+    build_process_sig-->>build_process_sig: format!('{me}()')
     build_process_sig-->>Kind__from: Kind::from(kind::code::FUNCTION)
-    build_process_sig-->>participant: builder.process.participant( sanitize(&me), format!('{}()', me), Kind...
+    build_process_sig-->>participant: builder.process.participant( sanitize(&me), format!('{me}()'), Kind::...
     build_process_sig-->>walk_stmts: walk_stmts(&mut builder, &block.stmts)
 ```
 

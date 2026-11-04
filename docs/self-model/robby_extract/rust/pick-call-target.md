@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn pick_call_target(caller_fqn: &str, targets: &[NodeId]) -> (NodeId, f32)` |
-| location | [`crates/robby-extract/src/rust.rs:902`](../../../../crates/robby-extract/src/rust.rs#L902) |
+| location | [`crates/robby-extract/src/rust.rs:908`](../../../../crates/robby-extract/src/rust.rs#L908) |
 | provenance | extractor · confidence 1.00 |
 
 > Prefer the callee in the same module as the caller; then longest shared
@@ -25,7 +25,7 @@ fn pick_call_target(caller_fqn: &str, targets: &[NodeId]) -> (NodeId, f32) {
         .map(|target| {
             let target_fqn = id_fqn(target);
             let target_mod = module_prefix(target_fqn);
-            let exact = if target_mod == caller_mod { 1 } else { 0 };
+            let exact = i32::from(target_mod == caller_mod);
             let shared = shared_module_score(caller_mod, target_mod) as i32;
             // Shorter FQN wins ties (crate::run over crate::nested::run).
             let len = target_fqn.len();
@@ -56,6 +56,7 @@ sequenceDiagram
     participant module_prefix as module_prefix
     participant iter as iter
     participant id_fqn as id_fqn
+    participant i32__from as i32::from
     participant shared_module_score as shared_module_score
     participant map as map
     participant collect as collect
@@ -69,6 +70,7 @@ sequenceDiagram
     pick_call_target-->>iter: targets .iter()
     pick_call_target-->>id_fqn: id_fqn(target)
     pick_call_target-->>module_prefix: module_prefix(target_fqn)
+    pick_call_target-->>i32__from: i32::from(target_mod == caller_mod)
     pick_call_target-->>shared_module_score: shared_module_score(caller_mod, target_mod)
     pick_call_target-->>len: target_fqn.len()
     pick_call_target-->>map: targets .iter() .map(|target| { let target_fqn = id_fqn(target) let ...
@@ -77,19 +79,21 @@ sequenceDiagram
     pick_call_target-->>clone: best.clone()
 ```
 
-13 steps · 0 observed · 13 possible only
+14 steps · 0 observed · 14 possible only
 
 **Edges**
 
 - calls → [`robby_extract::rust::module_prefix`](module-prefix.md)
 - calls → [`robby_extract::rust::id_fqn`](id-fqn.md)
 - calls → [`robby_extract::rust::module_prefix`](module-prefix.md)
+- calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
 - calls → [`robby_extract::rust::shared_module_score`](shared-module-score.md)
 - calls → [`robby_render::view::select::collect`](../../robby_render/view/select/collect.md)
 
 ## References
 
 - calls → [`robby_extract::rust`](index.md) — id_fqn, module_prefix, shared_module_score
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — from
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect
 
 ## Referenced by

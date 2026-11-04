@@ -6,15 +6,19 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn nav(doc: &Document, node: &Node, page: &Path, item: bool) -> String` |
-| location | [`crates/robby-render/src/tree.rs:387`](../../../../crates/robby-render/src/tree.rs#L387) |
+| location | [`crates/robby-render/src/tree.rs:384`](../../../../crates/robby-render/src/tree.rs#L384) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn nav(doc: &Document, node: &Node, page: &Path, item: bool) -> String {
     let mut out = String::new();
-    let _ = write!(out, "[Self-model]({})", rel_link(page, Path::new("README.md")));
+    let _ = write!(
+        out,
+        "[Self-model]({})",
+        rel_link(page, Path::new("README.md"))
+    );
 
-    let crate_dir = crate_of(node).unwrap_or_default();
+    let crate_dir = crate_of(node);
 
     let parent_target = if item {
         node.parent
@@ -42,11 +46,10 @@ fn nav(doc: &Document, node: &Node, page: &Path, item: bool) -> String {
                 .map(|parent| short_fqn(parent, &crate_dir))
                 .unwrap_or_default()
         } else {
-            node.parent
-                .as_ref()
-                .and_then(|id| doc.get(id))
-                .map(|parent| short_fqn(parent, &crate_dir))
-                .unwrap_or_else(|| "crate".to_owned())
+            node.parent.as_ref().and_then(|id| doc.get(id)).map_or_else(
+                || "crate".to_owned(),
+                |parent| short_fqn(parent, &crate_dir),
+            )
         };
         let _ = write!(out, " · [{}]({})", label, rel_link(page, &target));
     }
@@ -62,7 +65,6 @@ sequenceDiagram
     participant nav as nav()
     participant String__new as String::new
     participant crate_of as crate_of
-    participant unwrap_or_default as unwrap_or_default
     participant as_ref as as_ref
     participant get as get
     participant and_then as and_then
@@ -72,13 +74,13 @@ sequenceDiagram
     participant Some as Some
     participant short_fqn as short_fqn
     participant map as map
+    participant unwrap_or_default as unwrap_or_default
     participant to_owned as to_owned
-    participant unwrap_or_else as unwrap_or_else
+    participant map_or_else as map_or_else
     participant push_str as push_str
     nav-->>String__new: String::new()
-    nav-->>nav: write!(out, '[Self-model]({})', rel_link(page, Path::new('README.md')))
+    nav-->>nav: write!( out, '[Self-model]({})', rel_link(page, Path::new('README.md'...
     nav-->>crate_of: crate_of(node)
-    nav-->>unwrap_or_default: crate_of(node).unwrap_or_default()
     alt item
     nav-->>as_ref: node.parent .as_ref()
     nav-->>get: doc.get(id)
@@ -107,20 +109,19 @@ sequenceDiagram
     nav-->>map: node.parent .as_ref() .and_then(|id| doc.get(id)) .map(|parent| short...
     nav-->>unwrap_or_default: node.parent .as_ref() .and_then(|id| doc.get(id)) .map(|parent| short...
     else else
-    nav-->>as_ref: node.parent .as_ref()
+    nav-->>as_ref: node.parent.as_ref()
     nav-->>get: doc.get(id)
-    nav-->>and_then: node.parent .as_ref() .and_then(|id| doc.get(id))
-    nav-->>short_fqn: short_fqn(parent, &crate_dir)
-    nav-->>map: node.parent .as_ref() .and_then(|id| doc.get(id)) .map(|parent| short...
+    nav-->>and_then: node.parent.as_ref().and_then(|id| doc.get(id))
     nav-->>to_owned: 'crate'.to_owned()
-    nav-->>unwrap_or_else: node.parent .as_ref() .and_then(|id| doc.get(id)) .map(|parent| short...
+    nav-->>short_fqn: short_fqn(parent, &crate_dir)
+    nav-->>map_or_else: node.parent.as_ref().and_then(|id| doc.get(id)).map_or_else( || 'crat...
     end
     nav-->>nav: write!(out, ' · [{}]({})', label, rel_link(page, &target))
     end
     nav-->>push_str: out.push_str('\n\n')
 ```
 
-32 steps · 0 observed · 32 possible only
+30 steps · 0 observed · 30 possible only
 
 **Edges**
 

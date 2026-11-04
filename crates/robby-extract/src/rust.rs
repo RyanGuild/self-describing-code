@@ -226,7 +226,6 @@ fn walk_items(
                             &NodeId::symbol("rust", &fqn),
                         );
                         doc.merge(child);
-                        node.children.push(NodeId::symbol("rust", &child_fqn));
                     }
                 }
                 doc.merge(node);
@@ -243,7 +242,6 @@ fn walk_items(
                         span_of(variant, ctx),
                         &NodeId::symbol("rust", &fqn),
                     ));
-                    node.children.push(NodeId::symbol("rust", &child_fqn));
                 }
                 doc.merge(node);
             }
@@ -264,7 +262,6 @@ fn walk_items(
                             span_of(m, ctx),
                             &NodeId::symbol("rust", &fqn),
                         ));
-                        node.children.push(NodeId::symbol("rust", &child_fqn));
                     }
                 }
                 doc.merge(node);
@@ -277,7 +274,7 @@ fn walk_items(
                     .map(|(path, _)| format!("{} for ", path_text(path)))
                     .unwrap_or_default();
                 let fqn = format!("{fqn_base}::impl {trait_part}{self_name}");
-                let mut node = item_node(kind::code::IMPL, &fqn, span.clone(), parent);
+                let node = item_node(kind::code::IMPL, &fqn, span.clone(), parent);
                 for ii in &i.items {
                     match ii {
                         syn::ImplItem::Fn(m) => {
@@ -295,7 +292,6 @@ fn walk_items(
                                 &m.sig, &m.block, ctx, &child_fqn, pending,
                             ));
                             doc.merge(child);
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         syn::ImplItem::Const(c) => {
                             let child_fqn = format!("{fqn}::{}", c.ident);
@@ -305,7 +301,6 @@ fn walk_items(
                                 span_of(c, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             ));
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         syn::ImplItem::Type(t) => {
                             let child_fqn = format!("{fqn}::{}", t.ident);
@@ -315,7 +310,6 @@ fn walk_items(
                                 span_of(t, ctx),
                                 &NodeId::symbol("rust", &fqn),
                             ));
-                            node.children.push(NodeId::symbol("rust", &child_fqn));
                         }
                         _ => {}
                     }
@@ -324,9 +318,8 @@ fn walk_items(
             }
             Item::Mod(m) => {
                 let fqn = format!("{fqn_base}::{}", m.ident);
-                let mut node = item_node(kind::code::MODULE, &fqn, span.clone(), parent);
+                let node = item_node(kind::code::MODULE, &fqn, span.clone(), parent);
                 if let Some((_, items)) = &m.content {
-                    node.children.clear();
                     doc.merge(node);
                     walk_items(doc, items, &NodeId::symbol("rust", &fqn), ctx, pending);
                 } else {

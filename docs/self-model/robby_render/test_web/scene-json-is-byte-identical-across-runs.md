@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn scene_json_is_byte_identical_across_runs()` |
-| location | [`crates/robby-render/tests/web.rs:136`](../../../../crates/robby-render/tests/web.rs#L136) |
+| location | [`crates/robby-render/tests/web.rs:141`](../../../../crates/robby-render/tests/web.rs#L141) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

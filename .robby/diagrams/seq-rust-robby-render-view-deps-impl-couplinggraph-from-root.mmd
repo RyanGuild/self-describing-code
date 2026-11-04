@@ -60,21 +60,21 @@ sequenceDiagram
     from_root-->>as_str: target.id.as_str()
     from_root-->>stable_id: stable_id(target.id.as_str())
     from_root-->>clone: from_sid.clone()
-    from_root-->>entry: participants.entry(from_sid.clone())
+    from_root-->>entry: participants .entry(from_sid.clone())
     from_root-->>clone: node.id.clone()
     from_root-->>clone: from_sid.clone()
     from_root-->>clone: node.name.clone()
     from_root-->>as_str: from_mod.id.as_str()
     from_root-->>stable_id: stable_id(from_mod.id.as_str())
-    from_root-->>or_insert_with: participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn { i...
+    from_root-->>or_insert_with: participants .entry(from_sid.clone()) .or_insert_with(|| CouplingFn {...
     from_root-->>clone: to_sid.clone()
-    from_root-->>entry: participants.entry(to_sid.clone())
+    from_root-->>entry: participants .entry(to_sid.clone())
     from_root-->>clone: target.id.clone()
     from_root-->>clone: to_sid.clone()
     from_root-->>clone: target.name.clone()
     from_root-->>as_str: to_mod.id.as_str()
     from_root-->>stable_id: stable_id(to_mod.id.as_str())
-    from_root-->>or_insert_with: participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn { id:...
+    from_root-->>or_insert_with: participants .entry(to_sid.clone()) .or_insert_with(|| CouplingFn { i...
     alt from_sid != to_sid
     from_root-->>entry: weights.entry((from_sid, to_sid))
     from_root-->>or_default: weights.entry((from_sid, to_sid)).or_default()

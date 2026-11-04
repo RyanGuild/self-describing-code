@@ -47,7 +47,7 @@ flowchart TB
 
 | | test_render | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **test_render** | · | 101 | 58 |
+| **test_render** | · | 92 | 58 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 ## References
@@ -89,14 +89,14 @@ flowchart TB
 | [`output_is_byte_identical_across_runs`](output-is-byte-identical-across-runs.md) | `code.function` | 3 | `crates/robby-render/tests/render.rs:122:1` |
 | [`stable_ids_are_pinned`](stable-ids-are-pinned.md) | `code.function` | 3 | `crates/robby-render/tests/render.rs:131:1` |
 | [`flowchart_clusters_modules`](flowchart-clusters-modules.md) | `code.function` | 25 | `crates/robby-render/tests/render.rs:140:1` |
-| [`dependencies_emits_package_weighted_and_dsm`](dependencies-emits-package-weighted-and-dsm.md) | `code.function` | 68 | `crates/robby-render/tests/render.rs:166:1` |
-| [`externals_and_comments_sections_render`](externals-and-comments-sections-render.md) | `code.function` | 126 | `crates/robby-render/tests/render.rs:259:1` |
-| [`class_diagram_marks_traits_as_interfaces`](class-diagram-marks-traits-as-interfaces.md) | `code.function` | 45 | `crates/robby-render/tests/render.rs:469:1` |
+| [`dependencies_emits_package_weighted_and_dsm`](dependencies-emits-package-weighted-and-dsm.md) | `code.function` | 59 | `crates/robby-render/tests/render.rs:169:1` |
+| [`externals_and_comments_sections_render`](externals-and-comments-sections-render.md) | `code.function` | 114 | `crates/robby-render/tests/render.rs:257:1` |
+| [`class_diagram_marks_traits_as_interfaces`](class-diagram-marks-traits-as-interfaces.md) | `code.function` | 38 | `crates/robby-render/tests/render.rs:434:1` |
 
 ## Imports
 
 - [`use robby_ir::kind::code;`](../../robby_ir/kind/code/index.md)
 - [`use robby_ir::{`](../../robby_ir/index.md)
-- [`use robby_render::{`](../index.md)
 - [`use robby_render::view::{CommentsView, ExternalsView};`](../view/index.md)
+- [`use robby_render::{`](../index.md)
 

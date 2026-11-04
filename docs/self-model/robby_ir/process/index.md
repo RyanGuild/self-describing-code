@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-ir/src/lib.rs:22`](../../../../crates/robby-ir/src/lib.rs#L22) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 43 |
+| nodes | 51 |
 
 ## Types
 
@@ -25,6 +25,7 @@ classDiagram
         Signal
         Decision
         Note
+        +as_str()
     }
     class Block {
         +kind
@@ -38,6 +39,7 @@ classDiagram
         Loop
         Par
         Break
+        +as_str()
     }
     class Step {
         +from
@@ -66,7 +68,10 @@ classDiagram
 
 ```mermaid
 flowchart TB
-    n_f5e61214f719e7ae["process"]
+    subgraph n_f5e61214f719e7ae["process"]
+        direction TB
+        n_ff7a0f92d7ba8793["tests"]
+    end
     n_9c636b098ca4450e(["robby_render"])
     n_f5e61214f719e7ae --> n_9c636b098ca4450e
 ```
@@ -77,25 +82,43 @@ flowchart TB
 flowchart TB
     subgraph n_f5e61214f719e7ae["process"]
         direction TB
+        n_e7a741a6cec5a5a8["as_str"]
         n_043f1293c7ad8c3c["default"]
         n_9aae883b9b569ac9["new"]
+        n_09b9bef2ec7f54ef["wire"]
     end
     n_043f1293c7ad8c3c --> n_9aae883b9b569ac9
+    n_09b9bef2ec7f54ef --> n_e7a741a6cec5a5a8
 ```
 
 ## Dependency matrix
 
-| | process | robby_render |
-|---|---:|---:|
-| **process** | · | 4 |
-| **robby_render** | | · |
+| | process | tests | robby_render |
+|---|---:|---:|---:|
+| **process** | · | | 4 |
+| **tests** | | · | |
+| **robby_render** | | | · |
 
 ## Comments
 
-- `crates/robby-ir/src/process.rs:100:5` (docs, `robby_ir::process::impl Process::participant`): "Add a participant, returning its index. Duplicate ids are ignored."
+- `crates/robby-ir/src/process.rs:111:1` (docs, `robby_ir::process::Process`): "The process a node performs, or the process a trace recorded."
+  ```
+  /// The process a node performs, or the process a trace recorded.
+  #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+  pub struct Process {
+      pub participants: Vec<Participant>,
+      pub steps: Vec<Step>,
+  }
+  ```
+- `crates/robby-ir/src/process.rs:126:5` (docs, `robby_ir::process::impl Process::participant`): "Add a participant, returning its index. Duplicate ids are ignored."
   ```
   /// Add a participant, returning its index. Duplicate ids are ignored.
-      pub fn participant(&mut self, id: impl Into<String>, label: impl Into<String>, kind: Kind) -> usize {
+      pub fn participant(
+          &mut self,
+          id: impl Into<String>,
+          label: impl Into<String>,
+          kind: Kind,
+      ) -> usize {
           let id = id.into();
           if let Some(idx) = self.participants.iter().position(|p| p.id == id) {
               return idx;
@@ -108,7 +131,7 @@ flowchart TB
           self.participants.len() - 1
       }
   ```
-- `crates/robby-ir/src/process.rs:118:5` (docs, `robby_ir::process::impl Process::absorb`): "Merge an observed process into this (static) one. Matching is by `(from, to, label)`. Steps seen at runtime are marked …"
+- `crates/robby-ir/src/process.rs:149:5` (docs, `robby_ir::process::impl Process::absorb`): "Merge an observed process into this (static) one. Matching is by `(from, to, label)`. Steps seen at runtime are marked …"
   ```
   /// Merge an observed process into this (static) one.
       ///
@@ -125,9 +148,11 @@ flowchart TB
   
           let mut matched = vec![false; observed.steps.len()];
           for step in &mut self.steps {
-              if let Some(idx) = observed.steps.iter().position(|o| {
-                  o.from == step.from && o.to == step.to && o.label == step.label
-              }) {
+              if let Some(idx) = observed
+                  .steps
+                  .iter()
+                  .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
+              {
                   step.observed = true;
                   matched[idx] = true;
               }
@@ -155,7 +180,20 @@ flowchart TB
       pub kind: Kind,
   }
   ```
-- `crates/robby-ir/src/process.rs:42:1` (docs, `robby_ir::process::Block`): "A control-flow frame enclosing a step. Frames form a stack per step. The renderer diffs consecutive stacks and emits `a…"
+- `crates/robby-ir/src/process.rs:43:5` (docs, `robby_ir::process::impl StepKind::as_str`): "Serde / display name. One mapping, shared by every renderer."
+  ```
+  /// Serde / display name. One mapping, shared by every renderer.
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Call => "call",
+              Self::Return => "return",
+              Self::Signal => "signal",
+              Self::Decision => "decision",
+              Self::Note => "note",
+          }
+      }
+  ```
+- `crates/robby-ir/src/process.rs:55:1` (docs, `robby_ir::process::Block`): "A control-flow frame enclosing a step. Frames form a stack per step. The renderer diffs consecutive stacks and emits `a…"
   ```
   /// A control-flow frame enclosing a step.
   ///
@@ -171,7 +209,20 @@ flowchart TB
       pub branch: Option<String>,
   }
   ```
-- `crates/robby-ir/src/process.rs:66:1` (docs, `robby_ir::process::Step`): "A single ordered interaction."
+- `crates/robby-ir/src/process.rs:80:5` (docs, `robby_ir::process::impl BlockKind::as_str`): "Mermaid block keyword. Matches the serde name."
+  ```
+  /// Mermaid block keyword. Matches the serde name.
+      pub fn as_str(self) -> &'static str {
+          match self {
+              Self::Alt => "alt",
+              Self::Opt => "opt",
+              Self::Loop => "loop",
+              Self::Par => "par",
+              Self::Break => "break",
+          }
+      }
+  ```
+- `crates/robby-ir/src/process.rs:92:1` (docs, `robby_ir::process::Step`): "A single ordered interaction."
   ```
   /// A single ordered interaction.
   #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -190,15 +241,6 @@ flowchart TB
       pub span: Option<Span>,
       #[serde(default, skip_serializing_if = "Vec::is_empty")]
       pub blocks: Vec<Block>,
-  }
-  ```
-- `crates/robby-ir/src/process.rs:85:1` (docs, `robby_ir::process::Process`): "The process a node performs, or the process a trace recorded."
-  ```
-  /// The process a node performs, or the process a trace recorded.
-  #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-  pub struct Process {
-      pub participants: Vec<Participant>,
-      pub steps: Vec<Step>,
   }
   ```
 ## References
@@ -221,18 +263,24 @@ flowchart TB
 - calls ← [`robby_render::view::execution::add_callable`](../../robby_render/view/execution/add-callable.md)
 - calls ← [`robby_render::view::execution::from_code_path`](../../robby_render/view/execution/from-code-path.md)
 
+## Modules
+
+- [`process::tests`](tests/index.md) — 4 nodes
+
 ## Items
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
 | [`Participant`](participant.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:18:1` |
 | [`StepKind`](stepkind.md) | `code.enum` | — | `crates/robby-ir/src/process.rs:32:1` |
-| [`Block`](block.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:42:1` |
-| [`BlockKind`](blockkind.md) | `code.enum` | — | `crates/robby-ir/src/process.rs:56:1` |
-| [`Step`](step.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:66:1` |
-| [`Process`](process.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:85:1` |
-| [`impl Process`](impl-process.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:92:1` |
-| [`impl Default for Process`](impl-default-for-process.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:148:1` |
+| [`impl StepKind`](impl-stepkind.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:42:1` |
+| [`Block`](block.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:55:1` |
+| [`BlockKind`](blockkind.md) | `code.enum` | — | `crates/robby-ir/src/process.rs:69:1` |
+| [`impl BlockKind`](impl-blockkind.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:79:1` |
+| [`Step`](step.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:92:1` |
+| [`Process`](process.md) | `code.struct` | — | `crates/robby-ir/src/process.rs:111:1` |
+| [`impl Process`](impl-process.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:118:1` |
+| [`impl Default for Process`](impl-default-for-process.md) | `code.impl` | — | `crates/robby-ir/src/process.rs:181:1` |
 
 ## Imports
 

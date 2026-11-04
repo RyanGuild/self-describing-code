@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 142 |
+| nodes | 128 |
 
 ## Package diagram
 
@@ -31,7 +31,6 @@ flowchart TB
     n_86f239b07be3914c --> n_9c636b098ca4450e
     n_8ece825e5a096dd6 --> n_16d52a19f68ec5ab
     n_8ece825e5a096dd6 --> n_356bf2c23da68961
-    n_8ece825e5a096dd6 --> n_86f239b07be3914c
     n_8ece825e5a096dd6 --> n_9c636b098ca4450e
     n_e78ea7618cf62376 --> n_356bf2c23da68961
     n_e78ea7618cf62376 --> n_9c636b098ca4450e
@@ -73,7 +72,6 @@ flowchart TB
         end
         subgraph n_86f239b07be3914c["model"]
             direction TB
-            n_98b5a48e23f9ce77["as_str"]
             n_1fd47a45d469dbd3["chat"]
             n_741f16d659f0d7a1["clamp_highlights"]
             n_6b7cb950250ead62["decide"]
@@ -96,7 +94,6 @@ flowchart TB
     n_06a3c84c55d2315c --> n_1dc5482c6035715d
     n_06a3c84c55d2315c --> n_bf449c22aab0cac2
     n_1dc04536ee84305f --> n_06a3c84c55d2315c
-    n_1dc04536ee84305f -->|"6"| n_98b5a48e23f9ce77
     n_1dc04536ee84305f --> n_ac63655d2a29ac8a
     n_1dc04536ee84305f --> n_bc7398dbf6481d10
     n_1dc04536ee84305f -->|"2"| n_c1f9e59730490224
@@ -105,7 +102,6 @@ flowchart TB
     n_61bd98d44e636f64 --> n_0c9bed56e6eb7735
     n_61bd98d44e636f64 --> n_1dc5482c6035715d
     n_6640bfd1fad137a4 --> n_25c66f4d06378b6c
-    n_6640bfd1fad137a4 -->|"2"| n_98b5a48e23f9ce77
     n_6b7cb950250ead62 --> n_1fd47a45d469dbd3
     n_6b7cb950250ead62 --> n_4776f1339beeeddf
     n_6b7cb950250ead62 --> n_7e53198b962ce312
@@ -116,10 +112,8 @@ flowchart TB
     n_777e907af8a70400 -->|"6"| n_ef8fad1e9c264788
     n_a1cd648afdfa4d43 --> n_6afbb71d759f3316
     n_a1cd648afdfa4d43 --> n_777e907af8a70400
-    n_a1cd648afdfa4d43 --> n_98b5a48e23f9ce77
     n_a1cd648afdfa4d43 --> n_ef8fad1e9c264788
     n_a1cd648afdfa4d43 --> n_fc6e94c13c15442e
-    n_ac63655d2a29ac8a --> n_98b5a48e23f9ce77
     n_b3ee4a2b7d6ddea0 --> n_1fd47a45d469dbd3
     n_b3ee4a2b7d6ddea0 --> n_4776f1339beeeddf
     n_b3ee4a2b7d6ddea0 --> n_6640bfd1fad137a4
@@ -130,17 +124,13 @@ flowchart TB
     n_bc7398dbf6481d10 --> n_61bd98d44e636f64
     n_bc7398dbf6481d10 --> n_bf449c22aab0cac2
     n_bf449c22aab0cac2 --> n_ef8fad1e9c264788
-    n_c1f9e59730490224 --> n_98b5a48e23f9ce77
     n_c2cf29bdaa0bcb16 --> n_cbea6bc844128b44
     n_c774f5ee6b8ef175 --> n_6afbb71d759f3316
     n_c774f5ee6b8ef175 --> n_777e907af8a70400
-    n_c774f5ee6b8ef175 --> n_98b5a48e23f9ce77
     n_c774f5ee6b8ef175 --> n_ef8fad1e9c264788
     n_c774f5ee6b8ef175 --> n_fc6e94c13c15442e
-    n_df84fdce0689b5ca -->|"3"| n_98b5a48e23f9ce77
     n_df84fdce0689b5ca --> n_ef8fad1e9c264788
     n_f240cdc427a11b5e --> n_25c66f4d06378b6c
-    n_f240cdc427a11b5e -->|"2"| n_98b5a48e23f9ce77
     n_f44edd6b2eb226ea -->|"2"| n_6afbb71d759f3316
     n_f44edd6b2eb226ea --> n_777e907af8a70400
     n_f44edd6b2eb226ea -->|"2"| n_ef8fad1e9c264788
@@ -155,24 +145,24 @@ flowchart TB
 
 ## Dependency matrix
 
-| | tests | openrouter | robby_agent | enrich | context | tests | model | robby_ir | robby_render |
+| | tests | openrouter | robby_agent | enrich | model | context | tests | robby_ir | robby_render |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | **tests** | · | | | | | | | | |
 | **openrouter** | | · | | | | | | 1 | 3 |
 | **robby_agent** | | | · | | | | | | |
-| **enrich** | | | | · | 1 | 17 | 7 | 26 | |
-| **context** | | | | | · | 3 | 8 | 12 | 3 |
-| **tests** | | | | | | · | | | |
-| **model** | | | | | | | · | 8 | 1 |
+| **enrich** | | | | · | 2 | 1 | 17 | 30 | |
+| **model** | | | | | · | | | 12 | 1 |
+| **context** | | | | | | · | 3 | 20 | 3 |
+| **tests** | | | | | | | · | | |
 | **robby_ir** | | | | | | | | · | |
 | **robby_render** | | | | | | | | | · |
 
 ## Comments
 
-- `crates/robby-agent/src/context.rs:148:1` (docs, `robby_agent::context::nearest_following_item`): "Nearest following sibling item (not comment/import), by span start."
+- `crates/robby-agent/src/context.rs:147:1` (docs, `robby_agent::context::nearest_following_item`): "Nearest following sibling item (not comment/import), by span start."
   ```
   /// Nearest following sibling item (not comment/import), by span start.
-  pub fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
+  pub(crate) fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
       let parent = comment.parent.as_ref().and_then(|id| doc.get(id))?;
       let comment_start = comment.span.as_ref()?.start.byte;
       let mut best: Option<(&Node, u32)> = None;
@@ -254,7 +244,7 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-agent/src/context.rs:185:1` (docs, `robby_agent::context::line_window`): "±20 lines around the node's span."
+- `crates/robby-agent/src/context.rs:184:1` (docs, `robby_agent::context::line_window`): "±20 lines around the node's span."
   ```
   /// ±20 lines around the node's span.
   fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String> {
@@ -275,11 +265,7 @@ flowchart TB
           out.push_str(line);
           out.push('\n');
       }
-      if out.is_empty() {
-          None
-      } else {
-          Some(out)
-      }
+      if out.is_empty() { None } else { Some(out) }
   }
   ```
 - `crates/robby-agent/src/enrich.rs:43:1` (docs, `robby_agent::enrich::enrich_comments`): "Run two-stage enrich for comments lacking an `agent.decision` child."
@@ -334,7 +320,7 @@ flowchart TB
       Ok(stats)
   }
   ```
-- `crates/robby-agent/src/model.rs:40:1` (docs, `robby_agent::model::ChatClient`): "Pluggable chat backend (OpenRouter or fakes in tests)."
+- `crates/robby-agent/src/model.rs:42:1` (docs, `robby_agent::model::ChatClient`): "Pluggable chat backend (OpenRouter or fakes in tests)."
   ```
   /// Pluggable chat backend (OpenRouter or fakes in tests).
   pub trait ChatClient {
@@ -343,6 +329,7 @@ flowchart TB
   ```
 ## References
 
+- calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — as_str
 - calls → [`robby_ir::model`](../robby_ir/model/index.md) — 5 items
 - calls → [`robby_ir::span`](../robby_ir/span/index.md) — is_empty, location
 - calls → [`robby_render::report`](../robby_render/report/index.md) — push
@@ -353,15 +340,12 @@ flowchart TB
 ## Referenced by
 
 - calls ← [`robby_cli::enrich_comments`](../robby_cli/enrich-comments.md)
-- calls ← [`robby_cli::example_self_model::run`](../robby_cli/example_self_model/run.md)
-- calls ← [`robby_cli::run`](../robby_cli/run.md)
-- calls ← [`robby_extract::typescript::extract_file`](../robby_extract/typescript/extract-file.md)
 
 ## Modules
 
 - [`context`](context/index.md) — 20 nodes
 - [`enrich`](enrich/index.md) — 36 nodes
-- [`model`](model/index.md) — 60 nodes
+- [`model`](model/index.md) — 46 nodes
 - [`openrouter`](openrouter/index.md) — 21 nodes
 
 ## Imports

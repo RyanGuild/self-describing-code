@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn owning_in_scope<'a>(     doc: &'a Document,     id: &NodeId,     scope: &BTreeSet<NodeId>, ) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/deps.rs:695`](../../../../../crates/robby-render/src/view/deps.rs#L695) |
+| location | [`crates/robby-render/src/view/deps.rs:678`](../../../../../crates/robby-render/src/view/deps.rs#L678) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

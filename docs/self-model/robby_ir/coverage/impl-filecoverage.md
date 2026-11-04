@@ -68,7 +68,6 @@ impl FileCoverage {
 - calls ← [`robby_ir::coverage::impl CoverageReport::worst_first`](index.md)
 - calls ← [`robby_render::markdown::coverage_section`](../../robby_render/markdown/coverage-section.md)
 - calls ← [`robby_render::pipeline::impl Loaded::is_ok`](../../robby_render/pipeline/index.md)
-- calls ← [`robby_render::pipeline::impl Loaded::summary`](../../robby_render/pipeline/index.md)
 
 ### `is_complete`
 

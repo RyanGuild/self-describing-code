@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_direct_package(root: &Node, candidate: &Node) -> bool` |
-| location | [`crates/robby-render/src/view/deps.rs:784`](../../../../../crates/robby-render/src/view/deps.rs#L784) |
+| location | [`crates/robby-render/src/view/deps.rs:764`](../../../../../crates/robby-render/src/view/deps.rs#L764) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

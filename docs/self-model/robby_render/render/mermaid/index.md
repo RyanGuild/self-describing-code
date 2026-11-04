@@ -59,10 +59,10 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-render/src/render/mermaid.rs:284:1` (docs, `robby_render::render::mermaid::dsm_markdown_table`): "Markdown DSM table (row depends on column). Shared by Markdown/TUI."
+- `crates/robby-render/src/render/mermaid.rs:279:1` (docs, `robby_render::render::mermaid::dsm_markdown_table`): "Markdown DSM table (row depends on column). Shared by Markdown/TUI."
   ```
   /// Markdown DSM table (row depends on column). Shared by Markdown/TUI.
-  pub fn dsm_markdown_table(view: &PackageStructure) -> String {
+  pub(super) fn dsm_markdown_table(view: &PackageStructure) -> String {
       if view.modules.is_empty() {
           return String::new();
       }
@@ -73,10 +73,10 @@ flowchart TB
           let mut ordered = Vec::new();
           for layer in &view.layers {
               for sid in layer {
-                  if let Some(m) = view.module_by_stable(sid) {
-                      if seen.insert(sid.clone()) {
-                          ordered.push(m);
-                      }
+                  if let Some(m) = view.module_by_stable(sid)
+                      && seen.insert(sid.clone())
+                  {
+                      ordered.push(m);
                   }
               }
           }
@@ -177,10 +177,10 @@ flowchart TB
 |---|---|---:|---|
 | [`MermaidRenderer`](mermaidrenderer.md) | `code.struct` | — | `crates/robby-render/src/render/mermaid.rs:14:1` |
 | [`impl Renderer for MermaidRenderer`](impl-renderer-for-mermaidrenderer.md) | `code.impl` | — | `crates/robby-render/src/render/mermaid.rs:17:1` |
-| [`emit_package_subgraph`](emit-package-subgraph.md) | `code.function` | 8 | `crates/robby-render/src/render/mermaid.rs:216:1` |
-| [`emit_workspace_coupling`](emit-workspace-coupling.md) | `code.function` | 8 | `crates/robby-render/src/render/mermaid.rs:235:1` |
-| [`emit_coupling_subgraph`](emit-coupling-subgraph.md) | `code.function` | 13 | `crates/robby-render/src/render/mermaid.rs:253:1` |
-| [`dsm_markdown_table`](dsm-markdown-table.md) | `code.function` | 56 | `crates/robby-render/src/render/mermaid.rs:284:1` |
+| [`emit_package_subgraph`](emit-package-subgraph.md) | `code.function` | 8 | `crates/robby-render/src/render/mermaid.rs:212:1` |
+| [`emit_workspace_coupling`](emit-workspace-coupling.md) | `code.function` | 8 | `crates/robby-render/src/render/mermaid.rs:231:1` |
+| [`emit_coupling_subgraph`](emit-coupling-subgraph.md) | `code.function` | 13 | `crates/robby-render/src/render/mermaid.rs:249:1` |
+| [`dsm_markdown_table`](dsm-markdown-table.md) | `code.function` | 56 | `crates/robby-render/src/render/mermaid.rs:279:1` |
 
 ## Imports
 

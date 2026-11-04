@@ -99,13 +99,3 @@ pub fn strip_generics(name: &str) -> String {
 pub fn class_id(name: &str) -> String {
     alias(&strip_generics(name))
 }
-
-pub fn keyword(kind: robby_ir::BlockKind) -> &'static str {
-    match kind {
-        robby_ir::BlockKind::Alt => "alt",
-        robby_ir::BlockKind::Opt => "opt",
-        robby_ir::BlockKind::Loop => "loop",
-        robby_ir::BlockKind::Par => "par",
-        robby_ir::BlockKind::Break => "break",
-    }
-}

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:312`](../../../../crates/robby-ir/src/model.rs#L312) |
+| location | [`crates/robby-ir/src/model.rs:360`](../../../../crates/robby-ir/src/model.rs#L360) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,6 +18,8 @@ impl Document {
             roots: Vec::new(),
             files: Vec::new(),
             code_paths: Vec::new(),
+            pending_children: BTreeMap::new(),
+            pending_parents: BTreeMap::new(),
         }
     }
 
@@ -36,17 +38,7 @@ impl Document {
     }
 
     pub fn insert(&mut self, node: Node) {
-        let id = node.id.clone();
-        if node.parent.is_none() {
-            self.roots.push(id.clone());
-        } else if let Some(parent) = &node.parent {
-            if let Some(p) = self.nodes.get_mut(parent) {
-                if !p.children.contains(&id) {
-                    p.children.push(id.clone());
-                }
-            }
-        }
-        self.nodes.insert(id, node);
+        self.merge(node);
     }
 
     /// Insert, or merge into an existing node with the same id.
@@ -54,16 +46,22 @@ impl Document {
     /// Merging matters for modules: a `mod foo;` declaration and the file
     /// `foo.rs` both describe `crate::foo`. The declaration carries the span,
     /// the file carries the contents, and they must not overwrite each other.
-    pub fn merge(&mut self, node: Node) {
+    ///
+    /// Containment has one writer: this method. Set [`Node::parent`] on the
+    /// child. A `children` list passed in is normalized into that same index,
+    /// including when the child node arrives later.
+    pub fn merge(&mut self, mut node: Node) {
         let id = node.id.clone();
-        if let Some(existing) = self.nodes.get_mut(&id) {
+        let declared_children = std::mem::take(&mut node.children);
+        let incoming_parent = node.parent.clone();
+
+        let adopted_parent = if let Some(existing) = self.nodes.get_mut(&id) {
             if existing.span.is_none() {
                 existing.span = node.span;
             }
-            for child in node.children {
-                if !existing.children.contains(&child) {
-                    existing.children.push(child);
-                }
+            let adopted = existing.parent.is_none() && incoming_parent.is_some();
+            if adopted {
+                existing.parent = incoming_parent;
             }
             for edge in node.edges {
                 if !existing.edges.contains(&edge) {
@@ -78,9 +76,84 @@ impl Document {
                     existing.tags.push(tag);
                 }
             }
+            adopted
+        } else {
+            if node.parent.is_none()
+                && let Some(parent) = self.pending_parents.remove(&id)
+            {
+                node.parent = Some(parent);
+            }
+            if node.parent.is_none() {
+                self.roots.push(id.clone());
+            }
+            self.nodes.insert(id.clone(), node);
+            if let Some(waiting) = self.pending_children.remove(&id) {
+                for child in waiting {
+                    self.record_child(&id, &child);
+                }
+            }
+            false
+        };
+
+        if let Some(parent) = self.nodes.get(&id).and_then(|n| n.parent.clone()) {
+            self.record_child(&parent, &id);
+        }
+        if adopted_parent {
+            self.roots.retain(|root| root != &id);
+        }
+        for child in declared_children {
+            self.record_child(&id, &child);
+        }
+        // A children list can name a node that is inserted later, with no parent
+        // of its own. Point that node back so the two fields cannot diverge.
+        self.adopt_parent(&id);
+    }
+
+    /// If some node already lists `id` and `id` has no parent, adopt that link.
+    fn adopt_parent(&mut self, id: &NodeId) {
+        if self.nodes.get(id).is_some_and(|node| node.parent.is_some()) {
             return;
         }
-        self.insert(node);
+        let listed = self
+            .nodes
+            .iter()
+            .find(|(parent_id, node)| *parent_id != id && node.children.contains(id))
+            .map(|(parent_id, _)| parent_id.clone());
+        if let Some(parent) = listed {
+            self.record_child(&parent, id);
+        }
+    }
+
+    /// Record `child` under `parent`, and point the child back if it has no parent yet.
+    fn record_child(&mut self, parent: &NodeId, child: &NodeId) {
+        if parent == child {
+            return;
+        }
+        if let Some(parent_node) = self.nodes.get_mut(parent) {
+            if !parent_node.children.contains(child) {
+                parent_node.children.push(child.clone());
+            }
+        } else {
+            let pending = self.pending_children.entry(parent.clone()).or_default();
+            if !pending.contains(child) {
+                pending.push(child.clone());
+            }
+        }
+        if !self.nodes.contains_key(child) {
+            self.pending_parents
+                .entry(child.clone())
+                .or_insert_with(|| parent.clone());
+        }
+        let needs_parent = self
+            .nodes
+            .get(child)
+            .is_some_and(|node| node.parent.is_none());
+        if needs_parent {
+            if let Some(node) = self.nodes.get_mut(child) {
+                node.parent = Some(parent.clone());
+            }
+            self.roots.retain(|root| root != child);
+        }
     }
 
     pub fn get(&self, id: &NodeId) -> Option<&Node> {
@@ -151,6 +224,10 @@ impl Document {
 - calls ← [`robby_ir::codepath::sample_doc`](../codepath/tests/sample-doc.md)
 - calls ← [`robby_ir::coverage::document_coverage`](../coverage/document-coverage.md)
 - calls ← [`robby_ir::coverage::has_span_descendant`](../coverage/has-span-descendant.md)
+- calls ← [`robby_ir::model::child_inserted_before_its_parent_is_linked`](tests/child-inserted-before-its-parent-is-linked.md)
+- calls ← [`robby_ir::model::declared_children_set_the_child_parent`](tests/declared-children-set-the-child-parent.md)
+- calls ← [`robby_ir::model::parent_pointer_builds_the_child_index`](tests/parent-pointer-builds-the-child-index.md)
+- calls ← [`robby_ir::model::validate`](validate.md)
 - calls ← [`robby_ir::test_coverage::document_coverage_is_union_at_any_depth`](../test_coverage/document-coverage-is-union-at-any-depth.md)
 - calls ← [`robby_ir::test_coverage::frontier_spans_exclude_parents_that_have_span_children`](../test_coverage/frontier-spans-exclude-parents-that-have-span-children.md)
 - calls ← [`robby_ir::test_coverage::report_orders_worst_files_first`](../test_coverage/report-orders-worst-files-first.md)
@@ -250,7 +327,7 @@ impl Document {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(1)` |
-| location | [`crates/robby-ir/src/model.rs:313`](../../../../crates/robby-ir/src/model.rs#L313) |
+| location | [`crates/robby-ir/src/model.rs:361`](../../../../crates/robby-ir/src/model.rs#L361) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -262,6 +339,8 @@ pub fn new(generator: impl Into<String>) -> Self {
             roots: Vec::new(),
             files: Vec::new(),
             code_paths: Vec::new(),
+            pending_children: BTreeMap::new(),
+            pending_parents: BTreeMap::new(),
         }
     }
 ```
@@ -278,12 +357,16 @@ sequenceDiagram
     new-->>Vec__new: Vec::new()
     new-->>Vec__new: Vec::new()
     new-->>Vec__new: Vec::new()
+    new-->>BTreeMap__new: BTreeMap::new()
+    new-->>BTreeMap__new: BTreeMap::new()
 ```
 
-5 steps · 0 observed · 5 possible only
+7 steps · 0 observed · 7 possible only
 
 **Edges**
 
+- calls → [`robby_ir::model::impl Document::new`](index.md)
+- calls → [`robby_ir::model::impl Document::new`](index.md)
 - calls → [`robby_ir::model::impl Document::new`](index.md)
 - calls → [`robby_ir::model::impl Document::new`](index.md)
 - calls → [`robby_ir::model::impl Document::new`](index.md)
@@ -295,7 +378,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn rebuild_code_paths(1)` |
-| location | [`crates/robby-ir/src/model.rs:324`](../../../../crates/robby-ir/src/model.rs#L324) |
+| location | [`crates/robby-ir/src/model.rs:374`](../../../../crates/robby-ir/src/model.rs#L374) |
 | provenance | extractor · confidence 1.00 |
 
 > Rebuild [`Self::code_paths`] from current `Calls` edges and `main` entries.
@@ -327,7 +410,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn declare_file(2)` |
-| location | [`crates/robby-ir/src/model.rs:329`](../../../../crates/robby-ir/src/model.rs#L329) |
+| location | [`crates/robby-ir/src/model.rs:379`](../../../../crates/robby-ir/src/model.rs#L379) |
 | provenance | extractor · confidence 1.00 |
 
 > Record a source file as part of the map.
@@ -372,22 +455,12 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn insert(2)` |
-| location | [`crates/robby-ir/src/model.rs:338`](../../../../crates/robby-ir/src/model.rs#L338) |
+| location | [`crates/robby-ir/src/model.rs:388`](../../../../crates/robby-ir/src/model.rs#L388) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 pub fn insert(&mut self, node: Node) {
-        let id = node.id.clone();
-        if node.parent.is_none() {
-            self.roots.push(id.clone());
-        } else if let Some(parent) = &node.parent {
-            if let Some(p) = self.nodes.get_mut(parent) {
-                if !p.children.contains(&id) {
-                    p.children.push(id.clone());
-                }
-            }
-        }
-        self.nodes.insert(id, node);
+        self.merge(node);
     }
 ```
 
@@ -395,39 +468,15 @@ pub fn insert(&mut self, node: Node) {
 sequenceDiagram
     autonumber
     participant insert as insert()
-    participant clone as clone
-    participant is_none as is_none
-    participant push as push
-    participant get_mut as get_mut
-    participant contains as contains
-    insert-->>clone: node.id.clone()
-    insert-->>is_none: node.parent.is_none()
-    alt node.parent.is_none()
-    insert-->>clone: id.clone()
-    insert-->>push: self.roots.push(id.clone())
-    else else
-    alt let Some(parent) = &node.parent
-    insert-->>get_mut: self.nodes.get_mut(parent)
-    alt let Some(p) = self.nodes.get_mut(parent)
-    insert-->>contains: p.children.contains(&id)
-    alt !p.children.contains(&id)
-    insert-->>clone: id.clone()
-    insert-->>push: p.children.push(id.clone())
-    end
-    end
-    end
-    end
-    insert-->>insert: self.nodes.insert(id, node)
+    participant merge as merge
+    insert-->>merge: self.merge(node)
 ```
 
-9 steps · 0 observed · 9 possible only
+1 steps · 0 observed · 1 possible only
 
 **Edges**
 
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
-- calls → [`robby_render::view::scene::impl WorldRect::contains`](../../robby_render/view/scene/index.md)
-- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
-- calls → [`robby_ir::model::impl Document::insert`](index.md)
+- calls → [`robby_ir::model::impl Document::merge`](index.md)
 
 ### `merge`
 
@@ -435,7 +484,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn merge(2)` |
-| location | [`crates/robby-ir/src/model.rs:352`](../../../../crates/robby-ir/src/model.rs#L352) |
+| location | [`crates/robby-ir/src/model.rs:392`](../../../../crates/robby-ir/src/model.rs#L392) |
 | provenance | extractor · confidence 1.00 |
 
 > Insert, or merge into an existing node with the same id.
@@ -443,6 +492,10 @@ sequenceDiagram
 > Merging matters for modules: a `mod foo;` declaration and the file
 > `foo.rs` both describe `crate::foo`. The declaration carries the span,
 > the file carries the contents, and they must not overwrite each other.
+> 
+> Containment has one writer: this method. Set [`Node::parent`] on the
+> child. A `children` list passed in is normalized into that same index,
+> including when the child node arrives later.
 
 ```rust
 /// Insert, or merge into an existing node with the same id.
@@ -450,16 +503,22 @@ sequenceDiagram
     /// Merging matters for modules: a `mod foo;` declaration and the file
     /// `foo.rs` both describe `crate::foo`. The declaration carries the span,
     /// the file carries the contents, and they must not overwrite each other.
-    pub fn merge(&mut self, node: Node) {
+    ///
+    /// Containment has one writer: this method. Set [`Node::parent`] on the
+    /// child. A `children` list passed in is normalized into that same index,
+    /// including when the child node arrives later.
+    pub fn merge(&mut self, mut node: Node) {
         let id = node.id.clone();
-        if let Some(existing) = self.nodes.get_mut(&id) {
+        let declared_children = std::mem::take(&mut node.children);
+        let incoming_parent = node.parent.clone();
+
+        let adopted_parent = if let Some(existing) = self.nodes.get_mut(&id) {
             if existing.span.is_none() {
                 existing.span = node.span;
             }
-            for child in node.children {
-                if !existing.children.contains(&child) {
-                    existing.children.push(child);
-                }
+            let adopted = existing.parent.is_none() && incoming_parent.is_some();
+            if adopted {
+                existing.parent = incoming_parent;
             }
             for edge in node.edges {
                 if !existing.edges.contains(&edge) {
@@ -474,9 +533,37 @@ sequenceDiagram
                     existing.tags.push(tag);
                 }
             }
-            return;
+            adopted
+        } else {
+            if node.parent.is_none()
+                && let Some(parent) = self.pending_parents.remove(&id)
+            {
+                node.parent = Some(parent);
+            }
+            if node.parent.is_none() {
+                self.roots.push(id.clone());
+            }
+            self.nodes.insert(id.clone(), node);
+            if let Some(waiting) = self.pending_children.remove(&id) {
+                for child in waiting {
+                    self.record_child(&id, &child);
+                }
+            }
+            false
+        };
+
+        if let Some(parent) = self.nodes.get(&id).and_then(|n| n.parent.clone()) {
+            self.record_child(&parent, &id);
         }
-        self.insert(node);
+        if adopted_parent {
+            self.roots.retain(|root| root != &id);
+        }
+        for child in declared_children {
+            self.record_child(&id, &child);
+        }
+        // A children list can name a node that is inserted later, with no parent
+        // of its own. Point that node back so the two fields cannot diverge.
+        self.adopt_parent(&id);
     }
 ```
 
@@ -485,23 +572,30 @@ sequenceDiagram
     autonumber
     participant merge as merge()
     participant clone as clone
+    participant std__mem__take as std::mem::take
     participant get_mut as get_mut
     participant is_none as is_none
+    participant is_some as is_some
     participant contains as contains
     participant push as push
     participant entry as entry
     participant or_insert as or_insert
+    participant remove as remove
+    participant Some as Some
     participant insert as insert
+    participant record_child as record_child
+    participant get as get
+    participant and_then as and_then
+    participant retain as retain
+    participant adopt_parent as adopt_parent
     merge-->>clone: node.id.clone()
+    merge-->>std__mem__take: std::mem::take(&mut node.children)
+    merge-->>clone: node.parent.clone()
     merge-->>get_mut: self.nodes.get_mut(&id)
     alt let Some(existing) = self.nodes.get_mut(&id)
     merge-->>is_none: existing.span.is_none()
-    loop node.children
-    merge-->>contains: existing.children.contains(&child)
-    alt !existing.children.contains(&child)
-    merge-->>push: existing.children.push(child)
-    end
-    end
+    merge-->>is_none: existing.parent.is_none()
+    merge-->>is_some: incoming_parent.is_some()
     loop node.edges
     merge-->>contains: existing.edges.contains(&edge)
     alt !existing.edges.contains(&edge)
@@ -518,12 +612,42 @@ sequenceDiagram
     merge-->>push: existing.tags.push(tag)
     end
     end
-    merge-->>merge: return
+    else else
+    merge-->>is_none: node.parent.is_none()
+    merge-->>remove: self.pending_parents.remove(&id)
+    alt node.parent.is_none() && let Some(parent) = self.pending_parents.remo...
+    merge-->>Some: Some(parent)
     end
-    merge-->>insert: self.insert(node)
+    merge-->>is_none: node.parent.is_none()
+    alt node.parent.is_none()
+    merge-->>clone: id.clone()
+    merge-->>push: self.roots.push(id.clone())
+    end
+    merge-->>clone: id.clone()
+    merge-->>insert: self.nodes.insert(id.clone(), node)
+    merge-->>remove: self.pending_children.remove(&id)
+    alt let Some(waiting) = self.pending_children.remove(&id)
+    loop waiting
+    merge-->>record_child: self.record_child(&id, &child)
+    end
+    end
+    end
+    merge-->>get: self.nodes.get(&id)
+    merge-->>clone: n.parent.clone()
+    merge-->>and_then: self.nodes.get(&id).and_then(|n| n.parent.clone())
+    alt let Some(parent) = self.nodes.get(&id).and_then(|n| n.parent.clone())
+    merge-->>record_child: self.record_child(&parent, &id)
+    end
+    alt adopted_parent
+    merge-->>retain: self.roots.retain(|root| root != &id)
+    end
+    loop declared_children
+    merge-->>record_child: self.record_child(&id, &child)
+    end
+    merge-->>adopt_parent: self.adopt_parent(&id)
 ```
 
-13 steps · 0 observed · 13 possible only
+30 steps · 0 observed · 30 possible only
 
 **Edges**
 
@@ -531,9 +655,190 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../../robby_render/view/scene/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
-- calls → [`robby_render::view::scene::impl WorldRect::contains`](../../robby_render/view/scene/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](index.md)
+- calls → [`robby_ir::model::impl Document::record_child`](index.md)
+- calls → [`robby_ir::model::impl Document::get`](index.md)
+- calls → [`robby_ir::model::impl Document::record_child`](index.md)
+- calls → [`robby_ir::model::impl Document::record_child`](index.md)
+- calls → [`robby_ir::model::impl Document::adopt_parent`](index.md)
+
+### `adopt_parent`
+
+| | |
+|---|---|
+| kind | `code.method` |
+| signature | `fn adopt_parent(2)` |
+| location | [`crates/robby-ir/src/model.rs:460`](../../../../crates/robby-ir/src/model.rs#L460) |
+| provenance | extractor · confidence 1.00 |
+
+> If some node already lists `id` and `id` has no parent, adopt that link.
+
+```rust
+/// If some node already lists `id` and `id` has no parent, adopt that link.
+    fn adopt_parent(&mut self, id: &NodeId) {
+        if self.nodes.get(id).is_some_and(|node| node.parent.is_some()) {
+            return;
+        }
+        let listed = self
+            .nodes
+            .iter()
+            .find(|(parent_id, node)| *parent_id != id && node.children.contains(id))
+            .map(|(parent_id, _)| parent_id.clone());
+        if let Some(parent) = listed {
+            self.record_child(&parent, id);
+        }
+    }
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant adopt_parent as adopt_parent()
+    participant get as get
+    participant is_some as is_some
+    participant is_some_and as is_some_and
+    participant iter as iter
+    participant contains as contains
+    participant find as find
+    participant clone as clone
+    participant map as map
+    participant record_child as record_child
+    adopt_parent-->>get: self.nodes.get(id)
+    adopt_parent-->>is_some: node.parent.is_some()
+    adopt_parent-->>is_some_and: self.nodes.get(id).is_some_and(|node| node.parent.is_some())
+    alt self.nodes.get(id).is_some_and(|node| node.parent.is_some())
+    adopt_parent-->>adopt_parent: return
+    end
+    adopt_parent-->>iter: self .nodes .iter()
+    adopt_parent-->>contains: node.children.contains(id)
+    adopt_parent-->>find: self .nodes .iter() .find(|(parent_id, node)| *parent_id != id && nod...
+    adopt_parent-->>clone: parent_id.clone()
+    adopt_parent-->>map: self .nodes .iter() .find(|(parent_id, node)| *parent_id != id && nod...
+    alt let Some(parent) = listed
+    adopt_parent-->>record_child: self.record_child(&parent, id)
+    end
+```
+
+10 steps · 0 observed · 10 possible only
+
+**Edges**
+
+- calls → [`robby_ir::model::impl Document::get`](index.md)
+- calls → [`robby_render::view::scene::impl WorldRect::contains`](../../robby_render/view/scene/index.md)
+- calls → [`robby_ir::model::impl Document::record_child`](index.md)
+
+### `record_child`
+
+| | |
+|---|---|
+| kind | `code.method` |
+| signature | `fn record_child(3)` |
+| location | [`crates/robby-ir/src/model.rs:475`](../../../../crates/robby-ir/src/model.rs#L475) |
+| provenance | extractor · confidence 1.00 |
+
+> Record `child` under `parent`, and point the child back if it has no parent yet.
+
+```rust
+/// Record `child` under `parent`, and point the child back if it has no parent yet.
+    fn record_child(&mut self, parent: &NodeId, child: &NodeId) {
+        if parent == child {
+            return;
+        }
+        if let Some(parent_node) = self.nodes.get_mut(parent) {
+            if !parent_node.children.contains(child) {
+                parent_node.children.push(child.clone());
+            }
+        } else {
+            let pending = self.pending_children.entry(parent.clone()).or_default();
+            if !pending.contains(child) {
+                pending.push(child.clone());
+            }
+        }
+        if !self.nodes.contains_key(child) {
+            self.pending_parents
+                .entry(child.clone())
+                .or_insert_with(|| parent.clone());
+        }
+        let needs_parent = self
+            .nodes
+            .get(child)
+            .is_some_and(|node| node.parent.is_none());
+        if needs_parent {
+            if let Some(node) = self.nodes.get_mut(child) {
+                node.parent = Some(parent.clone());
+            }
+            self.roots.retain(|root| root != child);
+        }
+    }
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant record_child as record_child()
+    participant get_mut as get_mut
+    participant contains as contains
+    participant clone as clone
+    participant push as push
+    participant entry as entry
+    participant or_default as or_default
+    participant contains_key as contains_key
+    participant or_insert_with as or_insert_with
+    participant get as get
+    participant is_none as is_none
+    participant is_some_and as is_some_and
+    participant Some as Some
+    participant retain as retain
+    alt parent == child
+    record_child-->>record_child: return
+    end
+    record_child-->>get_mut: self.nodes.get_mut(parent)
+    alt let Some(parent_node) = self.nodes.get_mut(parent)
+    record_child-->>contains: parent_node.children.contains(child)
+    alt !parent_node.children.contains(child)
+    record_child-->>clone: child.clone()
+    record_child-->>push: parent_node.children.push(child.clone())
+    end
+    else else
+    record_child-->>clone: parent.clone()
+    record_child-->>entry: self.pending_children.entry(parent.clone())
+    record_child-->>or_default: self.pending_children.entry(parent.clone()).or_default()
+    record_child-->>contains: pending.contains(child)
+    alt !pending.contains(child)
+    record_child-->>clone: child.clone()
+    record_child-->>push: pending.push(child.clone())
+    end
+    end
+    record_child-->>contains_key: self.nodes.contains_key(child)
+    alt !self.nodes.contains_key(child)
+    record_child-->>clone: child.clone()
+    record_child-->>entry: self.pending_parents .entry(child.clone())
+    record_child-->>clone: parent.clone()
+    record_child-->>or_insert_with: self.pending_parents .entry(child.clone()) .or_insert_with(|| parent....
+    end
+    record_child-->>get: self .nodes .get(child)
+    record_child-->>is_none: node.parent.is_none()
+    record_child-->>is_some_and: self .nodes .get(child) .is_some_and(|node| node.parent.is_none())
+    alt needs_parent
+    record_child-->>get_mut: self.nodes.get_mut(child)
+    alt let Some(node) = self.nodes.get_mut(child)
+    record_child-->>clone: parent.clone()
+    record_child-->>Some: Some(parent.clone())
+    end
+    record_child-->>retain: self.roots.retain(|root| root != child)
+    end
+```
+
+23 steps · 0 observed · 23 possible only
+
+**Edges**
+
+- calls → [`robby_render::view::scene::impl WorldRect::contains`](../../robby_render/view/scene/index.md)
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+- calls → [`robby_render::view::scene::impl WorldRect::contains`](../../robby_render/view/scene/index.md)
+- calls → [`robby_render::report::impl Report::push`](../../robby_render/report/index.md)
+- calls → [`robby_ir::model::impl Document::get`](index.md)
 
 ### `get`
 
@@ -541,7 +846,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn get(2)` |
-| location | [`crates/robby-ir/src/model.rs:386`](../../../../crates/robby-ir/src/model.rs#L386) |
+| location | [`crates/robby-ir/src/model.rs:507`](../../../../crates/robby-ir/src/model.rs#L507) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -569,7 +874,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn subtree(2)` |
-| location | [`crates/robby-ir/src/model.rs:390`](../../../../crates/robby-ir/src/model.rs#L390) |
+| location | [`crates/robby-ir/src/model.rs:511`](../../../../crates/robby-ir/src/model.rs#L511) |
 | provenance | extractor · confidence 1.00 |
 
 > All nodes under `root`, depth-first, deterministic order.
@@ -606,7 +911,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn walk(3)` |
-| location | [`crates/robby-ir/src/model.rs:397`](../../../../crates/robby-ir/src/model.rs#L397) |
+| location | [`crates/robby-ir/src/model.rs:518`](../../../../crates/robby-ir/src/model.rs#L518) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

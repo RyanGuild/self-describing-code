@@ -22,12 +22,19 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
     krate.kind = Kind::from(code::CRATE);
     doc.insert(krate);
 
-    let mut left = Node::new(NodeId::symbol("rust", "demo::left"), code::MODULE, "demo::left");
+    let mut left = Node::new(
+        NodeId::symbol("rust", "demo::left"),
+        code::MODULE,
+        "demo::left",
+    );
     left.parent = Some(NodeId::from("rust://demo"));
     doc.insert(left);
 
-    let mut right =
-        Node::new(NodeId::symbol("rust", "demo::right"), code::MODULE, "demo::right");
+    let mut right = Node::new(
+        NodeId::symbol("rust", "demo::right"),
+        code::MODULE,
+        "demo::right",
+    );
     right.parent = Some(NodeId::from("rust://demo"));
     doc.insert(right);
 
@@ -38,7 +45,12 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
     );
     a.parent = Some(NodeId::symbol("rust", "demo::left"));
     a.signature = Some("fn a()".to_owned());
-    a.span = Some(Span::new("crates/demo/src/lib.rs", sources.get("crates/demo/src/lib.rs").unwrap(), 0, 9));
+    a.span = Some(Span::new(
+        "crates/demo/src/lib.rs",
+        sources.get("crates/demo/src/lib.rs").unwrap(),
+        0,
+        9,
+    ));
     let mut proc = Process::new();
     proc.participant("a", "a", Kind::from(code::FUNCTION));
     proc.step(Step {
@@ -59,8 +71,10 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
         "demo::right::b",
     );
     b.parent = Some(NodeId::symbol("rust", "demo::right"));
-    b.edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::left::a"), EdgeKind::Calls));
+    b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::left::a"),
+        EdgeKind::Calls,
+    ));
     let mut unresolved = Edge::new(NodeId::from("rust://missing::gone"), EdgeKind::Calls);
     unresolved.resolved = false;
     b.edges.push(unresolved);
@@ -71,19 +85,6 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
         26,
     ));
     doc.insert(b);
-
-    if let Some(krate) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        krate.children = vec![
-            NodeId::symbol("rust", "demo::left"),
-            NodeId::symbol("rust", "demo::right"),
-        ];
-    }
-    if let Some(left) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::left")) {
-        left.children = vec![NodeId::symbol("rust", "demo::left::a")];
-    }
-    if let Some(right) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::right")) {
-        right.children = vec![NodeId::symbol("rust", "demo::right::b")];
-    }
 
     (doc, sources)
 }
@@ -110,7 +111,6 @@ sequenceDiagram
     participant step as step
     participant Edge__new as Edge::new
     participant push as push
-    participant get_mut as get_mut
     demo_doc-->>Document__new: Document::new('test')
     demo_doc-->>BTreeMap__new: BTreeMap::new()
     demo_doc-->>to_owned: 'crates/demo/src/lib.rs'.to_owned()
@@ -121,12 +121,12 @@ sequenceDiagram
     demo_doc-->>Kind__from: Kind::from(code::CRATE)
     demo_doc-->>insert: doc.insert(krate)
     demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::left')
-    demo_doc-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::left'), code::MODULE, 'demo::...
+    demo_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::left'), code::MODULE, 'demo:...
     demo_doc-->>NodeId__from: NodeId::from('rust://demo')
     demo_doc-->>Some: Some(NodeId::from('rust://demo'))
     demo_doc-->>insert: doc.insert(left)
     demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::right')
-    demo_doc-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::right'), code::MODULE, 'demo:...
+    demo_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::right'), code::MODULE, 'demo...
     demo_doc-->>NodeId__from: NodeId::from('rust://demo')
     demo_doc-->>Some: Some(NodeId::from('rust://demo'))
     demo_doc-->>insert: doc.insert(right)
@@ -138,8 +138,8 @@ sequenceDiagram
     demo_doc-->>Some: Some('fn a()'.to_owned())
     demo_doc-->>get: sources.get('crates/demo/src/lib.rs')
     demo_doc-->>unwrap: sources.get('crates/demo/src/lib.rs').unwrap()
-    demo_doc-->>Span__new: Span::new('crates/demo/src/lib.rs', sources.get('crates/demo/src/lib....
-    demo_doc-->>Some: Some(Span::new('crates/demo/src/lib.rs', sources.get('crates/demo/src...
+    demo_doc-->>Span__new: Span::new( 'crates/demo/src/lib.rs', sources.get('crates/demo/src/lib...
+    demo_doc-->>Some: Some(Span::new( 'crates/demo/src/lib.rs', sources.get('crates/demo/sr...
     demo_doc-->>Process__new: Process::new()
     demo_doc-->>Kind__from: Kind::from(code::FUNCTION)
     demo_doc-->>participant: proc.participant('a', 'a', Kind::from(code::FUNCTION))
@@ -155,8 +155,8 @@ sequenceDiagram
     demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::right')
     demo_doc-->>Some: Some(NodeId::symbol('rust', 'demo::right'))
     demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::left::a')
-    demo_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::left::a'), EdgeKind::Calls)
-    demo_doc-->>push: b.edges .push(Edge::new(NodeId::symbol('rust', 'demo::left::a'), Edge...
+    demo_doc-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::left::a'), EdgeKind::Calls, )
+    demo_doc-->>push: b.edges.push(Edge::new( NodeId::symbol('rust', 'demo::left::a'), Edge...
     demo_doc-->>NodeId__from: NodeId::from('rust://missing::gone')
     demo_doc-->>Edge__new: Edge::new(NodeId::from('rust://missing::gone'), EdgeKind::Calls)
     demo_doc-->>push: b.edges.push(unresolved)
@@ -165,24 +165,9 @@ sequenceDiagram
     demo_doc-->>Span__new: Span::new( 'crates/demo/src/lib.rs', sources.get('crates/demo/src/lib...
     demo_doc-->>Some: Some(Span::new( 'crates/demo/src/lib.rs', sources.get('crates/demo/sr...
     demo_doc-->>insert: doc.insert(b)
-    demo_doc-->>NodeId__from: NodeId::from('rust://demo')
-    demo_doc-->>get_mut: doc.nodes.get_mut(&NodeId::from('rust://demo'))
-    alt let Some(krate) = doc.nodes.get_mut(&NodeId::from('rust://demo'))
-    demo_doc-->>demo_doc: vec![ NodeId::symbol('rust', 'demo::left'), NodeId::symbol('rust', 'd...
-    end
-    demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::left')
-    demo_doc-->>get_mut: doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::left'))
-    alt let Some(left) = doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::lef...
-    demo_doc-->>demo_doc: vec![NodeId::symbol('rust', 'demo::left::a')]
-    end
-    demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::right')
-    demo_doc-->>get_mut: doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::right'))
-    alt let Some(right) = doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::ri...
-    demo_doc-->>demo_doc: vec![NodeId::symbol('rust', 'demo::right::b')]
-    end
 ```
 
-63 steps · 0 observed · 63 possible only
+54 steps · 0 observed · 54 possible only
 
 **Edges**
 
@@ -223,9 +208,6 @@ sequenceDiagram
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 
 ## References
 

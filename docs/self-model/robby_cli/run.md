@@ -70,7 +70,14 @@ fn run() -> Result<ExitCode> {
             decision_model,
             note_model,
             limit,
-        } => enrich_comments(&ir, &source_root, out.as_deref(), decision_model, note_model, limit),
+        } => enrich_comments(
+            &ir,
+            &source_root,
+            out.as_deref(),
+            decision_model,
+            note_model,
+            limit,
+        ),
         Command::Web {
             ir,
             source_root,
@@ -136,7 +143,7 @@ sequenceDiagram
     run-->>show: show( path.as_deref(), ir.as_deref(), &source_root, depth, width, all...
     else Command::EnrichComments { ir, source_root, out, decision_model, note_...
     run-->>as_deref: out.as_deref()
-    run-->>enrich_comments: enrich_comments(&ir, &source_root, out.as_deref(), decision_model, no...
+    run-->>enrich_comments: enrich_comments( &ir, &source_root, out.as_deref(), decision_model, n...
     else Command::Web { ir, source_root, out, }
     run-->>web: web(&ir, &source_root, &out)
     end
@@ -146,7 +153,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_agent::model::impl Verdict::parse`](../robby_agent/model/index.md)
+- calls → [`robby_ir::vocab::impl Verdict::parse`](../robby_ir/vocab/index.md)
 - calls → [`robby_ir::schema_json`](../robby_ir/schema-json.md)
 - calls → [`robby_cli::check`](check.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../robby_ir/kind/index.md)
@@ -160,10 +167,10 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_agent::model`](../robby_agent/model/index.md) — parse
 - calls → [`robby_cli`](index.md) — 6 items
 - calls → [`robby_ir`](../robby_ir/index.md) — schema_json
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — from
+- calls → [`robby_ir::vocab`](../robby_ir/vocab/index.md) — parse
 - calls → [`robby_render::pipeline`](../robby_render/pipeline/index.md) — load, render_files
 
 ## Referenced by

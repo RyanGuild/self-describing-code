@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/comments.rs:214`](../../../../../crates/robby-render/src/view/comments.rs#L214) |
+| location | [`crates/robby-render/src/view/comments.rs:176`](../../../../../crates/robby-render/src/view/comments.rs#L176) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

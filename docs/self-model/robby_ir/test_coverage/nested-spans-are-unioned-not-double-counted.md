@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn nested_spans_are_unioned_not_double_counted()` |
-| location | [`crates/robby-ir/tests/coverage.rs:31`](../../../../crates/robby-ir/tests/coverage.rs#L31) |
+| location | [`crates/robby-ir/tests/coverage.rs:32`](../../../../crates/robby-ir/tests/coverage.rs#L32) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -15,8 +15,8 @@ fn nested_spans_are_unioned_not_double_counted() {
     let source = "fn add() { 1 }";
     let spans = [
         span(source, 0, source.len() as u32),
-        span(source, 3, 8),  // "add()"
-        span(source, 4, 6),  // "dd"
+        span(source, 3, 8), // "add()"
+        span(source, 4, 6), // "dd"
     ];
 
     let report = file_coverage(FILE, source, &spans);

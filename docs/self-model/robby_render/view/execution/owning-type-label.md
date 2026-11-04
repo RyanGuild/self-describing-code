@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn owning_type_label(doc: &Document, method: &Node) -> Option<String>` |
-| location | [`crates/robby-render/src/view/execution.rs:92`](../../../../../crates/robby-render/src/view/execution.rs#L92) |
+| location | [`crates/robby-render/src/view/execution.rs:84`](../../../../../crates/robby-render/src/view/execution.rs#L84) |
 | provenance | extractor · confidence 1.00 |
 
 > From a method under `impl … for Type`, recover the type name for a lifeline.
@@ -87,9 +87,9 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../links/index.md)
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../links/index.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)

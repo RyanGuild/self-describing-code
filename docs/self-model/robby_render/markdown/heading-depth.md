@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn heading_depth(doc: &Document, node: &Node) -> usize` |
-| location | [`crates/robby-render/src/markdown.rs:238`](../../../../crates/robby-render/src/markdown.rs#L238) |
+| location | [`crates/robby-render/src/markdown.rs:232`](../../../../crates/robby-render/src/markdown.rs#L232) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

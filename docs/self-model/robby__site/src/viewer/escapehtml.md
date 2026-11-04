@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:650`](../../../../../apps/site/src/viewer.ts#L650) |
+| location | [`apps/site/src/viewer.ts:636`](../../../../../apps/site/src/viewer.ts#L636) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function escapeHtml(s: string): string {
+function escapeHtml(s: string) {
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -28,8 +28,4 @@ sequenceDiagram
 ```
 
 2 steps · 0 observed · 2 possible only
-
-## Referenced by
-
-- calls ← [`robby__site/src/viewer/portalButton`](portalbutton.md)
 

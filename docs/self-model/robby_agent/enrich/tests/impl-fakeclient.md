@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-agent/src/enrich.rs:162`](../../../../../crates/robby-agent/src/enrich.rs#L162) |
+| location | [`crates/robby-agent/src/enrich.rs:160`](../../../../../crates/robby-agent/src/enrich.rs#L160) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -36,7 +36,7 @@ impl FakeClient {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(1)` |
-| location | [`crates/robby-agent/src/enrich.rs:163`](../../../../../crates/robby-agent/src/enrich.rs#L163) |
+| location | [`crates/robby-agent/src/enrich.rs:161`](../../../../../crates/robby-agent/src/enrich.rs#L161) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

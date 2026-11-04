@@ -5,14 +5,14 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn emit_class<'a>(     doc: &mut Document,     class: &Class<'a>,     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:629`](../../../../crates/robby-extract/src/typescript.rs#L629) |
+| signature | `fn emit_class(     doc: &mut Document,     class: &Class<'_>,     parent: &NodeId,     ctx: &Ctx<'_>,     pending: &mut Vec<PendingCall>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:621`](../../../../crates/robby-extract/src/typescript.rs#L621) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn emit_class<'a>(
+fn emit_class(
     doc: &mut Document,
-    class: &Class<'a>,
+    class: &Class<'_>,
     parent: &NodeId,
     ctx: &Ctx<'_>,
     pending: &mut Vec<PendingCall>,
@@ -25,13 +25,13 @@ fn emit_class<'a>(
     let class_id = NodeId::symbol("typescript", &fqn);
     let mut node = item_node(kind::code::CLASS, &fqn, oxc_span(class.span, ctx), parent);
 
-    if let Some(heritage) = &class.heritage {
-        if let Some(super_name) = type_name_expr(&heritage.expression) {
-            node.edges.push(Edge::new(
-                NodeId::symbol("typescript", &format!("{}/{}", ctx.module, super_name)),
-                EdgeKind::Extends,
-            ));
-        }
+    if let Some(heritage) = &class.heritage
+        && let Some(super_name) = type_name_expr(&heritage.expression)
+    {
+        node.edges.push(Edge::new(
+            NodeId::symbol("typescript", &format!("{}/{}", ctx.module, super_name)),
+            EdgeKind::Extends,
+        ));
     }
     for impls in &class.implements {
         if let Some(n) = type_name(&impls.expression) {
@@ -81,14 +81,12 @@ sequenceDiagram
     emit_class-->>NodeId__symbol: NodeId::symbol('typescript', &fqn)
     emit_class-->>oxc_span: oxc_span(class.span, ctx)
     emit_class-->>item_node: item_node(kind::code::CLASS, &fqn, oxc_span(class.span, ctx), parent)
-    alt let Some(heritage) = &class.heritage
     emit_class-->>type_name_expr: type_name_expr(&heritage.expression)
-    alt let Some(super_name) = type_name_expr(&heritage.expression)
+    alt let Some(heritage) = &class.heritage && let Some(super_name) = type_n...
     emit_class-->>emit_class: format!('{}/{}', ctx.module, super_name)
     emit_class-->>NodeId__symbol: NodeId::symbol('typescript', &format!('{}/{}', ctx.module, super_name))
     emit_class-->>Edge__new: Edge::new( NodeId::symbol('typescript', &format!('{}/{}', ctx.module,...
     emit_class-->>push: node.edges.push(Edge::new( NodeId::symbol('typescript', &format!('{}/...
-    end
     end
     loop &class.implements
     emit_class-->>type_name: type_name(&impls.expression)

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_type(node: &Node) -> bool` |
-| location | [`crates/robby-render/src/util.rs:84`](../../../../crates/robby-render/src/util.rs#L84) |
+| location | [`crates/robby-render/src/util.rs:83`](../../../../crates/robby-render/src/util.rs#L83) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String>` |
-| location | [`crates/robby-render/src/view/comments.rs:263`](../../../../../crates/robby-render/src/view/comments.rs#L263) |
+| location | [`crates/robby-render/src/view/comments.rs:225`](../../../../../crates/robby-render/src/view/comments.rs#L225) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -29,11 +29,7 @@ fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String
         out.push_str(line);
         out.push('\n');
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 ```
 

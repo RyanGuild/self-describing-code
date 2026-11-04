@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn frontier_spans_exclude_parents_that_have_span_children()` |
-| location | [`crates/robby-ir/tests/coverage.rs:168`](../../../../crates/robby-ir/tests/coverage.rs#L168) |
+| location | [`crates/robby-ir/tests/coverage.rs:173`](../../../../crates/robby-ir/tests/coverage.rs#L173) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,7 +18,11 @@ fn frontier_spans_exclude_parents_that_have_span_children() {
     parent.span = Some(Span::new(FILE, source, 0, source.len() as u32));
     doc.insert(parent);
 
-    let mut a = Node::new(NodeId::symbol("rust", "demo::a"), kind::code::FUNCTION, "demo::a");
+    let mut a = Node::new(
+        NodeId::symbol("rust", "demo::a"),
+        kind::code::FUNCTION,
+        "demo::a",
+    );
     a.parent = Some(NodeId::from("rust://demo"));
     a.span = Some(Span::new(FILE, source, 0, 9));
     doc.insert(a);
@@ -53,7 +57,7 @@ sequenceDiagram
     frontier_spans_exclude_parents_that_have_span_children-->>Some: Some(Span::new(FILE, source, 0, source.len() as u32))
     frontier_spans_exclude_parents_that_have_span_children-->>insert: doc.insert(parent)
     frontier_spans_exclude_parents_that_have_span_children-->>NodeId__symbol: NodeId::symbol('rust', 'demo::a')
-    frontier_spans_exclude_parents_that_have_span_children-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::a'), kind::code::FUNCTION, 'd...
+    frontier_spans_exclude_parents_that_have_span_children-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::a'), kind::code::FUNCTION, '...
     frontier_spans_exclude_parents_that_have_span_children-->>NodeId__from: NodeId::from('rust://demo')
     frontier_spans_exclude_parents_that_have_span_children-->>Some: Some(NodeId::from('rust://demo'))
     frontier_spans_exclude_parents_that_have_span_children-->>Span__new: Span::new(FILE, source, 0, 9)

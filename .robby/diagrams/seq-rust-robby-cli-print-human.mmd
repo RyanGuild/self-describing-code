@@ -8,7 +8,7 @@ sequenceDiagram
     participant is_ok as is_ok
     loop &loaded.diagnostics
     alt match &diagnostic.node
-    print_human-->>print_human: println!('{tag} [{}] {} ({})', diagnostic.code, diagnostic.message, n...
+    print_human-->>print_human: println!( '{tag} [{}] {} ({})', diagnostic.code, diagnostic.message, ...
     else None
     print_human-->>print_human: println!('{tag} [{}] {}', diagnostic.code, diagnostic.message)
     end

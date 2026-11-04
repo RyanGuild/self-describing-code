@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn functions_produce_process_steps()` |
-| location | [`crates/robby-extract/tests/extract.rs:51`](../../../../crates/robby-extract/tests/extract.rs#L51) |
+| location | [`crates/robby-extract/tests/extract.rs:48`](../../../../crates/robby-extract/tests/extract.rs#L48) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

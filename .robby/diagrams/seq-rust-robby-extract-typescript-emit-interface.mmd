@@ -12,7 +12,7 @@ sequenceDiagram
     emit_interface-->>as_str: iface.id.name.as_str()
     emit_interface-->>emit_interface: format!('{}/{}', ctx.module, name)
     emit_interface-->>oxc_span: oxc_span(iface.span, ctx)
-    emit_interface-->>item_node: item_node(kind::code::INTERFACE, &fqn, oxc_span(iface.span, ctx), par...
+    emit_interface-->>item_node: item_node( kind::code::INTERFACE, &fqn, oxc_span(iface.span, ctx), pa...
     loop &iface.extends
     emit_interface-->>type_name: type_name(&ext.type_name)
     alt let Some(n) = type_name(&ext.type_name)

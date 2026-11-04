@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn anchor(id: &NodeId) -> String` |
-| location | [`crates/robby-render/src/markdown.rs:298`](../../../../crates/robby-render/src/markdown.rs#L298) |
+| location | [`crates/robby-render/src/markdown.rs:261`](../../../../crates/robby-render/src/markdown.rs#L261) |
 | provenance | extractor · confidence 1.00 |
 
 > Sanity check used by tests: every id has a deterministic short form.
@@ -32,7 +32,7 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::stable_id`](../stable-id.md)
 
 ## References

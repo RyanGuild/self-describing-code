@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn resolve<'a>(doc: &'a Document, path: &str) -> Result<&'a Node>` |
-| location | [`crates/robby-cli/src/main.rs:441`](../../../crates/robby-cli/src/main.rs#L441) |
+| location | [`crates/robby-cli/src/main.rs:460`](../../../crates/robby-cli/src/main.rs#L460) |
 | provenance | extractor · confidence 1.00 |
 
 > Resolve an exact fqn, an id, or a unique suffix / bare name.

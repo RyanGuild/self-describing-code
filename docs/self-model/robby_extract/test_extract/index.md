@@ -63,8 +63,8 @@ flowchart TB
 | [`root`](root.md) | `code.function` | 3 | `crates/robby-extract/tests/extract.rs:8:1` |
 | [`every_source_file_is_declared`](every-source-file-is-declared.md) | `code.function` | 7 | `crates/robby-extract/tests/extract.rs:12:1` |
 | [`the_workspace_is_fully_covered`](the-workspace-is-fully-covered.md) | `code.function` | 16 | `crates/robby-extract/tests/extract.rs:27:1` |
-| [`functions_produce_process_steps`](functions-produce-process-steps.md) | `code.function` | 10 | `crates/robby-extract/tests/extract.rs:51:1` |
-| [`spans_point_at_the_right_bytes`](spans-point-at-the-right-bytes.md) | `code.function` | 13 | `crates/robby-extract/tests/extract.rs:71:1` |
+| [`functions_produce_process_steps`](functions-produce-process-steps.md) | `code.function` | 10 | `crates/robby-extract/tests/extract.rs:48:1` |
+| [`spans_point_at_the_right_bytes`](spans-point-at-the-right-bytes.md) | `code.function` | 13 | `crates/robby-extract/tests/extract.rs:68:1` |
 
 ## Imports
 

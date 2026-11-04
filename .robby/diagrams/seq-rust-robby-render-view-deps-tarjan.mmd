@@ -7,12 +7,12 @@ sequenceDiagram
     participant keys as keys
     participant contains_key as contains_key
     participant strongconnect as strongconnect
+    tarjan-->>tarjan: fn strongconnect( v: &str, adj: &BTreeMap<String, BTreeSet<String>>, ...
     tarjan-->>Vec__new: Vec::new()
     tarjan-->>BTreeSet__new: BTreeSet::new()
     tarjan-->>BTreeMap__new: BTreeMap::new()
     tarjan-->>BTreeMap__new: BTreeMap::new()
     tarjan-->>Vec__new: Vec::new()
-    tarjan-->>tarjan: fn strongconnect( v: &str, adj: &BTreeMap<String, BTreeSet<String>>, ...
     tarjan-->>keys: adj.keys()
     loop adj.keys()
     tarjan-->>contains_key: indices.contains_key(v)

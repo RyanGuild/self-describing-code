@@ -7,8 +7,8 @@ sequenceDiagram
     participant and_then as and_then
     crate_of-->>Some: Some(node)
     loop let Some(n) = current
-    crate_of-->>crate_of: matches!( n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
-    alt matches!( n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
+    crate_of-->>crate_of: matches!(n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
+    alt matches!(n.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
     crate_of-->>Some: Some(n)
     crate_of-->>crate_of: return
     end

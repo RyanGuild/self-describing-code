@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn item_slugs(items: &[&Node]) -> BTreeMap<NodeId, String>` |
-| location | [`crates/robby-render/src/tree.rs:115`](../../../../crates/robby-render/src/tree.rs#L115) |
+| location | [`crates/robby-render/src/tree.rs:113`](../../../../crates/robby-render/src/tree.rs#L113) |
 | provenance | extractor · confidence 1.00 |
 
 > Page slugs for a module's items. `index` is reserved for the module page.

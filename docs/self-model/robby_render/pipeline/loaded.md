@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-render/src/pipeline.rs:17`](../../../../crates/robby-render/src/pipeline.rs#L17) |
+| location | [`crates/robby-render/src/pipeline.rs:15`](../../../../crates/robby-render/src/pipeline.rs#L15) |
 | provenance | extractor · confidence 1.00 |
 
 > A document plus everything derived from it.
@@ -24,9 +24,9 @@ pub struct Loaded {
 
 **Fields and variants**
 
-- `document` — `crates/robby-render/src/pipeline.rs:19:5`
-- `sources` — `crates/robby-render/src/pipeline.rs:20:5`
-- `coverage` — `crates/robby-render/src/pipeline.rs:21:5`
-- `diagnostics` — `crates/robby-render/src/pipeline.rs:22:5`
-- `root` — `crates/robby-render/src/pipeline.rs:23:5`
+- `document` — `crates/robby-render/src/pipeline.rs:17:5`
+- `sources` — `crates/robby-render/src/pipeline.rs:18:5`
+- `coverage` — `crates/robby-render/src/pipeline.rs:19:5`
+- `diagnostics` — `crates/robby-render/src/pipeline.rs:20:5`
+- `root` — `crates/robby-render/src/pipeline.rs:21:5`
 

@@ -7,9 +7,7 @@ sequenceDiagram
     participant clone as clone
     participant to_owned as to_owned
     participant as_ref as as_ref
-    participant location as location
     participant map as map
-    participant source_name as source_name
     participant subtree as subtree
     participant len as len
     participant main_process as main_process
@@ -33,9 +31,8 @@ sequenceDiagram
     collect-->>to_owned: node.kind.as_str().to_owned()
     collect-->>clone: node.signature.clone()
     collect-->>as_ref: node.span.as_ref()
-    collect-->>location: s.location()
-    collect-->>map: node.span.as_ref().map(|s| s.location())
-    collect-->>source_name: source_name(node.provenance.source)
+    collect-->>map: node.span.as_ref().map(robby_ir::Span::location)
+    collect-->>as_str: node.provenance.source.as_str()
     collect-->>clone: node.docs.clone()
     collect-->>subtree: doc.subtree(&node.id)
     collect-->>len: doc.subtree(&node.id).len()
@@ -76,7 +73,7 @@ sequenceDiagram
     collect-->>map: node.process.as_ref().map(ProcessView::from_process)
     end
     alt opts.hierarchy
-    collect-->>HierarchyView__from_node: HierarchyView::from_node( doc, &node.id, opts.hierarchy_depth, opts.h...
+    collect-->>HierarchyView__from_node: HierarchyView::from_node(doc, &node.id, opts.hierarchy_depth, opts.hi...
     collect-->>is_empty: view.is_empty()
     alt view.is_empty()
     collect-->>Some: Some(view)

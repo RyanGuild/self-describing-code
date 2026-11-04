@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn short_kind(kind: &Kind) -> &str` |
-| location | [`crates/robby-render/src/util.rs:62`](../../../../crates/robby-render/src/util.rs#L62) |
+| location | [`crates/robby-render/src/util.rs:61`](../../../../crates/robby-render/src/util.rs#L61) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -34,8 +34,8 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 
 ## References
 

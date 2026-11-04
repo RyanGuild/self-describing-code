@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn class_id(name: &str) -> String` |
-| location | [`crates/robby-render/src/util.rs:100`](../../../../crates/robby-render/src/util.rs#L100) |
+| location | [`crates/robby-render/src/util.rs:99`](../../../../crates/robby-render/src/util.rs#L99) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

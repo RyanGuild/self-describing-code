@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn write_site(     doc: &Document,     sources: &BTreeMap<String, String>,     out: &Path, ) -> Result<usize>` |
-| location | [`crates/robby-render/src/web.rs:224`](../../../../crates/robby-render/src/web.rs#L224) |
+| signature | `fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path) -> Result<usize>` |
+| location | [`crates/robby-render/src/web.rs:120`](../../../../crates/robby-render/src/web.rs#L120) |
 | provenance | extractor · confidence 1.00 |
 
 > Write scene + frame JSON under `out` (typically `apps/site/public`).
@@ -21,11 +21,7 @@
 /// Returns the number of frame payload files written. The TypeScript viewer in
 /// `apps/site/src` loads these files; it is not copied here so the self-model
 /// keeps a single source of truth.
-pub fn write_site(
-    doc: &Document,
-    sources: &BTreeMap<String, String>,
-    out: &Path,
-) -> Result<usize> {
+pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path) -> Result<usize> {
     fs::create_dir_all(out)?;
     let frames_dir = out.join("frames");
     fs::create_dir_all(&frames_dir)?;
@@ -149,7 +145,7 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
 - calls → [`robby_render::web::impl FrameDetail::from_node_in_doc`](index.md)

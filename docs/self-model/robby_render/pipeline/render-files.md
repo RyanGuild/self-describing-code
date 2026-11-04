@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize>` |
-| location | [`crates/robby-render/src/pipeline.rs:102`](../../../../crates/robby-render/src/pipeline.rs#L102) |
+| location | [`crates/robby-render/src/pipeline.rs:105`](../../../../crates/robby-render/src/pipeline.rs#L105) |
 | provenance | extractor · confidence 1.00 |
 
 > Write one `.mmd` file per process and per root graph.
@@ -23,7 +23,10 @@ pub fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize> {
     }
     for root in &doc.roots {
         let mermaid = crate::flowchart(doc, root);
-        fs::write(out.join(format!("graph-{}.mmd", slug(root.as_str()))), mermaid)?;
+        fs::write(
+            out.join(format!("graph-{}.mmd", slug(root.as_str()))),
+            mermaid,
+        )?;
         count += 1;
     }
 
@@ -54,7 +57,7 @@ sequenceDiagram
     render_files-->>crate__flowchart: crate::flowchart(doc, root)
     render_files-->>render_files: format!('graph-{}.mmd', slug(root.as_str()))
     render_files-->>join: out.join(format!('graph-{}.mmd', slug(root.as_str())))
-    render_files-->>fs__write: fs::write(out.join(format!('graph-{}.mmd', slug(root.as_str()))), mer...
+    render_files-->>fs__write: fs::write( out.join(format!('graph-{}.mmd', slug(root.as_str()))), me...
     render_files-->>render_files: ? (propagate)
     end
     render_files-->>Ok: Ok(count)

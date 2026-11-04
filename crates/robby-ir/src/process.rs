@@ -39,6 +39,19 @@ pub enum StepKind {
     Note,
 }
 
+impl StepKind {
+    /// Serde / display name. One mapping, shared by every renderer.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Call => "call",
+            Self::Return => "return",
+            Self::Signal => "signal",
+            Self::Decision => "decision",
+            Self::Note => "note",
+        }
+    }
+}
+
 /// A control-flow frame enclosing a step.
 ///
 /// Frames form a stack per step. The renderer diffs consecutive stacks and
@@ -61,6 +74,19 @@ pub enum BlockKind {
     Loop,
     Par,
     Break,
+}
+
+impl BlockKind {
+    /// Mermaid block keyword. Matches the serde name.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Alt => "alt",
+            Self::Opt => "opt",
+            Self::Loop => "loop",
+            Self::Par => "par",
+            Self::Break => "break",
+        }
+    }
 }
 
 /// A single ordered interaction.
@@ -155,5 +181,40 @@ impl Process {
 impl Default for Process {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn wire<T: serde::Serialize>(value: T) -> String {
+        serde_json::to_value(value)
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_owned()
+    }
+
+    #[test]
+    fn names_match_serde() {
+        for kind in [
+            StepKind::Call,
+            StepKind::Return,
+            StepKind::Signal,
+            StepKind::Decision,
+            StepKind::Note,
+        ] {
+            assert_eq!(wire(kind), kind.as_str());
+        }
+        for kind in [
+            BlockKind::Alt,
+            BlockKind::Opt,
+            BlockKind::Loop,
+            BlockKind::Par,
+            BlockKind::Break,
+        ] {
+            assert_eq!(wire(kind), kind.as_str());
+        }
     }
 }

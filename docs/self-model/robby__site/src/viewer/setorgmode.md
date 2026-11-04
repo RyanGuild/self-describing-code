@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:156`](../../../../../apps/site/src/viewer.ts#L156) |
+| location | [`apps/site/src/viewer.ts:141`](../../../../../apps/site/src/viewer.ts#L141) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-async function setOrgMode(next: OrgMode): Promise<void> {
+async function setOrgMode(next: OrgMode) {
   if (next === orgMode || flying) {
     return;
   }
@@ -26,7 +26,7 @@ async function setOrgMode(next: OrgMode): Promise<void> {
   orgMode = next;
   orgStructureBtn.classList.toggle("is-active", next === "structure");
   orgEntrypointsBtn.classList.toggle("is-active", next === "entrypoints");
-  hintEl.textContent = next === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
+  hintEl.textContent = ORG_MODES[next].hint;
   applyScene(cached);
 }
 ```

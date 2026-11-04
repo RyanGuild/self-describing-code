@@ -115,7 +115,7 @@ flowchart TB
 
 | | coverage | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **coverage** | · | 12 | 10 |
+| **coverage** | · | 13 | 10 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 
@@ -206,7 +206,10 @@ flowchart TB
   
       let mut files = Vec::new();
       for (path, source) in sources {
-          let spans = spans_by_file.get(path.as_str()).cloned().unwrap_or_default();
+          let spans = spans_by_file
+              .get(path.as_str())
+              .cloned()
+              .unwrap_or_default();
           files.push(file_coverage(path, source, &spans));
       }
       files.sort_by(|a, b| a.file.cmp(&b.file));
@@ -214,7 +217,7 @@ flowchart TB
       CoverageReport { files }
   }
   ```
-- `crates/robby-ir/src/coverage.rs:209:1` (docs, `robby_ir::coverage::all_spans`): "Every span in the document, per file. This is the default claim set: a byte is represented when *some* node owns it, at…"
+- `crates/robby-ir/src/coverage.rs:212:1` (docs, `robby_ir::coverage::all_spans`): "Every span in the document, per file. This is the default claim set: a byte is represented when *some* node owns it, at…"
   ```
   /// Every span in the document, per file.
   ///
@@ -233,7 +236,7 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-ir/src/coverage.rs:226:1` (docs, `robby_ir::coverage::frontier_spans`): "The spans that actually claim source, per file. A node is a **frontier** node when no descendant carries a span. Only f…"
+- `crates/robby-ir/src/coverage.rs:229:1` (docs, `robby_ir::coverage::frontier_spans`): "The spans that actually claim source, per file. A node is a **frontier** node when no descendant carries a span. Only f…"
   ```
   /// The spans that actually claim source, per file.
   ///
@@ -253,23 +256,19 @@ flowchart TB
       out
   }
   ```
-- `crates/robby-ir/src/coverage.rs:322:1` (docs, `robby_ir::coverage::scan_trivia`): "Walk a byte range, accepting only whitespace, comments and (Rust) attributes. Returns the byte offset of the first toke…"
+- `crates/robby-ir/src/coverage.rs:316:1` (docs, `robby_ir::coverage::scan_trivia`): "Walk a byte range, accepting only whitespace, comments and (Rust) attributes. Returns the byte offset of the first toke…"
   ```
   /// Walk a byte range, accepting only whitespace, comments and (Rust) attributes.
   ///
   /// Returns the byte offset of the first token that is none of those, which is
   /// what makes the gap report actionable: it points at the exact byte that is
   /// missing from the map.
-  fn scan_trivia(
-      bytes: &[u8],
-      start: u32,
-      end: u32,
-      mode: TriviaMode,
-  ) -> Result<TriviaFlags, u32> {
+  fn scan_trivia(bytes: &[u8], start: u32, end: u32, mode: TriviaMode) -> Result<TriviaFlags, u32> {
       let mut flags = TriviaFlags::default();
       let mut i = start;
       // TypeScript shebang is trivia when it opens the file.
-      if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!' {
+      if mode == TriviaMode::TypeScript && i == 0 && end >= 2 && bytes[0] == b'#' && bytes[1] == b'!'
+      {
           flags.comment = true;
           while i < end && bytes[i as usize] != b'\n' {
               i += 1;
@@ -293,7 +292,10 @@ flowchart TB
                   if i + 1 < end && bytes[i as usize] == b'/' && bytes[(i + 1) as usize] == b'*' {
                       depth += 1;
                       i += 2;
-                  } else if i + 1 < end && bytes[i as usize] == b'*' && bytes[(i + 1) as usize] == b'/' {
+                  } else if i + 1 < end
+                      && bytes[i as usize] == b'*'
+                      && bytes[(i + 1) as usize] == b'/'
+                  {
                       depth -= 1;
                       i += 2;
                   } else {
@@ -315,7 +317,7 @@ flowchart TB
       Ok(flags)
   }
   ```
-- `crates/robby-ir/src/coverage.rs:382:1` (docs, `robby_ir::coverage::skip_attribute`): "Skip `#[...]` or `#![...]`, honouring nested brackets and string literals."
+- `crates/robby-ir/src/coverage.rs:375:1` (docs, `robby_ir::coverage::skip_attribute`): "Skip `#[...]` or `#![...]`, honouring nested brackets and string literals."
   ```
   /// Skip `#[...]` or `#![...]`, honouring nested brackets and string literals.
   fn skip_attribute(bytes: &[u8], start: u32, end: u32) -> Option<u32> {
@@ -445,7 +447,6 @@ flowchart TB
 - calls ← [`robby_render::markdown::coverage_section`](../../robby_render/markdown/coverage-section.md)
 - calls ← [`robby_render::pipeline::from_document`](../../robby_render/pipeline/from-document.md)
 - calls ← [`robby_render::pipeline::impl Loaded::is_ok`](../../robby_render/pipeline/index.md)
-- calls ← [`robby_render::pipeline::impl Loaded::summary`](../../robby_render/pipeline/index.md)
 - calls ← [`robby_render::pipeline::load_sources`](../../robby_render/pipeline/load-sources.md)
 
 ## Items
@@ -461,17 +462,17 @@ flowchart TB
 | [`impl CoverageReport`](impl-coveragereport.md) | `code.impl` | — | `crates/robby-ir/src/coverage.rs:118:1` |
 | [`file_coverage`](file-coverage.md) | `code.function` | 26 | `crates/robby-ir/src/coverage.rs:145:1` |
 | [`document_coverage`](document-coverage.md) | `code.function` | 10 | `crates/robby-ir/src/coverage.rs:191:1` |
-| [`all_spans`](all-spans.md) | `code.function` | 7 | `crates/robby-ir/src/coverage.rs:209:1` |
-| [`frontier_spans`](frontier-spans.md) | `code.function` | 7 | `crates/robby-ir/src/coverage.rs:226:1` |
-| [`has_span_descendant`](has-span-descendant.md) | `code.function` | 7 | `crates/robby-ir/src/coverage.rs:244:1` |
-| [`make_gap`](make-gap.md) | `code.function` | 6 | `crates/robby-ir/src/coverage.rs:253:1` |
-| [`TriviaMode`](triviamode.md) | `code.enum` | — | `crates/robby-ir/src/coverage.rs:268:1` |
-| [`impl TriviaMode`](impl-triviamode.md) | `code.impl` | — | `crates/robby-ir/src/coverage.rs:274:1` |
-| [`preview`](preview.md) | `code.function` | 9 | `crates/robby-ir/src/coverage.rs:293:1` |
-| [`TriviaFlags`](triviaflags.md) | `code.struct` | — | `crates/robby-ir/src/coverage.rs:304:1` |
-| [`impl TriviaFlags`](impl-triviaflags.md) | `code.impl` | — | `crates/robby-ir/src/coverage.rs:311:1` |
-| [`scan_trivia`](scan-trivia.md) | `code.function` | 8 | `crates/robby-ir/src/coverage.rs:322:1` |
-| [`skip_attribute`](skip-attribute.md) | `code.function` | 3 | `crates/robby-ir/src/coverage.rs:382:1` |
+| [`all_spans`](all-spans.md) | `code.function` | 7 | `crates/robby-ir/src/coverage.rs:212:1` |
+| [`frontier_spans`](frontier-spans.md) | `code.function` | 7 | `crates/robby-ir/src/coverage.rs:229:1` |
+| [`has_span_descendant`](has-span-descendant.md) | `code.function` | 7 | `crates/robby-ir/src/coverage.rs:247:1` |
+| [`make_gap`](make-gap.md) | `code.function` | 6 | `crates/robby-ir/src/coverage.rs:256:1` |
+| [`TriviaMode`](triviamode.md) | `code.enum` | — | `crates/robby-ir/src/coverage.rs:271:1` |
+| [`impl TriviaMode`](impl-triviamode.md) | `code.impl` | — | `crates/robby-ir/src/coverage.rs:277:1` |
+| [`preview`](preview.md) | `code.function` | 9 | `crates/robby-ir/src/coverage.rs:287:1` |
+| [`TriviaFlags`](triviaflags.md) | `code.struct` | — | `crates/robby-ir/src/coverage.rs:298:1` |
+| [`impl TriviaFlags`](impl-triviaflags.md) | `code.impl` | — | `crates/robby-ir/src/coverage.rs:305:1` |
+| [`scan_trivia`](scan-trivia.md) | `code.function` | 8 | `crates/robby-ir/src/coverage.rs:316:1` |
+| [`skip_attribute`](skip-attribute.md) | `code.function` | 3 | `crates/robby-ir/src/coverage.rs:375:1` |
 
 ## Imports
 

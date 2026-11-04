@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn typescript_fixture_is_fully_covered()` |
-| location | [`crates/robby-extract/tests/typescript.rs:162`](../../../../crates/robby-extract/tests/typescript.rs#L162) |
+| location | [`crates/robby-extract/tests/typescript.rs:165`](../../../../crates/robby-extract/tests/typescript.rs#L165) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -28,10 +28,7 @@ fn typescript_fixture_is_fully_covered() {
         .map(|(file, gap)| format!("{}:{} {:?}", file.file, gap.span.location(), gap.preview))
         .collect();
 
-    assert!(
-        report.is_complete(),
-        "unclaimed TypeScript: {failures:#?}"
-    );
+    assert!(report.is_complete(), "unclaimed TypeScript: {failures:#?}");
 }
 ```
 
@@ -69,7 +66,7 @@ sequenceDiagram
     typescript_fixture_is_fully_covered-->>typescript_fixture_is_fully_covered: format!('{}:{} {:?}', file.file, gap.span.location(), gap.preview)
     typescript_fixture_is_fully_covered-->>map: report .failures() .map(|(file, gap)| format!('{}:{} {:?}', file.file...
     typescript_fixture_is_fully_covered-->>collect: report .failures() .map(|(file, gap)| format!('{}:{} {:?}', file.file...
-    typescript_fixture_is_fully_covered-->>typescript_fixture_is_fully_covered: assert!( report.is_complete(), 'unclaimed TypeScript: {failures: ?}' )
+    typescript_fixture_is_fully_covered-->>typescript_fixture_is_fully_covered: assert!(report.is_complete(), 'unclaimed TypeScript: {failures: ?}')
 ```
 
 16 steps · 0 observed · 16 possible only

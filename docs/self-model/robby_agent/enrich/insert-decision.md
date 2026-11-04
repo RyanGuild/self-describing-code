@@ -18,9 +18,8 @@ fn insert_decision(
     decision_model: &str,
     note_model: Option<&str>,
 ) {
-    let parent = match doc.get(&ctx.parent_id) {
-        Some(p) => p,
-        None => return,
+    let Some(parent) = doc.get(&ctx.parent_id) else {
+        return;
     };
     let fqn = format!("{}/decision", parent.fqn);
     let lang = match parent.id.as_str().split("://").next() {
@@ -57,8 +56,7 @@ fn insert_decision(
         node.annotations
             .insert("note_kind".into(), note.kind.as_str().into());
         if let Some(model) = note_model {
-            node.annotations
-                .insert("note_model".into(), model.into());
+            node.annotations.insert("note_model".into(), model.into());
         }
         if let Ok(json) = serde_json::to_string(&note.highlights) {
             node.annotations.insert("highlights".into(), json);
@@ -89,9 +87,6 @@ sequenceDiagram
     participant serde_json__to_string as serde_json::to_string
     participant merge as merge
     insert_decision-->>get: doc.get(&ctx.parent_id)
-    alt match doc.get(&ctx.parent_id)
-    insert_decision-->>insert_decision: return
-    end
     insert_decision-->>insert_decision: format!('{}/decision', parent.fqn)
     insert_decision-->>as_str: parent.id.as_str()
     insert_decision-->>split: parent.id.as_str().split('://')
@@ -127,7 +122,7 @@ sequenceDiagram
     alt let Some(model) = note_model
     insert_decision-->>into: 'note_model'.into()
     insert_decision-->>into: model.into()
-    insert_decision-->>insert: node.annotations .insert('note_model'.into(), model.into())
+    insert_decision-->>insert: node.annotations.insert('note_model'.into(), model.into())
     end
     insert_decision-->>serde_json__to_string: serde_json::to_string(&note.highlights)
     alt let Ok(json) = serde_json::to_string(&note.highlights)
@@ -138,21 +133,21 @@ sequenceDiagram
     insert_decision-->>merge: doc.merge(node)
 ```
 
-36 steps · 0 observed · 36 possible only
+35 steps · 0 observed · 35 possible only
 
 **Edges**
 
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Node::with_lang`](../../robby_ir/model/index.md)
 - calls → [`robby_agent::enrich::impl FakeClient::new`](tests/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::span::impl Span::is_empty`](../../robby_ir/span/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](../model/index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
@@ -161,7 +156,7 @@ sequenceDiagram
 ## References
 
 - calls → [`robby_agent::enrich::tests`](tests/index.md) — new
-- calls → [`robby_agent::model`](../model/index.md) — as_str
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — 5 items
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 

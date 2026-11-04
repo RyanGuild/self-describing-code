@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn resolve_use_path<'a>(doc: &'a Document, text: &str) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/tree.rs:631`](../../../../crates/robby-render/src/tree.rs#L631) |
+| location | [`crates/robby-render/src/tree.rs:629`](../../../../crates/robby-render/src/tree.rs#L629) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,11 +19,9 @@ fn resolve_use_path<'a>(doc: &'a Document, text: &str) -> Option<&'a Node> {
         .trim();
     let path = path
         .split_once('{')
-        .map(|(prefix, _)| prefix)
-        .unwrap_or(path)
+        .map_or(path, |(prefix, _)| prefix)
         .split_once(" as ")
-        .map(|(prefix, _)| prefix)
-        .unwrap_or(path)
+        .map_or(path, |(prefix, _)| prefix)
         .trim()
         .trim_end_matches("::")
         .trim();
@@ -40,10 +38,10 @@ fn resolve_use_path<'a>(doc: &'a Document, text: &str) -> Option<&'a Node> {
 
     for candidate in candidates {
         let id = NodeId::symbol("rust", &candidate);
-        if let Some(node) = doc.get(&id) {
-            if is_module(node) {
-                return Some(node);
-            }
+        if let Some(node) = doc.get(&id)
+            && is_module(node)
+        {
+            return Some(node);
         }
     }
     None
@@ -58,8 +56,7 @@ sequenceDiagram
     participant trim_start_matches as trim_start_matches
     participant trim_end_matches as trim_end_matches
     participant split_once as split_once
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     participant is_empty as is_empty
     participant rsplit_once as rsplit_once
     participant to_owned as to_owned
@@ -74,14 +71,12 @@ sequenceDiagram
     resolve_use_path-->>trim_end_matches: text .trim() .trim_start_matches('pub ') .trim_start_matches('use ') ...
     resolve_use_path-->>trim: text .trim() .trim_start_matches('pub ') .trim_start_matches('use ') ...
     resolve_use_path-->>split_once: path .split_once('{')
-    resolve_use_path-->>map: path .split_once('{') .map(|(prefix, _)| prefix)
-    resolve_use_path-->>unwrap_or: path .split_once('{') .map(|(prefix, _)| prefix) .unwrap_or(path)
-    resolve_use_path-->>split_once: path .split_once('{') .map(|(prefix, _)| prefix) .unwrap_or(path) .sp...
-    resolve_use_path-->>map: path .split_once('{') .map(|(prefix, _)| prefix) .unwrap_or(path) .sp...
-    resolve_use_path-->>unwrap_or: path .split_once('{') .map(|(prefix, _)| prefix) .unwrap_or(path) .sp...
-    resolve_use_path-->>trim: path .split_once('{') .map(|(prefix, _)| prefix) .unwrap_or(path) .sp...
-    resolve_use_path-->>trim_end_matches: path .split_once('{') .map(|(prefix, _)| prefix) .unwrap_or(path) .sp...
-    resolve_use_path-->>trim: path .split_once('{') .map(|(prefix, _)| prefix) .unwrap_or(path) .sp...
+    resolve_use_path-->>map_or: path .split_once('{') .map_or(path, |(prefix, _)| prefix)
+    resolve_use_path-->>split_once: path .split_once('{') .map_or(path, |(prefix, _)| prefix) .split_once...
+    resolve_use_path-->>map_or: path .split_once('{') .map_or(path, |(prefix, _)| prefix) .split_once...
+    resolve_use_path-->>trim: path .split_once('{') .map_or(path, |(prefix, _)| prefix) .split_once...
+    resolve_use_path-->>trim_end_matches: path .split_once('{') .map_or(path, |(prefix, _)| prefix) .split_once...
+    resolve_use_path-->>trim: path .split_once('{') .map_or(path, |(prefix, _)| prefix) .split_once...
     resolve_use_path-->>is_empty: path.is_empty()
     alt path.is_empty()
     resolve_use_path-->>resolve_use_path: return
@@ -95,17 +90,15 @@ sequenceDiagram
     loop candidates
     resolve_use_path-->>NodeId__symbol: NodeId::symbol('rust', &candidate)
     resolve_use_path-->>get: doc.get(&id)
-    alt let Some(node) = doc.get(&id)
     resolve_use_path-->>is_module: is_module(node)
-    alt is_module(node)
+    alt let Some(node) = doc.get(&id) && is_module(node)
     resolve_use_path-->>Some: Some(node)
     resolve_use_path-->>resolve_use_path: return
     end
     end
-    end
 ```
 
-25 steps · 0 observed · 25 possible only
+23 steps · 0 observed · 23 possible only
 
 **Edges**
 

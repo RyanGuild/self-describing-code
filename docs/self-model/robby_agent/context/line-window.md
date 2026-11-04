@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String>` |
-| location | [`crates/robby-agent/src/context.rs:185`](../../../../crates/robby-agent/src/context.rs#L185) |
+| location | [`crates/robby-agent/src/context.rs:184`](../../../../crates/robby-agent/src/context.rs#L184) |
 | provenance | extractor · confidence 1.00 |
 
 > ±20 lines around the node's span.
@@ -31,11 +31,7 @@ fn line_window(sources: &BTreeMap<String, String>, node: &Node) -> Option<String
         out.push_str(line);
         out.push('\n');
     }
-    if out.is_empty() {
-        None
-    } else {
-        Some(out)
-    }
+    if out.is_empty() { None } else { Some(out) }
 }
 ```
 

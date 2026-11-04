@@ -6,14 +6,15 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_binary_module(doc: &Document, node: &Node) -> bool` |
-| location | [`crates/robby-render/src/view/select.rs:228`](../../../../../crates/robby-render/src/view/select.rs#L228) |
+| location | [`crates/robby-render/src/view/select.rs:200`](../../../../../crates/robby-render/src/view/select.rs#L200) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 pub fn is_binary_module(doc: &Document, node: &Node) -> bool {
-    node.children.iter().filter_map(|id| doc.get(id)).any(|child| {
-        child.name == "main" && child.kind.as_str() == kind::code::FUNCTION
-    })
+    node.children
+        .iter()
+        .filter_map(|id| doc.get(id))
+        .any(|child| child.name == "main" && child.kind.as_str() == kind::code::FUNCTION)
 }
 ```
 
@@ -26,11 +27,11 @@ sequenceDiagram
     participant filter_map as filter_map
     participant as_str as as_str
     participant any as any
-    is_binary_module-->>iter: node.children.iter()
+    is_binary_module-->>iter: node.children .iter()
     is_binary_module-->>get: doc.get(id)
-    is_binary_module-->>filter_map: node.children.iter().filter_map(|id| doc.get(id))
+    is_binary_module-->>filter_map: node.children .iter() .filter_map(|id| doc.get(id))
     is_binary_module-->>as_str: child.kind.as_str()
-    is_binary_module-->>any: node.children.iter().filter_map(|id| doc.get(id)).any(|child| { child...
+    is_binary_module-->>any: node.children .iter() .filter_map(|id| doc.get(id)) .any(|child| chil...
 ```
 
 5 steps · 0 observed · 5 possible only
@@ -38,7 +39,7 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 
 ## References
 

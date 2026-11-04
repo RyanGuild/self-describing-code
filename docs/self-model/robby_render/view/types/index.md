@@ -108,9 +108,9 @@ flowchart TB
 | [`TypeRelation`](typerelation.md) | `code.struct` | — | `crates/robby-render/src/view/types.rs:37:1` |
 | [`RelationKind`](relationkind.md) | `code.enum` | — | `crates/robby-render/src/view/types.rs:44:1` |
 | [`impl TypeModel`](impl-typemodel.md) | `code.impl` | — | `crates/robby-render/src/view/types.rs:50:1` |
-| [`class_from_node`](class-from-node.md) | `code.function` | 24 | `crates/robby-render/src/view/types.rs:165:1` |
-| [`impl_methods`](impl-methods.md) | `code.function` | 9 | `crates/robby-render/src/view/types.rs:217:1` |
-| [`parse_impl_target`](parse-impl-target.md) | `code.function` | 17 | `crates/robby-render/src/view/types.rs:229:1` |
+| [`class_from_node`](class-from-node.md) | `code.function` | 24 | `crates/robby-render/src/view/types.rs:166:1` |
+| [`impl_methods`](impl-methods.md) | `code.function` | 9 | `crates/robby-render/src/view/types.rs:218:1` |
+| [`parse_impl_target`](parse-impl-target.md) | `code.function` | 17 | `crates/robby-render/src/view/types.rs:230:1` |
 
 ## Imports
 

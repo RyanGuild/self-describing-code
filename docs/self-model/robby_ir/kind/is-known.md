@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_known(kind: &Kind) -> bool` |
-| location | [`crates/robby-ir/src/kind.rs:104`](../../../../crates/robby-ir/src/kind.rs#L104) |
+| location | [`crates/robby-ir/src/kind.rs:106`](../../../../crates/robby-ir/src/kind.rs#L106) |
 | provenance | extractor · confidence 1.00 |
 
 > True when `kind` is understood by the current version of the tool.

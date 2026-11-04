@@ -5,35 +5,30 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:367`](../../../../../apps/site/src/viewer.ts#L367) |
+| location | [`apps/site/src/viewer.ts:353`](../../../../../apps/site/src/viewer.ts#L353) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLElement {
+function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean) {
   const f = frame(id);
   const wrap = document.createElement("div");
-  wrap.className =
-    "frame-wrap" +
-    (isFocus ? " is-focus" : "") +
-    (isAncestor ? " is-ancestor" : "");
+  wrap.className = `frame-wrap${isFocus ? " is-focus" : ""}${isAncestor ? " is-ancestor" : ""}`;
   wrap.dataset.id = id;
 
   const inner = document.createElement("div");
-  inner.className = "frame" + (isFocus ? " is-focus" : "");
+  inner.className = `frame${isFocus ? " is-focus" : ""}`;
 
   const header = document.createElement("div");
   header.className = "frame-header";
   const showFqn = f.fqn && f.fqn !== f.name;
-  header.innerHTML =
-    `<span class="kind-chip">${escapeHtml(f.kind_tag)}</span>` +
-    `<span class="frame-title">${escapeHtml(f.name)}</span>` +
-    (showFqn ? `<span class="frame-fqn">${escapeHtml(f.fqn)}</span>` : "");
+  header.innerHTML = `<span class="kind-chip">${escapeHtml(f.kind_tag)}</span><span class="frame-title">${escapeHtml(f.name)}</span>${showFqn ? `<span class="frame-fqn">${escapeHtml(f.fqn)}</span>` : ""}`;
   if (isFocus && f.parent) {
+    const parent = f.parent;
     header.style.cursor = "pointer";
     header.title = "Zoom out";
     header.addEventListener("click", (e) => {
       e.stopPropagation();
-      flyTo(f.parent!);
+      flyTo(parent);
     });
   }
   inner.appendChild(header);

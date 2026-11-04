@@ -17,9 +17,7 @@ fn item_children<'a>(doc: &'a Document, node: &Node) -> Vec<&'a Node> {
     node.children
         .iter()
         .filter_map(|child| doc.get(child))
-        .filter(|child| {
-            !is_module(child) && !is_compact(child.kind.as_str())
-        })
+        .filter(|child| !is_module(child) && !is_compact(child.kind.as_str()))
         .collect()
 }
 ```
@@ -52,7 +50,7 @@ sequenceDiagram
 
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
 - calls → [`robby_render::tree::is_module`](is-module.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../view/comments/index.md)
 - calls → [`robby_render::tree::is_compact`](is-compact.md)
 - calls → [`robby_render::view::select::collect`](../view/select/collect.md)
 

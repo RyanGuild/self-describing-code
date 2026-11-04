@@ -33,14 +33,10 @@ sequenceDiagram
     attach_leading_docs-->>Some: Some((span.start.byte, child_id.clone()))
     end
     end
-    alt let Some((_, id)) = best
     attach_leading_docs-->>get_mut: doc.nodes.get_mut(&id)
-    alt let Some(child) = doc.nodes.get_mut(&id)
     attach_leading_docs-->>is_none: child.docs.is_none()
-    alt child.docs.is_none()
+    alt let Some((_, id)) = best && let Some(child) = doc.nodes.get_mut(&id) ...
     attach_leading_docs-->>to_owned: raw.to_owned()
     attach_leading_docs-->>Some: Some(raw.to_owned())
-    end
-    end
     end
     end

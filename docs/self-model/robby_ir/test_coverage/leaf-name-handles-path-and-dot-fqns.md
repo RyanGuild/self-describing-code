@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn leaf_name_handles_path_and_dot_fqns()` |
-| location | [`crates/robby-ir/tests/coverage.rs:229`](../../../../crates/robby-ir/tests/coverage.rs#L229) |
+| location | [`crates/robby-ir/tests/coverage.rs:242`](../../../../crates/robby-ir/tests/coverage.rs#L242) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

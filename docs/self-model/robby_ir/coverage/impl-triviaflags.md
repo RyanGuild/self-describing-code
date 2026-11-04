@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/coverage.rs:311`](../../../../crates/robby-ir/src/coverage.rs#L311) |
+| location | [`crates/robby-ir/src/coverage.rs:305`](../../../../crates/robby-ir/src/coverage.rs#L305) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -31,7 +31,7 @@ impl TriviaFlags {
 |---|---|
 | kind | `code.method` |
 | signature | `fn classify(1)` |
-| location | [`crates/robby-ir/src/coverage.rs:312`](../../../../crates/robby-ir/src/coverage.rs#L312) |
+| location | [`crates/robby-ir/src/coverage.rs:306`](../../../../crates/robby-ir/src/coverage.rs#L306) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

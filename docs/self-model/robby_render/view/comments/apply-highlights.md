@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn apply_highlights(code: &str, highlights: &[(u32, u32)]) -> String` |
-| location | [`crates/robby-render/src/view/comments.rs:289`](../../../../../crates/robby-render/src/view/comments.rs#L289) |
+| location | [`crates/robby-render/src/view/comments.rs:247`](../../../../../crates/robby-render/src/view/comments.rs#L247) |
 | provenance | extractor · confidence 1.00 |
 
 > Apply «…» markers around highlight ranges in `code` (byte offsets).

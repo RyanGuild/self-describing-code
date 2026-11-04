@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.crate` |
 | provenance | extractor · confidence 1.00 |
-| nodes | 819 |
+| nodes | 784 |
 
 ## Package diagram
 
@@ -107,7 +107,6 @@ flowchart TB
     n_458e2543a821af84 -.-> n_092b7abcfcf260db
     n_458e2543a821af84 -.-> n_2bf7728895532b9d
     n_458e2543a821af84 --> n_356bf2c23da68961
-    n_458e2543a821af84 -.-> n_534805da25f902cb
     n_458e2543a821af84 -.-> n_5534aafb5d116cdb
     n_458e2543a821af84 -.-> n_6b09e2da2b3d3ec0
     n_458e2543a821af84 -.-> n_77294f3b6f21b79c
@@ -159,7 +158,7 @@ flowchart TB
     n_58704dd7dd5e44a7 --> n_c53db78a9ef33eb6
     n_58704dd7dd5e44a7 -.-> n_d98da197ad772974
     n_6b09e2da2b3d3ec0 -.-> n_05b9b679aaf35ec8
-    n_6b09e2da2b3d3ec0 -.-> n_23dac307afb8bcf6
+    n_6b09e2da2b3d3ec0 -.-> n_2bf7728895532b9d
     n_6b09e2da2b3d3ec0 -.-> n_534805da25f902cb
     n_6b09e2da2b3d3ec0 -.-> n_f006da06b5256ba9
     n_6f40e2fa7b42a40f --> n_05b9b679aaf35ec8
@@ -405,7 +404,6 @@ flowchart TB
             n_6b907e7f03293147["count_modules"]
             n_7f2a8756106a28dc["crate_index_path"]
             n_22c884af901eb923["crate_of"]
-            n_d7e28b7b7f1708a7["first_line"]
             n_a3553c31416c47fa["global_index"]
             n_6de8c81bdaacb2c4["is_compact"]
             n_fdfc429b571e713a["is_crate"]
@@ -448,7 +446,6 @@ flowchart TB
             n_6b9cfcf51d0346ee["is_container"]
             n_8b2308df3e14a858["is_structural"]
             n_8495a2c77936c8db["is_type"]
-            n_2c049509d9088811["keyword"]
             n_fa2582297af08697["short_kind"]
             n_fc1d8ce8ffe60487["strip_generics"]
             n_9d5bfea5c691e091["text"]
@@ -458,7 +455,7 @@ flowchart TB
             subgraph n_2bf7728895532b9d["comments"]
                 direction TB
                 n_7d8b6f618e2e2b3d["apply_highlights"]
-                n_fab4eeebb9766d7f["as_str"]
+                n_ff7778a79352f45c["as_str"]
                 n_641e5b5aeeab0279["code_window"]
                 n_3768e26834af3c8a["decision_child"]
                 n_c4f28ea180022df8["enrichment_fields"]
@@ -576,7 +573,6 @@ flowchart TB
                 n_737bc7514c5fccaa["is_binary_module"]
                 n_7debed98e7d8376c["main_process"]
                 n_d02d0abf1c3600ac["markdown"]
-                n_11f6d2fb700cd378["source_name"]
                 n_f5a635ba7e165c71["tui_all"]
             end
             subgraph n_3d4b89e4d03574c3["sibling"]
@@ -599,12 +595,9 @@ flowchart TB
         end
         subgraph n_458e2543a821af84["web"]
             direction TB
-            n_12e10a94bd0b89a4["event_detail"]
             n_1cef7cd777a4897f["for_workspace"]
             n_87904cdb73eb4bef["from_node"]
             n_213e965c602f499e["from_node_in_doc"]
-            n_156e84213d588a5f["provenance_name"]
-            n_01028a6d08164775["step_kind_name"]
             n_4d3c3f485a9610d6["to_json"]
             n_035881844fb12b4b["write_site"]
         end
@@ -623,7 +616,7 @@ flowchart TB
     n_00fad7cf58583263 --> n_a570dbeb379084c2
     n_00fad7cf58583263 -->|"2"| n_bb9971de7b6aa277
     n_00fad7cf58583263 --> n_f2c21d1aff51beb3
-    n_00fad7cf58583263 --> n_fab4eeebb9766d7f
+    n_00fad7cf58583263 --> n_ff7778a79352f45c
     n_016efff8aa636e20 --> n_11e080982eb2281e
     n_016efff8aa636e20 --> n_32370c79df1f48c9
     n_01ad3ceef0d0cb80 --> n_11a23e983625805a
@@ -633,7 +626,7 @@ flowchart TB
     n_01ad3ceef0d0cb80 --> n_6de8c81bdaacb2c4
     n_01ad3ceef0d0cb80 --> n_eaf247f5644149ed
     n_01ad3ceef0d0cb80 -->|"3"| n_ebf19a6a762f1087
-    n_01ad3ceef0d0cb80 --> n_fab4eeebb9766d7f
+    n_01ad3ceef0d0cb80 --> n_ff7778a79352f45c
     n_031015833fb9c9ce --> n_8d4a969d6a37648c
     n_031015833fb9c9ce --> n_8df70fa96b2999e7
     n_035881844fb12b4b --> n_11e080982eb2281e
@@ -642,7 +635,7 @@ flowchart TB
     n_035881844fb12b4b -->|"4"| n_4d3c3f485a9610d6
     n_035881844fb12b4b --> n_632a84e110a5dc84
     n_035881844fb12b4b --> n_a226e41874f80197
-    n_035881844fb12b4b --> n_fab4eeebb9766d7f
+    n_035881844fb12b4b --> n_ff7778a79352f45c
     n_0572a55b97877ef3 -->|"2"| n_4d3c3f485a9610d6
     n_0572a55b97877ef3 --> n_5d64ffe3865383a1
     n_0572a55b97877ef3 -->|"2"| n_632a84e110a5dc84
@@ -652,24 +645,24 @@ flowchart TB
     n_0877d202cb3d1db5 --> n_465730a4067bc4e4
     n_0877d202cb3d1db5 --> n_5d9930b67863fdc3
     n_0877d202cb3d1db5 -->|"2"| n_7d8b6f618e2e2b3d
-    n_0877d202cb3d1db5 --> n_fab4eeebb9766d7f
+    n_0877d202cb3d1db5 --> n_ff7778a79352f45c
     n_09278f41badf9212 --> n_0b2e754c404da854
     n_09278f41badf9212 --> n_5862da4f52732478
     n_0ca465745abea557 -->|"2"| n_0b2e754c404da854
-    n_0ca465745abea557 --> n_fab4eeebb9766d7f
+    n_0ca465745abea557 --> n_ff7778a79352f45c
     n_0ccee746718d0bcc --> n_4958b0fbabca34bc
     n_0ccee746718d0bcc --> n_5d18d5212c5cf3a9
     n_0ccee746718d0bcc --> n_a226e41874f80197
     n_0ccee746718d0bcc -->|"4"| n_a9d8540e2150b923
     n_0ccee746718d0bcc --> n_bb9971de7b6aa277
-    n_0ccee746718d0bcc --> n_fab4eeebb9766d7f
+    n_0ccee746718d0bcc --> n_ff7778a79352f45c
     n_0d5be6053804de16 --> n_465730a4067bc4e4
     n_0d5be6053804de16 --> n_5d9930b67863fdc3
     n_10b2e100bc5e0821 --> n_01ad3ceef0d0cb80
     n_10b2e100bc5e0821 --> n_8e17337d9a194e54
     n_116ac437ecee9baf -.->|"1 circular"| n_9d5bfea5c691e091
     n_116ac437ecee9baf -.->|"1 circular"| n_bb9971de7b6aa277
-    n_116ac437ecee9baf --> n_fab4eeebb9766d7f
+    n_116ac437ecee9baf --> n_ff7778a79352f45c
     n_11a23e983625805a -->|"2"| n_11e080982eb2281e
     n_11a23e983625805a --> n_da411402b4350d4d
     n_11bb4f1dcd2a9098 --> n_5d9930b67863fdc3
@@ -681,8 +674,7 @@ flowchart TB
     n_12d6cac4f8626411 --> n_465730a4067bc4e4
     n_12d6cac4f8626411 --> n_5d9930b67863fdc3
     n_12d6cac4f8626411 --> n_c2ef34cf599b22b2
-    n_12d6cac4f8626411 --> n_fab4eeebb9766d7f
-    n_12e10a94bd0b89a4 --> n_01028a6d08164775
+    n_12d6cac4f8626411 --> n_ff7778a79352f45c
     n_1479adda4c9cb668 --> n_0fe77a472938eb6c
     n_1479adda4c9cb668 --> n_11e080982eb2281e
     n_1479adda4c9cb668 --> n_87904cdb73eb4bef
@@ -694,7 +686,7 @@ flowchart TB
     n_161877e5328c261f --> n_84ee9201a5b54929
     n_161877e5328c261f --> n_bb9971de7b6aa277
     n_161877e5328c261f --> n_d55652e93431fabb
-    n_174ca23724aec60a --> n_fab4eeebb9766d7f
+    n_174ca23724aec60a --> n_ff7778a79352f45c
     n_17c77dd7a6fb25ba --> n_11e080982eb2281e
     n_17c77dd7a6fb25ba -->|"2"| n_bb9971de7b6aa277
     n_1923d2917a857926 --> n_362f706ada15eb10
@@ -706,9 +698,9 @@ flowchart TB
     n_1923d2917a857926 -->|"3"| n_bb9971de7b6aa277
     n_1923d2917a857926 -->|"2"| n_f2c21d1aff51beb3
     n_1923d2917a857926 --> n_fa2582297af08697
-    n_1923d2917a857926 -->|"2"| n_fab4eeebb9766d7f
+    n_1923d2917a857926 -->|"2"| n_ff7778a79352f45c
     n_1923d2917a857926 --> n_ffe196e6a9593c82
-    n_197157e39be2dfd1 -->|"2"| n_11e080982eb2281e
+    n_197157e39be2dfd1 -->|"3"| n_11e080982eb2281e
     n_197157e39be2dfd1 --> n_2bde649864bf1146
     n_197157e39be2dfd1 --> n_323013ead64fbe04
     n_197157e39be2dfd1 --> n_465730a4067bc4e4
@@ -717,28 +709,27 @@ flowchart TB
     n_197157e39be2dfd1 --> n_bb9971de7b6aa277
     n_1a89d16c1861baae --> n_9ed0f9b7842fbcc9
     n_1cef7cd777a4897f --> n_a9d8540e2150b923
+    n_1cef7cd777a4897f --> n_ff7778a79352f45c
     n_1da2b6c82b3cdf34 --> n_27f283958f7b3bc6
     n_1fb1e54d52a9fcbc -->|"2"| n_0b2e754c404da854
     n_1fb1e54d52a9fcbc -->|"2"| n_465730a4067bc4e4
     n_1fb1e54d52a9fcbc --> n_5d9930b67863fdc3
     n_213e965c602f499e -->|"2"| n_016efff8aa636e20
     n_213e965c602f499e --> n_0b2e754c404da854
-    n_213e965c602f499e --> n_156e84213d588a5f
     n_213e965c602f499e --> n_237132f9c87e9cc1
     n_213e965c602f499e -->|"2"| n_25dacce096110768
     n_213e965c602f499e -.->|"1 circular"| n_87904cdb73eb4bef
     n_213e965c602f499e --> n_a9d8540e2150b923
-    n_213e965c602f499e -->|"2"| n_bb9971de7b6aa277
-    n_213e965c602f499e -->|"3"| n_fab4eeebb9766d7f
+    n_213e965c602f499e -->|"4"| n_ff7778a79352f45c
     n_2157cbc8b72be24e --> n_e9aacb4720bb8e4e
     n_237132f9c87e9cc1 --> n_bb53751168a285fd
     n_25b6e8d6201b38e1 -->|"2"| n_465730a4067bc4e4
     n_25b6e8d6201b38e1 -->|"7"| n_f2c21d1aff51beb3
-    n_25dacce096110768 --> n_2c049509d9088811
     n_25dacce096110768 -->|"5"| n_465730a4067bc4e4
     n_25dacce096110768 --> n_570e2c532788087a
     n_25dacce096110768 --> n_bb9971de7b6aa277
     n_25dacce096110768 -->|"2"| n_f2c21d1aff51beb3
+    n_25dacce096110768 --> n_ff7778a79352f45c
     n_273b2347595a4a92 --> n_1479adda4c9cb668
     n_273b2347595a4a92 --> n_f19279b0043fe2d4
     n_27f283958f7b3bc6 --> n_0b2e754c404da854
@@ -751,7 +742,7 @@ flowchart TB
     n_28988dd039e06d31 -->|"3"| n_465730a4067bc4e4
     n_28988dd039e06d31 -->|"2"| n_a9d8540e2150b923
     n_28988dd039e06d31 --> n_f2c21d1aff51beb3
-    n_28988dd039e06d31 -->|"14"| n_fab4eeebb9766d7f
+    n_28988dd039e06d31 -->|"14"| n_ff7778a79352f45c
     n_2bde649864bf1146 --> n_11e080982eb2281e
     n_2bde649864bf1146 --> n_465730a4067bc4e4
     n_2d7b3d99a600dc16 --> n_5d9930b67863fdc3
@@ -766,7 +757,7 @@ flowchart TB
     n_30b6d0144b0642cc --> n_b8cfed370f7630fa
     n_30b6d0144b0642cc -->|"2"| n_bb9971de7b6aa277
     n_30b6d0144b0642cc -->|"2"| n_f2c21d1aff51beb3
-    n_30b6d0144b0642cc -->|"11"| n_fab4eeebb9766d7f
+    n_30b6d0144b0642cc -->|"11"| n_ff7778a79352f45c
     n_30b6d0144b0642cc --> n_ffe196e6a9593c82
     n_323013ead64fbe04 --> n_11e080982eb2281e
     n_323013ead64fbe04 --> n_465730a4067bc4e4
@@ -774,7 +765,7 @@ flowchart TB
     n_32780da9ddf75af3 --> n_465730a4067bc4e4
     n_32780da9ddf75af3 -->|"3"| n_5d9930b67863fdc3
     n_32780da9ddf75af3 --> n_618f2fb865962654
-    n_32780da9ddf75af3 -->|"2"| n_fab4eeebb9766d7f
+    n_32780da9ddf75af3 -->|"2"| n_ff7778a79352f45c
     n_32cf4d2ecb5a0a21 --> n_9ed0f9b7842fbcc9
     n_34052eece36e7f4e -->|"2"| n_465730a4067bc4e4
     n_34052eece36e7f4e --> n_5d9930b67863fdc3
@@ -782,7 +773,7 @@ flowchart TB
     n_375dedd004f85044 --> n_11e080982eb2281e
     n_375dedd004f85044 --> n_bfa30f461d12b7ee
     n_375dedd004f85044 --> n_ca5056d43b6f5293
-    n_3768e26834af3c8a --> n_fab4eeebb9766d7f
+    n_3768e26834af3c8a --> n_ff7778a79352f45c
     n_3980bd571c7eece4 --> n_0b2e754c404da854
     n_3980bd571c7eece4 --> n_9aac12cb4c9e0e26
     n_3980bd571c7eece4 --> n_c7c36b72a1b4ae90
@@ -816,7 +807,7 @@ flowchart TB
     n_465de596eb56125b -->|"2"| n_bb9971de7b6aa277
     n_465de596eb56125b --> n_d55652e93431fabb
     n_465de596eb56125b --> n_ebf19a6a762f1087
-    n_465de596eb56125b -->|"2"| n_fab4eeebb9766d7f
+    n_465de596eb56125b -->|"2"| n_ff7778a79352f45c
     n_4677f91650c8fa9d -->|"2"| n_4958b0fbabca34bc
     n_4677f91650c8fa9d -.->|"1 circular"| n_90d23e972bd58ac7
     n_4677f91650c8fa9d -.->|"2 circular"| n_bb9971de7b6aa277
@@ -828,10 +819,10 @@ flowchart TB
     n_4c0cca6140ffbbd2 --> n_465730a4067bc4e4
     n_4c0cca6140ffbbd2 -->|"2"| n_4958b0fbabca34bc
     n_4c0cca6140ffbbd2 -->|"2"| n_f2c21d1aff51beb3
-    n_4c0cca6140ffbbd2 -->|"4"| n_fab4eeebb9766d7f
+    n_4c0cca6140ffbbd2 -->|"4"| n_ff7778a79352f45c
     n_4f04956ed969e78d -->|"2"| n_6b9cfcf51d0346ee
     n_50e81ecfa3776b43 --> n_fcf372bcbbdc728a
-    n_52a53b3b46311577 --> n_fab4eeebb9766d7f
+    n_52a53b3b46311577 --> n_ff7778a79352f45c
     n_55b8c37d0badb78d --> n_0b2e754c404da854
     n_55b8c37d0badb78d --> n_11e080982eb2281e
     n_55b8c37d0badb78d --> n_bb9971de7b6aa277
@@ -857,7 +848,7 @@ flowchart TB
     n_5d0e4314e8ae7165 --> n_ca5056d43b6f5293
     n_5d0e4314e8ae7165 --> n_f2c21d1aff51beb3
     n_5d0e4314e8ae7165 --> n_fa2582297af08697
-    n_5d0e4314e8ae7165 -->|"3"| n_fab4eeebb9766d7f
+    n_5d0e4314e8ae7165 -->|"3"| n_ff7778a79352f45c
     n_5d18d5212c5cf3a9 -->|"9"| n_11e080982eb2281e
     n_5d18d5212c5cf3a9 -->|"4"| n_465730a4067bc4e4
     n_5d64ffe3865383a1 -->|"12"| n_11e080982eb2281e
@@ -887,12 +878,12 @@ flowchart TB
     n_6892848a318479b5 --> n_d9177e73eb024a06
     n_6892848a318479b5 --> n_ef17956e251a25c9
     n_68970d6d58680b18 --> n_0b2e754c404da854
-    n_6b907e7f03293147 --> n_fab4eeebb9766d7f
+    n_6b907e7f03293147 --> n_ff7778a79352f45c
     n_6c39fec40a174770 --> n_5d64ffe3865383a1
     n_6c39fec40a174770 --> n_632a84e110a5dc84
-    n_737bc7514c5fccaa --> n_fab4eeebb9766d7f
+    n_737bc7514c5fccaa --> n_ff7778a79352f45c
     n_742a0cec2e78e8fe --> n_a9d8540e2150b923
-    n_742a0cec2e78e8fe --> n_fab4eeebb9766d7f
+    n_742a0cec2e78e8fe --> n_ff7778a79352f45c
     n_74c96613b6250856 --> n_3c079b97f8351ae3
     n_74c96613b6250856 -->|"2"| n_d1bec2e55ee10959
     n_79bed59b1a79eb84 --> n_465730a4067bc4e4
@@ -905,14 +896,14 @@ flowchart TB
     n_7d8b6f618e2e2b3d --> n_22563e829175fdb4
     n_7d8b6f618e2e2b3d -->|"2"| n_465730a4067bc4e4
     n_7d8b6f618e2e2b3d --> n_f2c21d1aff51beb3
-    n_7debed98e7d8376c --> n_fab4eeebb9766d7f
+    n_7debed98e7d8376c --> n_ff7778a79352f45c
     n_7f5f84584126cbf7 --> n_11e080982eb2281e
     n_7f5f84584126cbf7 -->|"2"| n_465730a4067bc4e4
     n_7f6f7186631adb12 --> n_5d18d5212c5cf3a9
     n_8208ba2b40e6adfa -->|"3"| n_0b2e754c404da854
     n_8208ba2b40e6adfa -->|"2"| n_0c8845659c8bf7a2
     n_8208ba2b40e6adfa --> n_5d9930b67863fdc3
-    n_8208ba2b40e6adfa -->|"4"| n_fab4eeebb9766d7f
+    n_8208ba2b40e6adfa -->|"4"| n_ff7778a79352f45c
     n_85e74789245bccf1 --> n_016efff8aa636e20
     n_85e74789245bccf1 --> n_d55652e93431fabb
     n_87904cdb73eb4bef -.->|"1 circular"| n_213e965c602f499e
@@ -936,7 +927,7 @@ flowchart TB
     n_8ff5a307b7777fb9 --> n_5ac99e1c84ebd9ad
     n_8ff5a307b7777fb9 -->|"2"| n_7d8b6f618e2e2b3d
     n_8ff5a307b7777fb9 --> n_ea8679fdc5a30ae1
-    n_8ff5a307b7777fb9 --> n_fab4eeebb9766d7f
+    n_8ff5a307b7777fb9 --> n_ff7778a79352f45c
     n_90d23e972bd58ac7 -.->|"1 circular"| n_bb9971de7b6aa277
     n_92067e3e318325fe --> n_465730a4067bc4e4
     n_92067e3e318325fe --> n_5d9930b67863fdc3
@@ -945,7 +936,7 @@ flowchart TB
     n_93c94be41cee362e -->|"4"| n_465730a4067bc4e4
     n_93c94be41cee362e -.->|"4 circular"| n_9d5bfea5c691e091
     n_93c94be41cee362e --> n_f2c21d1aff51beb3
-    n_93c94be41cee362e -->|"5"| n_fab4eeebb9766d7f
+    n_93c94be41cee362e -->|"5"| n_ff7778a79352f45c
     n_9667fb4c94bf5ed9 --> n_0b2e754c404da854
     n_9667fb4c94bf5ed9 --> n_b958b963d1f5507d
     n_9667fb4c94bf5ed9 --> n_ca5056d43b6f5293
@@ -958,10 +949,10 @@ flowchart TB
     n_9770ebfdac89aad3 --> n_b6f5763fd8852f21
     n_9770ebfdac89aad3 -->|"2"| n_c4f28ea180022df8
     n_9770ebfdac89aad3 -->|"4"| n_f2c21d1aff51beb3
-    n_9770ebfdac89aad3 -->|"5"| n_fab4eeebb9766d7f
+    n_9770ebfdac89aad3 -->|"4"| n_ff7778a79352f45c
     n_97d55db8002e6d30 --> n_a9d8540e2150b923
     n_97d55db8002e6d30 --> n_f2c21d1aff51beb3
-    n_97d55db8002e6d30 --> n_fab4eeebb9766d7f
+    n_97d55db8002e6d30 --> n_ff7778a79352f45c
     n_985af810c4fa74f1 --> n_465730a4067bc4e4
     n_985af810c4fa74f1 --> n_7222783df6ca47e4
     n_98e09a50ba136685 --> n_362f706ada15eb10
@@ -973,7 +964,7 @@ flowchart TB
     n_98e09a50ba136685 --> n_d8f08dd1d2200ed6
     n_98e09a50ba136685 -->|"5"| n_f2c21d1aff51beb3
     n_99d441e4191b295f --> n_8775b28cd211f488
-    n_99d441e4191b295f --> n_fab4eeebb9766d7f
+    n_99d441e4191b295f --> n_ff7778a79352f45c
     n_9bff590e84167ba9 --> n_11e080982eb2281e
     n_9bff590e84167ba9 --> n_465de596eb56125b
     n_9bff590e84167ba9 --> n_a09f9f042f43ca1b
@@ -982,11 +973,11 @@ flowchart TB
     n_9ca36d5dba653bd8 -->|"2"| n_465730a4067bc4e4
     n_9ca36d5dba653bd8 --> n_5d9930b67863fdc3
     n_9ca36d5dba653bd8 --> n_bb9971de7b6aa277
-    n_9ca36d5dba653bd8 -->|"5"| n_fab4eeebb9766d7f
+    n_9ca36d5dba653bd8 -->|"5"| n_ff7778a79352f45c
     n_9ca9be67b573c9bf --> n_5d64ffe3865383a1
     n_9ca9be67b573c9bf --> n_632a84e110a5dc84
     n_9ca9be67b573c9bf --> n_bb9971de7b6aa277
-    n_9d5bfea5c691e091 -->|"4"| n_465730a4067bc4e4
+    n_9d5bfea5c691e091 -->|"3"| n_465730a4067bc4e4
     n_9d5bfea5c691e091 -.->|"1 circular"| n_bb9971de7b6aa277
     n_9ed0f9b7842fbcc9 --> n_13a9263f385f07c0
     n_9ed0f9b7842fbcc9 --> n_1479adda4c9cb668
@@ -1012,8 +1003,8 @@ flowchart TB
     n_a15344ed13186dff -->|"2"| n_f2067b0bd780c963
     n_a15344ed13186dff -->|"6"| n_f2c21d1aff51beb3
     n_a15344ed13186dff --> n_fa641831e790faa6
-    n_a15344ed13186dff -->|"6"| n_fab4eeebb9766d7f
     n_a15344ed13186dff --> n_fad312efa0272c07
+    n_a15344ed13186dff -->|"6"| n_ff7778a79352f45c
     n_a226e41874f80197 --> n_1923d2917a857926
     n_a226e41874f80197 --> n_28988dd039e06d31
     n_a226e41874f80197 --> n_362f706ada15eb10
@@ -1041,7 +1032,7 @@ flowchart TB
     n_a5260953119bad05 --> n_92c00755071fede2
     n_a5260953119bad05 --> n_bb9971de7b6aa277
     n_a5260953119bad05 --> n_fc276d517df85552
-    n_a570dbeb379084c2 -->|"2"| n_fab4eeebb9766d7f
+    n_a570dbeb379084c2 --> n_ff7778a79352f45c
     n_a68c20b78787b334 -->|"2"| n_4958b0fbabca34bc
     n_a68c20b78787b334 --> n_4f04956ed969e78d
     n_a68c20b78787b334 -.->|"1 circular"| n_90d23e972bd58ac7
@@ -1061,7 +1052,7 @@ flowchart TB
     n_b0cef0aada7c7ad0 --> n_465730a4067bc4e4
     n_b0cef0aada7c7ad0 --> n_5d9930b67863fdc3
     n_b0cef0aada7c7ad0 -->|"2"| n_bb9971de7b6aa277
-    n_b0cef0aada7c7ad0 -->|"4"| n_fab4eeebb9766d7f
+    n_b0cef0aada7c7ad0 -->|"4"| n_ff7778a79352f45c
     n_b3037e5414d1f82b --> n_1a089c25759f11f3
     n_b3037e5414d1f82b --> n_465730a4067bc4e4
     n_b39972b6ed264192 --> n_0b2e754c404da854
@@ -1088,7 +1079,6 @@ flowchart TB
     n_bb53751168a285fd -->|"3"| n_d22b81485cec051f
     n_bb53751168a285fd -->|"3"| n_f2c21d1aff51beb3
     n_bb9971de7b6aa277 -->|"6"| n_0b2e754c404da854
-    n_bb9971de7b6aa277 --> n_11f6d2fb700cd378
     n_bb9971de7b6aa277 --> n_52efbca52123222c
     n_bb9971de7b6aa277 --> n_737bc7514c5fccaa
     n_bb9971de7b6aa277 --> n_7debed98e7d8376c
@@ -1097,7 +1087,7 @@ flowchart TB
     n_bb9971de7b6aa277 -.->|"1 circular"| n_c7c36b72a1b4ae90
     n_bb9971de7b6aa277 -.->|"4 circular"| n_ca5056d43b6f5293
     n_bb9971de7b6aa277 -->|"2"| n_daf5ef70c3eb6dee
-    n_bb9971de7b6aa277 -->|"2"| n_fab4eeebb9766d7f
+    n_bb9971de7b6aa277 -->|"3"| n_ff7778a79352f45c
     n_bcdf29a0a8f79b6c --> n_390bde23d800fb4e
     n_beed62791dc90132 -->|"4"| n_4958b0fbabca34bc
     n_beed62791dc90132 -->|"2"| n_a9d8540e2150b923
@@ -1109,8 +1099,8 @@ flowchart TB
     n_beed62791dc90132 -->|"4"| n_f2c21d1aff51beb3
     n_beed62791dc90132 --> n_f58f9296e7591cf3
     n_beed62791dc90132 --> n_fa641831e790faa6
-    n_beed62791dc90132 -->|"2"| n_fab4eeebb9766d7f
     n_beed62791dc90132 --> n_fad312efa0272c07
+    n_beed62791dc90132 -->|"2"| n_ff7778a79352f45c
     n_c10325e57e063de6 -->|"3"| n_4958b0fbabca34bc
     n_c10325e57e063de6 -.->|"2 circular"| n_bb9971de7b6aa277
     n_c10325e57e063de6 --> n_e984c401b99e2b91
@@ -1118,7 +1108,7 @@ flowchart TB
     n_c2ef34cf599b22b2 --> n_0b2e754c404da854
     n_c3867499cd12f6f1 -->|"2"| n_0b2e754c404da854
     n_c3867499cd12f6f1 --> n_4958b0fbabca34bc
-    n_c3867499cd12f6f1 -->|"2"| n_fab4eeebb9766d7f
+    n_c3867499cd12f6f1 -->|"2"| n_ff7778a79352f45c
     n_c4e6114e4ad3d4ea --> n_465730a4067bc4e4
     n_c4e6114e4ad3d4ea --> n_4958b0fbabca34bc
     n_c4e6114e4ad3d4ea --> n_8b2308df3e14a858
@@ -1127,19 +1117,18 @@ flowchart TB
     n_c4e6114e4ad3d4ea -->|"4"| n_bb9971de7b6aa277
     n_c4e6114e4ad3d4ea --> n_f2c21d1aff51beb3
     n_c4e6114e4ad3d4ea --> n_fa2582297af08697
-    n_c4e6114e4ad3d4ea -->|"4"| n_fab4eeebb9766d7f
+    n_c4e6114e4ad3d4ea -->|"4"| n_ff7778a79352f45c
     n_c4e6114e4ad3d4ea --> n_ffe196e6a9593c82
     n_c4f28ea180022df8 --> n_bb9971de7b6aa277
-    n_c4f28ea180022df8 --> n_fab4eeebb9766d7f
     n_c4f8d8f7672aa0e0 --> n_0b2e754c404da854
     n_c548f4f208a3b71a --> n_562f41d40a0543b1
     n_c548f4f208a3b71a --> n_ebf19a6a762f1087
     n_c5a1b546da6c093c --> n_5e81b400a2b82436
-    n_c5a1b546da6c093c --> n_fab4eeebb9766d7f
+    n_c5a1b546da6c093c --> n_ff7778a79352f45c
     n_c6de9edc70837acd --> n_43e14e4cbda3060d
     n_c6de9edc70837acd --> n_97d55db8002e6d30
     n_c6de9edc70837acd -.->|"1 circular"| n_bb9971de7b6aa277
-    n_c6de9edc70837acd --> n_fab4eeebb9766d7f
+    n_c6de9edc70837acd --> n_ff7778a79352f45c
     n_c7c36b72a1b4ae90 -.->|"1 circular"| n_116ac437ecee9baf
     n_c7c36b72a1b4ae90 -->|"6"| n_465730a4067bc4e4
     n_c7c36b72a1b4ae90 -->|"5"| n_5ec045eba2e1b6c2
@@ -1148,8 +1137,8 @@ flowchart TB
     n_c7c36b72a1b4ae90 -.->|"2 circular"| n_93c94be41cee362e
     n_c7c36b72a1b4ae90 -.->|"4 circular"| n_bb9971de7b6aa277
     n_c7c36b72a1b4ae90 -->|"4"| n_f2c21d1aff51beb3
-    n_c7c36b72a1b4ae90 --> n_fab4eeebb9766d7f
     n_c7c36b72a1b4ae90 -->|"3"| n_fc1d8ce8ffe60487
+    n_c7c36b72a1b4ae90 --> n_ff7778a79352f45c
     n_c7e4963e5c8a73c8 --> n_5d9930b67863fdc3
     n_c83f092a6de3dd2e --> n_5d9930b67863fdc3
     n_c85b951c411a59cf --> n_27f283958f7b3bc6
@@ -1166,7 +1155,7 @@ flowchart TB
     n_ca5056d43b6f5293 -->|"3"| n_f2c21d1aff51beb3
     n_ca5056d43b6f5293 -->|"2"| n_f8b93f550ab04ba2
     n_ca5056d43b6f5293 -->|"2"| n_fa641831e790faa6
-    n_ca5056d43b6f5293 -->|"5"| n_fab4eeebb9766d7f
+    n_ca5056d43b6f5293 -->|"5"| n_ff7778a79352f45c
     n_cc261f5078ecd444 --> n_5d64ffe3865383a1
     n_cc261f5078ecd444 --> n_632a84e110a5dc84
     n_cc261f5078ecd444 --> n_bb9971de7b6aa277
@@ -1202,7 +1191,7 @@ flowchart TB
     n_d351f6940188701a -->|"3"| n_465730a4067bc4e4
     n_d3c4eb93ce09e101 --> n_9d5bfea5c691e091
     n_d3c4eb93ce09e101 --> n_a9d8540e2150b923
-    n_d3c4eb93ce09e101 --> n_fab4eeebb9766d7f
+    n_d3c4eb93ce09e101 --> n_ff7778a79352f45c
     n_d55652e93431fabb --> n_016efff8aa636e20
     n_d55652e93431fabb --> n_25dacce096110768
     n_d5f9ec576d1f1fa3 --> n_016efff8aa636e20
@@ -1224,9 +1213,8 @@ flowchart TB
     n_d84657d79773bf18 -->|"4"| n_b3037e5414d1f82b
     n_d84657d79773bf18 -->|"3"| n_bb9971de7b6aa277
     n_d84657d79773bf18 --> n_d281c2e01d11e1fb
-    n_d84657d79773bf18 --> n_d7e28b7b7f1708a7
     n_d84657d79773bf18 --> n_ebf19a6a762f1087
-    n_d84657d79773bf18 --> n_fab4eeebb9766d7f
+    n_d84657d79773bf18 --> n_ff7778a79352f45c
     n_d8f08dd1d2200ed6 --> n_0b2e754c404da854
     n_d8f08dd1d2200ed6 --> n_8b2308df3e14a858
     n_d8f08dd1d2200ed6 -->|"2"| n_bb9971de7b6aa277
@@ -1235,7 +1223,7 @@ flowchart TB
     n_da411402b4350d4d --> n_11e080982eb2281e
     n_da411402b4350d4d -->|"2"| n_465730a4067bc4e4
     n_da411402b4350d4d --> n_a9d8540e2150b923
-    n_da411402b4350d4d --> n_fab4eeebb9766d7f
+    n_da411402b4350d4d --> n_ff7778a79352f45c
     n_dfa474318a063404 --> n_0e4ac560540b7b74
     n_dfa474318a063404 --> n_4958b0fbabca34bc
     n_e768a1fd4a5c1d40 -->|"14"| n_11e080982eb2281e
@@ -1260,14 +1248,14 @@ flowchart TB
     n_e9aacb4720bb8e4e -->|"6"| n_465730a4067bc4e4
     n_e9aacb4720bb8e4e -->|"4"| n_5d9930b67863fdc3
     n_e9aacb4720bb8e4e -->|"3"| n_bb9971de7b6aa277
-    n_e9aacb4720bb8e4e -->|"4"| n_fab4eeebb9766d7f
+    n_e9aacb4720bb8e4e -->|"4"| n_ff7778a79352f45c
     n_ea8679fdc5a30ae1 --> n_1795c187bd51093a
     n_eaf247f5644149ed --> n_6de8c81bdaacb2c4
     n_eaf247f5644149ed --> n_bb9971de7b6aa277
     n_eaf247f5644149ed --> n_ebf19a6a762f1087
-    n_eaf247f5644149ed --> n_fab4eeebb9766d7f
+    n_eaf247f5644149ed --> n_ff7778a79352f45c
     n_ebf19a6a762f1087 --> n_41a4b741f0d97cfa
-    n_ebf19a6a762f1087 --> n_fab4eeebb9766d7f
+    n_ebf19a6a762f1087 --> n_ff7778a79352f45c
     n_edc2d5920ba40a37 --> n_5d9930b67863fdc3
     n_ef17956e251a25c9 -->|"9"| n_f2c21d1aff51beb3
     n_eff1ef85ab0370f2 --> n_5d64ffe3865383a1
@@ -1294,7 +1282,7 @@ flowchart TB
     n_f58f9296e7591cf3 -->|"6"| n_bb9971de7b6aa277
     n_f58f9296e7591cf3 -->|"3"| n_f2c21d1aff51beb3
     n_f5a635ba7e165c71 --> n_52efbca52123222c
-    n_fa2582297af08697 -->|"2"| n_fab4eeebb9766d7f
+    n_fa2582297af08697 -->|"2"| n_ff7778a79352f45c
     n_fa641831e790faa6 --> n_4958b0fbabca34bc
     n_fa641831e790faa6 --> n_a073468cddadb161
     n_fad312efa0272c07 --> n_4958b0fbabca34bc
@@ -1304,7 +1292,7 @@ flowchart TB
     n_fcf372bcbbdc728a -->|"2"| n_4798894c665ce0e4
     n_fcf372bcbbdc728a --> n_52a53b3b46311577
     n_fcf372bcbbdc728a -->|"3"| n_f2c21d1aff51beb3
-    n_fcf372bcbbdc728a -->|"2"| n_fab4eeebb9766d7f
+    n_fcf372bcbbdc728a -->|"2"| n_ff7778a79352f45c
     n_fdde931043c1fc58 --> n_0b2e754c404da854
     n_fdde931043c1fc58 --> n_5ba920c10be0ff4f
     n_fdde931043c1fc58 --> n_8df70fa96b2999e7
@@ -1317,30 +1305,30 @@ flowchart TB
 
 | | test_tree | test_web | sibling | tui | execution | deps | externals | process | markdown | test_markdown | entrypoints | view | tree | hierarchy | types | report | test_render | mermaid | util | comments | web | select | markdown | pipeline | robby_render | robby_cli | tests | tests | links | tui | scene | source | render | robby_ir |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| **test_tree** | · | | | 1⇄ | | | | | | | | | | | | 8⇄ | | | | | | 2⇄ | | | | 1 | | | | | 1⇄ | | | 3 |
-| **test_web** | | · | | | | | | | | | | | | | | 28 | 1 | | | 1 | 7 | 4 | | 7 | 4 | | | | | | 4 | | | 46 |
+| **test_tree** | · | | | 1⇄ | | | | | | | | | | | | 9⇄ | | | | | | 2⇄ | | | | 1 | | | | | 1⇄ | | | 3 |
+| **test_web** | | · | | | | | | | | | | | | | | 28 | 1 | | | 1 | 7 | 4 | | 7 | 4 | | | | | | 4 | | | 43 |
 | **sibling** | | | · | | | | | | | | | | | | | 1 | | | 5 | 4 | | 4 | | | 4 | | | | | | 2 | | | 2 |
 | **tui** | | | | · | | 1⇄ | | 1⇄ | | | | | | | | 4⇄ | 1⇄ | | | | 1⇄ | 1⇄ | | | | | | | | 3⇄ | | | 2 | |
 | **execution** | | | | | · | | | | | | | | | | | 2⇄ | 2⇄ | | 2⇄ | 3⇄ | | 1⇄ | | | | | 1 | | 5⇄ | | 11⇄ | | | 20 |
 | **deps** | | | | | | · | | | | | 1⇄ | | | | | 3⇄ | | | 6⇄ | 16⇄ | | 32⇄ | | | 17⇄ | | | | | | 55⇄ | | | 25 |
-| **externals** | | | | | | | · | | | | | | | | | | | | | 4 | | 2 | | | | | | | 1 | | 1 | | | 6 |
-| **process** | | | | | | | | · | | | | | | | | 5⇄ | | | 1⇄ | | | 1⇄ | | | | | | | | | 2⇄ | | | |
+| **externals** | | | | | | | · | | | | | | | | | | | | | 3 | | 2 | | | | | | | 1 | | 1 | | | 6 |
+| **process** | | | | | | | | · | | | | | | | | 5⇄ | | | | 1⇄ | | 1⇄ | | | | | | | | | 2⇄ | | | |
 | **markdown** | | | | | | | | | · | | | | | | | 7 | | 1 | | 3 | | 2 | | | | | | | 3 | 1 | | | | 2 |
 | **test_markdown** | | | | | | | | | | · | | | | | | 7 | 1 | | | | | | 5 | | | | | | | | | | | 12 |
 | **entrypoints** | | | | | | | | | | | · | | | | | 6⇄ | | | | 4⇄ | | 1⇄ | | | | | | 2 | 1⇄ | | 17⇄ | | | 23 |
 | **view** | | | | | | | | | | | | · | | | | | | | | | | | | | | | | | | | | | | |
-| **tree** | | | | | | | | | | | | | · | | | 47 | 1 | | | 8 | | 10 | 1 | | 3 | | | | 14 | | | | 4 | 33 |
+| **tree** | | | | | | | | | | | | | · | | | 47 | 1 | | | 8 | | 10 | 1 | | 3 | | | | 14 | | | | 4 | 31 |
 | **hierarchy** | | | | | | | | | | | | | | · | | 2 | | | | 3 | | | | | | | | | | | 3 | | | 4 |
 | **types** | | | | | | | | | | | | | | | · | 10⇄ | | | 14⇄ | 7⇄ | | 5⇄ | | | | | | | | | 5⇄ | | | 11 |
 | **report** | | | | | | | | | | | | | | | | · | | | | | | | | | | | | | 3⇄ | 1⇄ | | | | |
-| **test_render** | | | | | | 2⇄ | | | | | | | | | | 40⇄ | · | | | | | 2⇄ | 1⇄ | | 11⇄ | | | | | | | | 2 | 101 |
+| **test_render** | | | | | | 2⇄ | | | | | | | | | | 40⇄ | · | | | | | 2⇄ | 1⇄ | | 11⇄ | | | | | | | | 2 | 92 |
 | **mermaid** | | | | | | 2⇄ | | | | | | | | | | 7⇄ | | · | | 6⇄ | | 3⇄ | | | | | | | 9⇄ | 12⇄ | | | | 10 |
-| **util** | | | | | | | | | | | | | | | | 6⇄ | | | · | 2⇄ | | 1⇄ | | | | | | | 1⇄ | | | | | 2 |
+| **util** | | | | | | | | | | | | | | | | 5⇄ | | | · | 2⇄ | | 1⇄ | | | | | | | 1⇄ | | | | | 2 |
 | **comments** | | | | | | | | | | | | | | | | 5⇄ | | | | · | | 1⇄ | | | | | | | | | 7⇄ | | | 15 |
-| **web** | | | | | 1⇄ | | | 2⇄ | | | | | | | | 1⇄ | 2⇄ | | | 4⇄ | · | 2⇄ | | 1⇄ | 2⇄ | | | | 1⇄ | | 1⇄ | | | 5 |
-| **select** | | | | | | 4⇄ | | | | | | | | | 1⇄ | | | | | 4⇄ | | · | | | | | | | 8⇄ | | | 2 | | 4 |
-| **markdown** | | | | | | | | | | | | | | | | 16⇄ | 1⇄ | | | 1⇄ | | 4⇄ | · | | 2⇄ | | | | 4⇄ | | | | 4 | 12 |
-| **pipeline** | | | | 1⇄ | | | | | | | | | | | | 4⇄ | | | | | | 2⇄ | | · | 3⇄ | | | | 3⇄ | | | | | 7 |
+| **web** | | | | | 1⇄ | | | 2⇄ | | | | | | | | 1⇄ | 2⇄ | | | 6⇄ | · | | | 1⇄ | 2⇄ | | | | 1⇄ | | 1⇄ | | | 4 |
+| **select** | | | | | | 4⇄ | | | | | | | | | 1⇄ | | | | | 5⇄ | | · | | | | | | | 8⇄ | | | 2 | | 3 |
+| **markdown** | | | | | | | | | | | | | | | | 16⇄ | 1⇄ | | | 1⇄ | | 4⇄ | · | | 2⇄ | | | | 4⇄ | | | | 4 | 11 |
+| **pipeline** | | | | 1⇄ | | | | | | | | | | | | 4⇄ | | | | | | 2⇄ | | · | 3⇄ | | | | 3⇄ | | | | | 6 |
 | **robby_render** | 1⇄ | | | | | 4⇄ | | 1⇄ | | | | | | | 1⇄ | 10⇄ | 1⇄ | | | | | 1⇄ | | | · | | | | 5⇄ | | | | 6 | 3 |
 | **robby_cli** | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | | | |
 | **tests** | | | | | | | | | | | | | | | | | | | | | | | | | | | · | | | | | | | |
@@ -1377,14 +1365,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
   ```
   /// Compact one-liner for a step.
   pub fn step_summary(step: &Step) -> String {
-      let kind = match step.kind {
-          StepKind::Call => "call",
-          StepKind::Return => "return",
-          StepKind::Signal => "signal",
-          StepKind::Decision => "decision",
-          StepKind::Note => "note",
-      };
-      format!("{kind} {} -> {}", step.from, step.to)
+      format!("{} {} -> {}", step.kind.as_str(), step.from, step.to)
   }
   ```
 - `crates/robby-render/src/lib.rs:32:1` (docs, `robby_render::sequence`): "Render a process as a Mermaid `sequenceDiagram`."
@@ -1561,7 +1542,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       artifact.to_markdown()
   }
   ```
-- `crates/robby-render/src/markdown.rs:276:1` (docs, `robby_render::markdown::index`): "A compact index of every node, for the top of the report."
+- `crates/robby-render/src/markdown.rs:246:1` (docs, `robby_render::markdown::index`): "A compact index of every node, for the top of the report."
   ```
   /// A compact index of every node, for the top of the report.
   pub fn index(doc: &Document) -> String {
@@ -1572,27 +1553,20 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           let location = node
               .span
               .as_ref()
-              .map(|s| s.location())
-              .unwrap_or_else(|| "—".to_owned());
-          let _ = writeln!(
-              out,
-              "| `{}` | `{}` | `{}` |",
-              node.fqn,
-              node.kind,
-              location
-          );
+              .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
+          let _ = writeln!(out, "| `{}` | `{}` | `{}` |", node.fqn, node.kind, location);
       }
       out
   }
   ```
-- `crates/robby-render/src/markdown.rs:298:1` (docs, `robby_render::markdown::anchor`): "Sanity check used by tests: every id has a deterministic short form."
+- `crates/robby-render/src/markdown.rs:261:1` (docs, `robby_render::markdown::anchor`): "Sanity check used by tests: every id has a deterministic short form."
   ```
   /// Sanity check used by tests: every id has a deterministic short form.
   pub fn anchor(id: &NodeId) -> String {
       stable_id(id.as_str())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:102:1` (docs, `robby_render::pipeline::render_files`): "Write one `.mmd` file per process and per root graph."
+- `crates/robby-render/src/pipeline.rs:105:1` (docs, `robby_render::pipeline::render_files`): "Write one `.mmd` file per process and per root graph."
   ```
   /// Write one `.mmd` file per process and per root graph.
   pub fn render_files(doc: &Document, out: &Path) -> std::io::Result<usize> {
@@ -1605,14 +1579,17 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       }
       for root in &doc.roots {
           let mermaid = crate::flowchart(doc, root);
-          fs::write(out.join(format!("graph-{}.mmd", slug(root.as_str()))), mermaid)?;
+          fs::write(
+              out.join(format!("graph-{}.mmd", slug(root.as_str()))),
+              mermaid,
+          )?;
           count += 1;
       }
   
       Ok(count)
   }
   ```
-- `crates/robby-render/src/pipeline.rs:120:1` (docs, `robby_render::pipeline::write_document`): "Write the IR document itself as a committed artifact."
+- `crates/robby-render/src/pipeline.rs:126:1` (docs, `robby_render::pipeline::write_document`): "Write the IR document itself as a committed artifact."
   ```
   /// Write the IR document itself as a committed artifact.
   pub fn write_document(doc: &Document, out: &Path) -> Result<()> {
@@ -1623,7 +1600,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:129:1` (docs, `robby_render::pipeline::write_report`): "Render the self-model as a linked tree of Markdown pages. Returns the number of pages written. Stale pages are removed …"
+- `crates/robby-render/src/pipeline.rs:135:1` (docs, `robby_render::pipeline::write_report`): "Render the self-model as a linked tree of Markdown pages. Returns the number of pages written. Stale pages are removed …"
   ```
   /// Render the self-model as a linked tree of Markdown pages.
   ///
@@ -1657,7 +1634,19 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(pages.len())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:161:1` (docs, `robby_render::pipeline::remove_markdown`): "Delete generated Markdown so removed modules do not linger."
+- `crates/robby-render/src/pipeline.rs:15:1` (docs, `robby_render::pipeline::Loaded`): "A document plus everything derived from it."
+  ```
+  /// A document plus everything derived from it.
+  pub struct Loaded {
+      pub document: Document,
+      pub sources: BTreeMap<String, String>,
+      pub coverage: CoverageReport,
+      pub diagnostics: Vec<Diagnostic>,
+      /// Workspace root the source paths are relative to.
+      pub root: PathBuf,
+  }
+  ```
+- `crates/robby-render/src/pipeline.rs:167:1` (docs, `robby_render::pipeline::remove_markdown`): "Delete generated Markdown so removed modules do not linger."
   ```
   /// Delete generated Markdown so removed modules do not linger.
   fn remove_markdown(dir: &Path) -> std::io::Result<()> {
@@ -1677,30 +1666,14 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(())
   }
   ```
-- `crates/robby-render/src/pipeline.rs:179:1` (docs, `robby_render::pipeline::watched_files`): "Files whose change must invalidate a cached build."
+- `crates/robby-render/src/pipeline.rs:185:1` (docs, `robby_render::pipeline::watched_files`): "Files whose change must invalidate a cached build."
   ```
   /// Files whose change must invalidate a cached build.
   pub fn watched_files(loaded: &Loaded) -> Vec<PathBuf> {
-      loaded
-          .sources
-          .keys()
-          .map(PathBuf::from)
-          .collect::<Vec<_>>()
+      loaded.sources.keys().map(PathBuf::from).collect::<Vec<_>>()
   }
   ```
-- `crates/robby-render/src/pipeline.rs:17:1` (docs, `robby_render::pipeline::Loaded`): "A document plus everything derived from it."
-  ```
-  /// A document plus everything derived from it.
-  pub struct Loaded {
-      pub document: Document,
-      pub sources: BTreeMap<String, String>,
-      pub coverage: CoverageReport,
-      pub diagnostics: Vec<Diagnostic>,
-      /// Workspace root the source paths are relative to.
-      pub root: PathBuf,
-  }
-  ```
-- `crates/robby-render/src/pipeline.rs:28:5` (docs, `robby_render::pipeline::impl Loaded::is_ok`): "True when the coverage gate passes and there are no error diagnostics."
+- `crates/robby-render/src/pipeline.rs:26:5` (docs, `robby_render::pipeline::impl Loaded::is_ok`): "True when the coverage gate passes and there are no error diagnostics."
   ```
   /// True when the coverage gate passes and there are no error diagnostics.
       pub fn is_ok(&self) -> bool {
@@ -1711,20 +1684,25 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
                   .any(|d| d.severity == Severity::Error)
       }
   ```
-- `crates/robby-render/src/pipeline.rs:37:5` (docs, `robby_render::pipeline::impl Loaded::summary`): "One-line summary for build output and CI logs."
+- `crates/robby-render/src/pipeline.rs:35:5` (docs, `robby_render::pipeline::impl Loaded::summary`): "One-line summary for build output and CI logs."
   ```
   /// One-line summary for build output and CI logs.
       pub fn summary(&self) -> String {
           let files = self.coverage.files.len();
           let claimed: u32 = self.coverage.files.iter().map(|f| f.covered_bytes).sum();
-          let unclaimed: u32 = self.coverage.files.iter().map(|f| f.uncovered_bytes()).sum();
+          let unclaimed: u32 = self
+              .coverage
+              .files
+              .iter()
+              .map(robby_ir::FileCoverage::uncovered_bytes)
+              .sum();
           format!(
               "{files} file(s), {claimed} bytes claimed, {unclaimed} unclaimed, {} diagnostic(s)",
               self.diagnostics.len()
           )
       }
   ```
-- `crates/robby-render/src/pipeline.rs:49:1` (docs, `robby_render::pipeline::load_document`): "Read and parse an IR document."
+- `crates/robby-render/src/pipeline.rs:52:1` (docs, `robby_render::pipeline::load_document`): "Read and parse an IR document."
   ```
   /// Read and parse an IR document.
   pub fn load_document(path: &Path) -> Result<Document> {
@@ -1732,7 +1710,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(serde_json::from_str(&text)?)
   }
   ```
-- `crates/robby-render/src/pipeline.rs:55:1` (docs, `robby_render::pipeline::load_sources`): "Read every source file the document references. A missing file is not an error here: the coverage report will show it a…"
+- `crates/robby-render/src/pipeline.rs:58:1` (docs, `robby_render::pipeline::load_sources`): "Read every source file the document references. A missing file is not an error here: the coverage report will show it a…"
   ```
   /// Read every source file the document references.
   ///
@@ -1758,7 +1736,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       sources
   }
   ```
-- `crates/robby-render/src/pipeline.rs:79:1` (docs, `robby_render::pipeline::load`): "Load a document and everything derived from it."
+- `crates/robby-render/src/pipeline.rs:82:1` (docs, `robby_render::pipeline::load`): "Load a document and everything derived from it."
   ```
   /// Load a document and everything derived from it.
   pub fn load(ir: &Path, root: &Path) -> Result<Loaded> {
@@ -1766,7 +1744,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(from_document(document, root))
   }
   ```
-- `crates/robby-render/src/pipeline.rs:85:1` (docs, `robby_render::pipeline::from_document`): "Compute everything derived from an in-memory document."
+- `crates/robby-render/src/pipeline.rs:88:1` (docs, `robby_render::pipeline::from_document`): "Compute everything derived from an in-memory document."
   ```
   /// Compute everything derived from an in-memory document.
   pub fn from_document(mut document: Document, root: &Path) -> Loaded {
@@ -1785,10 +1763,10 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       }
   }
   ```
-- `crates/robby-render/src/render/mermaid.rs:284:1` (docs, `robby_render::render::mermaid::dsm_markdown_table`): "Markdown DSM table (row depends on column). Shared by Markdown/TUI."
+- `crates/robby-render/src/render/mermaid.rs:279:1` (docs, `robby_render::render::mermaid::dsm_markdown_table`): "Markdown DSM table (row depends on column). Shared by Markdown/TUI."
   ```
   /// Markdown DSM table (row depends on column). Shared by Markdown/TUI.
-  pub fn dsm_markdown_table(view: &PackageStructure) -> String {
+  pub(super) fn dsm_markdown_table(view: &PackageStructure) -> String {
       if view.modules.is_empty() {
           return String::new();
       }
@@ -1799,10 +1777,10 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           let mut ordered = Vec::new();
           for layer in &view.layers {
               for sid in layer {
-                  if let Some(m) = view.module_by_stable(sid) {
-                      if seen.insert(sid.clone()) {
-                          ordered.push(m);
-                      }
+                  if let Some(m) = view.module_by_stable(sid)
+                      && seen.insert(sid.clone())
+                  {
+                      ordered.push(m);
                   }
               }
           }
@@ -2095,13 +2073,11 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       node.children
           .iter()
           .filter_map(|child| doc.get(child))
-          .filter(|child| {
-              !is_module(child) && !is_compact(child.kind.as_str())
-          })
+          .filter(|child| !is_module(child) && !is_compact(child.kind.as_str()))
           .collect()
   }
   ```
-- `crates/robby-render/src/tree.rs:115:1` (docs, `robby_render::tree::item_slugs`): "Page slugs for a module's items. `index` is reserved for the module page."
+- `crates/robby-render/src/tree.rs:113:1` (docs, `robby_render::tree::item_slugs`): "Page slugs for a module's items. `index` is reserved for the module page."
   ```
   /// Page slugs for a module's items. `index` is reserved for the module page.
   fn item_slugs(items: &[&Node]) -> BTreeMap<NodeId, String> {
@@ -2115,7 +2091,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       slugs
   }
   ```
-- `crates/robby-render/src/tree.rs:214:1` (docs, `robby_render::tree::module_page`): "A module page: what is in here, and where to go next."
+- `crates/robby-render/src/tree.rs:208:1` (docs, `robby_render::tree::module_page`): "A module page: what is in here, and where to go next."
   ```
   /// A module page: what is in here, and where to go next.
   fn module_page(
@@ -2135,12 +2111,16 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       let _ = writeln!(out, "|---|---|");
       let _ = writeln!(out, "| kind | `{}` |", node.kind);
       if let Some(span) = &node.span {
-          let _ = writeln!(out, "| declared at | {} |", source_link(&page, out_rel, span));
+          let _ = writeln!(
+              out,
+              "| declared at | {} |",
+              source_link(&page, out_rel, span)
+          );
       }
       let _ = writeln!(
           out,
           "| provenance | {} · confidence {:.2} |",
-          source_name(node.provenance.source),
+          node.provenance.source.as_str(),
           node.provenance.confidence
       );
       let _ = writeln!(out, "| nodes | {} |", doc.subtree(&node.id).len());
@@ -2235,18 +2215,18 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           out.push_str("## Items\n\n");
           out.push_str("| Item | Kind | Steps | Location |\n|---|---|---:|---|\n");
           for item in items {
-              let Some(slug) = slugs.get(&item.id) else { continue };
+              let Some(slug) = slugs.get(&item.id) else {
+                  continue;
+              };
               let target = module_dir.join(format!("{slug}.md"));
               let location = item
                   .span
                   .as_ref()
-                  .map(|span| span.location())
-                  .unwrap_or_else(|| "—".to_owned());
+                  .map_or_else(|| "—".to_owned(), robby_ir::Span::location);
               let steps = item
                   .process
                   .as_ref()
-                  .map(|process| process.steps.len().to_string())
-                  .unwrap_or_else(|| "—".to_owned());
+                  .map_or_else(|| "—".to_owned(), |process| process.steps.len().to_string());
               let _ = writeln!(
                   out,
                   "| [`{}`]({}) | `{}` | {} | `{}` |",
@@ -2265,8 +2245,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           for import in imports {
               let text = sources
                   .and_then(|s| import.span.as_ref().and_then(|span| slice(s, span)))
-                  .map(|text| first_line(&text))
-                  .unwrap_or_else(|| import.name.clone());
+                  .map_or_else(|| import.name.clone(), first_line);
               let _ = writeln!(out, "- {}", linked_import(doc, &page, &text));
           }
           out.push('\n');
@@ -2297,11 +2276,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
   ) -> Vec<Page> {
       let mut pages = Vec::new();
   
-      let crates: Vec<&Node> = doc
-          .nodes
-          .values()
-          .filter(|node| is_crate(node))
-          .collect();
+      let crates: Vec<&Node> = doc.nodes.values().filter(|node| is_crate(node)).collect();
   
       pages.push(Page {
           path: PathBuf::from("README.md"),
@@ -2316,7 +2291,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       pages
   }
   ```
-- `crates/robby-render/src/tree.rs:372:1` (docs, `robby_render::tree::item_page`): "An item page: the source, its process, its edges."
+- `crates/robby-render/src/tree.rs:369:1` (docs, `robby_render::tree::item_page`): "An item page: the source, its process, its edges."
   ```
   /// An item page: the source, its process, its edges.
   fn item_page(
@@ -2333,7 +2308,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       out
   }
   ```
-- `crates/robby-render/src/tree.rs:564:1` (docs, `robby_render::tree::render_links`): "Render a [`LinkGraph`] as markdown with resolved page paths."
+- `crates/robby-render/src/tree.rs:562:1` (docs, `robby_render::tree::render_links`): "Render a [`LinkGraph`] as markdown with resolved page paths."
   ```
   /// Render a [`LinkGraph`] as markdown with resolved page paths.
   fn render_links(doc: &Document, links: &LinkGraph, page: &Path) -> String {
@@ -2395,7 +2370,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       out
   }
   ```
-- `crates/robby-render/src/tree.rs:715:1` (docs, `robby_render::tree::module_index_path`): "`<crate>/<a>/<b>/index.md` for a module, `<crate>/index.md` for the crate root."
+- `crates/robby-render/src/tree.rs:708:1` (docs, `robby_render::tree::module_index_path`): "`<crate>/<a>/<b>/index.md` for a module, `<crate>/index.md` for the crate root."
   ```
   /// `<crate>/<a>/<b>/index.md` for a module, `<crate>/index.md` for the crate root.
   fn module_index_path(node: &Node, crate_dir: &str) -> Option<PathBuf> {
@@ -2412,24 +2387,23 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       )))
   }
   ```
-- `crates/robby-render/src/tree.rs:730:1` (docs, `robby_render::tree::page_of_node`): "The most specific page for a node: its item page if it has one."
+- `crates/robby-render/src/tree.rs:723:1` (docs, `robby_render::tree::page_of_node`): "The most specific page for a node: its item page if it has one."
   ```
   /// The most specific page for a node: its item page if it has one.
   fn page_of_node(doc: &Document, node: &Node) -> Option<PathBuf> {
-      let crate_dir = crate_of(node)?;
+      let crate_dir = crate_of(node);
   
-      if !is_module(node) && !is_compact(node.kind.as_str()) {
-          if let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id)) {
-              if is_module(parent) {
-                  if let Some(index) = module_index_path(parent, &crate_dir) {
-                      let module_dir = index.parent().unwrap_or(Path::new("."));
-                      let items = item_children(doc, parent);
-                      let slugs = item_slugs(&items);
-                      if let Some(slug) = slugs.get(&node.id) {
-                          return Some(module_dir.join(format!("{slug}.md")));
-                      }
-                  }
-              }
+      if !is_module(node)
+          && !is_compact(node.kind.as_str())
+          && let Some(parent) = node.parent.as_ref().and_then(|id| doc.get(id))
+          && is_module(parent)
+          && let Some(index) = module_index_path(parent, &crate_dir)
+      {
+          let module_dir = index.parent().unwrap_or(Path::new("."));
+          let items = item_children(doc, parent);
+          let slugs = item_slugs(&items);
+          if let Some(slug) = slugs.get(&node.id) {
+              return Some(module_dir.join(format!("{slug}.md")));
           }
       }
   
@@ -2439,12 +2413,16 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           if is_module(candidate) {
               return module_index_path(candidate, &crate_dir);
           }
-          current = candidate.parent.clone();
+          // `while let` moves `current`, so this has to be a fresh assignment.
+          #[allow(clippy::assigning_clones)]
+          {
+              current = candidate.parent.clone();
+          }
       }
       None
   }
   ```
-- `crates/robby-render/src/tree.rs:760:1` (docs, `robby_render::tree::rel_link`): "Relative link from one page to another. Both are relative to the output root."
+- `crates/robby-render/src/tree.rs:756:1` (docs, `robby_render::tree::rel_link`): "Relative link from one page to another. Both are relative to the output root."
   ```
   /// Relative link from one page to another. Both are relative to the output root.
   fn rel_link(from: &Path, to: &Path) -> String {
@@ -2478,12 +2456,12 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       out
   }
   ```
-- `crates/robby-render/src/tree.rs:792:1` (docs, `robby_render::tree::source_link`): "A link from a generated page back to the exact source span."
+- `crates/robby-render/src/tree.rs:788:1` (docs, `robby_render::tree::source_link`): "A link from a generated page back to the exact source span."
   ```
   /// A link from a generated page back to the exact source span.
   fn source_link(page: &Path, out_rel: &str, span: &robby_ir::Span) -> String {
       let out_depth = out_rel.split('/').filter(|s| !s.is_empty()).count();
-      let page_depth = page.parent().map(|p| p.components().count()).unwrap_or(0);
+      let page_depth = page.parent().map_or(0, |p| p.components().count());
       let prefix = "../".repeat(out_depth + page_depth);
       format!(
           "[`{}:{}`]({}{}#L{})",
@@ -2491,7 +2469,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       )
   }
   ```
-- `crates/robby-render/src/tree.rs:827:1` (docs, `robby_render::tree::item_slug`): "A filesystem-safe, human-readable page name, disambiguated on collision."
+- `crates/robby-render/src/tree.rs:823:1` (docs, `robby_render::tree::item_slug`): "A filesystem-safe, human-readable page name, disambiguated on collision."
   ```
   /// A filesystem-safe, human-readable page name, disambiguated on collision.
   fn item_slug(name: &str, id: &NodeId, used: &mut BTreeSet<String>) -> String {
@@ -2520,7 +2498,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       alt
   }
   ```
-- `crates/robby-render/src/tree.rs:854:1` (docs, `robby_render::tree::page_paths`): "Every page path a document will produce, for tests and stale-file cleanup."
+- `crates/robby-render/src/tree.rs:850:1` (docs, `robby_render::tree::page_paths`): "Every page path a document will produce, for tests and stale-file cleanup."
   ```
   /// Every page path a document will produce, for tests and stale-file cleanup.
   pub fn page_paths(doc: &Document) -> Vec<PathBuf> {
@@ -2606,8 +2584,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       let mut out = String::with_capacity(input.len());
       for ch in input.chars() {
           match ch {
-              '\n' | '\r' | '\t' => out.push(' '),
-              ';' | '#' => out.push(' '),
+              '\n' | '\r' | '\t' | ';' | '#' => out.push(' '),
               '"' => out.push('\''),
               _ => out.push(ch),
           }
@@ -2619,15 +2596,15 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
   ```
   /// FNV-1a stable id for Mermaid / layout keys.
   pub fn stable_id(input: &str) -> String {
-      let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
+      let mut hash: u64 = 0xCBF2_9CE4_8422_2325;
       for byte in input.as_bytes() {
           hash ^= u64::from(*byte);
-          hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
+          hash = hash.wrapping_mul(0x0000_0100_0000_01B3);
       }
       format!("n_{hash:016x}")
   }
   ```
-- `crates/robby-render/src/view/comments.rs:289:1` (docs, `robby_render::view::comments::apply_highlights`): "Apply «…» markers around highlight ranges in `code` (byte offsets)."
+- `crates/robby-render/src/view/comments.rs:247:1` (docs, `robby_render::view::comments::apply_highlights`): "Apply «…» markers around highlight ranges in `code` (byte offsets)."
   ```
   /// Apply «…» markers around highlight ranges in `code` (byte offsets).
   pub fn apply_highlights(code: &str, highlights: &[(u32, u32)]) -> String {
@@ -2655,7 +2632,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       out
   }
   ```
-- `crates/robby-render/src/view/deps.rs:204:5` (docs, `robby_render::view::deps::impl CouplingGraph::from_root`): "Function-level internal Calls under `root`."
+- `crates/robby-render/src/view/deps.rs:198:5` (docs, `robby_render::view::deps::impl CouplingGraph::from_root`): "Function-level internal Calls under `root`."
   ```
   /// Function-level internal Calls under `root`.
       pub fn from_root(doc: &Document, root: &NodeId) -> Self {
@@ -2667,8 +2644,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
               .nodes
               .values()
               .filter(|node| {
-                  is_container(node)
-                      && (node.id == root_node.id || is_under_fqn(root_node, node))
+                  is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
               })
               .collect();
           let package_scope: BTreeSet<NodeId> = packages.iter().map(|p| p.id.clone()).collect();
@@ -2700,18 +2676,22 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
   
                   let from_sid = stable_id(node.id.as_str());
                   let to_sid = stable_id(target.id.as_str());
-                  participants.entry(from_sid.clone()).or_insert_with(|| CouplingFn {
-                      id: node.id.clone(),
-                      stable_id: from_sid.clone(),
-                      name: node.name.clone(),
-                      parent_stable_id: stable_id(from_mod.id.as_str()),
-                  });
-                  participants.entry(to_sid.clone()).or_insert_with(|| CouplingFn {
-                      id: target.id.clone(),
-                      stable_id: to_sid.clone(),
-                      name: target.name.clone(),
-                      parent_stable_id: stable_id(to_mod.id.as_str()),
-                  });
+                  participants
+                      .entry(from_sid.clone())
+                      .or_insert_with(|| CouplingFn {
+                          id: node.id.clone(),
+                          stable_id: from_sid.clone(),
+                          name: node.name.clone(),
+                          parent_stable_id: stable_id(from_mod.id.as_str()),
+                      });
+                  participants
+                      .entry(to_sid.clone())
+                      .or_insert_with(|| CouplingFn {
+                          id: target.id.clone(),
+                          stable_id: to_sid.clone(),
+                          name: target.name.clone(),
+                          parent_stable_id: stable_id(to_mod.id.as_str()),
+                      });
                   if from_sid != to_sid {
                       *weights.entry((from_sid, to_sid)).or_default() += 1;
                   }
@@ -2756,19 +2736,14 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           }
       }
   ```
-- `crates/robby-render/src/view/deps.rs:303:5` (docs, `robby_render::view::deps::impl CouplingGraph::workspace`): "Crates as subgraphs; direct modules as nodes; call-weighted module edges."
+- `crates/robby-render/src/view/deps.rs:300:5` (docs, `robby_render::view::deps::impl CouplingGraph::workspace`): "Crates as subgraphs; direct modules as nodes; call-weighted module edges."
   ```
   /// Crates as subgraphs; direct modules as nodes; call-weighted module edges.
       pub fn workspace(doc: &Document) -> Self {
           let crates: Vec<&Node> = doc
               .nodes
               .values()
-              .filter(|node| {
-                  matches!(
-                      node.kind.as_str(),
-                      kind::code::CRATE | kind::code::PACKAGE
-                  )
-              })
+              .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
               .collect();
           if crates.is_empty() {
               return Self::empty();
@@ -2993,7 +2968,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       from_code_path(doc, &path)
   }
   ```
-- `crates/robby-render/src/view/execution.rs:92:1` (docs, `robby_render::view::execution::owning_type_label`): "From a method under `impl … for Type`, recover the type name for a lifeline."
+- `crates/robby-render/src/view/execution.rs:84:1` (docs, `robby_render::view::execution::owning_type_label`): "From a method under `impl … for Type`, recover the type name for a lifeline."
   ```
   /// From a method under `impl … for Type`, recover the type name for a lifeline.
   fn owning_type_label(doc: &Document, method: &Node) -> Option<String> {
@@ -3017,10 +2992,13 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           .map(str::to_owned)
   }
   ```
-- `crates/robby-render/src/view/process.rs:7:1` (docs, `robby_render::view::process::ProcessView`): "Format-agnostic process diagram data."
+- `crates/robby-render/src/view/process.rs:7:1` (docs, `robby_render::view::process::ProcessView`): "Format-agnostic process diagram data. This is also the JSON shape under `FrameDetail.process`. There is no second DTO."
   ```
   /// Format-agnostic process diagram data.
-  #[derive(Debug, Clone, PartialEq, Eq)]
+  ///
+  /// This is also the JSON shape under `FrameDetail.process`. There is no
+  /// second DTO.
+  #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
   pub struct ProcessView {
       pub participants: Vec<ParticipantView>,
       pub events: Vec<ProcessEvent>,
@@ -3145,14 +3123,10 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       pub frames: BTreeMap<String, Frame>,
   }
   ```
-- `crates/robby-render/src/view/scene.rs:377:1` (docs, `robby_render::view::scene::attach_call_portals`): "Portals for every Calls hop among placed frames (tree children + cross edges)."
+- `crates/robby-render/src/view/scene.rs:368:1` (docs, `robby_render::view::scene::attach_call_portals`): "Portals for every Calls hop among placed frames (tree children + cross edges)."
   ```
   /// Portals for every Calls hop among placed frames (tree children + cross edges).
-  fn attach_call_portals(
-      doc: &Document,
-      tree: &CallTree,
-      frames: &mut BTreeMap<String, Frame>,
-  ) {
+  fn attach_call_portals(doc: &Document, tree: &CallTree, frames: &mut BTreeMap<String, Frame>) {
       let mut pairs: Vec<(NodeId, NodeId)> = Vec::new();
       for (from_id, kids) in &tree.children {
           for to_id in kids {
@@ -3175,12 +3149,10 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           }
           let to_name = doc
               .get(to_id)
-              .map(|n| n.fqn.clone())
-              .unwrap_or_else(|| to_id.as_str().to_owned());
+              .map_or_else(|| to_id.as_str().to_owned(), |n| n.fqn.clone());
           let from_name = doc
               .get(from_id)
-              .map(|n| n.fqn.clone())
-              .unwrap_or_else(|| from_id.as_str().to_owned());
+              .map_or_else(|| from_id.as_str().to_owned(), |n| n.fqn.clone());
   
           if let Some(from_frame) = frames.get_mut(&from_sid) {
               from_frame.portals.push(Portal {
@@ -3230,7 +3202,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       pub h: i64,
   }
   ```
-- `crates/robby-render/src/view/scene.rs:522:1` (docs, `robby_render::view::scene::layout_grid`): "Place `n` children in a grid on the local canvas (below the header, above portals)."
+- `crates/robby-render/src/view/scene.rs:507:1` (docs, `robby_render::view::scene::layout_grid`): "Place `n` children in a grid on the local canvas (below the header, above portals)."
   ```
   /// Place `n` children in a grid on the local canvas (below the header, above portals).
   fn layout_grid(n: usize) -> Vec<Rect> {
@@ -3264,7 +3236,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       out
   }
   ```
-- `crates/robby-render/src/view/scene.rs:554:1` (docs, `robby_render::view::scene::is_scene_skipped`): "Comments stay in the IR and markdown tree, but are not Prezi frames."
+- `crates/robby-render/src/view/scene.rs:539:1` (docs, `robby_render::view::scene::is_scene_skipped`): "Comments stay in the IR and markdown tree, but are not Prezi frames."
   ```
   /// Comments stay in the IR and markdown tree, but are not Prezi frames.
   fn is_scene_skipped(kind_name: &str) -> bool {
@@ -3368,8 +3340,8 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           fqn: node.fqn.clone(),
           kind: node.kind.as_str().to_owned(),
           signature: node.signature.clone(),
-          location: node.span.as_ref().map(|s| s.location()),
-          provenance_source: source_name(node.provenance.source),
+          location: node.span.as_ref().map(robby_ir::Span::location),
+          provenance_source: node.provenance.source.as_str(),
           confidence: node.provenance.confidence,
           docs: node.docs.clone(),
           node_count: doc.subtree(&node.id).len(),
@@ -3383,44 +3355,28 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
   
       let types = if opts.types && is_module {
           let model = TypeModel::from_module(doc, &node.id);
-          if model.is_empty() {
-              None
-          } else {
-              Some(model)
-          }
+          if model.is_empty() { None } else { Some(model) }
       } else {
           None
       };
   
       let dependencies = if opts.dependencies && is_module {
           let views = DependencyViews::from_root(doc, &node.id);
-          if views.is_empty() {
-              None
-          } else {
-              Some(views)
-          }
+          if views.is_empty() { None } else { Some(views) }
       } else {
           None
       };
   
       let externals = if opts.externals && is_module {
           let view = ExternalsView::from_root(doc, &node.id);
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
   
       let comments = if opts.comments && is_module {
           let view = CommentsView::from_root(doc, &node.id, sources);
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
@@ -3432,17 +3388,9 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       };
   
       let hierarchy = if opts.hierarchy {
-          let view = HierarchyView::from_node(
-              doc,
-              &node.id,
-              opts.hierarchy_depth,
-              opts.hierarchy_all,
-          );
-          if view.is_empty() {
-              None
-          } else {
-              Some(view)
-          }
+          let view =
+              HierarchyView::from_node(doc, &node.id, opts.hierarchy_depth, opts.hierarchy_all);
+          if view.is_empty() { None } else { Some(view) }
       } else {
           None
       };
@@ -3455,11 +3403,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
   
       let sibling = if opts.sibling {
           let graph = SiblingGraph::from_root(doc, &node.id);
-          if graph.is_empty() {
-              None
-          } else {
-              Some(graph)
-          }
+          if graph.is_empty() { None } else { Some(graph) }
       } else {
           None
       };
@@ -3485,80 +3429,14 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       }
   }
   ```
-- `crates/robby-render/src/web.rs:113:5` (docs, `robby_render::web::impl FrameDetail::from_node_in_doc`): "Like [`Self::from_node`], optionally using `doc` for path-level execution."
-  ```
-  /// Like [`Self::from_node`], optionally using `doc` for path-level execution.
-      pub fn from_node_in_doc(
-          node: &Node,
-          sources: &BTreeMap<String, String>,
-          doc: Option<&Document>,
-      ) -> Self {
-          let (process, process_mermaid) = match node.process.as_ref() {
-              Some(p) => {
-                  let view = ProcessView::from_process(p);
-                  let mermaid = MermaidRenderer.process(&view);
-                  let detail = ProcessDetail {
-                      participants: view
-                          .participants
-                          .into_iter()
-                          .map(|p| ParticipantDetail {
-                              id: p.id,
-                              label: p.label,
-                          })
-                          .collect(),
-                      events: view.events.into_iter().map(event_detail).collect(),
-                      step_count: view.step_count,
-                      observed_count: view.observed_count,
-                  };
-                  (Some(detail), Some(mermaid))
-              }
-              None => (None, None),
-          };
-  
-          let execution_mermaid = doc.and_then(|d| {
-              let exec = execution_process(d, &node.id)?;
-              // Prefer path diagram when it adds call hops beyond the local body.
-              if exec.steps.is_empty() {
-                  return None;
-              }
-              let view = ProcessView::from_process(&exec);
-              Some(MermaidRenderer.process(&view))
-          });
-  
-          let source = SourceSlice::from_node(node, sources).map(|s| SourceDetail {
-              file: s.file,
-              text: s.text,
-          });
-  
-          Self {
-              stable_id: stable_id(node.id.as_str()),
-              id: node.id.as_str().to_owned(),
-              fqn: node.fqn.clone(),
-              kind: node.kind.as_str().to_owned(),
-              signature: node.signature.clone(),
-              docs: node.docs.clone(),
-              location: node.span.as_ref().map(|s| s.location()),
-              provenance: provenance_name(node.provenance.source),
-              confidence: node.provenance.confidence,
-              process,
-              process_mermaid,
-              execution_mermaid,
-              source,
-          }
-      }
-  ```
-- `crates/robby-render/src/web.rs:224:1` (docs, `robby_render::web::write_site`): "Write scene + frame JSON under `out` (typically `apps/site/public`). Returns the number of frame payload files written.…"
+- `crates/robby-render/src/web.rs:120:1` (docs, `robby_render::web::write_site`): "Write scene + frame JSON under `out` (typically `apps/site/public`). Returns the number of frame payload files written.…"
   ```
   /// Write scene + frame JSON under `out` (typically `apps/site/public`).
   ///
   /// Returns the number of frame payload files written. The TypeScript viewer in
   /// `apps/site/src` loads these files; it is not copied here so the self-model
   /// keeps a single source of truth.
-  pub fn write_site(
-      doc: &Document,
-      sources: &BTreeMap<String, String>,
-      out: &Path,
-  ) -> Result<usize> {
+  pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path) -> Result<usize> {
       fs::create_dir_all(out)?;
       let frames_dir = out.join("frames");
       fs::create_dir_all(&frames_dir)?;
@@ -3603,7 +3481,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       Ok(count)
   }
   ```
-- `crates/robby-render/src/web.rs:22:1` (docs, `robby_render::web::FrameDetail`): "Lazy detail for one frame (fetched after the camera settles)."
+- `crates/robby-render/src/web.rs:21:1` (docs, `robby_render::web::FrameDetail`): "Lazy detail for one frame (fetched after the camera settles)."
   ```
   /// Lazy detail for one frame (fetched after the camera settles).
   #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -3621,7 +3499,7 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       pub provenance: &'static str,
       pub confidence: f32,
       #[serde(skip_serializing_if = "Option::is_none")]
-      pub process: Option<ProcessDetail>,
+      pub process: Option<ProcessView>,
       /// Mermaid `sequenceDiagram` body for the process (same path as Markdown).
       #[serde(skip_serializing_if = "Option::is_none")]
       pub process_mermaid: Option<String>,
@@ -3629,10 +3507,56 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
       #[serde(skip_serializing_if = "Option::is_none")]
       pub execution_mermaid: Option<String>,
       #[serde(skip_serializing_if = "Option::is_none")]
-      pub source: Option<SourceDetail>,
+      pub source: Option<SourceSlice>,
   }
   ```
-- `crates/robby-render/tests/web.rs:88:1` (docs, `robby_render::test_web::entrypoints_demo_doc`): "Two `main` entries that both call a shared callee (first parent wins)."
+- `crates/robby-render/src/web.rs:71:5` (docs, `robby_render::web::impl FrameDetail::from_node_in_doc`): "Like [`Self::from_node`], optionally using `doc` for path-level execution."
+  ```
+  /// Like [`Self::from_node`], optionally using `doc` for path-level execution.
+      pub fn from_node_in_doc(
+          node: &Node,
+          sources: &BTreeMap<String, String>,
+          doc: Option<&Document>,
+      ) -> Self {
+          let (process, process_mermaid) = match node.process.as_ref() {
+              Some(p) => {
+                  let view = ProcessView::from_process(p);
+                  let mermaid = MermaidRenderer.process(&view);
+                  (Some(view), Some(mermaid))
+              }
+              None => (None, None),
+          };
+  
+          let execution_mermaid = doc.and_then(|d| {
+              let exec = execution_process(d, &node.id)?;
+              // Prefer path diagram when it adds call hops beyond the local body.
+              if exec.steps.is_empty() {
+                  return None;
+              }
+              let view = ProcessView::from_process(&exec);
+              Some(MermaidRenderer.process(&view))
+          });
+  
+          let source = SourceSlice::from_node(node, sources);
+  
+          Self {
+              stable_id: stable_id(node.id.as_str()),
+              id: node.id.as_str().to_owned(),
+              fqn: node.fqn.clone(),
+              kind: node.kind.as_str().to_owned(),
+              signature: node.signature.clone(),
+              docs: node.docs.clone(),
+              location: node.span.as_ref().map(robby_ir::Span::location),
+              provenance: node.provenance.source.as_str(),
+              confidence: node.provenance.confidence,
+              process,
+              process_mermaid,
+              execution_mermaid,
+              source,
+          }
+      }
+  ```
+- `crates/robby-render/tests/web.rs:89:1` (docs, `robby_render::test_web::entrypoints_demo_doc`): "Two `main` entries that both call a shared callee (first parent wins)."
   ```
   /// Two `main` entries that both call a shared callee (first parent wins).
   fn entrypoints_demo_doc() -> Document {
@@ -3643,12 +3567,14 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           code::FUNCTION,
           "demo::bin_a::main",
       );
-      main_a
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
-      main_a
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::helper"), EdgeKind::Calls));
+      main_a.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::shared"),
+          EdgeKind::Calls,
+      ));
+      main_a.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::helper"),
+          EdgeKind::Calls,
+      ));
       doc.insert(main_a);
   
       let mut helper = Node::new(
@@ -3656,9 +3582,10 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           code::FUNCTION,
           "demo::helper",
       );
-      helper
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+      helper.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::shared"),
+          EdgeKind::Calls,
+      ));
       doc.insert(helper);
   
       let shared = Node::new(
@@ -3673,9 +3600,10 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
           code::FUNCTION,
           "demo::bin_b::main",
       );
-      main_b
-          .edges
-          .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+      main_b.edges.push(Edge::new(
+          NodeId::symbol("rust", "demo::shared"),
+          EdgeKind::Calls,
+      ));
       doc.insert(main_b);
   
       doc.rebuild_code_paths();
@@ -3686,11 +3614,11 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 
 - calls → [`robby_cli`](../robby_cli/index.md) — extract
 - calls → [`robby_ir::codepath`](../robby_ir/codepath/index.md) — find_entrypoints, from_entry
-- calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — 6 items
+- calls → [`robby_ir::coverage`](../robby_ir/coverage/index.md) — 5 items
 - calls → [`robby_ir::kind`](../robby_ir/kind/index.md) — from
 - calls → [`robby_ir::model`](../robby_ir/model/index.md) — 7 items
 - calls → [`robby_ir::process`](../robby_ir/process/index.md) — participant
-- calls → [`robby_ir::span`](../robby_ir/span/index.md) — location
+- calls → [`robby_ir::vocab`](../robby_ir/vocab/index.md) — parse
 
 ## Referenced by
 
@@ -3724,7 +3652,6 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - calls ← [`robby_extract::rust::sanitize`](../robby_extract/rust/sanitize.md)
 - calls ← [`robby_extract::rust::shared_module_score`](../robby_extract/rust/shared-module-score.md)
 - calls ← [`robby_extract::rust::walk_expr`](../robby_extract/rust/walk-expr.md)
-- calls ← [`robby_extract::rust::walk_items`](../robby_extract/rust/walk-items.md)
 - calls ← [`robby_extract::test_extract::the_workspace_is_fully_covered`](../robby_extract/test_extract/the-workspace-is-fully-covered.md)
 - calls ← [`robby_extract::test_typescript::bare_import_creates_external_npm_stub`](../robby_extract/test_typescript/bare-import-creates-external-npm-stub.md)
 - calls ← [`robby_extract::test_typescript::emits_comment_nodes_and_attaches_docs`](../robby_extract/test_typescript/emits-comment-nodes-and-attaches-docs.md)
@@ -3751,9 +3678,10 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - calls ← [`robby_ir::coverage::frontier_spans`](../robby_ir/coverage/frontier-spans.md)
 - calls ← [`robby_ir::coverage::impl CoverageReport::worst_first`](../robby_ir/coverage/index.md)
 - calls ← [`robby_ir::coverage::preview`](../robby_ir/coverage/preview.md)
+- calls ← [`robby_ir::model::impl Document::adopt_parent`](../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::declare_file`](../robby_ir/model/index.md)
-- calls ← [`robby_ir::model::impl Document::insert`](../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::merge`](../robby_ir/model/index.md)
+- calls ← [`robby_ir::model::impl Document::record_child`](../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::impl Document::walk`](../robby_ir/model/index.md)
 - calls ← [`robby_ir::model::validate`](../robby_ir/model/validate.md)
 - calls ← [`robby_ir::process::impl Process::absorb`](../robby_ir/process/index.md)
@@ -3763,18 +3691,18 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 
 ## Modules
 
-- [`markdown`](markdown/index.md) — 17 nodes
+- [`markdown`](markdown/index.md) — 15 nodes
 - [`pipeline`](pipeline/index.md) — 25 nodes
-- [`render`](render/index.md) — 73 nodes
+- [`render`](render/index.md) — 72 nodes
 - [`report`](report/index.md) — 19 nodes
 - [`tree`](tree/index.md) — 42 nodes
 - [`tui`](tui/index.md) — 11 nodes
-- [`util`](util/index.md) — 13 nodes
+- [`util`](util/index.md) — 12 nodes
 - [`view`](view/index.md) — 224 nodes
-- [`web`](web/index.md) — 50 nodes
+- [`web`](web/index.md) — 31 nodes
 - [`render::markdown`](render/markdown/index.md) — 25 nodes
 - [`render::mermaid`](render/mermaid/index.md) — 23 nodes
-- [`view::comments`](view/comments/index.md) — 44 nodes
+- [`view::comments`](view/comments/index.md) — 32 nodes
 - [`view::deps`](view/deps/index.md) — 81 nodes
 - [`view::entrypoints`](view/entrypoints/index.md) — 21 nodes
 - [`view::execution`](view/execution/index.md) — 14 nodes
@@ -3807,6 +3735,6 @@ Cycles: report ↔ test_render ↔ mermaid ↔ util ↔ test_tree ↔ comments �
 - `pub use report::{Report, Section};`
 - `pub use view::{`
 - `pub use web::{FrameDetail, write_site};`
-- [`use robby_ir::{Document, NodeId, Process, Step, StepKind};`](../robby_ir/index.md)
+- [`use robby_ir::{Document, NodeId, Process, Step};`](../robby_ir/index.md)
 - `use view::ProcessView as ProcView;`
 

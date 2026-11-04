@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:481`](../../../../../apps/site/src/viewer.ts#L481) |
+| location | [`apps/site/src/viewer.ts:462`](../../../../../apps/site/src/viewer.ts#L462) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-async function loadDetail(id: string): Promise<void> {
+async function loadDetail(id: string) {
   const f = frame(id);
   const host = worldEl.querySelector(`[data-detail-host="${cssEscape(id)}"]`);
   if (!host) {
@@ -30,7 +30,9 @@ async function loadDetail(id: string): Promise<void> {
   const isContainer = f.children.length > 0;
   // Containers keep the child grid — inject execution above it.
   if (isContainer) {
-    host.querySelectorAll(":scope > .detail").forEach((el) => el.remove());
+    for (const el of host.querySelectorAll(":scope > .detail")) {
+      el.remove();
+    }
     if (detail.execution_mermaid) {
       const panel = document.createElement("div");
       panel.className = "detail detail-execution";
@@ -97,12 +99,7 @@ async function loadDetail(id: string): Promise<void> {
     panel.appendChild(src);
   }
 
-  if (
-    !detail.execution_mermaid &&
-    !detail.process_mermaid &&
-    !detail.source &&
-    !detail.docs
-  ) {
+  if (!detail.execution_mermaid && !detail.process_mermaid && !detail.source && !detail.docs) {
     const empty = document.createElement("div");
     empty.className = "empty-leaf";
     empty.textContent = "No process or source on this node.";
@@ -123,7 +120,7 @@ sequenceDiagram
     participant fetchJson as fetchJson
     participant set as set
     participant error as error
-    participant forEach as forEach
+    participant remove as remove
     participant createElement as createElement
     participant appendExecution as appendExecution
     participant insertBefore as insertBefore
@@ -144,8 +141,9 @@ sequenceDiagram
     self-->>error: 
     return-->>caller: 
     end
-    self-->>forEach: 
-    self-->>fn: 
+    loop for-of
+    self-->>remove: 
+    end
     alt if
     self-->>createElement: 
     self-->>appendExecution: 
@@ -187,7 +185,7 @@ sequenceDiagram
     self-->>appendChild: 
 ```
 
-39 steps · 0 observed · 39 possible only
+38 steps · 0 observed · 38 possible only
 
 **Edges**
 

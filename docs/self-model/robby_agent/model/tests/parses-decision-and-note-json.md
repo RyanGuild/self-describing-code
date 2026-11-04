@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn parses_decision_and_note_json()` |
-| location | [`crates/robby-agent/src/model.rs:268`](../../../../../crates/robby-agent/src/model.rs#L268) |
+| location | [`crates/robby-agent/src/model.rs:216`](../../../../../crates/robby-agent/src/model.rs#L216) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

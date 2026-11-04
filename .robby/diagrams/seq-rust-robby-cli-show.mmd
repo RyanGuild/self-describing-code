@@ -1,14 +1,12 @@
 sequenceDiagram
     autonumber
     participant show as show()
-    participant map as map
-    participant unwrap_or_else as unwrap_or_else
+    participant map_or_else as map_or_else
     participant exists as exists
     participant pipeline__load as pipeline::load
     participant resolve as resolve
     participant Ok as Ok
-    show-->>map: ir.map(PathBuf::from)
-    show-->>unwrap_or_else: ir.map(PathBuf::from).unwrap_or_else(default_ir)
+    show-->>map_or_else: ir.map_or_else(default_ir, PathBuf::from)
     show-->>exists: ir.exists()
     alt !ir.exists()
     show-->>show: bail!( '{} does not exist run `cargo run -p robby-cli -- extract --o...

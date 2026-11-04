@@ -5,12 +5,16 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn web(ir: &std::path::Path, source_root: &std::path::Path, out: &std::path::Path) -> Result<ExitCode>` |
-| location | [`crates/robby-cli/src/main.rs:222`](../../../crates/robby-cli/src/main.rs#L222) |
+| signature | `fn web(     ir: &std::path::Path,     source_root: &std::path::Path,     out: &std::path::Path, ) -> Result<ExitCode>` |
+| location | [`crates/robby-cli/src/main.rs:229`](../../../crates/robby-cli/src/main.rs#L229) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn web(ir: &std::path::Path, source_root: &std::path::Path, out: &std::path::Path) -> Result<ExitCode> {
+fn web(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    out: &std::path::Path,
+) -> Result<ExitCode> {
     let loaded = pipeline::load(ir, source_root)?;
     let count = robby_render::write_site(&loaded.document, &loaded.sources, out)?;
     println!(

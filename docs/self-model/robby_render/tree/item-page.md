@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn item_page(     doc: &Document,     node: &Node,     page: &Path,     sources: Option<&BTreeMap<String, String>>,     out_rel: &str, ) -> String` |
-| location | [`crates/robby-render/src/tree.rs:372`](../../../../crates/robby-render/src/tree.rs#L372) |
+| location | [`crates/robby-render/src/tree.rs:369`](../../../../crates/robby-render/src/tree.rs#L369) |
 | provenance | extractor · confidence 1.00 |
 
 > An item page: the source, its process, its edges.

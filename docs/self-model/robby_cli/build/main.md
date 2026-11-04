@@ -14,7 +14,10 @@ fn main() {
     let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR"));
     let root = manifest.join("../..");
 
-    println!("cargo:rerun-if-changed={}", manifest.join("build.rs").display());
+    println!(
+        "cargo:rerun-if-changed={}",
+        manifest.join("build.rs").display()
+    );
 
     let document = robby_extract::extract(&root).unwrap_or_else(|err| {
         panic!("robby: extraction failed: {err:#}");
@@ -76,7 +79,7 @@ sequenceDiagram
     main-->>expect: env::var('CARGO_MANIFEST_DIR').expect('CARGO_MANIFEST_DIR')
     main-->>PathBuf__from: PathBuf::from(env::var('CARGO_MANIFEST_DIR').expect('CARGO_MANIFEST_D...
     main-->>join: manifest.join('../..')
-    main-->>main: println!('cargo:rerun-if-changed={}', manifest.join('build.rs').displ...
+    main-->>main: println!( 'cargo:rerun-if-changed={}', manifest.join('build.rs').disp...
     main-->>robby_extract__extract: robby_extract::extract(&root)
     main-->>main: panic!('robby: extraction failed: {err: }')
     main-->>unwrap_or_else: robby_extract::extract(&root).unwrap_or_else(|err| { panic!('robby: e...

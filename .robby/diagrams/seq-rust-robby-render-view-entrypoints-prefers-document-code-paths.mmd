@@ -4,7 +4,7 @@ sequenceDiagram
     participant doc_with_mains as doc_with_mains
     participant CallTree__from_document as CallTree::from_document
     prefers_document_code_paths-->>doc_with_mains: doc_with_mains()
-    prefers_document_code_paths-->>prefers_document_code_paths: assert!(!doc.code_paths.is_empty())
+    prefers_document_code_paths-->>prefers_document_code_paths: assert_ne!(doc.code_paths, no_paths)
     prefers_document_code_paths-->>CallTree__from_document: CallTree::from_document(&doc)
     prefers_document_code_paths-->>prefers_document_code_paths: assert_eq!(tree.entries, vec![NodeId::symbol('rust', 'demo::main')])
     prefers_document_code_paths-->>prefers_document_code_paths: assert_eq!( tree.children_of(&NodeId::symbol('rust', 'demo::main')), ...

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/model.rs:56`](../../../../crates/robby-ir/src/model.rs#L56) |
+| location | [`crates/robby-ir/src/model.rs:58`](../../../../crates/robby-ir/src/model.rs#L58) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,7 +22,7 @@ impl From<String> for NodeId {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from(1)` |
-| location | [`crates/robby-ir/src/model.rs:57`](../../../../crates/robby-ir/src/model.rs#L57) |
+| location | [`crates/robby-ir/src/model.rs:59`](../../../../crates/robby-ir/src/model.rs#L59) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

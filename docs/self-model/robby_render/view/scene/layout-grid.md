@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn layout_grid(n: usize) -> Vec<Rect>` |
-| location | [`crates/robby-render/src/view/scene.rs:522`](../../../../../crates/robby-render/src/view/scene.rs#L522) |
+| location | [`crates/robby-render/src/view/scene.rs:507`](../../../../../crates/robby-render/src/view/scene.rs#L507) |
 | provenance | extractor · confidence 1.00 |
 
 > Place `n` children in a grid on the local canvas (below the header, above portals).

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn build_process(     f: &syn::ItemFn,     ctx: &Ctx<'_>,     fqn: &str,     pending: &mut Vec<PendingCall>, ) -> Process` |
-| location | [`crates/robby-extract/src/rust.rs:537`](../../../../crates/robby-extract/src/rust.rs#L537) |
+| location | [`crates/robby-extract/src/rust.rs:540`](../../../../crates/robby-extract/src/rust.rs#L540) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

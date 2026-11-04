@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-agent/src/model.rs:147`](../../../../crates/robby-agent/src/model.rs#L147) |
+| location | [`crates/robby-agent/src/model.rs:95`](../../../../crates/robby-agent/src/model.rs#L95) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -54,7 +54,7 @@ impl<'a, C: ChatClient + ?Sized> NoteModel<'a, C> {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(2)` |
-| location | [`crates/robby-agent/src/model.rs:148`](../../../../crates/robby-agent/src/model.rs#L148) |
+| location | [`crates/robby-agent/src/model.rs:96`](../../../../crates/robby-agent/src/model.rs#L96) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -82,7 +82,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn write_note(2)` |
-| location | [`crates/robby-agent/src/model.rs:155`](../../../../crates/robby-agent/src/model.rs#L155) |
+| location | [`crates/robby-agent/src/model.rs:103`](../../../../crates/robby-agent/src/model.rs#L103) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

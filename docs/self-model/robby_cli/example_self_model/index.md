@@ -40,14 +40,12 @@ classDiagram
 ```mermaid
 flowchart TB
     n_c58f68f7fc449f63["example_self_model"]
-    n_f3e9f97d91a4f4af(["robby_agent"])
     n_a331a60ee1568354(["robby_cli"])
     n_356bf2c23da68961(["robby_ir"])
     n_9c636b098ca4450e(["robby_render"])
     n_c58f68f7fc449f63 --> n_356bf2c23da68961
     n_c58f68f7fc449f63 --> n_9c636b098ca4450e
     n_c58f68f7fc449f63 --> n_a331a60ee1568354
-    n_c58f68f7fc449f63 --> n_f3e9f97d91a4f4af
 ```
 
 ## Module coupling
@@ -64,18 +62,17 @@ flowchart TB
 
 ## Dependency matrix
 
-| | example_self_model | robby_ir | robby_render | robby_cli | robby_agent |
-|---|---:|---:|---:|---:|---:|
-| **example_self_model** | · | 1 | 6 | 1 | 1 |
-| **robby_ir** | | · | | | |
-| **robby_render** | | | · | | |
-| **robby_cli** | | | | · | |
-| **robby_agent** | | | | | · |
+| | example_self_model | robby_ir | robby_render | robby_cli |
+|---|---:|---:|---:|---:|
+| **example_self_model** | · | 2 | 6 | 1 |
+| **robby_ir** | | · | | |
+| **robby_render** | | | · | |
+| **robby_cli** | | | | · |
 ## References
 
-- calls → [`robby_agent::model`](../../robby_agent/model/index.md) — parse
 - calls → [`robby_cli`](../index.md) — extract
 - calls → [`robby_ir::coverage`](../../robby_ir/coverage/index.md) — failures
+- calls → [`robby_ir::vocab`](../../robby_ir/vocab/index.md) — parse
 - calls → [`robby_render::pipeline`](../../robby_render/pipeline/index.md) — 6 items
 
 ## Items

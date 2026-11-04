@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-render/src/view/entrypoints.rs:131`](../../../../../../crates/robby-render/src/view/entrypoints.rs#L131) |
+| declared at | [`crates/robby-render/src/view/entrypoints.rs:126`](../../../../../../crates/robby-render/src/view/entrypoints.rs#L126) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 6 |
 
@@ -38,9 +38,9 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`doc_with_mains`](doc-with-mains.md) | `code.function` | 23 | `crates/robby-render/src/view/entrypoints.rs:136:5` |
+| [`doc_with_mains`](doc-with-mains.md) | `code.function` | 23 | `crates/robby-render/src/view/entrypoints.rs:131:5` |
 | [`prefers_document_code_paths`](prefers-document-code-paths.md) | `code.function` | 5 | `crates/robby-render/src/view/entrypoints.rs:176:5` |
-| [`first_parent_wins_shared_callee`](first-parent-wins-shared-callee.md) | `code.function` | 6 | `crates/robby-render/src/view/entrypoints.rs:188:5` |
+| [`first_parent_wins_shared_callee`](first-parent-wins-shared-callee.md) | `code.function` | 6 | `crates/robby-render/src/view/entrypoints.rs:189:5` |
 
 ## Imports
 

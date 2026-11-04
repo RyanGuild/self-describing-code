@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-ir/src/coverage.rs:268`](../../../../crates/robby-ir/src/coverage.rs#L268) |
+| location | [`crates/robby-ir/src/coverage.rs:271`](../../../../crates/robby-ir/src/coverage.rs#L271) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,6 +18,6 @@ enum TriviaMode {
 
 **Fields and variants**
 
-- `Rust` — `crates/robby-ir/src/coverage.rs:270:5`
-- `TypeScript` — `crates/robby-ir/src/coverage.rs:271:5`
+- `Rust` — `crates/robby-ir/src/coverage.rs:273:5`
+- `TypeScript` — `crates/robby-ir/src/coverage.rs:274:5`
 

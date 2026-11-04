@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn render_links(doc: &Document, links: &LinkGraph, page: &Path) -> String` |
-| location | [`crates/robby-render/src/tree.rs:564`](../../../../crates/robby-render/src/tree.rs#L564) |
+| location | [`crates/robby-render/src/tree.rs:562`](../../../../crates/robby-render/src/tree.rs#L562) |
 | provenance | extractor · confidence 1.00 |
 
 > Render a [`LinkGraph`] as markdown with resolved page paths.

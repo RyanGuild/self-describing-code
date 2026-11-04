@@ -5,19 +5,15 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn attach_call_portals(     doc: &Document,     tree: &CallTree,     frames: &mut BTreeMap<String, Frame>, )` |
-| location | [`crates/robby-render/src/view/scene.rs:377`](../../../../../crates/robby-render/src/view/scene.rs#L377) |
+| signature | `fn attach_call_portals(doc: &Document, tree: &CallTree, frames: &mut BTreeMap<String, Frame>)` |
+| location | [`crates/robby-render/src/view/scene.rs:368`](../../../../../crates/robby-render/src/view/scene.rs#L368) |
 | provenance | extractor · confidence 1.00 |
 
 > Portals for every Calls hop among placed frames (tree children + cross edges).
 
 ```rust
 /// Portals for every Calls hop among placed frames (tree children + cross edges).
-fn attach_call_portals(
-    doc: &Document,
-    tree: &CallTree,
-    frames: &mut BTreeMap<String, Frame>,
-) {
+fn attach_call_portals(doc: &Document, tree: &CallTree, frames: &mut BTreeMap<String, Frame>) {
     let mut pairs: Vec<(NodeId, NodeId)> = Vec::new();
     for (from_id, kids) in &tree.children {
         for to_id in kids {
@@ -40,12 +36,10 @@ fn attach_call_portals(
         }
         let to_name = doc
             .get(to_id)
-            .map(|n| n.fqn.clone())
-            .unwrap_or_else(|| to_id.as_str().to_owned());
+            .map_or_else(|| to_id.as_str().to_owned(), |n| n.fqn.clone());
         let from_name = doc
             .get(from_id)
-            .map(|n| n.fqn.clone())
-            .unwrap_or_else(|| from_id.as_str().to_owned());
+            .map_or_else(|| from_id.as_str().to_owned(), |n| n.fqn.clone());
 
         if let Some(from_frame) = frames.get_mut(&from_sid) {
             from_frame.portals.push(Portal {
@@ -103,9 +97,8 @@ sequenceDiagram
     participant stable_id as stable_id
     participant contains_key as contains_key
     participant get as get
-    participant map as map
     participant to_owned as to_owned
-    participant unwrap_or_else as unwrap_or_else
+    participant map_or_else as map_or_else
     participant get_mut as get_mut
     participant Some as Some
     participant values_mut as values_mut
@@ -138,17 +131,15 @@ sequenceDiagram
     attach_call_portals-->>contains_key: frames.contains_key(&from_sid)
     attach_call_portals-->>contains_key: frames.contains_key(&to_sid)
     attach_call_portals-->>get: doc .get(to_id)
-    attach_call_portals-->>clone: n.fqn.clone()
-    attach_call_portals-->>map: doc .get(to_id) .map(|n| n.fqn.clone())
     attach_call_portals-->>as_str: to_id.as_str()
     attach_call_portals-->>to_owned: to_id.as_str().to_owned()
-    attach_call_portals-->>unwrap_or_else: doc .get(to_id) .map(|n| n.fqn.clone()) .unwrap_or_else(|| to_id.as_s...
-    attach_call_portals-->>get: doc .get(from_id)
     attach_call_portals-->>clone: n.fqn.clone()
-    attach_call_portals-->>map: doc .get(from_id) .map(|n| n.fqn.clone())
+    attach_call_portals-->>map_or_else: doc .get(to_id) .map_or_else(|| to_id.as_str().to_owned(), |n| n.fqn....
+    attach_call_portals-->>get: doc .get(from_id)
     attach_call_portals-->>as_str: from_id.as_str()
     attach_call_portals-->>to_owned: from_id.as_str().to_owned()
-    attach_call_portals-->>unwrap_or_else: doc .get(from_id) .map(|n| n.fqn.clone()) .unwrap_or_else(|| from_id....
+    attach_call_portals-->>clone: n.fqn.clone()
+    attach_call_portals-->>map_or_else: doc .get(from_id) .map_or_else(|| from_id.as_str().to_owned(), |n| n....
     attach_call_portals-->>get_mut: frames.get_mut(&from_sid)
     alt let Some(from_frame) = frames.get_mut(&from_sid)
     attach_call_portals-->>clone: to_name.clone()
@@ -179,32 +170,32 @@ sequenceDiagram
     end
 ```
 
-55 steps · 0 observed · 55 possible only
+53 steps · 0 observed · 53 possible only
 
 **Edges**
 
 - calls → [`robby_render::view::scene::impl Rect::new`](index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::stable_id`](../../stable-id.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 
 ## References
 

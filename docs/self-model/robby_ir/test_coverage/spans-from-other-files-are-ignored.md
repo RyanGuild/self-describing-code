@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn spans_from_other_files_are_ignored()` |
-| location | [`crates/robby-ir/tests/coverage.rs:107`](../../../../crates/robby-ir/tests/coverage.rs#L107) |
+| location | [`crates/robby-ir/tests/coverage.rs:108`](../../../../crates/robby-ir/tests/coverage.rs#L108) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn first_line(text: &str) -> String` |
-| location | [`crates/robby-render/src/tree.rs:809`](../../../../crates/robby-render/src/tree.rs#L809) |
+| location | [`crates/robby-render/src/tree.rs:805`](../../../../crates/robby-render/src/tree.rs#L805) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -32,8 +32,4 @@ sequenceDiagram
 ```
 
 5 steps · 0 observed · 5 possible only
-
-## Referenced by
-
-- calls ← [`robby_render::tree::module_page`](module-page.md)
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn resolve_calls(doc: &mut Document, pending: Vec<PendingCall>)` |
-| location | [`crates/robby-extract/src/typescript.rs:1038`](../../../../crates/robby-extract/src/typescript.rs#L1038) |
+| location | [`crates/robby-extract/src/typescript.rs:1031`](../../../../crates/robby-extract/src/typescript.rs#L1031) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

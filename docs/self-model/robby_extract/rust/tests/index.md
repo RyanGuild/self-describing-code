@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.module` |
-| declared at | [`crates/robby-extract/src/rust.rs:961`](../../../../../crates/robby-extract/src/rust.rs#L961) |
+| declared at | [`crates/robby-extract/src/rust.rs:966`](../../../../../crates/robby-extract/src/rust.rs#L966) |
 | provenance | extractor · confidence 1.00 |
 | nodes | 4 |
 
@@ -32,8 +32,8 @@ flowchart TB
 
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
-| [`pick_call_prefers_same_module`](pick-call-prefers-same-module.md) | `code.function` | 4 | `crates/robby-extract/src/rust.rs:965:5` |
-| [`line_index_handles_non_ascii`](line-index-handles-non-ascii.md) | `code.function` | 5 | `crates/robby-extract/src/rust.rs:977:5` |
+| [`pick_call_prefers_same_module`](pick-call-prefers-same-module.md) | `code.function` | 4 | `crates/robby-extract/src/rust.rs:970:5` |
+| [`line_index_handles_non_ascii`](line-index-handles-non-ascii.md) | `code.function` | 5 | `crates/robby-extract/src/rust.rs:982:5` |
 
 ## Imports
 

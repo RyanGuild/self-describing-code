@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn mini_doc() -> (Document, BTreeMap<String, String>)` |
-| location | [`crates/robby-agent/src/enrich.rs:180`](../../../../../crates/robby-agent/src/enrich.rs#L180) |
+| location | [`crates/robby-agent/src/enrich.rs:183`](../../../../../crates/robby-agent/src/enrich.rs#L183) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -28,7 +28,9 @@ fn mini_doc() -> (Document, BTreeMap<String, String>) {
         );
         comment.parent = Some(NodeId::symbol("typescript", "demo/shapes"));
         comment.docs = Some("Draws a point.".into());
-        comment.annotations.insert("comment_kind".into(), "block".into());
+        comment
+            .annotations
+            .insert("comment_kind".into(), "block".into());
         comment.span = Some(Span {
             file: "shapes.ts".into(),
             start: Position::new(1, 1, 0),
@@ -50,16 +52,6 @@ fn mini_doc() -> (Document, BTreeMap<String, String>) {
         });
         doc.insert(iface);
 
-        if let Some(m) = doc
-            .nodes
-            .get_mut(&NodeId::symbol("typescript", "demo/shapes"))
-        {
-            m.children = vec![
-                NodeId::symbol("typescript", "demo/shapes/comment@0"),
-                NodeId::symbol("typescript", "demo/shapes/Drawable"),
-            ];
-        }
-
         let mut sources = BTreeMap::new();
         sources.insert(
             "shapes.ts".into(),
@@ -80,7 +72,6 @@ sequenceDiagram
     participant Some as Some
     participant into as into
     participant Position__new as Position::new
-    participant get_mut as get_mut
     participant BTreeMap__new as BTreeMap::new
     mini_doc-->>Document__new: Document::new('test')
     mini_doc-->>NodeId__symbol: NodeId::symbol('typescript', 'demo/shapes')
@@ -94,7 +85,7 @@ sequenceDiagram
     mini_doc-->>Some: Some('Draws a point.'.into())
     mini_doc-->>into: 'comment_kind'.into()
     mini_doc-->>into: 'block'.into()
-    mini_doc-->>insert: comment.annotations.insert('comment_kind'.into(), 'block'.into())
+    mini_doc-->>insert: comment .annotations .insert('comment_kind'.into(), 'block'.into())
     mini_doc-->>into: 'shapes.ts'.into()
     mini_doc-->>Position__new: Position::new(1, 1, 0)
     mini_doc-->>Position__new: Position::new(1, 20, 19)
@@ -109,18 +100,13 @@ sequenceDiagram
     mini_doc-->>Position__new: Position::new(4, 2, 60)
     mini_doc-->>Some: Some(Span { file: 'shapes.ts'.into(), start: Position::new(2, 1, 20),...
     mini_doc-->>insert: doc.insert(iface)
-    mini_doc-->>NodeId__symbol: NodeId::symbol('typescript', 'demo/shapes')
-    mini_doc-->>get_mut: doc .nodes .get_mut(&NodeId::symbol('typescript', 'demo/shapes'))
-    alt let Some(m) = doc .nodes .get_mut(&NodeId::symbol('typescript', 'demo...
-    mini_doc-->>mini_doc: vec![ NodeId::symbol('typescript', 'demo/shapes/comment@0'), NodeId::...
-    end
     mini_doc-->>BTreeMap__new: BTreeMap::new()
     mini_doc-->>into: 'shapes.ts'.into()
     mini_doc-->>into: '/** Draws a point. */\nexport interface Drawable {\n draw(): void \n...
     mini_doc-->>insert: sources.insert( 'shapes.ts'.into(), '/** Draws a point. */\nexport in...
 ```
 
-34 steps · 0 observed · 34 possible only
+31 steps · 0 observed · 31 possible only
 
 **Edges**
 
@@ -141,7 +127,6 @@ sequenceDiagram
 - calls → [`robby_agent::enrich::impl FakeClient::new`](index.md)
 - calls → [`robby_agent::enrich::impl FakeClient::new`](index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../../robby_ir/model/index.md)
 - calls → [`robby_agent::enrich::impl FakeClient::new`](index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 

@@ -11,7 +11,7 @@ use crate::view::{
     HierarchyNode, HierarchyView, LinkGraph, NodeMeta, NodeViews, PackageNode, PackageStructure,
     ProcessEvent, ProcessView, SelectOpts, SiblingGraph, SourceSlice, TypeModel, collect,
 };
-use robby_ir::{Document, Node, StepKind};
+use robby_ir::{Document, Node};
 
 use super::Renderer;
 
@@ -230,7 +230,7 @@ impl Renderer for TuiRenderer {
                         pad(&name(from), from_width),
                         pad(&name(to), to_width),
                         pad(&clip(label, 52), label_width),
-                        step_tag(*kind),
+                        kind.as_str(),
                     );
                 }
             }
@@ -602,15 +602,5 @@ fn pad(text: &str, width: usize) -> String {
         text.to_owned()
     } else {
         format!("{text}{}", " ".repeat(width - current))
-    }
-}
-
-fn step_tag(kind: StepKind) -> &'static str {
-    match kind {
-        StepKind::Call => "call",
-        StepKind::Return => "return",
-        StepKind::Signal => "signal",
-        StepKind::Decision => "decision",
-        StepKind::Note => "note",
     }
 }

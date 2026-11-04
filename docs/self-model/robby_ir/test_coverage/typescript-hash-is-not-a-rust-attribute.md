@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn typescript_hash_is_not_a_rust_attribute()` |
-| location | [`crates/robby-ir/tests/coverage.rs:219`](../../../../crates/robby-ir/tests/coverage.rs#L219) |
+| location | [`crates/robby-ir/tests/coverage.rs:232`](../../../../crates/robby-ir/tests/coverage.rs#L232) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

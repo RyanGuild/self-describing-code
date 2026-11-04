@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn sequence_includes_call_and_type_lifeline()` |
-| location | [`crates/robby-render/src/view/execution.rs:161`](../../../../../../crates/robby-render/src/view/execution.rs#L161) |
+| location | [`crates/robby-render/src/view/execution.rs:155`](../../../../../../crates/robby-render/src/view/execution.rs#L155) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -15,7 +15,12 @@
         let doc = sample();
         let process =
             execution_process(&doc, &NodeId::symbol("rust", "demo::main")).expect("process");
-        assert!(process.participants.iter().any(|p| p.label.contains("main")));
+        assert!(
+            process
+                .participants
+                .iter()
+                .any(|p| p.label.contains("main"))
+        );
         assert!(process.participants.iter().any(|p| p.label.contains("run")));
         assert!(
             process.participants.iter().any(|p| p.label == "Foo"),
@@ -38,7 +43,7 @@ sequenceDiagram
     sequence_includes_call_and_type_lifeline-->>NodeId__symbol: NodeId::symbol('rust', 'demo::main')
     sequence_includes_call_and_type_lifeline-->>execution_process: execution_process(&doc, &NodeId::symbol('rust', 'demo::main'))
     sequence_includes_call_and_type_lifeline-->>expect: execution_process(&doc, &NodeId::symbol('rust', 'demo::main')).expect...
-    sequence_includes_call_and_type_lifeline-->>sequence_includes_call_and_type_lifeline: assert!(process.participants.iter().any(|p| p.label.contains('main')))
+    sequence_includes_call_and_type_lifeline-->>sequence_includes_call_and_type_lifeline: assert!( process .participants .iter() .any(|p| p.label.contains('mai...
     sequence_includes_call_and_type_lifeline-->>sequence_includes_call_and_type_lifeline: assert!(process.participants.iter().any(|p| p.label.contains('run')))
     sequence_includes_call_and_type_lifeline-->>sequence_includes_call_and_type_lifeline: assert!( process.participants.iter().any(|p| p.label == 'Foo'), 'expe...
     sequence_includes_call_and_type_lifeline-->>sequence_includes_call_and_type_lifeline: assert!(process.steps.len() >= 2)

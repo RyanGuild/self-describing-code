@@ -8,15 +8,14 @@ sequenceDiagram
     participant push_str as push_str
     participant module_by_stable as module_by_stable
     participant as_str as as_str
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
+    ascii_package_structure-->>ascii_package_structure: fn walk(node: &PackageNode, prefix: &str, is_last: bool, out: &mut St...
     ascii_package_structure-->>is_empty: view.is_empty()
     alt view.is_empty()
     ascii_package_structure-->>String__from: String::from('(no package structure)\n')
     ascii_package_structure-->>ascii_package_structure: return
     end
     ascii_package_structure-->>String__new: String::new()
-    ascii_package_structure-->>ascii_package_structure: fn walk(node: &PackageNode, prefix: &str, is_last: bool, out: &mut St...
     ascii_package_structure-->>walk: walk(&view.root, '', true, &mut out)
     ascii_package_structure-->>is_empty: view.externals.is_empty()
     alt !view.externals.is_empty()
@@ -30,15 +29,13 @@ sequenceDiagram
     ascii_package_structure-->>push_str: out.push_str('depends\n')
     loop &view.edges
     ascii_package_structure-->>module_by_stable: view .module_by_stable(&edge.from)
-    ascii_package_structure-->>as_str: m.name.as_str()
-    ascii_package_structure-->>map: view .module_by_stable(&edge.from) .map(|m| m.name.as_str())
     ascii_package_structure-->>as_str: edge.from.as_str()
-    ascii_package_structure-->>unwrap_or: view .module_by_stable(&edge.from) .map(|m| m.name.as_str()) .unwrap_...
-    ascii_package_structure-->>module_by_stable: view .module_by_stable(&edge.to)
     ascii_package_structure-->>as_str: m.name.as_str()
-    ascii_package_structure-->>map: view .module_by_stable(&edge.to) .map(|m| m.name.as_str())
+    ascii_package_structure-->>map_or: view .module_by_stable(&edge.from) .map_or(edge.from.as_str(), |m| m....
+    ascii_package_structure-->>module_by_stable: view .module_by_stable(&edge.to)
     ascii_package_structure-->>as_str: edge.to.as_str()
-    ascii_package_structure-->>unwrap_or: view .module_by_stable(&edge.to) .map(|m| m.name.as_str()) .unwrap_or...
+    ascii_package_structure-->>as_str: m.name.as_str()
+    ascii_package_structure-->>map_or: view .module_by_stable(&edge.to) .map_or(edge.to.as_str(), |m| m.name...
     ascii_package_structure-->>ascii_package_structure: writeln!(out, ' {from} → {to}{mark}')
     end
     end

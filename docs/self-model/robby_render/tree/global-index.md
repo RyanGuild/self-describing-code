@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn global_index(doc: &Document, coverage: Option<&CoverageReport>, crates: &[&Node]) -> String` |
-| location | [`crates/robby-render/src/tree.rs:131`](../../../../crates/robby-render/src/tree.rs#L131) |
+| location | [`crates/robby-render/src/tree.rs:129`](../../../../crates/robby-render/src/tree.rs#L129) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

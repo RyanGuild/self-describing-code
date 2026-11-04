@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn attach_leading_docs(     doc: &mut Document,     comments: &[Comment],     module_id: &NodeId,     ctx: &Ctx<'_>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:429`](../../../../crates/robby-extract/src/typescript.rs#L429) |
+| location | [`crates/robby-extract/src/typescript.rs:421`](../../../../crates/robby-extract/src/typescript.rs#L421) |
 | provenance | extractor · confidence 1.00 |
 
 > Attach leading comments (JSDoc-style) onto the following item's `docs`.
@@ -78,12 +78,11 @@ fn attach_leading_docs(
             }
         }
 
-        if let Some((_, id)) = best {
-            if let Some(child) = doc.nodes.get_mut(&id) {
-                if child.docs.is_none() {
-                    child.docs = Some(raw.to_owned());
-                }
-            }
+        if let Some((_, id)) = best
+            && let Some(child) = doc.nodes.get_mut(&id)
+            && child.docs.is_none()
+        {
+            child.docs = Some(raw.to_owned());
         }
     }
 }
@@ -125,15 +124,11 @@ sequenceDiagram
     attach_leading_docs-->>Some: Some((span.start.byte, child_id.clone()))
     end
     end
-    alt let Some((_, id)) = best
     attach_leading_docs-->>get_mut: doc.nodes.get_mut(&id)
-    alt let Some(child) = doc.nodes.get_mut(&id)
     attach_leading_docs-->>is_none: child.docs.is_none()
-    alt child.docs.is_none()
+    alt let Some((_, id)) = best && let Some(child) = doc.nodes.get_mut(&id) ...
     attach_leading_docs-->>to_owned: raw.to_owned()
     attach_leading_docs-->>Some: Some(raw.to_owned())
-    end
-    end
     end
     end
 ```

@@ -6,14 +6,14 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node>` |
-| location | [`crates/robby-agent/src/context.rs:148`](../../../../crates/robby-agent/src/context.rs#L148) |
+| location | [`crates/robby-agent/src/context.rs:147`](../../../../crates/robby-agent/src/context.rs#L147) |
 | provenance | extractor · confidence 1.00 |
 
 > Nearest following sibling item (not comment/import), by span start.
 
 ```rust
 /// Nearest following sibling item (not comment/import), by span start.
-pub fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
+pub(crate) fn nearest_following_item<'a>(doc: &'a Document, comment: &Node) -> Option<&'a Node> {
     let parent = comment.parent.as_ref().and_then(|id| doc.get(id))?;
     let comment_start = comment.span.as_ref()?.start.byte;
     let mut best: Option<(&Node, u32)> = None;

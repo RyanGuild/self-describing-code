@@ -83,19 +83,6 @@ fn demo_doc() -> (Document, BTreeMap<String, String>) {
     ));
     doc.insert(b);
 
-    if let Some(krate) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        krate.children = vec![
-            NodeId::symbol("rust", "demo::left"),
-            NodeId::symbol("rust", "demo::right"),
-        ];
-    }
-    if let Some(left) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::left")) {
-        left.children = vec![NodeId::symbol("rust", "demo::left::a")];
-    }
-    if let Some(right) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::right")) {
-        right.children = vec![NodeId::symbol("rust", "demo::right::b")];
-    }
-
     (doc, sources)
 }
 

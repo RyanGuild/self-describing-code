@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn document_coverage_is_union_at_any_depth()` |
-| location | [`crates/robby-ir/tests/coverage.rs:187`](../../../../crates/robby-ir/tests/coverage.rs#L187) |
+| location | [`crates/robby-ir/tests/coverage.rs:196`](../../../../crates/robby-ir/tests/coverage.rs#L196) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

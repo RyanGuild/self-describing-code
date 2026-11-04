@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn load(ir: &Path, root: &Path) -> Result<Loaded>` |
-| location | [`crates/robby-render/src/pipeline.rs:79`](../../../../crates/robby-render/src/pipeline.rs#L79) |
+| location | [`crates/robby-render/src/pipeline.rs:82`](../../../../crates/robby-render/src/pipeline.rs#L82) |
 | provenance | extractor · confidence 1.00 |
 
 > Load a document and everything derived from it.

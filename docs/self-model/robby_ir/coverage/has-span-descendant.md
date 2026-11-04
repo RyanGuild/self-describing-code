@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn has_span_descendant(doc: &Document, id: &crate::model::NodeId) -> bool` |
-| location | [`crates/robby-ir/src/coverage.rs:244`](../../../../crates/robby-ir/src/coverage.rs#L244) |
+| location | [`crates/robby-ir/src/coverage.rs:247`](../../../../crates/robby-ir/src/coverage.rs#L247) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

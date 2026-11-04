@@ -25,7 +25,7 @@ pub use view::{
 };
 pub use web::{FrameDetail, write_site};
 
-use robby_ir::{Document, NodeId, Process, Step, StepKind};
+use robby_ir::{Document, NodeId, Process, Step};
 
 use view::ProcessView as ProcView;
 
@@ -116,12 +116,5 @@ pub fn all_sequences(doc: &Document) -> Vec<(NodeId, String)> {
 
 /// Compact one-liner for a step.
 pub fn step_summary(step: &Step) -> String {
-    let kind = match step.kind {
-        StepKind::Call => "call",
-        StepKind::Return => "return",
-        StepKind::Signal => "signal",
-        StepKind::Decision => "decision",
-        StepKind::Note => "note",
-    };
-    format!("{kind} {} -> {}", step.from, step.to)
+    format!("{} {} -> {}", step.kind.as_str(), step.from, step.to)
 }

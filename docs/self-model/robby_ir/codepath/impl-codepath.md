@@ -5,16 +5,14 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/codepath.rs:49`](../../../../crates/robby-ir/src/codepath.rs#L49) |
+| location | [`crates/robby-ir/src/codepath.rs:51`](../../../../crates/robby-ir/src/codepath.rs#L51) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 impl CodePath {
     /// Build one path from `entry` over resolved `Calls` edges.
     pub fn from_entry(doc: &Document, entry: &NodeId, max_depth: u32) -> Option<Self> {
-        if doc.get(entry).is_none() {
-            return None;
-        }
+        doc.get(entry)?;
 
         let mut edges = Vec::new();
         let mut placed = BTreeSet::new();
@@ -39,8 +37,8 @@ impl CodePath {
                 .map(|e| (e.to.clone(), e.confidence))
                 .collect();
             callees.sort_by(|(a, _), (b, _)| {
-                let fa = doc.get(a).map(|n| n.fqn.as_str()).unwrap_or("");
-                let fb = doc.get(b).map(|n| n.fqn.as_str()).unwrap_or("");
+                let fa = doc.get(a).map_or("", |n| n.fqn.as_str());
+                let fb = doc.get(b).map_or("", |n| n.fqn.as_str());
                 fa.cmp(fb).then_with(|| a.as_str().cmp(b.as_str()))
             });
             callees.dedup_by(|(a, _), (b, _)| a == b);
@@ -89,7 +87,7 @@ impl CodePath {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_entry(3)` |
-| location | [`crates/robby-ir/src/codepath.rs:50`](../../../../crates/robby-ir/src/codepath.rs#L50) |
+| location | [`crates/robby-ir/src/codepath.rs:52`](../../../../crates/robby-ir/src/codepath.rs#L52) |
 | provenance | extractor · confidence 1.00 |
 
 > Build one path from `entry` over resolved `Calls` edges.
@@ -97,9 +95,7 @@ impl CodePath {
 ```rust
 /// Build one path from `entry` over resolved `Calls` edges.
     pub fn from_entry(doc: &Document, entry: &NodeId, max_depth: u32) -> Option<Self> {
-        if doc.get(entry).is_none() {
-            return None;
-        }
+        doc.get(entry)?;
 
         let mut edges = Vec::new();
         let mut placed = BTreeSet::new();
@@ -124,8 +120,8 @@ impl CodePath {
                 .map(|e| (e.to.clone(), e.confidence))
                 .collect();
             callees.sort_by(|(a, _), (b, _)| {
-                let fa = doc.get(a).map(|n| n.fqn.as_str()).unwrap_or("");
-                let fb = doc.get(b).map(|n| n.fqn.as_str()).unwrap_or("");
+                let fa = doc.get(a).map_or("", |n| n.fqn.as_str());
+                let fb = doc.get(b).map_or("", |n| n.fqn.as_str());
                 fa.cmp(fb).then_with(|| a.as_str().cmp(b.as_str()))
             });
             callees.dedup_by(|(a, _), (b, _)| a == b);
@@ -158,7 +154,6 @@ sequenceDiagram
     autonumber
     participant from_entry as from_entry()
     participant get as get
-    participant is_none as is_none
     participant Vec__new as Vec::new
     participant BTreeSet__new as BTreeSet::new
     participant clone as clone
@@ -172,7 +167,7 @@ sequenceDiagram
     participant map as map
     participant collect as collect
     participant as_str as as_str
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     participant cmp as cmp
     participant then_with as then_with
     participant sort_by as sort_by
@@ -180,10 +175,7 @@ sequenceDiagram
     participant push as push
     participant Some as Some
     from_entry-->>get: doc.get(entry)
-    from_entry-->>is_none: doc.get(entry).is_none()
-    alt doc.get(entry).is_none()
-    from_entry-->>from_entry: return
-    end
+    from_entry-->>from_entry: ? (propagate)
     from_entry-->>Vec__new: Vec::new()
     from_entry-->>BTreeSet__new: BTreeSet::new()
     from_entry-->>clone: entry.clone()
@@ -204,18 +196,16 @@ sequenceDiagram
     from_entry-->>collect: from .edges .iter() .filter(|e| e.kind == EdgeKind::Calls && e.resolv...
     from_entry-->>get: doc.get(a)
     from_entry-->>as_str: n.fqn.as_str()
-    from_entry-->>map: doc.get(a).map(|n| n.fqn.as_str())
-    from_entry-->>unwrap_or: doc.get(a).map(|n| n.fqn.as_str()).unwrap_or('')
+    from_entry-->>map_or: doc.get(a).map_or('', |n| n.fqn.as_str())
     from_entry-->>get: doc.get(b)
     from_entry-->>as_str: n.fqn.as_str()
-    from_entry-->>map: doc.get(b).map(|n| n.fqn.as_str())
-    from_entry-->>unwrap_or: doc.get(b).map(|n| n.fqn.as_str()).unwrap_or('')
+    from_entry-->>map_or: doc.get(b).map_or('', |n| n.fqn.as_str())
     from_entry-->>cmp: fa.cmp(fb)
     from_entry-->>as_str: a.as_str()
     from_entry-->>as_str: b.as_str()
     from_entry-->>cmp: a.as_str().cmp(b.as_str())
     from_entry-->>then_with: fa.cmp(fb).then_with(|| a.as_str().cmp(b.as_str()))
-    from_entry-->>sort_by: callees.sort_by(|(a, _), (b, _)| { let fa = doc.get(a).map(|n| n.fqn....
+    from_entry-->>sort_by: callees.sort_by(|(a, _), (b, _)| { let fa = doc.get(a).map_or('', |n|...
     from_entry-->>dedup_by: callees.dedup_by(|(a, _), (b, _)| a == b)
     loop callees
     from_entry-->>clone: to.clone()
@@ -230,7 +220,7 @@ sequenceDiagram
     from_entry-->>Some: Some(Self { entry: entry.clone(), edges, max_depth, })
 ```
 
-43 steps · 0 observed · 43 possible only
+40 steps · 0 observed · 40 possible only
 
 **Edges**
 

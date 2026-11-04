@@ -5,15 +5,18 @@
  * `robby web`. Click a card to zoom in; portals jump to related frames;
  * Escape / back zooms out.
  *
- * Frames stay laid out at full canvas resolution (1600×1000). A single
+ * Frames stay laid out in the scene canvas. A single
  * screen-space transform per frame (camera × world placement) avoids the
  * downscale-then-upscale rasterization that keeps text pixelated after zoom.
  */
 
-const CANVAS_W = 1600;
-const CANVAS_H = 1000;
 const TWEEN_MS = 500;
 
+/**
+ * Fields this file reads. The JSON is whatever `Scene` and `FrameDetail`
+ * in robby-render serialize; unused fields stay untyped.
+ * `process` here is `ProcessView` — only the counts are read.
+ */
 interface Rect {
   x: number;
   y: number;
@@ -29,8 +32,6 @@ interface Portal {
 }
 
 interface SceneFrame {
-  id: string;
-  stable_id: string;
   name: string;
   fqn: string;
   kind_tag: string;
@@ -38,7 +39,6 @@ interface SceneFrame {
   children: string[];
   world: Rect;
   local_in_parent?: Rect;
-  edges: { from: string; to: string; label: string; resolved: boolean }[];
   portals: Portal[];
 }
 
@@ -48,36 +48,14 @@ interface Scene {
   frames: Record<string, SceneFrame>;
 }
 
-interface ProcessEvent {
-  type: "end" | "else" | "begin" | "interaction";
-  label?: string;
-  keyword?: string;
-  index?: number;
-  from?: string;
-  to?: string;
-  observed?: boolean;
-  kind?: string;
-}
-
 interface FrameDetail {
-  stable_id: string;
-  id: string;
-  fqn: string;
   kind: string;
   signature?: string;
   docs?: string;
   location?: string;
   provenance: string;
-  confidence: number;
-  process?: {
-    participants: { id: string; label: string }[];
-    events: ProcessEvent[];
-    step_count: number;
-    observed_count: number;
-  };
-  /** Mermaid sequenceDiagram from robby-render (same as Markdown). */
+  process?: { step_count: number; observed_count: number };
   process_mermaid?: string;
-  /** Path-level Calls sequence (functions + owning types). */
   execution_mermaid?: string;
   source?: { file: string; text: string };
 }
@@ -88,17 +66,25 @@ interface Camera {
   ty: number;
 }
 
-type OrgMode = "structure" | "entrypoints";
+const ORG_MODES = {
+  structure: {
+    file: "scene.json",
+    hint: "click a card to zoom · portals jump to related views",
+  },
+  entrypoints: {
+    file: "scene-entrypoints.json",
+    hint: "drill by call path · portals jump across shared callees",
+  },
+} as const;
 
-const HINT_STRUCTURE = "click a card to zoom · portals jump to related views";
-const HINT_ENTRYPOINTS = "drill by call path · portals jump across shared callees";
+type OrgMode = keyof typeof ORG_MODES;
 
-const worldEl = document.getElementById("world")!;
-const crumbEl = document.getElementById("crumb")!;
-const hintEl = document.getElementById("hint")!;
-const zoomOutBtn = document.getElementById("zoom-out") as HTMLButtonElement;
-const orgStructureBtn = document.getElementById("org-structure") as HTMLButtonElement;
-const orgEntrypointsBtn = document.getElementById("org-entrypoints") as HTMLButtonElement;
+const worldEl = requireElement("world");
+const crumbEl = requireElement("crumb");
+const hintEl = requireElement("hint");
+const zoomOutBtn = requireButton("zoom-out");
+const orgStructureBtn = requireButton("org-structure");
+const orgEntrypointsBtn = requireButton("org-entrypoints");
 
 let scene: Scene | null = null;
 let orgMode: OrgMode = "structure";
@@ -109,14 +95,13 @@ let flying = false;
 let camera: Camera = { scale: 1, tx: 0, ty: 0 };
 let cameraRaf = 0;
 
-async function main(): Promise<void> {
+async function main() {
   try {
-    const structure = await fetchJson<Scene>("scene.json");
+    const structure = await fetchJson<Scene>(ORG_MODES.structure.file);
     sceneCache.set("structure", structure);
     scene = structure;
   } catch (err) {
-    worldEl.textContent =
-      "Could not load scene.json. Run `robby web` then serve this app (Vite).";
+    worldEl.textContent = "Could not load scene.json. Run `robby web` then serve this app (Vite).";
     console.error(err);
     return;
   }
@@ -139,21 +124,21 @@ async function main(): Promise<void> {
   });
 }
 
-async function prefetchEntrypoints(): Promise<void> {
+async function prefetchEntrypoints() {
   if (sceneCache.has("entrypoints")) {
     return;
   }
   try {
-    const entrypoints = await fetchJson<Scene>("scene-entrypoints.json");
+    const entrypoints = await fetchJson<Scene>(ORG_MODES.entrypoints.file);
     sceneCache.set("entrypoints", entrypoints);
   } catch (err) {
     console.error(err);
     orgEntrypointsBtn.disabled = true;
-    orgEntrypointsBtn.title = "scene-entrypoints.json missing — re-run robby web";
+    orgEntrypointsBtn.title = `${ORG_MODES.entrypoints.file} missing — re-run robby web`;
   }
 }
 
-async function setOrgMode(next: OrgMode): Promise<void> {
+async function setOrgMode(next: OrgMode) {
   if (next === orgMode || flying) {
     return;
   }
@@ -170,11 +155,11 @@ async function setOrgMode(next: OrgMode): Promise<void> {
   orgMode = next;
   orgStructureBtn.classList.toggle("is-active", next === "structure");
   orgEntrypointsBtn.classList.toggle("is-active", next === "entrypoints");
-  hintEl.textContent = next === "entrypoints" ? HINT_ENTRYPOINTS : HINT_STRUCTURE;
+  hintEl.textContent = ORG_MODES[next].hint;
   applyScene(cached);
 }
 
-function applyScene(next: Scene): void {
+function applyScene(next: Scene) {
   scene = next;
   flying = false;
   window.cancelAnimationFrame(cameraRaf);
@@ -184,15 +169,22 @@ function applyScene(next: Scene): void {
   void loadDetail(focusId);
 }
 
-function frame(id: string): SceneFrame {
-  const f = scene!.frames[id];
+function currentScene(): Scene {
+  if (!scene) {
+    throw new Error("scene is not loaded");
+  }
+  return scene;
+}
+
+function frame(id: string) {
+  const f = currentScene().frames[id];
   if (!f) {
     throw new Error(`missing frame ${id}`);
   }
   return f;
 }
 
-function ancestors(id: string): string[] {
+function ancestors(id: string) {
   const path: string[] = [];
   let cur: string | null = id;
   while (cur) {
@@ -202,7 +194,7 @@ function ancestors(id: string): string[] {
   return path.reverse();
 }
 
-function cameraForFocus(id: string): Camera {
+function cameraForFocus(id: string) {
   const f = frame(id);
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -217,15 +209,8 @@ function cameraForFocus(id: string): Camera {
   };
 }
 
-interface ScreenRect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
 /** Absolute screen rect for a frame from its world coordinates + camera. */
-function screenRectFromWorld(f: SceneFrame, cam: Camera): ScreenRect {
+function screenRectFromWorld(f: SceneFrame, cam: Camera) {
   return {
     x: cam.tx + f.world.x * cam.scale,
     y: cam.ty + f.world.y * cam.scale,
@@ -239,21 +224,22 @@ function screenRectFromWorld(f: SceneFrame, cam: Camera): ScreenRect {
  * parent's screen box. Nested world integers collapse to 1×1 and stack; the
  * local grid on the 1600×1000 canvas does not.
  */
-function screenRectFor(f: SceneFrame, cam: Camera): ScreenRect {
-  if (f.parent === focusId && f.local_in_parent) {
+function screenRectFor(f: SceneFrame, cam: Camera) {
+  if (f.parent === focusId && f.local_in_parent && scene) {
     const parent = screenRectFromWorld(frame(focusId), cam);
     const loc = f.local_in_parent;
+    const { w, h } = scene.canvas;
     return {
-      x: parent.x + (loc.x / CANVAS_W) * parent.w,
-      y: parent.y + (loc.y / CANVAS_H) * parent.h,
-      w: Math.max((loc.w / CANVAS_W) * parent.w, 1),
-      h: Math.max((loc.h / CANVAS_H) * parent.h, 1),
+      x: parent.x + (loc.x / w) * parent.w,
+      y: parent.y + (loc.y / h) * parent.h,
+      w: Math.max((loc.w / w) * parent.w, 1),
+      h: Math.max((loc.h / h) * parent.h, 1),
     };
   }
   return screenRectFromWorld(f, cam);
 }
 
-function placeFrame(el: HTMLElement, f: SceneFrame, cam: Camera): void {
+function placeFrame(el: HTMLElement, f: SceneFrame, cam: Camera) {
   const r = screenRectFor(f, cam);
   el.style.width = `${r.w}px`;
   el.style.height = `${r.h}px`;
@@ -262,16 +248,18 @@ function placeFrame(el: HTMLElement, f: SceneFrame, cam: Camera): void {
   el.style.transform = "none";
 }
 
-function placeAllFrames(): void {
+function placeAllFrames() {
   // Only top-level world cards (the focus). Children live in the body's grid.
   for (const el of worldEl.querySelectorAll<HTMLElement>(":scope > .frame-wrap")) {
     const id = el.dataset.id;
-    if (!id) continue;
+    if (!id) {
+      continue;
+    }
     placeFrame(el, frame(id), camera);
   }
 }
 
-function remount(): void {
+function remount() {
   worldEl.innerHTML = "";
   const focus = frame(focusId);
   const focusEl = makeFrameEl(focusId, true, false);
@@ -297,13 +285,11 @@ function remount(): void {
 
 const PORTAL_PREVIEW = 8;
 
-function portalButton(portal: Portal): HTMLButtonElement {
+function portalButton(portal: Portal) {
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = "portal" + (portal.target ? "" : " unresolved");
-  btn.innerHTML =
-    `<span class="pk">${escapeHtml(portal.kind_label)}</span>` +
-    escapeHtml(portal.label);
+  btn.className = `portal${portal.target ? "" : " unresolved"}`;
+  btn.innerHTML = `<span class="pk">${escapeHtml(portal.kind_label)}</span>${escapeHtml(portal.label)}`;
   btn.title = portal.target_name || portal.label;
   if (portal.target) {
     const target = portal.target;
@@ -315,17 +301,17 @@ function portalButton(portal: Portal): HTMLButtonElement {
   return btn;
 }
 
-function buildPortalStrip(f: SceneFrame): HTMLElement {
+function buildPortalStrip(f: SceneFrame) {
   const strip = document.createElement("div");
   strip.className = "portal-strip";
   let expanded = false;
 
-  const syncFocusClass = (): void => {
+  const syncFocusClass = () => {
     const focusWrap = strip.closest(".frame-wrap");
     focusWrap?.classList.toggle("portals-expanded", expanded);
   };
 
-  const render = (): void => {
+  const render = () => {
     strip.innerHTML = "";
     strip.classList.toggle("is-expanded", expanded);
     syncFocusClass();
@@ -364,31 +350,26 @@ function buildPortalStrip(f: SceneFrame): HTMLElement {
   return strip;
 }
 
-function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLElement {
+function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean) {
   const f = frame(id);
   const wrap = document.createElement("div");
-  wrap.className =
-    "frame-wrap" +
-    (isFocus ? " is-focus" : "") +
-    (isAncestor ? " is-ancestor" : "");
+  wrap.className = `frame-wrap${isFocus ? " is-focus" : ""}${isAncestor ? " is-ancestor" : ""}`;
   wrap.dataset.id = id;
 
   const inner = document.createElement("div");
-  inner.className = "frame" + (isFocus ? " is-focus" : "");
+  inner.className = `frame${isFocus ? " is-focus" : ""}`;
 
   const header = document.createElement("div");
   header.className = "frame-header";
   const showFqn = f.fqn && f.fqn !== f.name;
-  header.innerHTML =
-    `<span class="kind-chip">${escapeHtml(f.kind_tag)}</span>` +
-    `<span class="frame-title">${escapeHtml(f.name)}</span>` +
-    (showFqn ? `<span class="frame-fqn">${escapeHtml(f.fqn)}</span>` : "");
+  header.innerHTML = `<span class="kind-chip">${escapeHtml(f.kind_tag)}</span><span class="frame-title">${escapeHtml(f.name)}</span>${showFqn ? `<span class="frame-fqn">${escapeHtml(f.fqn)}</span>` : ""}`;
   if (isFocus && f.parent) {
+    const parent = f.parent;
     header.style.cursor = "pointer";
     header.title = "Zoom out";
     header.addEventListener("click", (e) => {
       e.stopPropagation();
-      flyTo(f.parent!);
+      flyTo(parent);
     });
   }
   inner.appendChild(header);
@@ -416,8 +397,8 @@ function makeFrameEl(id: string, isFocus: boolean, isAncestor: boolean): HTMLEle
   return wrap;
 }
 
-function flyTo(id: string): void {
-  if (!scene!.frames[id] || id === focusId || flying) {
+function flyTo(id: string) {
+  if (!currentScene().frames[id] || id === focusId || flying) {
     return;
   }
   flying = true;
@@ -434,7 +415,7 @@ function flyTo(id: string): void {
   });
 }
 
-function zoomOut(): void {
+function zoomOut() {
   const parent = frame(focusId).parent;
   if (!parent) {
     return;
@@ -442,16 +423,16 @@ function zoomOut(): void {
   flyTo(parent);
 }
 
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
+function easeOutCubic(t: number) {
+  return 1 - (1 - t) ** 3;
 }
 
-function tweenCamera(next: Camera, onDone?: () => void): void {
+function tweenCamera(next: Camera, onDone?: () => void) {
   window.cancelAnimationFrame(cameraRaf);
   const from = { ...camera };
   const start = performance.now();
 
-  const tick = (now: number): void => {
+  const tick = (now: number) => {
     const t = Math.min(1, (now - start) / TWEEN_MS);
     const e = easeOutCubic(t);
     camera = {
@@ -471,14 +452,14 @@ function tweenCamera(next: Camera, onDone?: () => void): void {
   cameraRaf = window.requestAnimationFrame(tick);
 }
 
-function updateChrome(): void {
+function updateChrome() {
   crumbEl.textContent = ancestors(focusId)
     .map((id) => frame(id).name)
     .join(" / ");
   zoomOutBtn.disabled = !frame(focusId).parent;
 }
 
-async function loadDetail(id: string): Promise<void> {
+async function loadDetail(id: string) {
   const f = frame(id);
   const host = worldEl.querySelector(`[data-detail-host="${cssEscape(id)}"]`);
   if (!host) {
@@ -499,7 +480,9 @@ async function loadDetail(id: string): Promise<void> {
   const isContainer = f.children.length > 0;
   // Containers keep the child grid — inject execution above it.
   if (isContainer) {
-    host.querySelectorAll(":scope > .detail").forEach((el) => el.remove());
+    for (const el of host.querySelectorAll(":scope > .detail")) {
+      el.remove();
+    }
     if (detail.execution_mermaid) {
       const panel = document.createElement("div");
       panel.className = "detail detail-execution";
@@ -566,12 +549,7 @@ async function loadDetail(id: string): Promise<void> {
     panel.appendChild(src);
   }
 
-  if (
-    !detail.execution_mermaid &&
-    !detail.process_mermaid &&
-    !detail.source &&
-    !detail.docs
-  ) {
+  if (!detail.execution_mermaid && !detail.process_mermaid && !detail.source && !detail.docs) {
     const empty = document.createElement("div");
     empty.className = "empty-leaf";
     empty.textContent = "No process or source on this node.";
@@ -581,11 +559,7 @@ async function loadDetail(id: string): Promise<void> {
   host.appendChild(panel);
 }
 
-function appendExecution(
-  panel: HTMLElement,
-  mermaidSrc: string,
-  frameId: string,
-): void {
+function appendExecution(panel: HTMLElement, mermaidSrc: string, frameId: string) {
   const proc = document.createElement("div");
   proc.className = "process process-execution";
   const heading = document.createElement("h2");
@@ -620,11 +594,7 @@ function loadMermaid(): Promise<typeof import("mermaid")> {
   return mermaidReady;
 }
 
-async function renderMermaid(
-  host: HTMLElement,
-  definition: string,
-  frameId: string,
-): Promise<void> {
+async function renderMermaid(host: HTMLElement, definition: string, frameId: string) {
   try {
     const { default: mermaid } = await loadMermaid();
     const renderId = `mmd-${frameId.replace(/[^a-zA-Z0-9_-]/g, "_")}-${++mermaidSeq}`;
@@ -647,7 +617,23 @@ async function fetchJson<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
-function escapeHtml(s: string): string {
+function requireElement(id: string) {
+  const el = document.getElementById(id);
+  if (!(el instanceof HTMLElement)) {
+    throw new Error(`missing #${id}`);
+  }
+  return el;
+}
+
+function requireButton(id: string) {
+  const el = document.getElementById(id);
+  if (!(el instanceof HTMLButtonElement)) {
+    throw new Error(`missing button #${id}`);
+  }
+  return el;
+}
+
+function escapeHtml(s: string) {
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -655,7 +641,7 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function cssEscape(s: string): string {
+function cssEscape(s: string) {
   if (window.CSS && typeof CSS.escape === "function") {
     return CSS.escape(s);
   }

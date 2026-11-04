@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-agent/src/model.rs:106`](../../../../crates/robby-agent/src/model.rs#L106) |
+| location | [`crates/robby-agent/src/model.rs:54`](../../../../crates/robby-agent/src/model.rs#L54) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -20,7 +20,7 @@ pub struct Note {
 
 **Fields and variants**
 
-- `kind` — `crates/robby-agent/src/model.rs:108:5`
-- `body` — `crates/robby-agent/src/model.rs:109:5`
-- `highlights` — `crates/robby-agent/src/model.rs:110:5`
+- `kind` — `crates/robby-agent/src/model.rs:56:5`
+- `body` — `crates/robby-agent/src/model.rs:57:5`
+- `highlights` — `crates/robby-agent/src/model.rs:58:5`
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn watched_files(loaded: &Loaded) -> Vec<PathBuf>` |
-| location | [`crates/robby-render/src/pipeline.rs:179`](../../../../crates/robby-render/src/pipeline.rs#L179) |
+| location | [`crates/robby-render/src/pipeline.rs:185`](../../../../crates/robby-render/src/pipeline.rs#L185) |
 | provenance | extractor · confidence 1.00 |
 
 > Files whose change must invalidate a cached build.
@@ -14,11 +14,7 @@
 ```rust
 /// Files whose change must invalidate a cached build.
 pub fn watched_files(loaded: &Loaded) -> Vec<PathBuf> {
-    loaded
-        .sources
-        .keys()
-        .map(PathBuf::from)
-        .collect::<Vec<_>>()
+    loaded.sources.keys().map(PathBuf::from).collect::<Vec<_>>()
 }
 ```
 
@@ -29,9 +25,9 @@ sequenceDiagram
     participant keys as keys
     participant map as map
     participant collect as collect
-    watched_files-->>keys: loaded .sources .keys()
-    watched_files-->>map: loaded .sources .keys() .map(PathBuf::from)
-    watched_files-->>collect: loaded .sources .keys() .map(PathBuf::from) .collect::<Vec<_>>()
+    watched_files-->>keys: loaded.sources.keys()
+    watched_files-->>map: loaded.sources.keys().map(PathBuf::from)
+    watched_files-->>collect: loaded.sources.keys().map(PathBuf::from).collect::<Vec<_>>()
 ```
 
 3 steps · 0 observed · 3 possible only

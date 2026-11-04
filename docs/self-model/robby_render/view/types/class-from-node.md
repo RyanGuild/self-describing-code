@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn class_from_node(doc: &Document, node: &Node, id: String) -> ClassView` |
-| location | [`crates/robby-render/src/view/types.rs:165`](../../../../../crates/robby-render/src/view/types.rs#L165) |
+| location | [`crates/robby-render/src/view/types.rs:166`](../../../../../crates/robby-render/src/view/types.rs#L166) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -121,21 +121,21 @@ sequenceDiagram
 
 **Edges**
 
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::util::text`](../../util/text.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_render::util::text`](../../util/text.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::util::text`](../../util/text.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::util::text`](../../util/text.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 

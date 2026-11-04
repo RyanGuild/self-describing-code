@@ -7,7 +7,7 @@ use robby_ir::{Document, Lang, Node, NodeId, Provenance, Source, kind};
 
 use crate::context::{CommentContext, collect_comment_contexts};
 use crate::model::{
-    ChatClient, DecisionModel, NoteModel, Verdict, DEFAULT_DECISION_MODEL, DEFAULT_NOTE_MODEL,
+    ChatClient, DEFAULT_DECISION_MODEL, DEFAULT_NOTE_MODEL, DecisionModel, NoteModel, Verdict,
 };
 
 #[derive(Debug, Clone)]
@@ -98,9 +98,8 @@ fn insert_decision(
     decision_model: &str,
     note_model: Option<&str>,
 ) {
-    let parent = match doc.get(&ctx.parent_id) {
-        Some(p) => p,
-        None => return,
+    let Some(parent) = doc.get(&ctx.parent_id) else {
+        return;
     };
     let fqn = format!("{}/decision", parent.fqn);
     let lang = match parent.id.as_str().split("://").next() {
@@ -137,8 +136,7 @@ fn insert_decision(
         node.annotations
             .insert("note_kind".into(), note.kind.as_str().into());
         if let Some(model) = note_model {
-            node.annotations
-                .insert("note_model".into(), model.into());
+            node.annotations.insert("note_model".into(), model.into());
         }
         if let Ok(json) = serde_json::to_string(&note.highlights) {
             node.annotations.insert("highlights".into(), json);
@@ -168,7 +166,12 @@ mod tests {
     }
 
     impl ChatClient for FakeClient {
-        fn chat(&self, _model: &str, _messages: &[ChatMessage], _json_mode: bool) -> Result<String> {
+        fn chat(
+            &self,
+            _model: &str,
+            _messages: &[ChatMessage],
+            _json_mode: bool,
+        ) -> Result<String> {
             let mut q = self.responses.lock().unwrap();
             if q.is_empty() {
                 anyhow::bail!("FakeClient exhausted");
@@ -195,7 +198,9 @@ mod tests {
         );
         comment.parent = Some(NodeId::symbol("typescript", "demo/shapes"));
         comment.docs = Some("Draws a point.".into());
-        comment.annotations.insert("comment_kind".into(), "block".into());
+        comment
+            .annotations
+            .insert("comment_kind".into(), "block".into());
         comment.span = Some(Span {
             file: "shapes.ts".into(),
             start: Position::new(1, 1, 0),
@@ -217,16 +222,6 @@ mod tests {
         });
         doc.insert(iface);
 
-        if let Some(m) = doc
-            .nodes
-            .get_mut(&NodeId::symbol("typescript", "demo/shapes"))
-        {
-            m.children = vec![
-                NodeId::symbol("typescript", "demo/shapes/comment@0"),
-                NodeId::symbol("typescript", "demo/shapes/Drawable"),
-            ];
-        }
-
         let mut sources = BTreeMap::new();
         sources.insert(
             "shapes.ts".into(),
@@ -238,9 +233,7 @@ mod tests {
     #[test]
     fn noise_short_circuits_without_note_call() {
         let (mut doc, sources) = mini_doc();
-        let client = FakeClient::new(vec![
-            r#"{"verdict":"noise","reason":"filler"}"#.into(),
-        ]);
+        let client = FakeClient::new(vec![r#"{"verdict":"noise","reason":"filler"}"#.into()]);
         let stats = enrich_comments(&mut doc, &sources, &client, &EnrichOpts::default()).unwrap();
         assert_eq!(stats.noise, 1);
         assert_eq!(stats.noted, 0);
@@ -250,7 +243,10 @@ mod tests {
             .find(|n| n.kind.as_str() == kind::agent::DECISION)
             .expect("decision");
         assert_eq!(
-            decision.annotations.get("verdict").map(|s| s.as_str()),
+            decision
+                .annotations
+                .get("verdict")
+                .map(std::string::String::as_str),
             Some("noise")
         );
         assert!(decision.docs.is_none());
@@ -273,7 +269,10 @@ mod tests {
             .expect("decision");
         assert_eq!(decision.docs.as_deref(), Some("Implement draw()."));
         assert_eq!(
-            decision.annotations.get("note_kind").map(|s| s.as_str()),
+            decision
+                .annotations
+                .get("note_kind")
+                .map(std::string::String::as_str),
             Some("usage_example")
         );
         assert!(
@@ -287,9 +286,7 @@ mod tests {
     #[test]
     fn idempotent_skip_when_decision_exists() {
         let (mut doc, sources) = mini_doc();
-        let client = FakeClient::new(vec![
-            r#"{"verdict":"noise","reason":"x"}"#.into(),
-        ]);
+        let client = FakeClient::new(vec![r#"{"verdict":"noise","reason":"x"}"#.into()]);
         enrich_comments(&mut doc, &sources, &client, &EnrichOpts::default()).unwrap();
         let client2 = FakeClient::new(vec![]);
         let stats = enrich_comments(&mut doc, &sources, &client2, &EnrichOpts::default()).unwrap();

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn emit_comments(doc: &mut Document, comments: &[Comment], parent: &NodeId, ctx: &Ctx<'_>)` |
-| location | [`crates/robby-extract/src/typescript.rs:402`](../../../../crates/robby-extract/src/typescript.rs#L402) |
+| location | [`crates/robby-extract/src/typescript.rs:394`](../../../../crates/robby-extract/src/typescript.rs#L394) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

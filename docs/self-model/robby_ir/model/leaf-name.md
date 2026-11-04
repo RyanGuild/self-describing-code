@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn leaf_name(fqn: &str) -> String` |
-| location | [`crates/robby-ir/src/model.rs:280`](../../../../crates/robby-ir/src/model.rs#L280) |
+| location | [`crates/robby-ir/src/model.rs:317`](../../../../crates/robby-ir/src/model.rs#L317) |
 | provenance | extractor · confidence 1.00 |
 
 > Leaf segment of an FQN across Rust (`::`), path (`/`), and dotted TS forms.

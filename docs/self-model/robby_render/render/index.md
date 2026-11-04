@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-render/src/lib.rs:12`](../../../../crates/robby-render/src/lib.rs#L12) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 73 |
+| nodes | 72 |
 
 ## Types
 
@@ -288,7 +288,7 @@ flowchart TB
 
 ## Modules
 
-- [`render::tui`](tui/index.md) — 52 nodes
+- [`render::tui`](tui/index.md) — 51 nodes
 
 ## Items
 

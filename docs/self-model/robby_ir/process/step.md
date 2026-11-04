@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/process.rs:66`](../../../../crates/robby-ir/src/process.rs#L66) |
+| location | [`crates/robby-ir/src/process.rs:92`](../../../../crates/robby-ir/src/process.rs#L92) |
 | provenance | extractor · confidence 1.00 |
 
 > A single ordered interaction.
@@ -33,11 +33,11 @@ pub struct Step {
 
 **Fields and variants**
 
-- `from` — `crates/robby-ir/src/process.rs:69:5`
-- `to` — `crates/robby-ir/src/process.rs:70:5`
-- `label` — `crates/robby-ir/src/process.rs:71:5`
-- `kind` — `crates/robby-ir/src/process.rs:72:5`
-- `observed` — `crates/robby-ir/src/process.rs:73:5`
-- `span` — `crates/robby-ir/src/process.rs:79:5`
-- `blocks` — `crates/robby-ir/src/process.rs:81:5`
+- `from` — `crates/robby-ir/src/process.rs:95:5`
+- `to` — `crates/robby-ir/src/process.rs:96:5`
+- `label` — `crates/robby-ir/src/process.rs:97:5`
+- `kind` — `crates/robby-ir/src/process.rs:98:5`
+- `observed` — `crates/robby-ir/src/process.rs:99:5`
+- `span` — `crates/robby-ir/src/process.rs:105:5`
+- `blocks` — `crates/robby-ir/src/process.rs:107:5`
 

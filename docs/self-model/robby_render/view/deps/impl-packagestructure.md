@@ -19,8 +19,7 @@ impl PackageStructure {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
 
@@ -47,12 +46,7 @@ impl PackageStructure {
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -144,8 +138,7 @@ pub fn from_root(doc: &Document, root: &NodeId) -> Self {
             .nodes
             .values()
             .filter(|node| {
-                is_container(node)
-                    && (node.id == root_node.id || is_under_fqn(root_node, node))
+                is_container(node) && (node.id == root_node.id || is_under_fqn(root_node, node))
             })
             .collect();
 
@@ -230,7 +223,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn workspace(1)` |
-| location | [`crates/robby-render/src/view/deps.rs:137`](../../../../../crates/robby-render/src/view/deps.rs#L137) |
+| location | [`crates/robby-render/src/view/deps.rs:136`](../../../../../crates/robby-render/src/view/deps.rs#L136) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -238,12 +231,7 @@ pub fn workspace(doc: &Document) -> Self {
         let crates: Vec<&Node> = doc
             .nodes
             .values()
-            .filter(|node| {
-                matches!(
-                    node.kind.as_str(),
-                    kind::code::CRATE | kind::code::PACKAGE
-                )
-            })
+            .filter(|node| matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE))
             .collect();
         if crates.is_empty() {
             return Self::empty();
@@ -295,9 +283,9 @@ sequenceDiagram
     participant clone as clone
     participant package_edges as package_edges
     workspace-->>values: doc .nodes .values()
-    workspace-->>workspace: matches!( node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE )
-    workspace-->>filter: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
-    workspace-->>collect: doc .nodes .values() .filter(|node| { matches!( node.kind.as_str(), k...
+    workspace-->>workspace: matches!(node.kind.as_str(), kind::code::CRATE | kind::code::PACKAGE)
+    workspace-->>filter: doc .nodes .values() .filter(|node| matches!(node.kind.as_str(), kind...
+    workspace-->>collect: doc .nodes .values() .filter(|node| matches!(node.kind.as_str(), kind...
     workspace-->>is_empty: crates.is_empty()
     alt crates.is_empty()
     workspace-->>Self__empty: Self::empty()
@@ -341,7 +329,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn empty(0)` |
-| location | [`crates/robby-render/src/view/deps.rs:177`](../../../../../crates/robby-render/src/view/deps.rs#L177) |
+| location | [`crates/robby-render/src/view/deps.rs:171`](../../../../../crates/robby-render/src/view/deps.rs#L171) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -403,7 +391,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-render/src/view/deps.rs:194`](../../../../../crates/robby-render/src/view/deps.rs#L194) |
+| location | [`crates/robby-render/src/view/deps.rs:188`](../../../../../crates/robby-render/src/view/deps.rs#L188) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -435,7 +423,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn module_by_stable(2)` |
-| location | [`crates/robby-render/src/view/deps.rs:198`](../../../../../crates/robby-render/src/view/deps.rs#L198) |
+| location | [`crates/robby-render/src/view/deps.rs:192`](../../../../../crates/robby-render/src/view/deps.rs#L192) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

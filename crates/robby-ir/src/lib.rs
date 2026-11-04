@@ -21,6 +21,7 @@ pub mod kind;
 pub mod model;
 pub mod process;
 pub mod span;
+pub mod vocab;
 
 pub use codepath::{CodePath, CodePathEdge, DEFAULT_MAX_DEPTH, build_code_paths, find_entrypoints};
 pub use coverage::{
@@ -33,6 +34,7 @@ pub use model::{
 };
 pub use process::{Block, BlockKind, Participant, Process, Step, StepKind};
 pub use span::{Position, Span};
+pub use vocab::{Highlight, NoteKind, Verdict};
 
 /// The JSON Schema for [`Document`], derived from the Rust types.
 ///

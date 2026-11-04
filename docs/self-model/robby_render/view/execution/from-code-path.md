@@ -34,11 +34,7 @@ pub fn from_code_path(doc: &Document, path: &CodePath) -> Option<Process> {
         let from_id = participant_id(from);
         if let Some(type_label) = owning_type_label(doc, to) {
             let type_id = alias(&type_label);
-            process.participant(
-                type_id.clone(),
-                type_label,
-                Kind::from(kind::code::STRUCT),
-            );
+            process.participant(type_id.clone(), type_label, Kind::from(kind::code::STRUCT));
             process.step(Step {
                 from: from_id,
                 to: type_id,
@@ -114,7 +110,7 @@ sequenceDiagram
     from_code_path-->>alias: alias(&type_label)
     from_code_path-->>clone: type_id.clone()
     from_code_path-->>Kind__from: Kind::from(kind::code::STRUCT)
-    from_code_path-->>participant: process.participant( type_id.clone(), type_label, Kind::from(kind::co...
+    from_code_path-->>participant: process.participant(type_id.clone(), type_label, Kind::from(kind::cod...
     from_code_path-->>clone: to.name.clone()
     from_code_path-->>Vec__new: Vec::new()
     from_code_path-->>step: process.step(Step { from: from_id, to: type_id, label: to.name.clone(...

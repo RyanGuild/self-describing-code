@@ -18,7 +18,7 @@ sequenceDiagram
     else else
     links-->>links: format!(' — {} items', link.items.len())
     end
-    links-->>links: writeln!( out, ' {} → {}{detail}', link.kind_label, link.module_fqn )
+    links-->>links: writeln!(out, ' {} → {}{detail}', link.kind_label, link.module_fqn)
     end
     links-->>push: out.push('\n')
     end

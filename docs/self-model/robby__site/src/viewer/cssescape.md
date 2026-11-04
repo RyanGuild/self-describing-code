@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:658`](../../../../../apps/site/src/viewer.ts#L658) |
+| location | [`apps/site/src/viewer.ts:644`](../../../../../apps/site/src/viewer.ts#L644) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function cssEscape(s: string): string {
+function cssEscape(s: string) {
   if (window.CSS && typeof CSS.escape === "function") {
     return CSS.escape(s);
   }

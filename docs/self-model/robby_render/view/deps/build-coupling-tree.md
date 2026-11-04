@@ -6,12 +6,11 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn build_coupling_tree(root: &Node, packages: &[&Node]) -> CouplingModule` |
-| location | [`crates/robby-render/src/view/deps.rs:639`](../../../../../crates/robby-render/src/view/deps.rs#L639) |
+| location | [`crates/robby-render/src/view/deps.rs:622`](../../../../../crates/robby-render/src/view/deps.rs#L622) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn build_coupling_tree(root: &Node, packages: &[&Node]) -> CouplingModule {
-    let tree = build_package_tree(root, packages);
     fn convert(node: PackageNode) -> CouplingModule {
         CouplingModule {
             id: node.id,
@@ -21,6 +20,7 @@ fn build_coupling_tree(root: &Node, packages: &[&Node]) -> CouplingModule {
             children: node.children.into_iter().map(convert).collect(),
         }
     }
+    let tree = build_package_tree(root, packages);
     convert(tree)
 }
 ```
@@ -31,8 +31,8 @@ sequenceDiagram
     participant build_coupling_tree as build_coupling_tree()
     participant build_package_tree as build_package_tree
     participant convert as convert
-    build_coupling_tree-->>build_package_tree: build_package_tree(root, packages)
     build_coupling_tree-->>build_coupling_tree: fn convert(node: PackageNode) -> CouplingModule { CouplingModule { id...
+    build_coupling_tree-->>build_package_tree: build_package_tree(root, packages)
     build_coupling_tree-->>convert: convert(tree)
 ```
 

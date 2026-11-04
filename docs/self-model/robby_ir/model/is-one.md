@@ -6,10 +6,11 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn is_one(v: &f32) -> bool` |
-| location | [`crates/robby-ir/src/model.rs:152`](../../../../crates/robby-ir/src/model.rs#L152) |
+| location | [`crates/robby-ir/src/model.rs:166`](../../../../crates/robby-ir/src/model.rs#L166) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn is_one(v: &f32) -> bool {
     (*v - 1.0).abs() < f32::EPSILON
 }

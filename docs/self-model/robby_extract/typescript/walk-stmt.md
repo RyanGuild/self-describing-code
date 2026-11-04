@@ -5,20 +5,27 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn walk_stmt<'a>(     stmt: &Statement<'a>,     process: &mut Process,     frames: &[Block],     pending: &mut Vec<PendingCall>,     from: &NodeId,     ctx: &Ctx<'_>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:858`](../../../../crates/robby-extract/src/typescript.rs#L858) |
+| signature | `fn walk_stmt(     stmt: &Statement<'_>,     process: &mut Process,     frames: &[Block],     pending: &mut Vec<PendingCall>,     from: &NodeId,     ctx: &Ctx<'_>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:844`](../../../../crates/robby-extract/src/typescript.rs#L844) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn walk_stmt<'a>(
-    stmt: &Statement<'a>,
+fn walk_stmt(
+    stmt: &Statement<'_>,
     process: &mut Process,
     frames: &[Block],
     pending: &mut Vec<PendingCall>,
     from: &NodeId,
     ctx: &Ctx<'_>,
 ) {
-    walk_stmts(std::slice::from_ref(stmt), process, frames, pending, from, ctx);
+    walk_stmts(
+        std::slice::from_ref(stmt),
+        process,
+        frames,
+        pending,
+        from,
+        ctx,
+    );
 }
 ```
 
@@ -29,7 +36,7 @@ sequenceDiagram
     participant std__slice__from_ref as std::slice::from_ref
     participant walk_stmts as walk_stmts
     walk_stmt-->>std__slice__from_ref: std::slice::from_ref(stmt)
-    walk_stmt-->>walk_stmts: walk_stmts(std::slice::from_ref(stmt), process, frames, pending, from...
+    walk_stmt-->>walk_stmts: walk_stmts( std::slice::from_ref(stmt), process, frames, pending, fro...
 ```
 
 2 steps · 0 observed · 2 possible only

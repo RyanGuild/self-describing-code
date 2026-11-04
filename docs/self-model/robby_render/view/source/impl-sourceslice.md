@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/view/source.rs:13`](../../../../../crates/robby-render/src/view/source.rs#L13) |
+| location | [`crates/robby-render/src/view/source.rs:14`](../../../../../crates/robby-render/src/view/source.rs#L14) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -38,7 +38,7 @@ impl SourceSlice {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_node(2)` |
-| location | [`crates/robby-render/src/view/source.rs:14`](../../../../../crates/robby-render/src/view/source.rs#L14) |
+| location | [`crates/robby-render/src/view/source.rs:15`](../../../../../crates/robby-render/src/view/source.rs#L15) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

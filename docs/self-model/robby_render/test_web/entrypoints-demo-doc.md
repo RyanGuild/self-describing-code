@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn entrypoints_demo_doc() -> Document` |
-| location | [`crates/robby-render/tests/web.rs:88`](../../../../crates/robby-render/tests/web.rs#L88) |
+| location | [`crates/robby-render/tests/web.rs:89`](../../../../crates/robby-render/tests/web.rs#L89) |
 | provenance | extractor · confidence 1.00 |
 
 > Two `main` entries that both call a shared callee (first parent wins).
@@ -21,12 +21,14 @@ fn entrypoints_demo_doc() -> Document {
         code::FUNCTION,
         "demo::bin_a::main",
     );
-    main_a
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
-    main_a
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::helper"), EdgeKind::Calls));
+    main_a.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::shared"),
+        EdgeKind::Calls,
+    ));
+    main_a.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::helper"),
+        EdgeKind::Calls,
+    ));
     doc.insert(main_a);
 
     let mut helper = Node::new(
@@ -34,9 +36,10 @@ fn entrypoints_demo_doc() -> Document {
         code::FUNCTION,
         "demo::helper",
     );
-    helper
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+    helper.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::shared"),
+        EdgeKind::Calls,
+    ));
     doc.insert(helper);
 
     let shared = Node::new(
@@ -51,9 +54,10 @@ fn entrypoints_demo_doc() -> Document {
         code::FUNCTION,
         "demo::bin_b::main",
     );
-    main_b
-        .edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::shared"), EdgeKind::Calls));
+    main_b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::shared"),
+        EdgeKind::Calls,
+    ));
     doc.insert(main_b);
 
     doc.rebuild_code_paths();
@@ -76,17 +80,17 @@ sequenceDiagram
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::bin_a::main')
     entrypoints_demo_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::bin_a::main'), code::FUNCTIO...
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::shared')
-    entrypoints_demo_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::shared'), EdgeKind::Calls)
-    entrypoints_demo_doc-->>push: main_a .edges .push(Edge::new(NodeId::symbol('rust', 'demo::shared'),...
+    entrypoints_demo_doc-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::shared'), EdgeKind::Calls, )
+    entrypoints_demo_doc-->>push: main_a.edges.push(Edge::new( NodeId::symbol('rust', 'demo::shared'), ...
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::helper')
-    entrypoints_demo_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::helper'), EdgeKind::Calls)
-    entrypoints_demo_doc-->>push: main_a .edges .push(Edge::new(NodeId::symbol('rust', 'demo::helper'),...
+    entrypoints_demo_doc-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::helper'), EdgeKind::Calls, )
+    entrypoints_demo_doc-->>push: main_a.edges.push(Edge::new( NodeId::symbol('rust', 'demo::helper'), ...
     entrypoints_demo_doc-->>insert: doc.insert(main_a)
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::helper')
     entrypoints_demo_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::helper'), code::FUNCTION, 'd...
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::shared')
-    entrypoints_demo_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::shared'), EdgeKind::Calls)
-    entrypoints_demo_doc-->>push: helper .edges .push(Edge::new(NodeId::symbol('rust', 'demo::shared'),...
+    entrypoints_demo_doc-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::shared'), EdgeKind::Calls, )
+    entrypoints_demo_doc-->>push: helper.edges.push(Edge::new( NodeId::symbol('rust', 'demo::shared'), ...
     entrypoints_demo_doc-->>insert: doc.insert(helper)
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::shared')
     entrypoints_demo_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::shared'), code::FUNCTION, 'd...
@@ -94,8 +98,8 @@ sequenceDiagram
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::bin_b::main')
     entrypoints_demo_doc-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::bin_b::main'), code::FUNCTIO...
     entrypoints_demo_doc-->>NodeId__symbol: NodeId::symbol('rust', 'demo::shared')
-    entrypoints_demo_doc-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::shared'), EdgeKind::Calls)
-    entrypoints_demo_doc-->>push: main_b .edges .push(Edge::new(NodeId::symbol('rust', 'demo::shared'),...
+    entrypoints_demo_doc-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::shared'), EdgeKind::Calls, )
+    entrypoints_demo_doc-->>push: main_b.edges.push(Edge::new( NodeId::symbol('rust', 'demo::shared'), ...
     entrypoints_demo_doc-->>insert: doc.insert(main_b)
     entrypoints_demo_doc-->>rebuild_code_paths: doc.rebuild_code_paths()
 ```

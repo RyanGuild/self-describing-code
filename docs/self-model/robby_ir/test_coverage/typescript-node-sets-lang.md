@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn typescript_node_sets_lang()` |
-| location | [`crates/robby-ir/tests/coverage.rs:236`](../../../../crates/robby-ir/tests/coverage.rs#L236) |
+| location | [`crates/robby-ir/tests/coverage.rs:249`](../../../../crates/robby-ir/tests/coverage.rs#L249) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

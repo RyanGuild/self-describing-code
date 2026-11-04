@@ -5,18 +5,12 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn module_tree_line(     doc: &Document,     node: &Node,     crate_dir: &str,     depth: usize,     out: &mut String, )` |
-| location | [`crates/robby-render/src/tree.rs:188`](../../../../crates/robby-render/src/tree.rs#L188) |
+| signature | `fn module_tree_line(doc: &Document, node: &Node, crate_dir: &str, depth: usize, out: &mut String)` |
+| location | [`crates/robby-render/src/tree.rs:186`](../../../../crates/robby-render/src/tree.rs#L186) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn module_tree_line(
-    doc: &Document,
-    node: &Node,
-    crate_dir: &str,
-    depth: usize,
-    out: &mut String,
-) {
+fn module_tree_line(doc: &Document, node: &Node, crate_dir: &str, depth: usize, out: &mut String) {
     let Some(index) = module_index_path(node, crate_dir) else {
         return;
     };
@@ -29,7 +23,9 @@ fn module_tree_line(
         doc.subtree(&node.id).len()
     );
     for child in &node.children {
-        let Some(child) = doc.get(child) else { continue };
+        let Some(child) = doc.get(child) else {
+            continue;
+        };
         if is_module(child) {
             module_tree_line(doc, child, crate_dir, depth + 1, out);
         }

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn emit_package_subgraph(out: &mut String, node: &PackageNode, depth: usize)` |
-| location | [`crates/robby-render/src/render/mermaid.rs:216`](../../../../../crates/robby-render/src/render/mermaid.rs#L216) |
+| location | [`crates/robby-render/src/render/mermaid.rs:212`](../../../../../crates/robby-render/src/render/mermaid.rs#L212) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,18 +6,11 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn tarjan(adj: &BTreeMap<String, BTreeSet<String>>) -> Vec<Vec<String>>` |
-| location | [`crates/robby-render/src/view/deps.rs:792`](../../../../../crates/robby-render/src/view/deps.rs#L792) |
+| location | [`crates/robby-render/src/view/deps.rs:772`](../../../../../crates/robby-render/src/view/deps.rs#L772) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn tarjan(adj: &BTreeMap<String, BTreeSet<String>>) -> Vec<Vec<String>> {
-    let mut index = 0usize;
-    let mut stack: Vec<String> = Vec::new();
-    let mut on_stack: BTreeSet<String> = BTreeSet::new();
-    let mut indices: BTreeMap<String, usize> = BTreeMap::new();
-    let mut lowlink: BTreeMap<String, usize> = BTreeMap::new();
-    let mut sccs: Vec<Vec<String>> = Vec::new();
-
     fn strongconnect(
         v: &str,
         adj: &BTreeMap<String, BTreeSet<String>>,
@@ -63,6 +56,13 @@ fn tarjan(adj: &BTreeMap<String, BTreeSet<String>>) -> Vec<Vec<String>> {
         }
     }
 
+    let mut index = 0usize;
+    let mut stack: Vec<String> = Vec::new();
+    let mut on_stack: BTreeSet<String> = BTreeSet::new();
+    let mut indices: BTreeMap<String, usize> = BTreeMap::new();
+    let mut lowlink: BTreeMap<String, usize> = BTreeMap::new();
+    let mut sccs: Vec<Vec<String>> = Vec::new();
+
     for v in adj.keys() {
         if !indices.contains_key(v) {
             strongconnect(
@@ -92,12 +92,12 @@ sequenceDiagram
     participant keys as keys
     participant contains_key as contains_key
     participant strongconnect as strongconnect
+    tarjan-->>tarjan: fn strongconnect( v: &str, adj: &BTreeMap<String, BTreeSet<String>>, ...
     tarjan-->>Vec__new: Vec::new()
     tarjan-->>BTreeSet__new: BTreeSet::new()
     tarjan-->>BTreeMap__new: BTreeMap::new()
     tarjan-->>BTreeMap__new: BTreeMap::new()
     tarjan-->>Vec__new: Vec::new()
-    tarjan-->>tarjan: fn strongconnect( v: &str, adj: &BTreeMap<String, BTreeSet<String>>, ...
     tarjan-->>keys: adj.keys()
     loop adj.keys()
     tarjan-->>contains_key: indices.contains_key(v)

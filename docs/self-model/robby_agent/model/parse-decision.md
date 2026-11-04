@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn parse_decision(raw: &str) -> Result<Decision>` |
-| location | [`crates/robby-agent/src/model.rs:186`](../../../../crates/robby-agent/src/model.rs#L186) |
+| location | [`crates/robby-agent/src/model.rs:134`](../../../../crates/robby-agent/src/model.rs#L134) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -61,13 +61,14 @@ sequenceDiagram
 
 - calls → [`robby_agent::model::extract_json`](extract-json.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 
 ## References
 
-- calls → [`robby_agent::model`](index.md) — as_str, extract_json
+- calls → [`robby_agent::model`](index.md) — extract_json
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
 
 ## Referenced by

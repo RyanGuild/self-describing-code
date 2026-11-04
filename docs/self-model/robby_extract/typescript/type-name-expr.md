@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn type_name_expr(expr: &Expression<'_>) -> Option<String>` |
-| location | [`crates/robby-extract/src/typescript.rs:710`](../../../../crates/robby-extract/src/typescript.rs#L710) |
+| location | [`crates/robby-extract/src/typescript.rs:697`](../../../../crates/robby-extract/src/typescript.rs#L697) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn short_fqn(node: &Node, crate_dir: &str) -> String` |
-| location | [`crates/robby-render/src/tree.rs:820`](../../../../crates/robby-render/src/tree.rs#L820) |
+| location | [`crates/robby-render/src/tree.rs:816`](../../../../crates/robby-render/src/tree.rs#L816) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

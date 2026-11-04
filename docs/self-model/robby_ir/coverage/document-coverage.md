@@ -26,7 +26,10 @@ pub fn document_coverage(doc: &Document, sources: &BTreeMap<String, String>) -> 
 
     let mut files = Vec::new();
     for (path, source) in sources {
-        let spans = spans_by_file.get(path.as_str()).cloned().unwrap_or_default();
+        let spans = spans_by_file
+            .get(path.as_str())
+            .cloned()
+            .unwrap_or_default();
         files.push(file_coverage(path, source, &spans));
     }
     files.sort_by(|a, b| a.file.cmp(&b.file));
@@ -53,9 +56,9 @@ sequenceDiagram
     document_coverage-->>Vec__new: Vec::new()
     loop sources
     document_coverage-->>as_str: path.as_str()
-    document_coverage-->>get: spans_by_file.get(path.as_str())
-    document_coverage-->>cloned: spans_by_file.get(path.as_str()).cloned()
-    document_coverage-->>unwrap_or_default: spans_by_file.get(path.as_str()).cloned().unwrap_or_default()
+    document_coverage-->>get: spans_by_file .get(path.as_str())
+    document_coverage-->>cloned: spans_by_file .get(path.as_str()) .cloned()
+    document_coverage-->>unwrap_or_default: spans_by_file .get(path.as_str()) .cloned() .unwrap_or_default()
     document_coverage-->>file_coverage: file_coverage(path, source, &spans)
     document_coverage-->>push: files.push(file_coverage(path, source, &spans))
     end

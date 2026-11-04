@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:177`](../../../../../apps/site/src/viewer.ts#L177) |
+| location | [`apps/site/src/viewer.ts:162`](../../../../../apps/site/src/viewer.ts#L162) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function applyScene(next: Scene): void {
+function applyScene(next: Scene) {
   scene = next;
   flying = false;
   window.cancelAnimationFrame(cameraRaf);

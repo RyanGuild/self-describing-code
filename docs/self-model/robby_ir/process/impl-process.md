@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/process.rs:92`](../../../../crates/robby-ir/src/process.rs#L92) |
+| location | [`crates/robby-ir/src/process.rs:118`](../../../../crates/robby-ir/src/process.rs#L118) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,7 +18,12 @@ impl Process {
     }
 
     /// Add a participant, returning its index. Duplicate ids are ignored.
-    pub fn participant(&mut self, id: impl Into<String>, label: impl Into<String>, kind: Kind) -> usize {
+    pub fn participant(
+        &mut self,
+        id: impl Into<String>,
+        label: impl Into<String>,
+        kind: Kind,
+    ) -> usize {
         let id = id.into();
         if let Some(idx) = self.participants.iter().position(|p| p.id == id) {
             return idx;
@@ -50,9 +55,11 @@ impl Process {
 
         let mut matched = vec![false; observed.steps.len()];
         for step in &mut self.steps {
-            if let Some(idx) = observed.steps.iter().position(|o| {
-                o.from == step.from && o.to == step.to && o.label == step.label
-            }) {
+            if let Some(idx) = observed
+                .steps
+                .iter()
+                .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
+            {
                 step.observed = true;
                 matched[idx] = true;
             }
@@ -90,7 +97,7 @@ impl Process {
 |---|---|
 | kind | `code.method` |
 | signature | `fn new(0)` |
-| location | [`crates/robby-ir/src/process.rs:93`](../../../../crates/robby-ir/src/process.rs#L93) |
+| location | [`crates/robby-ir/src/process.rs:119`](../../../../crates/robby-ir/src/process.rs#L119) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -124,14 +131,19 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn participant(4)` |
-| location | [`crates/robby-ir/src/process.rs:100`](../../../../crates/robby-ir/src/process.rs#L100) |
+| location | [`crates/robby-ir/src/process.rs:126`](../../../../crates/robby-ir/src/process.rs#L126) |
 | provenance | extractor · confidence 1.00 |
 
 > Add a participant, returning its index. Duplicate ids are ignored.
 
 ```rust
 /// Add a participant, returning its index. Duplicate ids are ignored.
-    pub fn participant(&mut self, id: impl Into<String>, label: impl Into<String>, kind: Kind) -> usize {
+    pub fn participant(
+        &mut self,
+        id: impl Into<String>,
+        label: impl Into<String>,
+        kind: Kind,
+    ) -> usize {
         let id = id.into();
         if let Some(idx) = self.participants.iter().position(|p| p.id == id) {
             return idx;
@@ -177,7 +189,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn step(2)` |
-| location | [`crates/robby-ir/src/process.rs:114`](../../../../crates/robby-ir/src/process.rs#L114) |
+| location | [`crates/robby-ir/src/process.rs:145`](../../../../crates/robby-ir/src/process.rs#L145) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -206,7 +218,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn absorb(2)` |
-| location | [`crates/robby-ir/src/process.rs:118`](../../../../crates/robby-ir/src/process.rs#L118) |
+| location | [`crates/robby-ir/src/process.rs:149`](../../../../crates/robby-ir/src/process.rs#L149) |
 | provenance | extractor · confidence 1.00 |
 
 > Merge an observed process into this (static) one.
@@ -232,9 +244,11 @@ sequenceDiagram
 
         let mut matched = vec![false; observed.steps.len()];
         for step in &mut self.steps {
-            if let Some(idx) = observed.steps.iter().position(|o| {
-                o.from == step.from && o.to == step.to && o.label == step.label
-            }) {
+            if let Some(idx) = observed
+                .steps
+                .iter()
+                .position(|o| o.from == step.from && o.to == step.to && o.label == step.label)
+            {
                 step.observed = true;
                 matched[idx] = true;
             }
@@ -267,8 +281,8 @@ sequenceDiagram
     end
     absorb-->>absorb: vec![false observed.steps.len()]
     loop &mut self.steps
-    absorb-->>iter: observed.steps.iter()
-    absorb-->>position: observed.steps.iter().position(|o| { o.from == step.from && o.to == s...
+    absorb-->>iter: observed .steps .iter()
+    absorb-->>position: observed .steps .iter() .position(|o| o.from == step.from && o.to == ...
     end
     absorb-->>iter: observed.steps.iter()
     absorb-->>enumerate: observed.steps.iter().enumerate()

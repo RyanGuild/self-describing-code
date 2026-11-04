@@ -5,18 +5,17 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:112`](../../../../../apps/site/src/viewer.ts#L112) |
+| location | [`apps/site/src/viewer.ts:98`](../../../../../apps/site/src/viewer.ts#L98) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-async function main(): Promise<void> {
+async function main() {
   try {
-    const structure = await fetchJson<Scene>("scene.json");
+    const structure = await fetchJson<Scene>(ORG_MODES.structure.file);
     sceneCache.set("structure", structure);
     scene = structure;
   } catch (err) {
-    worldEl.textContent =
-      "Could not load scene.json. Run `robby web` then serve this app (Vite).";
+    worldEl.textContent = "Could not load scene.json. Run `robby web` then serve this app (Vite).";
     console.error(err);
     return;
   }

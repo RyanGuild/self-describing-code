@@ -64,10 +64,13 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-render/src/view/process.rs:7:1` (docs, `robby_render::view::process::ProcessView`): "Format-agnostic process diagram data."
+- `crates/robby-render/src/view/process.rs:7:1` (docs, `robby_render::view::process::ProcessView`): "Format-agnostic process diagram data. This is also the JSON shape under `FrameDetail.process`. There is no second DTO."
   ```
   /// Format-agnostic process diagram data.
-  #[derive(Debug, Clone, PartialEq, Eq)]
+  ///
+  /// This is also the JSON shape under `FrameDetail.process`. There is no
+  /// second DTO.
+  #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
   pub struct ProcessView {
       pub participants: Vec<ParticipantView>,
       pub events: Vec<ProcessEvent>,
@@ -78,7 +81,7 @@ flowchart TB
 ## References
 
 - calls → [`robby_render::report`](../../report/index.md) — push
-- calls → [`robby_render::util`](../../util/index.md) — keyword
+- calls → [`robby_render::view::comments`](../comments/index.md) — as_str
 - calls → [`robby_render::view::scene`](../scene/index.md) — new
 - calls → [`robby_render::view::select`](../select/index.md) — collect
 
@@ -93,13 +96,13 @@ flowchart TB
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
 | [`ProcessView`](processview.md) | `code.struct` | — | `crates/robby-render/src/view/process.rs:7:1` |
-| [`ParticipantView`](participantview.md) | `code.struct` | — | `crates/robby-render/src/view/process.rs:16:1` |
-| [`ProcessEvent`](processevent.md) | `code.enum` | — | `crates/robby-render/src/view/process.rs:22:1` |
-| [`impl ProcessView`](impl-processview.md) | `code.impl` | — | `crates/robby-render/src/view/process.rs:42:1` |
-| [`common_prefix`](common-prefix.md) | `code.function` | 2 | `crates/robby-render/src/view/process.rs:114:1` |
+| [`ParticipantView`](participantview.md) | `code.struct` | — | `crates/robby-render/src/view/process.rs:19:1` |
+| [`ProcessEvent`](processevent.md) | `code.enum` | — | `crates/robby-render/src/view/process.rs:25:1` |
+| [`impl ProcessView`](impl-processview.md) | `code.impl` | — | `crates/robby-render/src/view/process.rs:46:1` |
+| [`common_prefix`](common-prefix.md) | `code.function` | 2 | `crates/robby-render/src/view/process.rs:115:1` |
 
 ## Imports
 
+- `use serde::Serialize;`
 - [`use robby_ir::{Block, Process, StepKind};`](../../../robby_ir/index.md)
-- `use crate::util::keyword;`
 

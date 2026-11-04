@@ -1,7 +1,8 @@
 //! Prezi-style site data: scene geometry + lazy frame payloads.
 //!
-//! The TypeScript viewer lives in `apps/site` (extracted into the self-model).
-//! This module only writes the JSON the viewer loads.
+//! The TypeScript viewer lives in `apps/site`. It reads this JSON structurally
+//! and does not keep a second copy of the schema. `Scene` and [`FrameDetail`]
+//! (whose `process` is [`crate::view::ProcessView`]) are the payload.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -10,12 +11,12 @@ use std::path::Path;
 use anyhow::Result;
 use serde::Serialize;
 
-use robby_ir::{Document, Node, Source, StepKind};
+use robby_ir::{Document, Node, Source};
 
 use crate::render::MermaidRenderer;
 use crate::render::Renderer;
 use crate::util::stable_id;
-use crate::view::{ProcessEvent, ProcessView, Scene, SourceSlice, WORKSPACE_ID, execution_process};
+use crate::view::{ProcessView, Scene, SourceSlice, WORKSPACE_ID, execution_process};
 
 /// Lazy detail for one frame (fetched after the camera settles).
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -33,7 +34,7 @@ pub struct FrameDetail {
     pub provenance: &'static str,
     pub confidence: f32,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub process: Option<ProcessDetail>,
+    pub process: Option<ProcessView>,
     /// Mermaid `sequenceDiagram` body for the process (same path as Markdown).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub process_mermaid: Option<String>,
@@ -41,48 +42,7 @@ pub struct FrameDetail {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub execution_mermaid: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub source: Option<SourceDetail>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct ProcessDetail {
-    pub participants: Vec<ParticipantDetail>,
-    pub events: Vec<EventDetail>,
-    pub step_count: usize,
-    pub observed_count: usize,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct ParticipantDetail {
-    pub id: String,
-    pub label: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-#[serde(tag = "type", rename_all = "snake_case")]
-pub enum EventDetail {
-    End,
-    Else {
-        label: String,
-    },
-    Begin {
-        keyword: String,
-        label: String,
-    },
-    Interaction {
-        index: usize,
-        from: String,
-        to: String,
-        label: String,
-        observed: bool,
-        kind: String,
-    },
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct SourceDetail {
-    pub file: String,
-    pub text: String,
+    pub source: Option<SourceSlice>,
 }
 
 impl FrameDetail {
@@ -95,7 +55,7 @@ impl FrameDetail {
             signature: None,
             docs: Some("Synthetic root: crates and packages of this map.".to_owned()),
             location: None,
-            provenance: "extractor",
+            provenance: Source::Extractor.as_str(),
             confidence: 1.0,
             process: None,
             process_mermaid: None,
@@ -118,20 +78,7 @@ impl FrameDetail {
             Some(p) => {
                 let view = ProcessView::from_process(p);
                 let mermaid = MermaidRenderer.process(&view);
-                let detail = ProcessDetail {
-                    participants: view
-                        .participants
-                        .into_iter()
-                        .map(|p| ParticipantDetail {
-                            id: p.id,
-                            label: p.label,
-                        })
-                        .collect(),
-                    events: view.events.into_iter().map(event_detail).collect(),
-                    step_count: view.step_count,
-                    observed_count: view.observed_count,
-                };
-                (Some(detail), Some(mermaid))
+                (Some(view), Some(mermaid))
             }
             None => (None, None),
         };
@@ -146,10 +93,7 @@ impl FrameDetail {
             Some(MermaidRenderer.process(&view))
         });
 
-        let source = SourceSlice::from_node(node, sources).map(|s| SourceDetail {
-            file: s.file,
-            text: s.text,
-        });
+        let source = SourceSlice::from_node(node, sources);
 
         Self {
             stable_id: stable_id(node.id.as_str()),
@@ -159,7 +103,7 @@ impl FrameDetail {
             signature: node.signature.clone(),
             docs: node.docs.clone(),
             location: node.span.as_ref().map(robby_ir::Span::location),
-            provenance: provenance_name(node.provenance.source),
+            provenance: node.provenance.source.as_str(),
             confidence: node.provenance.confidence,
             process,
             process_mermaid,
@@ -170,52 +114,6 @@ impl FrameDetail {
 
     pub fn to_json(&self) -> String {
         serde_json::to_string_pretty(self).expect("frame detail serializes")
-    }
-}
-
-fn event_detail(event: ProcessEvent) -> EventDetail {
-    match event {
-        ProcessEvent::End => EventDetail::End,
-        ProcessEvent::Else { label } => EventDetail::Else { label },
-        ProcessEvent::Begin { keyword, label } => EventDetail::Begin {
-            keyword: keyword.to_owned(),
-            label,
-        },
-        ProcessEvent::Interaction {
-            index,
-            from,
-            to,
-            label,
-            observed,
-            kind,
-        } => EventDetail::Interaction {
-            index,
-            from,
-            to,
-            label,
-            observed,
-            kind: step_kind_name(kind).to_owned(),
-        },
-    }
-}
-
-fn step_kind_name(kind: StepKind) -> &'static str {
-    match kind {
-        StepKind::Call => "call",
-        StepKind::Return => "return",
-        StepKind::Signal => "signal",
-        StepKind::Decision => "decision",
-        StepKind::Note => "note",
-    }
-}
-
-fn provenance_name(source: Source) -> &'static str {
-    match source {
-        Source::Extractor => "extractor",
-        Source::Macro => "macro",
-        Source::Trace => "trace",
-        Source::Agent => "agent",
-        Source::Hand => "hand",
     }
 }
 

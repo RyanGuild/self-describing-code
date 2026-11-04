@@ -43,7 +43,7 @@ cargo test --workspace
 cd apps/site && npm install && npm run check
 ```
 
-`cargo test` regenerates `docs/self-model/` and `.robby/`. A clean tree after the test run means those artifacts match the source.
+`cargo test` regenerates `docs/self-model/` and `.robby/`. A clean tree after the test run means those artifacts match the source. `no_page_is_a_wall_of_text` already fails: the `robby_render` crate index is over the 1000-line page budget.
 
 ## Run it
 

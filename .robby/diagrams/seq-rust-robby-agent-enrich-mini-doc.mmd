@@ -8,7 +8,6 @@ sequenceDiagram
     participant Some as Some
     participant into as into
     participant Position__new as Position::new
-    participant get_mut as get_mut
     participant BTreeMap__new as BTreeMap::new
     mini_doc-->>Document__new: Document::new('test')
     mini_doc-->>NodeId__symbol: NodeId::symbol('typescript', 'demo/shapes')
@@ -22,7 +21,7 @@ sequenceDiagram
     mini_doc-->>Some: Some('Draws a point.'.into())
     mini_doc-->>into: 'comment_kind'.into()
     mini_doc-->>into: 'block'.into()
-    mini_doc-->>insert: comment.annotations.insert('comment_kind'.into(), 'block'.into())
+    mini_doc-->>insert: comment .annotations .insert('comment_kind'.into(), 'block'.into())
     mini_doc-->>into: 'shapes.ts'.into()
     mini_doc-->>Position__new: Position::new(1, 1, 0)
     mini_doc-->>Position__new: Position::new(1, 20, 19)
@@ -37,11 +36,6 @@ sequenceDiagram
     mini_doc-->>Position__new: Position::new(4, 2, 60)
     mini_doc-->>Some: Some(Span { file: 'shapes.ts'.into(), start: Position::new(2, 1, 20),...
     mini_doc-->>insert: doc.insert(iface)
-    mini_doc-->>NodeId__symbol: NodeId::symbol('typescript', 'demo/shapes')
-    mini_doc-->>get_mut: doc .nodes .get_mut(&NodeId::symbol('typescript', 'demo/shapes'))
-    alt let Some(m) = doc .nodes .get_mut(&NodeId::symbol('typescript', 'demo...
-    mini_doc-->>mini_doc: vec![ NodeId::symbol('typescript', 'demo/shapes/comment@0'), NodeId::...
-    end
     mini_doc-->>BTreeMap__new: BTreeMap::new()
     mini_doc-->>into: 'shapes.ts'.into()
     mini_doc-->>into: '/** Draws a point. */\nexport interface Drawable {\n draw(): void \n...

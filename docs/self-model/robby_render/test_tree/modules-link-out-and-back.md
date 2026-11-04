@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn modules_link_out_and_back()` |
-| location | [`crates/robby-render/tests/tree.rs:100`](../../../../crates/robby-render/tests/tree.rs#L100) |
+| location | [`crates/robby-render/tests/tree.rs:103`](../../../../crates/robby-render/tests/tree.rs#L103) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -18,9 +18,7 @@ fn modules_link_out_and_back() {
         .map(|page| (page.path.to_string_lossy().replace('\\', "/"), page))
         .collect();
 
-    let cli = by_path
-        .get("robby_cli/index.md")
-        .expect("robby_cli index");
+    let cli = by_path.get("robby_cli/index.md").expect("robby_cli index");
     assert!(
         cli.body.contains("## References"),
         "crate pages should list outbound references"
@@ -64,8 +62,8 @@ sequenceDiagram
     modules_link_out_and_back-->>replace: page.path.to_string_lossy().replace('\\', '/')
     modules_link_out_and_back-->>map: pages .iter() .map(|page| (page.path.to_string_lossy().replace('\\', ...
     modules_link_out_and_back-->>collect: pages .iter() .map(|page| (page.path.to_string_lossy().replace('\\', ...
-    modules_link_out_and_back-->>get: by_path .get('robby_cli/index.md')
-    modules_link_out_and_back-->>expect: by_path .get('robby_cli/index.md') .expect('robby_cli index')
+    modules_link_out_and_back-->>get: by_path.get('robby_cli/index.md')
+    modules_link_out_and_back-->>expect: by_path.get('robby_cli/index.md').expect('robby_cli index')
     modules_link_out_and_back-->>modules_link_out_and_back: assert!( cli.body.contains(' References'), 'crate pages should list...
     modules_link_out_and_back-->>modules_link_out_and_back: assert!( cli.body.contains('robby_render/pipeline/index.md'), 'robby_...
     modules_link_out_and_back-->>get: by_path .get('robby_render/pipeline/index.md')

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-ir/src/model.rs:186`](../../../../crates/robby-ir/src/model.rs#L186) |
+| location | [`crates/robby-ir/src/model.rs:220`](../../../../crates/robby-ir/src/model.rs#L220) |
 | provenance | extractor · confidence 1.00 |
 
 > A single described thing: a crate, a function, a statement, an observation.
@@ -27,8 +27,11 @@ pub struct Node {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub docs: Option<String>,
     pub provenance: Provenance,
+    /// Parent in the containment tree. This is the link callers set.
+    /// [`Document::merge`] maintains [`Self::children`] from it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parent: Option<NodeId>,
+    /// Child ids in insertion order. Written only by [`Document::merge`].
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub children: Vec<NodeId>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -44,19 +47,19 @@ pub struct Node {
 
 **Fields and variants**
 
-- `id` — `crates/robby-ir/src/model.rs:189:5`
-- `kind` — `crates/robby-ir/src/model.rs:190:5`
-- `name` — `crates/robby-ir/src/model.rs:191:5`
-- `fqn` — `crates/robby-ir/src/model.rs:192:5`
-- `lang` — `crates/robby-ir/src/model.rs:194:5`
-- `span` — `crates/robby-ir/src/model.rs:195:5`
-- `signature` — `crates/robby-ir/src/model.rs:197:5`
-- `docs` — `crates/robby-ir/src/model.rs:199:5`
-- `provenance` — `crates/robby-ir/src/model.rs:201:5`
-- `parent` — `crates/robby-ir/src/model.rs:202:5`
-- `children` — `crates/robby-ir/src/model.rs:204:5`
-- `edges` — `crates/robby-ir/src/model.rs:206:5`
-- `process` — `crates/robby-ir/src/model.rs:208:5`
-- `annotations` — `crates/robby-ir/src/model.rs:210:5`
-- `tags` — `crates/robby-ir/src/model.rs:212:5`
+- `id` — `crates/robby-ir/src/model.rs:223:5`
+- `kind` — `crates/robby-ir/src/model.rs:224:5`
+- `name` — `crates/robby-ir/src/model.rs:225:5`
+- `fqn` — `crates/robby-ir/src/model.rs:226:5`
+- `lang` — `crates/robby-ir/src/model.rs:228:5`
+- `span` — `crates/robby-ir/src/model.rs:229:5`
+- `signature` — `crates/robby-ir/src/model.rs:231:5`
+- `docs` — `crates/robby-ir/src/model.rs:233:5`
+- `provenance` — `crates/robby-ir/src/model.rs:235:5`
+- `parent` — `crates/robby-ir/src/model.rs:236:5`
+- `children` — `crates/robby-ir/src/model.rs:240:5`
+- `edges` — `crates/robby-ir/src/model.rs:243:5`
+- `process` — `crates/robby-ir/src/model.rs:245:5`
+- `annotations` — `crates/robby-ir/src/model.rs:247:5`
+- `tags` — `crates/robby-ir/src/model.rs:249:5`
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn topological_layers(     adj: &BTreeMap<String, BTreeSet<String>>,     cyclic: &BTreeSet<String>, ) -> Vec<Vec<String>>` |
-| location | [`crates/robby-render/src/view/deps.rs:863`](../../../../../crates/robby-render/src/view/deps.rs#L863) |
+| location | [`crates/robby-render/src/view/deps.rs:843`](../../../../../crates/robby-render/src/view/deps.rs#L843) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

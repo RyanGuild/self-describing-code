@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:437`](../../../../../apps/site/src/viewer.ts#L437) |
+| location | [`apps/site/src/viewer.ts:418`](../../../../../apps/site/src/viewer.ts#L418) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function zoomOut(): void {
+function zoomOut() {
   const parent = frame(focusId).parent;
   if (!parent) {
     return;

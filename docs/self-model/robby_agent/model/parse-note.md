@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn parse_note(raw: &str) -> Result<Note>` |
-| location | [`crates/robby-agent/src/model.rs:201`](../../../../crates/robby-agent/src/model.rs#L201) |
+| location | [`crates/robby-agent/src/model.rs:149`](../../../../crates/robby-agent/src/model.rs#L149) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -114,9 +114,9 @@ sequenceDiagram
 
 - calls → [`robby_agent::model::extract_json`](extract-json.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
-- calls → [`robby_agent::model::impl Verdict::as_str`](index.md)
+- calls → [`robby_ir::kind::impl Kind::as_str`](../../robby_ir/kind/index.md)
 - calls → [`robby_ir::span::impl Span::is_empty`](../../robby_ir/span/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../robby_ir/model/index.md)
@@ -125,7 +125,8 @@ sequenceDiagram
 
 ## References
 
-- calls → [`robby_agent::model`](index.md) — as_str, extract_json
+- calls → [`robby_agent::model`](index.md) — extract_json
+- calls → [`robby_ir::kind`](../../robby_ir/kind/index.md) — as_str
 - calls → [`robby_ir::model`](../../robby_ir/model/index.md) — get
 - calls → [`robby_ir::span`](../../robby_ir/span/index.md) — is_empty
 - calls → [`robby_render::view::select`](../../robby_render/view/select/index.md) — collect

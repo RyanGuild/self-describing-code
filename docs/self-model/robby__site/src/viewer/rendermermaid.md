@@ -5,15 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:623`](../../../../../apps/site/src/viewer.ts#L623) |
+| location | [`apps/site/src/viewer.ts:597`](../../../../../apps/site/src/viewer.ts#L597) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-async function renderMermaid(
-  host: HTMLElement,
-  definition: string,
-  frameId: string,
-): Promise<void> {
+async function renderMermaid(host: HTMLElement, definition: string, frameId: string) {
   try {
     const { default: mermaid } = await loadMermaid();
     const renderId = `mmd-${frameId.replace(/[^a-zA-Z0-9_-]/g, "_")}-${++mermaidSeq}`;

@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.enum` |
-| location | [`crates/robby-ir/src/model.rs:407`](../../../../crates/robby-ir/src/model.rs#L407) |
+| location | [`crates/robby-ir/src/model.rs:528`](../../../../crates/robby-ir/src/model.rs#L528) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -20,7 +20,7 @@ pub enum Severity {
 
 **Fields and variants**
 
-- `Error` — `crates/robby-ir/src/model.rs:410:5`
-- `Warning` — `crates/robby-ir/src/model.rs:411:5`
-- `Info` — `crates/robby-ir/src/model.rs:412:5`
+- `Error` — `crates/robby-ir/src/model.rs:531:5`
+- `Warning` — `crates/robby-ir/src/model.rs:532:5`
+- `Info` — `crates/robby-ir/src/model.rs:533:5`
 

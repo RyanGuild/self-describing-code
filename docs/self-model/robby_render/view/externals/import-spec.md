@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn import_spec(node: &Node) -> Option<String>` |
-| location | [`crates/robby-render/src/view/externals.rs:81`](../../../../../crates/robby-render/src/view/externals.rs#L81) |
+| location | [`crates/robby-render/src/view/externals.rs:85`](../../../../../crates/robby-render/src/view/externals.rs#L85) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

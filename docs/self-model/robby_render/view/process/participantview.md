@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.struct` |
-| location | [`crates/robby-render/src/view/process.rs:16`](../../../../../crates/robby-render/src/view/process.rs#L16) |
+| location | [`crates/robby-render/src/view/process.rs:19`](../../../../../crates/robby-render/src/view/process.rs#L19) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ParticipantView {
     pub id: String,
     pub label: String,
@@ -18,6 +18,6 @@ pub struct ParticipantView {
 
 **Fields and variants**
 
-- `id` — `crates/robby-render/src/view/process.rs:18:5`
-- `label` — `crates/robby-render/src/view/process.rs:19:5`
+- `id` — `crates/robby-render/src/view/process.rs:21:5`
+- `label` — `crates/robby-render/src/view/process.rs:22:5`
 

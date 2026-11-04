@@ -7,7 +7,7 @@
 | kind | `code.module` |
 | declared at | [`crates/robby-render/src/render/mod.rs:6`](../../../../../crates/robby-render/src/render/mod.rs#L6) |
 | provenance | extractor · confidence 1.00 |
-| nodes | 52 |
+| nodes | 51 |
 
 ## Types
 
@@ -185,11 +185,10 @@ flowchart TB
 | [`impl Default for TuiRenderer`](impl-default-for-tuirenderer.md) | `code.impl` | — | `crates/robby-render/src/render/tui.rs:80:1` |
 | [`impl TuiRenderer`](impl-tuirenderer.md) | `code.impl` | — | `crates/robby-render/src/render/tui.rs:86:1` |
 | [`impl Renderer for TuiRenderer`](impl-renderer-for-tuirenderer.md) | `code.impl` | — | `crates/robby-render/src/render/tui.rs:108:1` |
-| [`ascii_package_structure`](ascii-package-structure.md) | `code.function` | 22 | `crates/robby-render/src/render/tui.rs:459:1` |
-| [`ascii_coupling`](ascii-coupling.md) | `code.function` | 24 | `crates/robby-render/src/render/tui.rs:510:1` |
-| [`clip`](clip.md) | `code.function` | 11 | `crates/robby-render/src/render/tui.rs:586:1` |
-| [`pad`](pad.md) | `code.function` | 3 | `crates/robby-render/src/render/tui.rs:607:1` |
-| [`step_tag`](step-tag.md) | `code.function` | 0 | `crates/robby-render/src/render/tui.rs:616:1` |
+| [`ascii_package_structure`](ascii-package-structure.md) | `code.function` | 20 | `crates/robby-render/src/render/tui.rs:450:1` |
+| [`ascii_coupling`](ascii-coupling.md) | `code.function` | 23 | `crates/robby-render/src/render/tui.rs:499:1` |
+| [`clip`](clip.md) | `code.function` | 11 | `crates/robby-render/src/render/tui.rs:578:1` |
+| [`pad`](pad.md) | `code.function` | 3 | `crates/robby-render/src/render/tui.rs:599:1` |
 
 ## Imports
 
@@ -198,6 +197,6 @@ flowchart TB
 - `use ascii_dag::{Direction, Graph, RenderOptions};`
 - `use unicode_width::UnicodeWidthStr;`
 - `use crate::view::{`
-- [`use robby_ir::{Document, Node, StepKind};`](../../../robby_ir/index.md)
+- [`use robby_ir::{Document, Node};`](../../../robby_ir/index.md)
 - `use super::Renderer;`
 

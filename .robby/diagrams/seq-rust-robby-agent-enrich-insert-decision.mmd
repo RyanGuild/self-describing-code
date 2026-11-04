@@ -17,9 +17,6 @@ sequenceDiagram
     participant serde_json__to_string as serde_json::to_string
     participant merge as merge
     insert_decision-->>get: doc.get(&ctx.parent_id)
-    alt match doc.get(&ctx.parent_id)
-    insert_decision-->>insert_decision: return
-    end
     insert_decision-->>insert_decision: format!('{}/decision', parent.fqn)
     insert_decision-->>as_str: parent.id.as_str()
     insert_decision-->>split: parent.id.as_str().split('://')
@@ -55,7 +52,7 @@ sequenceDiagram
     alt let Some(model) = note_model
     insert_decision-->>into: 'note_model'.into()
     insert_decision-->>into: model.into()
-    insert_decision-->>insert: node.annotations .insert('note_model'.into(), model.into())
+    insert_decision-->>insert: node.annotations.insert('note_model'.into(), model.into())
     end
     insert_decision-->>serde_json__to_string: serde_json::to_string(&note.highlights)
     alt let Ok(json) = serde_json::to_string(&note.highlights)

@@ -51,7 +51,7 @@ flowchart TB
 
 ## Comments
 
-- `crates/robby-ir/src/kind.rs:104:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
+- `crates/robby-ir/src/kind.rs:106:1` (docs, `robby_ir::kind::is_known`): "True when `kind` is understood by the current version of the tool. Unknown kinds are never an error — they are rendered…"
   ```
   /// True when `kind` is understood by the current version of the tool.
   ///
@@ -64,11 +64,13 @@ flowchart TB
 - `crates/robby-ir/src/kind.rs:17:1` (docs, `robby_ir::kind::Kind`): "A namespaced, open-ended kind tag."
   ```
   /// A namespaced, open-ended kind tag.
-  #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]
+  #[derive(
+      Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema,
+  )]
   #[serde(transparent)]
   pub struct Kind(String);
   ```
-- `crates/robby-ir/src/kind.rs:31:5` (docs, `robby_ir::kind::impl Kind::namespace`): "The namespace prefix, e.g. `code` in `code.function`."
+- `crates/robby-ir/src/kind.rs:33:5` (docs, `robby_ir::kind::impl Kind::namespace`): "The namespace prefix, e.g. `code` in `code.function`."
   ```
   /// The namespace prefix, e.g. `code` in `code.function`.
       pub fn namespace(&self) -> &str {
@@ -77,6 +79,14 @@ flowchart TB
   ```
 ## Referenced by
 
+- calls ← [`robby_agent::context::collect_comment_contexts`](../../robby_agent/context/collect-comment-contexts.md)
+- calls ← [`robby_agent::context::has_decision_child`](../../robby_agent/context/has-decision-child.md)
+- calls ← [`robby_agent::context::parent_has_comment_with_text`](../../robby_agent/context/parent-has-comment-with-text.md)
+- calls ← [`robby_agent::enrich::insert_decision`](../../robby_agent/enrich/insert-decision.md)
+- calls ← [`robby_agent::enrich::noise_short_circuits_without_note_call`](../../robby_agent/enrich/tests/noise-short-circuits-without-note-call.md)
+- calls ← [`robby_agent::enrich::relevant_writes_note_and_highlights`](../../robby_agent/enrich/tests/relevant-writes-note-and-highlights.md)
+- calls ← [`robby_agent::model::parse_decision`](../../robby_agent/model/parse-decision.md)
+- calls ← [`robby_agent::model::parse_note`](../../robby_agent/model/parse-note.md)
 - calls ← [`robby_cli::build::main`](../../robby_cli/build/main.md)
 - calls ← [`robby_cli::default_ir`](../../robby_cli/default-ir.md)
 - calls ← [`robby_cli::resolve`](../../robby_cli/resolve.md)
@@ -86,6 +96,7 @@ flowchart TB
 - calls ← [`robby_extract::rust::id_fqn`](../../robby_extract/rust/id-fqn.md)
 - calls ← [`robby_extract::rust::impl ProcBuilder<'_, '_>::emit`](../../robby_extract/rust/index.md)
 - calls ← [`robby_extract::rust::item_node`](../../robby_extract/rust/item-node.md)
+- calls ← [`robby_extract::rust::pick_call_target`](../../robby_extract/rust/pick-call-target.md)
 - calls ← [`robby_extract::rust::resolve_calls`](../../robby_extract/rust/resolve-calls.md)
 - calls ← [`robby_extract::test_extract::root`](../../robby_extract/test_extract/root.md)
 - calls ← [`robby_extract::test_typescript::bare_import_creates_external_npm_stub`](../../robby_extract/test_typescript/bare-import-creates-external-npm-stub.md)
@@ -114,6 +125,7 @@ flowchart TB
 - calls ← [`robby_ir::coverage::document_coverage`](../coverage/document-coverage.md)
 - calls ← [`robby_ir::coverage::file_coverage`](../coverage/file-coverage.md)
 - calls ← [`robby_ir::coverage::frontier_spans`](../coverage/frontier-spans.md)
+- calls ← [`robby_ir::coverage::impl TriviaMode::from_path`](../coverage/index.md)
 - calls ← [`robby_ir::coverage::make_gap`](../coverage/make-gap.md)
 - calls ← [`robby_ir::model::validate`](../model/validate.md)
 - calls ← [`robby_ir::test_coverage::document_coverage_is_union_at_any_depth`](../test_coverage/document-coverage-is-union-at-any-depth.md)
@@ -171,11 +183,11 @@ flowchart TB
 | Item | Kind | Steps | Location |
 |---|---|---:|---|
 | [`Kind`](kind.md) | `code.struct` | — | `crates/robby-ir/src/kind.rs:17:1` |
-| [`impl Kind`](impl-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:22:1` |
-| [`Display for Kind`](display-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:37:1` |
-| [`impl From<&str> for Kind`](impl-from-str-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:43:1` |
-| [`impl From<String> for Kind`](impl-from-string-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:49:1` |
-| [`is_known`](is-known.md) | `code.function` | 1 | `crates/robby-ir/src/kind.rs:104:1` |
+| [`impl Kind`](impl-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:24:1` |
+| [`Display for Kind`](display-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:39:1` |
+| [`impl From<&str> for Kind`](impl-from-str-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:45:1` |
+| [`impl From<String> for Kind`](impl-from-string-for-kind.md) | `code.impl` | — | `crates/robby-ir/src/kind.rs:51:1` |
+| [`is_known`](is-known.md) | `code.function` | 1 | `crates/robby-ir/src/kind.rs:106:1` |
 
 ## Imports
 

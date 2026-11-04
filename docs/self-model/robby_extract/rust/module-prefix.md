@@ -6,12 +6,12 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn module_prefix(fqn: &str) -> &str` |
-| location | [`crates/robby-extract/src/rust.rs:942`](../../../../crates/robby-extract/src/rust.rs#L942) |
+| location | [`crates/robby-extract/src/rust.rs:947`](../../../../crates/robby-extract/src/rust.rs#L947) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn module_prefix(fqn: &str) -> &str {
-    fqn.rsplit_once("::").map(|(m, _)| m).unwrap_or(fqn)
+    fqn.rsplit_once("::").map_or(fqn, |(m, _)| m)
 }
 ```
 
@@ -20,14 +20,12 @@ sequenceDiagram
     autonumber
     participant module_prefix as module_prefix()
     participant rsplit_once as rsplit_once
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     module_prefix-->>rsplit_once: fqn.rsplit_once('::')
-    module_prefix-->>map: fqn.rsplit_once('::').map(|(m, _)| m)
-    module_prefix-->>unwrap_or: fqn.rsplit_once('::').map(|(m, _)| m).unwrap_or(fqn)
+    module_prefix-->>map_or: fqn.rsplit_once('::').map_or(fqn, |(m, _)| m)
 ```
 
-3 steps · 0 observed · 3 possible only
+2 steps · 0 observed · 2 possible only
 
 ## Referenced by
 

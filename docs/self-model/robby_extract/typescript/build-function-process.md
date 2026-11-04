@@ -5,22 +5,21 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn build_function_process<'a>(     f: &Function<'a>,     fqn: &str,     pending: &mut Vec<PendingCall>,     ctx: &Ctx<'_>, ) -> Process` |
-| location | [`crates/robby-extract/src/typescript.rs:732`](../../../../crates/robby-extract/src/typescript.rs#L732) |
+| signature | `fn build_function_process(     f: &Function<'_>,     fqn: &str,     pending: &mut Vec<PendingCall>,     ctx: &Ctx<'_>, ) -> Process` |
+| location | [`crates/robby-extract/src/typescript.rs:719`](../../../../crates/robby-extract/src/typescript.rs#L719) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn build_function_process<'a>(
-    f: &Function<'a>,
+fn build_function_process(
+    f: &Function<'_>,
     fqn: &str,
     pending: &mut Vec<PendingCall>,
     ctx: &Ctx<'_>,
 ) -> Process {
-    let name = f
-        .id
-        .as_ref()
-        .map(|i| i.name.as_str())
-        .unwrap_or_else(|| fqn.rsplit('/').next().unwrap_or(fqn));
+    let name = f.id.as_ref().map_or_else(
+        || fqn.rsplit('/').next().unwrap_or(fqn),
+        |i| i.name.as_str(),
+    );
     let mut process = Process::new();
     process.participant(
         sanitize(name),
@@ -40,25 +39,23 @@ sequenceDiagram
     autonumber
     participant build_function_process as build_function_process()
     participant as_ref as as_ref
-    participant as_str as as_str
-    participant map as map
     participant rsplit as rsplit
     participant next as next
     participant unwrap_or as unwrap_or
-    participant unwrap_or_else as unwrap_or_else
+    participant as_str as as_str
+    participant map_or_else as map_or_else
     participant Process__new as Process::new
     participant sanitize as sanitize
     participant Kind__from as Kind::from
     participant participant as participant
     participant NodeId__symbol as NodeId::symbol
     participant walk_stmts as walk_stmts
-    build_function_process-->>as_ref: f .id .as_ref()
-    build_function_process-->>as_str: i.name.as_str()
-    build_function_process-->>map: f .id .as_ref() .map(|i| i.name.as_str())
+    build_function_process-->>as_ref: f.id.as_ref()
     build_function_process-->>rsplit: fqn.rsplit('/')
     build_function_process-->>next: fqn.rsplit('/').next()
     build_function_process-->>unwrap_or: fqn.rsplit('/').next().unwrap_or(fqn)
-    build_function_process-->>unwrap_or_else: f .id .as_ref() .map(|i| i.name.as_str()) .unwrap_or_else(|| fqn.rspl...
+    build_function_process-->>as_str: i.name.as_str()
+    build_function_process-->>map_or_else: f.id.as_ref().map_or_else( || fqn.rsplit('/').next().unwrap_or(fqn), ...
     build_function_process-->>Process__new: Process::new()
     build_function_process-->>sanitize: sanitize(name)
     build_function_process-->>build_function_process: format!('{name}()')
@@ -70,7 +67,7 @@ sequenceDiagram
     end
 ```
 
-14 steps · 0 observed · 14 possible only
+13 steps · 0 observed · 13 possible only
 
 **Edges**
 

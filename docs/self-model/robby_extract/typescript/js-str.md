@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn js_str<'a>(value: &oxc::str::JSStr<'a>) -> &'a str` |
-| location | [`crates/robby-extract/src/typescript.rs:999`](../../../../crates/robby-extract/src/typescript.rs#L999) |
+| location | [`crates/robby-extract/src/typescript.rs:992`](../../../../crates/robby-extract/src/typescript.rs#L992) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

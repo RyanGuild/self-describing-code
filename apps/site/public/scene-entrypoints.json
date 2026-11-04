@@ -187,10 +187,10 @@
           "target_name": "robby_render::report::impl Report::new"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::scene::impl Scene::from_entrypoints",
@@ -225,7 +225,9 @@
       "fqn": "robby__site/src/viewer/frame",
       "kind_tag": "function",
       "parent": "n_a1c27c3ac975d3da",
-      "children": [],
+      "children": [
+        "n_4ff5fb377956c45f"
+      ],
       "world": {
         "x": 338.32267479687505,
         "y": 242.99393383299997,
@@ -238,7 +240,14 @@
         "w": 636,
         "h": 397
       },
-      "edges": [],
+      "edges": [
+        {
+          "from": "frame",
+          "to": "currentScene",
+          "label": "calls",
+          "resolved": true
+        }
+      ],
       "portals": [
         {
           "label": "from robby__site/src/viewer/cameraForFocus",
@@ -269,6 +278,12 @@
           "kind_label": "called",
           "target": "n_ffabacd7399a2335",
           "target_name": "robby__site/src/viewer/screenRectFor"
+        },
+        {
+          "label": "robby__site/src/viewer/currentScene",
+          "kind_label": "calls",
+          "target": "n_4ff5fb377956c45f",
+          "target_name": "robby__site/src/viewer/currentScene"
         }
       ]
     },
@@ -551,7 +566,7 @@
       "parent": "n_c7c36b72a1b4ae90",
       "children": [],
       "world": {
-        "x": 1080.723410876904,
+        "x": 1080.9328008207517,
         "y": 257.9000220458998,
         "w": 0.023085241309204103,
         "h": 0.014068260589824001
@@ -583,10 +598,10 @@
           "target_name": "robby_render::util::text"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::select::collect",
@@ -656,36 +671,6 @@
           "kind_label": "calls",
           "target": "n_1795c187bd51093a",
           "target_name": "robby_render::render::tui::impl Default for ShowOptions::default"
-        }
-      ]
-    },
-    "n_11f6d2fb700cd378": {
-      "id": "rust://robby_render::view::select::source_name",
-      "stable_id": "n_11f6d2fb700cd378",
-      "name": "robby_render::view::select::source_name",
-      "fqn": "robby_render::view::select::source_name",
-      "kind_tag": "function",
-      "parent": "n_bb9971de7b6aa277",
-      "children": [],
-      "world": {
-        "x": 1080.16960064917,
-        "y": 257.86027728784,
-        "w": 0.12563396630859375,
-        "h": 0.07687574092800001
-      },
-      "local_in_parent": {
-        "x": 170,
-        "y": 610,
-        "w": 180,
-        "h": 112
-      },
-      "edges": [],
-      "portals": [
-        {
-          "label": "from robby_render::view::select::collect",
-          "kind_label": "called",
-          "target": "n_bb9971de7b6aa277",
-          "target_name": "robby_render::view::select::collect"
         }
       ]
     },
@@ -846,36 +831,6 @@
         }
       ]
     },
-    "n_156e84213d588a5f": {
-      "id": "rust://robby_render::web::provenance_name",
-      "stable_id": "n_156e84213d588a5f",
-      "name": "robby_render::web::provenance_name",
-      "fqn": "robby_render::web::provenance_name",
-      "kind_tag": "function",
-      "parent": "n_213e965c602f499e",
-      "children": [],
-      "world": {
-        "x": 1170.4545509480747,
-        "y": 294.5518262739505,
-        "w": 0.8257496244169924,
-        "h": 0.509132873672976
-      },
-      "local_in_parent": {
-        "x": 842,
-        "y": 239,
-        "w": 636,
-        "h": 397
-      },
-      "edges": [],
-      "portals": [
-        {
-          "label": "from robby_render::web::impl FrameDetail::from_node_in_doc",
-          "kind_label": "called",
-          "target": "n_213e965c602f499e",
-          "target_name": "robby_render::web::impl FrameDetail::from_node_in_doc"
-        }
-      ]
-    },
     "n_172766082c19d366": {
       "id": "typescript://robby__site/src/viewer/screenRectFromWorld",
       "stable_id": "n_172766082c19d366",
@@ -1010,10 +965,10 @@
           "target_name": "robby_render::util::short_kind"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::entrypoints::impl CallTree::children_of",
@@ -1128,6 +1083,66 @@
           "kind_label": "calls",
           "target": "n_a9d8540e2150b923",
           "target_name": "robby_render::stable_id"
+        },
+        {
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
+          "kind_label": "calls",
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
+        }
+      ]
+    },
+    "n_212a1b1aafdbc6f5": {
+      "id": "rust://robby_ir::model::impl Document::record_child",
+      "stable_id": "n_212a1b1aafdbc6f5",
+      "name": "robby_ir::model::impl Document::record_child",
+      "fqn": "robby_ir::model::impl Document::record_child",
+      "kind_tag": "method",
+      "parent": "n_9655ec8c7f78876b",
+      "children": [],
+      "world": {
+        "x": 1077.9335255456522,
+        "y": 256.3705507230604,
+        "w": 0.08156785262585449,
+        "h": 0.049866959412143995
+      },
+      "local_in_parent": {
+        "x": 1013,
+        "y": 175,
+        "w": 294,
+        "h": 183
+      },
+      "edges": [],
+      "portals": [
+        {
+          "label": "from robby_ir::model::impl Document::adopt_parent",
+          "kind_label": "called",
+          "target": "n_ddc9818664b59506",
+          "target_name": "robby_ir::model::impl Document::adopt_parent"
+        },
+        {
+          "label": "from robby_ir::model::impl Document::merge",
+          "kind_label": "called",
+          "target": "n_9655ec8c7f78876b",
+          "target_name": "robby_ir::model::impl Document::merge"
+        },
+        {
+          "label": "robby_ir::model::impl Document::get",
+          "kind_label": "calls",
+          "target": "n_80b75adcd8002383",
+          "target_name": "robby_ir::model::impl Document::get"
+        },
+        {
+          "label": "robby_render::report::impl Report::push",
+          "kind_label": "calls",
+          "target": "n_465730a4067bc4e4",
+          "target_name": "robby_render::report::impl Report::push"
+        },
+        {
+          "label": "robby_render::view::scene::impl WorldRect::contains",
+          "kind_label": "calls",
+          "target": "n_4958b0fbabca34bc",
+          "target_name": "robby_render::view::scene::impl WorldRect::contains"
         }
       ]
     },
@@ -1139,8 +1154,7 @@
       "kind_tag": "method",
       "parent": "n_87904cdb73eb4bef",
       "children": [
-        "n_237132f9c87e9cc1",
-        "n_156e84213d588a5f"
+        "n_237132f9c87e9cc1"
       ],
       "world": {
         "x": 1169.3613415396485,
@@ -1160,12 +1174,6 @@
           "to": "execution_process",
           "label": "calls",
           "resolved": true
-        },
-        {
-          "from": "from_node_in_doc",
-          "to": "provenance_name",
-          "label": "calls",
-          "resolved": true
         }
       ],
       "portals": [
@@ -1182,12 +1190,6 @@
           "target_name": "robby_render::web::write_site"
         },
         {
-          "label": "robby_ir::span::impl Span::location",
-          "kind_label": "calls",
-          "target": "n_e1148240ffe4051a",
-          "target_name": "robby_ir::span::impl Span::location"
-        },
-        {
           "label": "robby_render::stable_id",
           "kind_label": "calls",
           "target": "n_a9d8540e2150b923",
@@ -1200,10 +1202,10 @@
           "target_name": "robby_render::test_render::process"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::execution::execution_process",
@@ -1224,22 +1226,10 @@
           "target_name": "robby_render::view::process::impl ProcessView::from_process"
         },
         {
-          "label": "robby_render::view::select::collect",
-          "kind_label": "calls",
-          "target": "n_bb9971de7b6aa277",
-          "target_name": "robby_render::view::select::collect"
-        },
-        {
           "label": "robby_render::web::impl FrameDetail::from_node",
           "kind_label": "calls",
           "target": "n_87904cdb73eb4bef",
           "target_name": "robby_render::web::impl FrameDetail::from_node"
-        },
-        {
-          "label": "robby_render::web::provenance_name",
-          "kind_label": "calls",
-          "target": "n_156e84213d588a5f",
-          "target_name": "robby_render::web::provenance_name"
         }
       ]
     },
@@ -1284,13 +1274,13 @@
         "n_bb53751168a285fd"
       ],
       "world": {
-        "x": 1169.5197400525083,
+        "x": 1169.9871455002915,
         "y": 294.5518262739505,
         "w": 0.8257496244169924,
         "h": 0.509132873672976
       },
       "local_in_parent": {
-        "x": 122,
+        "x": 482,
         "y": 239,
         "w": 636,
         "h": 397
@@ -1332,7 +1322,6 @@
       "kind_tag": "method",
       "parent": "n_d55652e93431fabb",
       "children": [
-        "n_2c049509d9088811",
         "n_570e2c532788087a"
       ],
       "world": {
@@ -1351,12 +1340,6 @@
         {
           "from": "from_process",
           "to": "common_prefix",
-          "label": "calls",
-          "resolved": true
-        },
-        {
-          "from": "from_process",
-          "to": "keyword",
           "label": "calls",
           "resolved": true
         }
@@ -1381,10 +1364,10 @@
           "target_name": "robby_render::report::impl Report::push"
         },
         {
-          "label": "robby_render::util::keyword",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_2c049509d9088811",
-          "target_name": "robby_render::util::keyword"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::process::common_prefix",
@@ -1523,10 +1506,10 @@
           "target_name": "robby_render::stable_id"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::scene::impl Rect::new",
@@ -1636,36 +1619,6 @@
           "kind_label": "calls",
           "target": "n_c1ed09f4638ddb8e",
           "target_name": "robby__site/src/viewer/fetchJson"
-        }
-      ]
-    },
-    "n_2c049509d9088811": {
-      "id": "rust://robby_render::util::keyword",
-      "stable_id": "n_2c049509d9088811",
-      "name": "robby_render::util::keyword",
-      "fqn": "robby_render::util::keyword",
-      "kind_tag": "function",
-      "parent": "n_25dacce096110768",
-      "children": [],
-      "world": {
-        "x": 1241.0537075017269,
-        "y": 252.82782627395054,
-        "w": 0.8257496244169924,
-        "h": 0.509132873672976
-      },
-      "local_in_parent": {
-        "x": 122,
-        "y": 239,
-        "w": 636,
-        "h": 397
-      },
-      "edges": [],
-      "portals": [
-        {
-          "label": "from robby_render::view::process::impl ProcessView::from_process",
-          "kind_label": "called",
-          "target": "n_25dacce096110768",
-          "target_name": "robby_render::view::process::impl ProcessView::from_process"
         }
       ]
     },
@@ -1827,7 +1780,7 @@
       "kind_tag": "function",
       "parent": "n_59c2c49c5fb01842",
       "children": [
-        "n_71153c355fdead2e",
+        "n_b7d128015f3c4b42",
         "n_470f85c178206b14"
       ],
       "world": {
@@ -1864,12 +1817,6 @@
           "target_name": "robby_cli::example_self_model::main"
         },
         {
-          "label": "robby_agent::model::impl Verdict::parse",
-          "kind_label": "calls",
-          "target": "n_71153c355fdead2e",
-          "target_name": "robby_agent::model::impl Verdict::parse"
-        },
-        {
           "label": "robby_cli::extract",
           "kind_label": "calls",
           "target": "n_b685ee67ac4f2f21",
@@ -1880,6 +1827,12 @@
           "kind_label": "calls",
           "target": "n_298b37ed3e660088",
           "target_name": "robby_ir::coverage::impl CoverageReport::failures"
+        },
+        {
+          "label": "robby_ir::vocab::impl Verdict::parse",
+          "kind_label": "calls",
+          "target": "n_b7d128015f3c4b42",
+          "target_name": "robby_ir::vocab::impl Verdict::parse"
         },
         {
           "label": "robby_render::pipeline::from_document",
@@ -2081,7 +2034,7 @@
       "parent": "n_e246ceacf9164349",
       "children": [],
       "world": {
-        "x": 1080.23571552394,
+        "x": 1080.2775935127095,
         "y": 257.5656565018578,
         "w": 0.04993950160766601,
         "h": 0.030519669148416004
@@ -2320,10 +2273,16 @@
           "target_name": "robby_ir::coverage::file_coverage"
         },
         {
-          "label": "from robby_ir::model::impl Document::insert",
+          "label": "from robby_ir::model::impl Document::merge",
           "kind_label": "called",
-          "target": "n_8a5415d7daf6e60c",
-          "target_name": "robby_ir::model::impl Document::insert"
+          "target": "n_9655ec8c7f78876b",
+          "target_name": "robby_ir::model::impl Document::merge"
+        },
+        {
+          "label": "from robby_ir::model::impl Document::record_child",
+          "kind_label": "called",
+          "target": "n_212a1b1aafdbc6f5",
+          "target_name": "robby_ir::model::impl Document::record_child"
         },
         {
           "label": "from robby_ir::model::impl Document::walk",
@@ -2435,7 +2394,7 @@
         "n_90d23e972bd58ac7"
       ],
       "world": {
-        "x": 1080.9329840369526,
+        "x": 1080.891106048183,
         "y": 257.5656565018578,
         "w": 0.04993950160766601,
         "h": 0.030519669148416004
@@ -2682,27 +2641,39 @@
       "name": "robby_render::view::scene::impl WorldRect::contains",
       "fqn": "robby_render::view::scene::impl WorldRect::contains",
       "kind_tag": "method",
-      "parent": "n_8a5415d7daf6e60c",
+      "parent": "n_9655ec8c7f78876b",
       "children": [],
       "world": {
-        "x": 1077.6524771282714,
-        "y": 256.322863740016,
-        "w": 0.44390668095703123,
-        "h": 0.272497045968
+        "x": 1077.7337675392216,
+        "y": 256.4637447127814,
+        "w": 0.08156785262585449,
+        "h": 0.049866959412143995
       },
       "local_in_parent": {
-        "x": 482,
-        "y": 239,
-        "w": 636,
-        "h": 397
+        "x": 293,
+        "y": 517,
+        "w": 294,
+        "h": 183
       },
       "edges": [],
       "portals": [
         {
-          "label": "from robby_ir::model::impl Document::insert",
+          "label": "from robby_ir::model::impl Document::adopt_parent",
           "kind_label": "called",
-          "target": "n_8a5415d7daf6e60c",
-          "target_name": "robby_ir::model::impl Document::insert"
+          "target": "n_ddc9818664b59506",
+          "target_name": "robby_ir::model::impl Document::adopt_parent"
+        },
+        {
+          "label": "from robby_ir::model::impl Document::merge",
+          "kind_label": "called",
+          "target": "n_9655ec8c7f78876b",
+          "target_name": "robby_ir::model::impl Document::merge"
+        },
+        {
+          "label": "from robby_ir::model::impl Document::record_child",
+          "kind_label": "called",
+          "target": "n_212a1b1aafdbc6f5",
+          "target_name": "robby_ir::model::impl Document::record_child"
         },
         {
           "label": "from robby_render::view::deps::finalize_edges",
@@ -2858,7 +2829,7 @@
       "parent": "n_a68c20b78787b334",
       "children": [],
       "world": {
-        "x": 1081.0045635966508,
+        "x": 1080.9626856078812,
         "y": 257.5729507027843,
         "w": 0.01985095188904724,
         "h": 0.012116308651921153
@@ -2888,6 +2859,36 @@
           "kind_label": "calls",
           "target": "n_6b9cfcf51d0346ee",
           "target_name": "robby_render::util::is_container"
+        }
+      ]
+    },
+    "n_4ff5fb377956c45f": {
+      "id": "typescript://robby__site/src/viewer/currentScene",
+      "stable_id": "n_4ff5fb377956c45f",
+      "name": "robby__site/src/viewer/currentScene",
+      "fqn": "robby__site/src/viewer/currentScene",
+      "kind_tag": "function",
+      "parent": "n_040412c8c1da1011",
+      "children": [],
+      "world": {
+        "x": 343.8853766692579,
+        "y": 245.73059173170097,
+        "w": 7.339996661484376,
+        "h": 4.545829229222999
+      },
+      "local_in_parent": {
+        "x": 482,
+        "y": 239,
+        "w": 636,
+        "h": 397
+      },
+      "edges": [],
+      "portals": [
+        {
+          "label": "from robby__site/src/viewer/frame",
+          "kind_label": "called",
+          "target": "n_040412c8c1da1011",
+          "target_name": "robby__site/src/viewer/frame"
         }
       ]
     },
@@ -2965,10 +2966,10 @@
           "target_name": "robby_render::view::hierarchy::build"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         }
       ]
     },
@@ -2981,13 +2982,13 @@
       "parent": "n_bb9971de7b6aa277",
       "children": [],
       "world": {
-        "x": 1080.420868581787,
+        "x": 1080.5465025480958,
         "y": 257.703780243808,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 530,
+        "x": 710,
         "y": 382,
         "w": 180,
         "h": 112
@@ -3204,13 +3205,13 @@
       "parent": "n_25dacce096110768",
       "children": [],
       "world": {
-        "x": 1241.9885183972933,
+        "x": 1241.52111294951,
         "y": 252.82782627395054,
         "w": 0.8257496244169924,
         "h": 0.509132873672976
       },
       "local_in_parent": {
-        "x": 842,
+        "x": 482,
         "y": 239,
         "w": 636,
         "h": 397
@@ -3381,10 +3382,10 @@
           "target_name": "robby_render::util::short_kind"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::deps::impl CouplingGraph::from_root",
@@ -3427,7 +3428,7 @@
       "parent": "n_5ec045eba2e1b6c2",
       "children": [],
       "world": {
-        "x": 1080.6926751159558,
+        "x": 1080.9020650598036,
         "y": 257.8770928567834,
         "w": 0.009176383420408631,
         "h": 0.005585099454160128
@@ -3483,7 +3484,7 @@
         "n_5e81b400a2b82436"
       ],
       "world": {
-        "x": 1080.6857206870113,
+        "x": 1080.895110630859,
         "y": 257.8737305425024,
         "w": 0.023085241309204103,
         "h": 0.014068260589824001
@@ -3647,12 +3648,6 @@
           "target_name": "robby_cli::main"
         },
         {
-          "label": "robby_agent::model::impl Verdict::parse",
-          "kind_label": "calls",
-          "target": "n_71153c355fdead2e",
-          "target_name": "robby_agent::model::impl Verdict::parse"
-        },
-        {
           "label": "robby_cli::check",
           "kind_label": "calls",
           "target": "n_0b19cbdc9c790728",
@@ -3699,6 +3694,12 @@
           "kind_label": "calls",
           "target": "n_ca6f58cffa1dcfd5",
           "target_name": "robby_ir::schema_json"
+        },
+        {
+          "label": "robby_ir::vocab::impl Verdict::parse",
+          "kind_label": "calls",
+          "target": "n_b7d128015f3c4b42",
+          "target_name": "robby_ir::vocab::impl Verdict::parse"
         },
         {
           "label": "robby_render::pipeline::load",
@@ -4104,42 +4105,6 @@
         }
       ]
     },
-    "n_71153c355fdead2e": {
-      "id": "rust://robby_agent::model::impl Verdict::parse",
-      "stable_id": "n_71153c355fdead2e",
-      "name": "robby_agent::model::impl Verdict::parse",
-      "fqn": "robby_agent::model::impl Verdict::parse",
-      "kind_tag": "method",
-      "parent": "n_32b42d0d55443cd4",
-      "children": [],
-      "world": {
-        "x": 390.47845625,
-        "y": 578.100589,
-        "w": 46.4538375,
-        "h": 28.842446999999996
-      },
-      "local_in_parent": {
-        "x": 122,
-        "y": 239,
-        "w": 636,
-        "h": 397
-      },
-      "edges": [],
-      "portals": [
-        {
-          "label": "from robby_cli::example_self_model::run",
-          "kind_label": "called",
-          "target": "n_32b42d0d55443cd4",
-          "target_name": "robby_cli::example_self_model::run"
-        },
-        {
-          "label": "from robby_cli::run",
-          "kind_label": "called",
-          "target": "n_5fb1bc1f5dbdeb45",
-          "target_name": "robby_cli::run"
-        }
-      ]
-    },
     "n_737bc7514c5fccaa": {
       "id": "rust://robby_render::view::select::is_binary_module",
       "stable_id": "n_737bc7514c5fccaa",
@@ -4149,13 +4114,13 @@
       "parent": "n_bb9971de7b6aa277",
       "children": [],
       "world": {
-        "x": 1080.6721365144042,
+        "x": 1080.881526458252,
         "y": 257.703780243808,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 890,
+        "x": 1190,
         "y": 382,
         "w": 180,
         "h": 112
@@ -4175,10 +4140,10 @@
           "target_name": "robby_ir::model::impl Document::get"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         }
       ]
     },
@@ -4273,7 +4238,7 @@
       "parent": "n_c7c36b72a1b4ae90",
       "children": [],
       "world": {
-        "x": 1080.7611010667965,
+        "x": 1080.9704910106443,
         "y": 257.9000220458998,
         "w": 0.023085241309204103,
         "h": 0.014068260589824001
@@ -4408,14 +4373,14 @@
       "parent": "n_bb9971de7b6aa277",
       "children": [],
       "world": {
-        "x": 1080.9234044470215,
-        "y": 257.703780243808,
+        "x": 1080.2114786379395,
+        "y": 257.86027728784,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 1250,
-        "y": 382,
+        "x": 230,
+        "y": 610,
         "w": 180,
         "h": 112
       },
@@ -4434,10 +4399,10 @@
           "target_name": "robby_ir::model::impl Document::get"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         }
       ]
     },
@@ -4506,10 +4471,34 @@
           "target_name": "robby_ir::coverage::document_coverage"
         },
         {
+          "label": "from robby_ir::model::impl Document::adopt_parent",
+          "kind_label": "called",
+          "target": "n_ddc9818664b59506",
+          "target_name": "robby_ir::model::impl Document::adopt_parent"
+        },
+        {
+          "label": "from robby_ir::model::impl Document::merge",
+          "kind_label": "called",
+          "target": "n_9655ec8c7f78876b",
+          "target_name": "robby_ir::model::impl Document::merge"
+        },
+        {
+          "label": "from robby_ir::model::impl Document::record_child",
+          "kind_label": "called",
+          "target": "n_212a1b1aafdbc6f5",
+          "target_name": "robby_ir::model::impl Document::record_child"
+        },
+        {
           "label": "from robby_ir::model::impl Document::walk",
           "kind_label": "called",
           "target": "n_3f94f0bb1c5a653c",
           "target_name": "robby_ir::model::impl Document::walk"
+        },
+        {
+          "label": "from robby_ir::model::validate",
+          "kind_label": "called",
+          "target": "n_ea6373866a29c8d4",
+          "target_name": "robby_ir::model::validate"
         },
         {
           "label": "from robby_render::view::deps::best_scope_prefix",
@@ -4648,7 +4637,7 @@
       "parent": "n_c7c36b72a1b4ae90",
       "children": [],
       "world": {
-        "x": 1080.723410876904,
+        "x": 1080.9328008207517,
         "y": 257.8737305425024,
         "w": 0.023085241309204103,
         "h": 0.014068260589824001
@@ -4678,13 +4667,13 @@
       "parent": "n_bb9971de7b6aa277",
       "children": [],
       "world": {
-        "x": 1080.16960064917,
+        "x": 1080.2114786379395,
         "y": 257.703780243808,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 170,
+        "x": 230,
         "y": 382,
         "w": 180,
         "h": 112
@@ -4758,7 +4747,7 @@
       "kind_tag": "method",
       "parent": "n_55b8c37d0badb78d",
       "children": [
-        "n_4958b0fbabca34bc"
+        "n_9655ec8c7f78876b"
       ],
       "world": {
         "x": 1077.3160572851561,
@@ -4775,7 +4764,7 @@
       "edges": [
         {
           "from": "insert",
-          "to": "contains",
+          "to": "merge",
           "label": "calls",
           "resolved": true
         }
@@ -4786,6 +4775,12 @@
           "kind_label": "called",
           "target": "n_b2cbb53c41a04542",
           "target_name": "robby_ir::codepath::impl CodePath::from_entry"
+        },
+        {
+          "label": "from robby_ir::model::impl Document::merge",
+          "kind_label": "called",
+          "target": "n_9655ec8c7f78876b",
+          "target_name": "robby_ir::model::impl Document::merge"
         },
         {
           "label": "from robby_render::pipeline::load_sources",
@@ -4854,16 +4849,10 @@
           "target_name": "robby_render::web::write_site"
         },
         {
-          "label": "robby_render::report::impl Report::push",
+          "label": "robby_ir::model::impl Document::merge",
           "kind_label": "calls",
-          "target": "n_465730a4067bc4e4",
-          "target_name": "robby_render::report::impl Report::push"
-        },
-        {
-          "label": "robby_render::view::scene::impl WorldRect::contains",
-          "kind_label": "calls",
-          "target": "n_4958b0fbabca34bc",
-          "target_name": "robby_render::view::scene::impl WorldRect::contains"
+          "target": "n_9655ec8c7f78876b",
+          "target_name": "robby_ir::model::impl Document::merge"
         }
       ]
     },
@@ -5027,7 +5016,7 @@
       "parent": "n_4677f91650c8fa9d",
       "children": [],
       "world": {
-        "x": 1080.9592646996737,
+        "x": 1080.917386710904,
         "y": 257.5729507027843,
         "w": 0.01985095188904724,
         "h": 0.012116308651921153
@@ -5135,7 +5124,7 @@
         "n_9d5bfea5c691e091"
       ],
       "world": {
-        "x": 1080.6857206870113,
+        "x": 1080.895110630859,
         "y": 257.9000220458998,
         "w": 0.023085241309204103,
         "h": 0.014068260589824001
@@ -5198,16 +5187,123 @@
           "target_name": "robby_render::util::text"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::scene::impl Rect::new",
           "kind_label": "calls",
           "target": "n_f2c21d1aff51beb3",
           "target_name": "robby_render::view::scene::impl Rect::new"
+        }
+      ]
+    },
+    "n_9655ec8c7f78876b": {
+      "id": "rust://robby_ir::model::impl Document::merge",
+      "stable_id": "n_9655ec8c7f78876b",
+      "name": "robby_ir::model::impl Document::merge",
+      "fqn": "robby_ir::model::impl Document::merge",
+      "kind_tag": "method",
+      "parent": "n_8a5415d7daf6e60c",
+      "children": [
+        "n_ddc9818664b59506",
+        "n_212a1b1aafdbc6f5",
+        "n_4958b0fbabca34bc"
+      ],
+      "world": {
+        "x": 1077.6524771282714,
+        "y": 256.322863740016,
+        "w": 0.44390668095703123,
+        "h": 0.272497045968
+      },
+      "local_in_parent": {
+        "x": 482,
+        "y": 239,
+        "w": 636,
+        "h": 397
+      },
+      "edges": [
+        {
+          "from": "merge",
+          "to": "contains",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "merge",
+          "to": "contains",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "merge",
+          "to": "record_child",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "merge",
+          "to": "record_child",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "merge",
+          "to": "record_child",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "merge",
+          "to": "adopt_parent",
+          "label": "calls",
+          "resolved": true
+        }
+      ],
+      "portals": [
+        {
+          "label": "from robby_ir::model::impl Document::insert",
+          "kind_label": "called",
+          "target": "n_8a5415d7daf6e60c",
+          "target_name": "robby_ir::model::impl Document::insert"
+        },
+        {
+          "label": "robby_ir::model::impl Document::adopt_parent",
+          "kind_label": "calls",
+          "target": "n_ddc9818664b59506",
+          "target_name": "robby_ir::model::impl Document::adopt_parent"
+        },
+        {
+          "label": "robby_ir::model::impl Document::get",
+          "kind_label": "calls",
+          "target": "n_80b75adcd8002383",
+          "target_name": "robby_ir::model::impl Document::get"
+        },
+        {
+          "label": "robby_ir::model::impl Document::insert",
+          "kind_label": "calls",
+          "target": "n_8a5415d7daf6e60c",
+          "target_name": "robby_ir::model::impl Document::insert"
+        },
+        {
+          "label": "robby_ir::model::impl Document::record_child",
+          "kind_label": "calls",
+          "target": "n_212a1b1aafdbc6f5",
+          "target_name": "robby_ir::model::impl Document::record_child"
+        },
+        {
+          "label": "robby_render::report::impl Report::push",
+          "kind_label": "calls",
+          "target": "n_465730a4067bc4e4",
+          "target_name": "robby_render::report::impl Report::push"
+        },
+        {
+          "label": "robby_render::view::scene::impl WorldRect::contains",
+          "kind_label": "calls",
+          "target": "n_4958b0fbabca34bc",
+          "target_name": "robby_render::view::scene::impl WorldRect::contains"
         }
       ]
     },
@@ -5246,10 +5342,10 @@
           "target_name": "robby_render::stable_id"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::scene::impl Rect::new",
@@ -5436,6 +5532,12 @@
           "target_name": "robby_ir::coverage::file_coverage"
         },
         {
+          "label": "from robby_ir::coverage::impl TriviaMode::from_path",
+          "kind_label": "called",
+          "target": "n_f23ddd4acf61487b",
+          "target_name": "robby_ir::coverage::impl TriviaMode::from_path"
+        },
+        {
           "label": "from robby_ir::coverage::make_gap",
           "kind_label": "called",
           "target": "n_55d765f1c3d46722",
@@ -5482,7 +5584,7 @@
       "parent": "n_93c94be41cee362e",
       "children": [],
       "world": {
-        "x": 1080.6926751159558,
+        "x": 1080.9020650598036,
         "y": 257.9033843601808,
         "w": 0.009176383420408631,
         "h": 0.005585099454160128
@@ -5804,7 +5906,7 @@
         "n_4f04956ed969e78d"
       ],
       "world": {
-        "x": 1080.9895193217915,
+        "x": 1080.947641333022,
         "y": 257.5656565018578,
         "w": 0.04993950160766601,
         "h": 0.030519669148416004
@@ -6225,6 +6327,42 @@
         }
       ]
     },
+    "n_b7d128015f3c4b42": {
+      "id": "rust://robby_ir::vocab::impl Verdict::parse",
+      "stable_id": "n_b7d128015f3c4b42",
+      "name": "robby_ir::vocab::impl Verdict::parse",
+      "fqn": "robby_ir::vocab::impl Verdict::parse",
+      "kind_tag": "method",
+      "parent": "n_32b42d0d55443cd4",
+      "children": [],
+      "world": {
+        "x": 390.47845625,
+        "y": 578.100589,
+        "w": 46.4538375,
+        "h": 28.842446999999996
+      },
+      "local_in_parent": {
+        "x": 122,
+        "y": 239,
+        "w": 636,
+        "h": 397
+      },
+      "edges": [],
+      "portals": [
+        {
+          "label": "from robby_cli::example_self_model::run",
+          "kind_label": "called",
+          "target": "n_32b42d0d55443cd4",
+          "target_name": "robby_cli::example_self_model::run"
+        },
+        {
+          "label": "from robby_cli::run",
+          "kind_label": "called",
+          "target": "n_5fb1bc1f5dbdeb45",
+          "target_name": "robby_cli::run"
+        }
+      ]
+    },
     "n_b8cfed370f7630fa": {
       "id": "rust://robby_render::view::links::impl LinkGraph::for_node",
       "stable_id": "n_b8cfed370f7630fa",
@@ -6237,13 +6375,13 @@
         "n_a68c20b78787b334"
       ],
       "world": {
-        "x": 1080.9234044470215,
+        "x": 1080.881526458252,
         "y": 257.547283199776,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 1250,
+        "x": 1190,
         "y": 154,
         "w": 180,
         "h": 112
@@ -6322,7 +6460,7 @@
       "parent": "n_237132f9c87e9cc1",
       "children": [],
       "world": {
-        "x": 1169.7684971268638,
+        "x": 1170.235902574647,
         "y": 294.67350903075834,
         "w": 0.32823547570575445,
         "h": 0.20212575084817147
@@ -6400,14 +6538,12 @@
       "parent": "n_55b8c37d0badb78d",
       "children": [
         "n_e246ceacf9164349",
-        "n_e1148240ffe4051a",
-        "n_fab4eeebb9766d7f",
+        "n_ff7778a79352f45c",
         "n_b8cfed370f7630fa",
         "n_8775b28cd211f488",
         "n_52efbca52123222c",
         "n_737bc7514c5fccaa",
         "n_7debed98e7d8376c",
-        "n_11f6d2fb700cd378",
         "n_daf5ef70c3eb6dee",
         "n_c7c36b72a1b4ae90"
       ],
@@ -6450,13 +6586,7 @@
         },
         {
           "from": "collect",
-          "to": "location",
-          "label": "calls",
-          "resolved": true
-        },
-        {
-          "from": "collect",
-          "to": "source_name",
+          "to": "as_str",
           "label": "calls",
           "resolved": true
         },
@@ -6649,28 +6779,16 @@
           "target_name": "robby_render::view::types::impl_methods"
         },
         {
-          "label": "from robby_render::web::impl FrameDetail::from_node_in_doc",
-          "kind_label": "called",
-          "target": "n_213e965c602f499e",
-          "target_name": "robby_render::web::impl FrameDetail::from_node_in_doc"
-        },
-        {
           "label": "robby_ir::model::impl Document::subtree",
           "kind_label": "calls",
           "target": "n_e246ceacf9164349",
           "target_name": "robby_ir::model::impl Document::subtree"
         },
         {
-          "label": "robby_ir::span::impl Span::location",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_e1148240ffe4051a",
-          "target_name": "robby_ir::span::impl Span::location"
-        },
-        {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
-          "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::deps::impl CouplingGraph::from_root",
@@ -6713,12 +6831,6 @@
           "kind_label": "calls",
           "target": "n_7debed98e7d8376c",
           "target_name": "robby_render::view::select::main_process"
-        },
-        {
-          "label": "robby_render::view::select::source_name",
-          "kind_label": "calls",
-          "target": "n_11f6d2fb700cd378",
-          "target_name": "robby_render::view::select::source_name"
         },
         {
           "label": "robby_render::view::source::impl SourceSlice::from_node",
@@ -7053,10 +7165,10 @@
           "target_name": "robby_render::view::deps::build_coupling_tree"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::deps::package_leaf",
@@ -7094,13 +7206,13 @@
         "n_796acf395b92fc32"
       ],
       "world": {
-        "x": 1080.6721365144042,
+        "x": 1080.881526458252,
         "y": 257.86027728784,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 890,
+        "x": 1190,
         "y": 610,
         "w": 180,
         "h": 112
@@ -7229,10 +7341,10 @@
           "target_name": "robby_render::util::strip_generics"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::scene::impl Rect::new",
@@ -7500,10 +7612,10 @@
           "target_name": "robby_render::util::is_container"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::deps::build_coupling_tree",
@@ -7666,7 +7778,7 @@
       "parent": "n_e246ceacf9164349",
       "children": [],
       "world": {
-        "x": 1080.179180239101,
+        "x": 1080.2210582278706,
         "y": 257.5656565018578,
         "w": 0.04993950160766601,
         "h": 0.030519669148416004
@@ -7890,13 +8002,13 @@
       "parent": "n_bb9971de7b6aa277",
       "children": [],
       "world": {
-        "x": 1080.420868581787,
+        "x": 1080.5465025480958,
         "y": 257.86027728784,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 530,
+        "x": 710,
         "y": 610,
         "w": 180,
         "h": 112
@@ -7968,39 +8080,51 @@
         }
       ]
     },
-    "n_e1148240ffe4051a": {
-      "id": "rust://robby_ir::span::impl Span::location",
-      "stable_id": "n_e1148240ffe4051a",
-      "name": "robby_ir::span::impl Span::location",
-      "fqn": "robby_ir::span::impl Span::location",
+    "n_ddc9818664b59506": {
+      "id": "rust://robby_ir::model::impl Document::adopt_parent",
+      "stable_id": "n_ddc9818664b59506",
+      "name": "robby_ir::model::impl Document::adopt_parent",
+      "fqn": "robby_ir::model::impl Document::adopt_parent",
       "kind_tag": "method",
-      "parent": "n_bb9971de7b6aa277",
+      "parent": "n_9655ec8c7f78876b",
       "children": [],
       "world": {
-        "x": 1080.420868581787,
-        "y": 257.547283199776,
-        "w": 0.12563396630859375,
-        "h": 0.07687574092800001
+        "x": 1077.7337675392216,
+        "y": 256.3705507230604,
+        "w": 0.08156785262585449,
+        "h": 0.049866959412143995
       },
       "local_in_parent": {
-        "x": 530,
-        "y": 154,
-        "w": 180,
-        "h": 112
+        "x": 293,
+        "y": 175,
+        "w": 294,
+        "h": 183
       },
       "edges": [],
       "portals": [
         {
-          "label": "from robby_render::view::select::collect",
+          "label": "from robby_ir::model::impl Document::merge",
           "kind_label": "called",
-          "target": "n_bb9971de7b6aa277",
-          "target_name": "robby_render::view::select::collect"
+          "target": "n_9655ec8c7f78876b",
+          "target_name": "robby_ir::model::impl Document::merge"
         },
         {
-          "label": "from robby_render::web::impl FrameDetail::from_node_in_doc",
-          "kind_label": "called",
-          "target": "n_213e965c602f499e",
-          "target_name": "robby_render::web::impl FrameDetail::from_node_in_doc"
+          "label": "robby_ir::model::impl Document::get",
+          "kind_label": "calls",
+          "target": "n_80b75adcd8002383",
+          "target_name": "robby_ir::model::impl Document::get"
+        },
+        {
+          "label": "robby_ir::model::impl Document::record_child",
+          "kind_label": "calls",
+          "target": "n_212a1b1aafdbc6f5",
+          "target_name": "robby_ir::model::impl Document::record_child"
+        },
+        {
+          "label": "robby_render::view::scene::impl WorldRect::contains",
+          "kind_label": "calls",
+          "target": "n_4958b0fbabca34bc",
+          "target_name": "robby_render::view::scene::impl WorldRect::contains"
         }
       ]
     },
@@ -8016,13 +8140,13 @@
         "n_3f94f0bb1c5a653c"
       ],
       "world": {
-        "x": 1080.16960064917,
+        "x": 1080.2114786379395,
         "y": 257.547283199776,
         "w": 0.12563396630859375,
         "h": 0.07687574092800001
       },
       "local_in_parent": {
-        "x": 170,
+        "x": 230,
         "y": 154,
         "w": 180,
         "h": 112
@@ -8550,6 +8674,30 @@
         },
         {
           "from": "validate",
+          "to": "error",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "validate",
+          "to": "about",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "validate",
+          "to": "error",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "validate",
+          "to": "about",
+          "label": "calls",
+          "resolved": true
+        },
+        {
+          "from": "validate",
           "to": "warning",
           "label": "calls",
           "resolved": true
@@ -8645,6 +8793,12 @@
           "kind_label": "calls",
           "target": "n_ba675cd10b655ae1",
           "target_name": "robby_ir::model::impl Diagnostic::warning"
+        },
+        {
+          "label": "robby_ir::model::impl Document::get",
+          "kind_label": "calls",
+          "target": "n_80b75adcd8002383",
+          "target_name": "robby_ir::model::impl Document::get"
         },
         {
           "label": "robby_ir::model::impl Edge::new",
@@ -8798,6 +8952,12 @@
           "kind_label": "called",
           "target": "n_55d765f1c3d46722",
           "target_name": "robby_ir::coverage::make_gap"
+        },
+        {
+          "label": "robby_ir::kind::impl Kind::new",
+          "kind_label": "calls",
+          "target": "n_9ad7a7d7cfd84f45",
+          "target_name": "robby_ir::kind::impl Kind::new"
         }
       ]
     },
@@ -9082,10 +9242,10 @@
           "target_name": "robby_render::view::scene::build_frame"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         }
       ]
     },
@@ -9182,132 +9342,6 @@
         }
       ]
     },
-    "n_fab4eeebb9766d7f": {
-      "id": "rust://robby_render::view::comments::impl NoteKind::as_str",
-      "stable_id": "n_fab4eeebb9766d7f",
-      "name": "robby_render::view::comments::impl NoteKind::as_str",
-      "fqn": "robby_render::view::comments::impl NoteKind::as_str",
-      "kind_tag": "method",
-      "parent": "n_bb9971de7b6aa277",
-      "children": [],
-      "world": {
-        "x": 1080.6721365144042,
-        "y": 257.547283199776,
-        "w": 0.12563396630859375,
-        "h": 0.07687574092800001
-      },
-      "local_in_parent": {
-        "x": 890,
-        "y": 154,
-        "w": 180,
-        "h": 112
-      },
-      "edges": [],
-      "portals": [
-        {
-          "label": "from robby_render::util::short_kind",
-          "kind_label": "called",
-          "target": "n_fa2582297af08697",
-          "target_name": "robby_render::util::short_kind"
-        },
-        {
-          "label": "from robby_render::view::deps::build_package_tree",
-          "kind_label": "called",
-          "target": "n_c6de9edc70837acd",
-          "target_name": "robby_render::view::deps::build_package_tree"
-        },
-        {
-          "label": "from robby_render::view::deps::impl CouplingGraph::from_root",
-          "kind_label": "called",
-          "target": "n_ca5056d43b6f5293",
-          "target_name": "robby_render::view::deps::impl CouplingGraph::from_root"
-        },
-        {
-          "label": "from robby_render::view::deps::package_leaf",
-          "kind_label": "called",
-          "target": "n_97d55db8002e6d30",
-          "target_name": "robby_render::view::deps::package_leaf"
-        },
-        {
-          "label": "from robby_render::view::hierarchy::build",
-          "kind_label": "called",
-          "target": "n_fcf372bcbbdc728a",
-          "target_name": "robby_render::view::hierarchy::build"
-        },
-        {
-          "label": "from robby_render::view::hierarchy::kind_tag",
-          "kind_label": "called",
-          "target": "n_52a53b3b46311577",
-          "target_name": "robby_render::view::hierarchy::kind_tag"
-        },
-        {
-          "label": "from robby_render::view::scene::attach_call_portals",
-          "kind_label": "called",
-          "target": "n_28988dd039e06d31",
-          "target_name": "robby_render::view::scene::attach_call_portals"
-        },
-        {
-          "label": "from robby_render::view::scene::build_call_frame",
-          "kind_label": "called",
-          "target": "n_1923d2917a857926",
-          "target_name": "robby_render::view::scene::build_call_frame"
-        },
-        {
-          "label": "from robby_render::view::scene::build_frame",
-          "kind_label": "called",
-          "target": "n_5d0e4314e8ae7165",
-          "target_name": "robby_render::view::scene::build_frame"
-        },
-        {
-          "label": "from robby_render::view::select::collect",
-          "kind_label": "called",
-          "target": "n_bb9971de7b6aa277",
-          "target_name": "robby_render::view::select::collect"
-        },
-        {
-          "label": "from robby_render::view::select::is_binary_module",
-          "kind_label": "called",
-          "target": "n_737bc7514c5fccaa",
-          "target_name": "robby_render::view::select::is_binary_module"
-        },
-        {
-          "label": "from robby_render::view::select::main_process",
-          "kind_label": "called",
-          "target": "n_7debed98e7d8376c",
-          "target_name": "robby_render::view::select::main_process"
-        },
-        {
-          "label": "from robby_render::view::types::class_from_node",
-          "kind_label": "called",
-          "target": "n_93c94be41cee362e",
-          "target_name": "robby_render::view::types::class_from_node"
-        },
-        {
-          "label": "from robby_render::view::types::impl TypeModel::from_module",
-          "kind_label": "called",
-          "target": "n_c7c36b72a1b4ae90",
-          "target_name": "robby_render::view::types::impl TypeModel::from_module"
-        },
-        {
-          "label": "from robby_render::view::types::impl_methods",
-          "kind_label": "called",
-          "target": "n_116ac437ecee9baf",
-          "target_name": "robby_render::view::types::impl_methods"
-        },
-        {
-          "label": "from robby_render::web::impl FrameDetail::from_node_in_doc",
-          "kind_label": "called",
-          "target": "n_213e965c602f499e",
-          "target_name": "robby_render::web::impl FrameDetail::from_node_in_doc"
-        },
-        {
-          "label": "from robby_render::web::write_site",
-          "kind_label": "called",
-          "target": "n_035881844fb12b4b",
-          "target_name": "robby_render::web::write_site"
-        }
-      ]
-    },
     "n_fc1d8ce8ffe60487": {
       "id": "rust://robby_render::util::strip_generics",
       "stable_id": "n_fc1d8ce8ffe60487",
@@ -9317,7 +9351,7 @@
       "parent": "n_c7c36b72a1b4ae90",
       "children": [],
       "world": {
-        "x": 1080.7611010667965,
+        "x": 1080.9704910106443,
         "y": 257.8737305425024,
         "w": 0.023085241309204103,
         "h": 0.014068260589824001
@@ -9443,10 +9477,10 @@
           "target_name": "robby_render::report::impl Report::push"
         },
         {
-          "label": "robby_render::view::comments::impl NoteKind::as_str",
+          "label": "robby_render::view::comments::impl CommentKind::as_str",
           "kind_label": "calls",
-          "target": "n_fab4eeebb9766d7f",
-          "target_name": "robby_render::view::comments::impl NoteKind::as_str"
+          "target": "n_ff7778a79352f45c",
+          "target_name": "robby_render::view::comments::impl CommentKind::as_str"
         },
         {
           "label": "robby_render::view::hierarchy::is_compact",
@@ -9465,6 +9499,144 @@
           "kind_label": "calls",
           "target": "n_f2c21d1aff51beb3",
           "target_name": "robby_render::view::scene::impl Rect::new"
+        }
+      ]
+    },
+    "n_ff7778a79352f45c": {
+      "id": "rust://robby_render::view::comments::impl CommentKind::as_str",
+      "stable_id": "n_ff7778a79352f45c",
+      "name": "robby_render::view::comments::impl CommentKind::as_str",
+      "fqn": "robby_render::view::comments::impl CommentKind::as_str",
+      "kind_tag": "method",
+      "parent": "n_bb9971de7b6aa277",
+      "children": [],
+      "world": {
+        "x": 1080.5465025480958,
+        "y": 257.547283199776,
+        "w": 0.12563396630859375,
+        "h": 0.07687574092800001
+      },
+      "local_in_parent": {
+        "x": 710,
+        "y": 154,
+        "w": 180,
+        "h": 112
+      },
+      "edges": [],
+      "portals": [
+        {
+          "label": "from robby_render::util::short_kind",
+          "kind_label": "called",
+          "target": "n_fa2582297af08697",
+          "target_name": "robby_render::util::short_kind"
+        },
+        {
+          "label": "from robby_render::view::deps::build_package_tree",
+          "kind_label": "called",
+          "target": "n_c6de9edc70837acd",
+          "target_name": "robby_render::view::deps::build_package_tree"
+        },
+        {
+          "label": "from robby_render::view::deps::impl CouplingGraph::from_root",
+          "kind_label": "called",
+          "target": "n_ca5056d43b6f5293",
+          "target_name": "robby_render::view::deps::impl CouplingGraph::from_root"
+        },
+        {
+          "label": "from robby_render::view::deps::package_leaf",
+          "kind_label": "called",
+          "target": "n_97d55db8002e6d30",
+          "target_name": "robby_render::view::deps::package_leaf"
+        },
+        {
+          "label": "from robby_render::view::hierarchy::build",
+          "kind_label": "called",
+          "target": "n_fcf372bcbbdc728a",
+          "target_name": "robby_render::view::hierarchy::build"
+        },
+        {
+          "label": "from robby_render::view::hierarchy::kind_tag",
+          "kind_label": "called",
+          "target": "n_52a53b3b46311577",
+          "target_name": "robby_render::view::hierarchy::kind_tag"
+        },
+        {
+          "label": "from robby_render::view::process::impl ProcessView::from_process",
+          "kind_label": "called",
+          "target": "n_25dacce096110768",
+          "target_name": "robby_render::view::process::impl ProcessView::from_process"
+        },
+        {
+          "label": "from robby_render::view::scene::attach_call_portals",
+          "kind_label": "called",
+          "target": "n_28988dd039e06d31",
+          "target_name": "robby_render::view::scene::attach_call_portals"
+        },
+        {
+          "label": "from robby_render::view::scene::build_call_frame",
+          "kind_label": "called",
+          "target": "n_1923d2917a857926",
+          "target_name": "robby_render::view::scene::build_call_frame"
+        },
+        {
+          "label": "from robby_render::view::scene::build_frame",
+          "kind_label": "called",
+          "target": "n_5d0e4314e8ae7165",
+          "target_name": "robby_render::view::scene::build_frame"
+        },
+        {
+          "label": "from robby_render::view::select::collect",
+          "kind_label": "called",
+          "target": "n_bb9971de7b6aa277",
+          "target_name": "robby_render::view::select::collect"
+        },
+        {
+          "label": "from robby_render::view::select::is_binary_module",
+          "kind_label": "called",
+          "target": "n_737bc7514c5fccaa",
+          "target_name": "robby_render::view::select::is_binary_module"
+        },
+        {
+          "label": "from robby_render::view::select::main_process",
+          "kind_label": "called",
+          "target": "n_7debed98e7d8376c",
+          "target_name": "robby_render::view::select::main_process"
+        },
+        {
+          "label": "from robby_render::view::types::class_from_node",
+          "kind_label": "called",
+          "target": "n_93c94be41cee362e",
+          "target_name": "robby_render::view::types::class_from_node"
+        },
+        {
+          "label": "from robby_render::view::types::impl TypeModel::from_module",
+          "kind_label": "called",
+          "target": "n_c7c36b72a1b4ae90",
+          "target_name": "robby_render::view::types::impl TypeModel::from_module"
+        },
+        {
+          "label": "from robby_render::view::types::impl_methods",
+          "kind_label": "called",
+          "target": "n_116ac437ecee9baf",
+          "target_name": "robby_render::view::types::impl_methods"
+        },
+        {
+          "label": "from robby_render::web::impl FrameDetail::for_workspace",
+          "kind_label": "called",
+          "target": "n_1cef7cd777a4897f",
+          "target_name": "robby_render::web::impl FrameDetail::for_workspace"
+        },
+        {
+          "label": "from robby_render::web::impl FrameDetail::from_node_in_doc",
+          "kind_label": "called",
+          "target": "n_213e965c602f499e",
+          "target_name": "robby_render::web::impl FrameDetail::from_node_in_doc"
+        },
+        {
+          "label": "from robby_render::web::write_site",
+          "kind_label": "called",
+          "target": "n_035881844fb12b4b",
+          "target_name": "robby_render::web::write_site"
         }
       ]
     },
@@ -9534,7 +9706,7 @@
       "parent": "n_4677f91650c8fa9d",
       "children": [],
       "world": {
-        "x": 1080.93679192395,
+        "x": 1080.8949139351805,
         "y": 257.5729507027843,
         "w": 0.01985095188904724,
         "h": 0.012116308651921153

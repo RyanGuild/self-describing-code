@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn rel_link(from: &Path, to: &Path) -> String` |
-| location | [`crates/robby-render/src/tree.rs:760`](../../../../crates/robby-render/src/tree.rs#L760) |
+| location | [`crates/robby-render/src/tree.rs:756`](../../../../crates/robby-render/src/tree.rs#L756) |
 | provenance | extractor · confidence 1.00 |
 
 > Relative link from one page to another. Both are relative to the output root.

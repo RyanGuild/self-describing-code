@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn source_link(page: &Path, out_rel: &str, span: &robby_ir::Span) -> String` |
-| location | [`crates/robby-render/src/tree.rs:792`](../../../../crates/robby-render/src/tree.rs#L792) |
+| location | [`crates/robby-render/src/tree.rs:788`](../../../../crates/robby-render/src/tree.rs#L788) |
 | provenance | extractor · confidence 1.00 |
 
 > A link from a generated page back to the exact source span.
@@ -15,7 +15,7 @@
 /// A link from a generated page back to the exact source span.
 fn source_link(page: &Path, out_rel: &str, span: &robby_ir::Span) -> String {
     let out_depth = out_rel.split('/').filter(|s| !s.is_empty()).count();
-    let page_depth = page.parent().map(|p| p.components().count()).unwrap_or(0);
+    let page_depth = page.parent().map_or(0, |p| p.components().count());
     let prefix = "../".repeat(out_depth + page_depth);
     format!(
         "[`{}:{}`]({}{}#L{})",
@@ -34,8 +34,7 @@ sequenceDiagram
     participant count as count
     participant parent as parent
     participant components as components
-    participant map as map
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     participant repeat as repeat
     source_link-->>split: out_rel.split('/')
     source_link-->>is_empty: s.is_empty()
@@ -44,13 +43,12 @@ sequenceDiagram
     source_link-->>parent: page.parent()
     source_link-->>components: p.components()
     source_link-->>count: p.components().count()
-    source_link-->>map: page.parent().map(|p| p.components().count())
-    source_link-->>unwrap_or: page.parent().map(|p| p.components().count()).unwrap_or(0)
+    source_link-->>map_or: page.parent().map_or(0, |p| p.components().count())
     source_link-->>repeat: '../'.repeat(out_depth + page_depth)
     source_link-->>source_link: format!( '[`{}:{}`]({}{} L{})', span.file, span.start.line, prefix, s...
 ```
 
-11 steps · 0 observed · 11 possible only
+10 steps · 0 observed · 10 possible only
 
 **Edges**
 

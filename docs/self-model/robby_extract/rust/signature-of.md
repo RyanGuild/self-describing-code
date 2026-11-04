@@ -6,12 +6,12 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn signature_of(f: &syn::ItemFn, ctx: &Ctx<'_>) -> String` |
-| location | [`crates/robby-extract/src/rust.rs:379`](../../../../crates/robby-extract/src/rust.rs#L379) |
+| location | [`crates/robby-extract/src/rust.rs:385`](../../../../crates/robby-extract/src/rust.rs#L385) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 fn signature_of(f: &syn::ItemFn, ctx: &Ctx<'_>) -> String {
-    let text = slice(ctx, span_of(&f.sig, ctx));
+    let text = slice(ctx, &span_of(&f.sig, ctx));
     text.split('{').next().unwrap_or(&text).trim().to_owned()
 }
 ```
@@ -28,7 +28,7 @@ sequenceDiagram
     participant trim as trim
     participant to_owned as to_owned
     signature_of-->>span_of: span_of(&f.sig, ctx)
-    signature_of-->>slice: slice(ctx, span_of(&f.sig, ctx))
+    signature_of-->>slice: slice(ctx, &span_of(&f.sig, ctx))
     signature_of-->>split: text.split('{')
     signature_of-->>next: text.split('{').next()
     signature_of-->>unwrap_or: text.split('{').next().unwrap_or(&text)

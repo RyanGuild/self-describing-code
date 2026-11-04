@@ -15,15 +15,11 @@ sequenceDiagram
     loop attrs
     docs_of-->>path: attr.path()
     docs_of-->>is_ident: attr.path().is_ident('doc')
-    alt attr.path().is_ident('doc')
-    alt let syn::Meta::NameValue(nv) = &attr.meta
-    alt let syn::Expr::Lit(syn::ExprLit { lit: syn::Lit::Str(s), .. }) = &nv....
+    alt attr.path().is_ident('doc') && let syn::Meta::NameValue(nv) = &attr.m...
     docs_of-->>value: s.value()
     docs_of-->>trim: s.value().trim()
     docs_of-->>to_owned: s.value().trim().to_owned()
     docs_of-->>push: lines.push(s.value().trim().to_owned())
-    end
-    end
     end
     end
     docs_of-->>is_empty: lines.is_empty()

@@ -3,12 +3,8 @@ sequenceDiagram
     participant parse_verdict as parse_verdict()
     participant get as get
     participant as_str as as_str
-    participant Some as Some
+    participant Verdict__parse as Verdict::parse
     parse_verdict-->>get: decision.annotations.get('verdict')
     parse_verdict-->>parse_verdict: ? (propagate)
     parse_verdict-->>as_str: decision.annotations.get('verdict')?.as_str()
-    alt match decision.annotations.get('verdict')?.as_str()
-    parse_verdict-->>Some: Some(Verdict::Relevant)
-    else 'noise'
-    parse_verdict-->>Some: Some(Verdict::Noise)
-    end
+    parse_verdict-->>Verdict__parse: Verdict::parse(decision.annotations.get('verdict')?.as_str())

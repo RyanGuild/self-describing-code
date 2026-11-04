@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:274`](../../../../../apps/site/src/viewer.ts#L274) |
+| location | [`apps/site/src/viewer.ts:262`](../../../../../apps/site/src/viewer.ts#L262) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function remount(): void {
+function remount() {
   worldEl.innerHTML = "";
   const focus = frame(focusId);
   const focusEl = makeFrameEl(focusId, true, false);

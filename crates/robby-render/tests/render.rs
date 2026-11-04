@@ -219,23 +219,6 @@ fn dependencies_emits_package_weighted_and_dsm() {
     ));
     doc.insert(b);
 
-    // Keep parent→child links consistent with how the extractor builds the tree.
-    if let Some(krate) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        krate.children = vec![
-            NodeId::symbol("rust", "demo::left"),
-            NodeId::symbol("rust", "demo::right"),
-        ];
-    }
-    if let Some(left) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::left")) {
-        left.children = vec![
-            NodeId::symbol("rust", "demo::left::Point"),
-            NodeId::symbol("rust", "demo::left::a"),
-        ];
-    }
-    if let Some(right) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::right")) {
-        right.children = vec![NodeId::symbol("rust", "demo::right::b")];
-    }
-
     let out = dependencies(&doc, &NodeId::from("rust://demo"));
 
     assert!(out.starts_with("flowchart TB\n"));
@@ -397,39 +380,6 @@ fn externals_and_comments_sections_render() {
     });
     doc.insert(iface);
 
-    if let Some(pkg) = doc.nodes.get_mut(&NodeId::symbol("typescript", "demo")) {
-        pkg.children = vec![NodeId::symbol("typescript", "demo/shapes")];
-    }
-    if let Some(module) = doc
-        .nodes
-        .get_mut(&NodeId::symbol("typescript", "demo/shapes"))
-    {
-        module.children = vec![
-            NodeId::symbol("typescript", "demo/shapes/import:demo-ext"),
-            NodeId::symbol("typescript", "demo/shapes/comment@0"),
-            NodeId::symbol("typescript", "demo/shapes/comment@99"),
-            NodeId::symbol("typescript", "demo/shapes/Drawable"),
-        ];
-    }
-    if let Some(c) = doc
-        .nodes
-        .get_mut(&NodeId::symbol("typescript", "demo/shapes/comment@0"))
-    {
-        c.children = vec![NodeId::symbol(
-            "typescript",
-            "demo/shapes/comment@0/decision",
-        )];
-    }
-    if let Some(c) = doc
-        .nodes
-        .get_mut(&NodeId::symbol("typescript", "demo/shapes/comment@99"))
-    {
-        c.children = vec![NodeId::symbol(
-            "typescript",
-            "demo/shapes/comment@99/decision",
-        )];
-    }
-
     let mut sources = std::collections::BTreeMap::new();
     sources.insert(
         "shapes.ts".into(),
@@ -507,7 +457,6 @@ fn class_diagram_marks_traits_as_interfaces() {
 
     let mut point = Node::new(NodeId::symbol("rust", "demo::Point"), code::STRUCT, "Point");
     point.parent = Some(NodeId::from("rust://demo"));
-    point.children = vec![NodeId::symbol("rust", "demo::Point::x")];
     doc.insert(point);
 
     let mut field = Node::new(NodeId::symbol("rust", "demo::Point::x"), code::FIELD, "x");
@@ -521,17 +470,6 @@ fn class_diagram_marks_traits_as_interfaces() {
     );
     impl_node.parent = Some(NodeId::from("rust://demo"));
     doc.insert(impl_node);
-
-    if let Some(module) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        module.children = vec![
-            NodeId::symbol("rust", "demo::Drawable"),
-            NodeId::symbol("rust", "demo::Point"),
-            NodeId::symbol("rust", "demo::impl Drawable for Point"),
-        ];
-    }
-    if let Some(drawable) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::Drawable")) {
-        drawable.children = vec![NodeId::symbol("rust", "demo::Drawable::draw")];
-    }
 
     let out = class_diagram(&doc, &NodeId::from("rust://demo"));
     assert!(out.contains("<<interface>>"));

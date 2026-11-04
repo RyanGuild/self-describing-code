@@ -65,18 +65,13 @@ impl CallTree {
     pub fn from_entries(doc: &Document, entries: &[NodeId], max_depth: usize) -> Self {
         let paths: Vec<CodePath> = entries
             .iter()
-            .filter_map(|entry| {
-                CodePath::from_entry(doc, entry, max_depth as u32)
-            })
+            .filter_map(|entry| CodePath::from_entry(doc, entry, max_depth as u32))
             .collect();
         Self::from_code_paths(doc, &paths)
     }
 
     pub fn children_of(&self, id: &NodeId) -> &[NodeId] {
-        self.children
-            .get(id)
-            .map(|v| v.as_slice())
-            .unwrap_or(&[])
+        self.children.get(id).map_or(&[], std::vec::Vec::as_slice)
     }
 }
 ```
@@ -288,9 +283,7 @@ sequenceDiagram
 pub fn from_entries(doc: &Document, entries: &[NodeId], max_depth: usize) -> Self {
         let paths: Vec<CodePath> = entries
             .iter()
-            .filter_map(|entry| {
-                CodePath::from_entry(doc, entry, max_depth as u32)
-            })
+            .filter_map(|entry| CodePath::from_entry(doc, entry, max_depth as u32))
             .collect();
         Self::from_code_paths(doc, &paths)
     }
@@ -307,8 +300,8 @@ sequenceDiagram
     participant Self__from_code_paths as Self::from_code_paths
     from_entries-->>iter: entries .iter()
     from_entries-->>CodePath__from_entry: CodePath::from_entry(doc, entry, max_depth as u32)
-    from_entries-->>filter_map: entries .iter() .filter_map(|entry| { CodePath::from_entry(doc, entry...
-    from_entries-->>collect: entries .iter() .filter_map(|entry| { CodePath::from_entry(doc, entry...
+    from_entries-->>filter_map: entries .iter() .filter_map(|entry| CodePath::from_entry(doc, entry, ...
+    from_entries-->>collect: entries .iter() .filter_map(|entry| CodePath::from_entry(doc, entry, ...
     from_entries-->>Self__from_code_paths: Self::from_code_paths(doc, &paths)
 ```
 
@@ -326,15 +319,12 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn children_of(2)` |
-| location | [`crates/robby-render/src/view/entrypoints.rs:90`](../../../../../crates/robby-render/src/view/entrypoints.rs#L90) |
+| location | [`crates/robby-render/src/view/entrypoints.rs:88`](../../../../../crates/robby-render/src/view/entrypoints.rs#L88) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
 pub fn children_of(&self, id: &NodeId) -> &[NodeId] {
-        self.children
-            .get(id)
-            .map(|v| v.as_slice())
-            .unwrap_or(&[])
+        self.children.get(id).map_or(&[], std::vec::Vec::as_slice)
     }
 ```
 
@@ -343,16 +333,12 @@ sequenceDiagram
     autonumber
     participant children_of as children_of()
     participant get as get
-    participant as_slice as as_slice
-    participant map as map
-    participant unwrap_or as unwrap_or
-    children_of-->>get: self.children .get(id)
-    children_of-->>as_slice: v.as_slice()
-    children_of-->>map: self.children .get(id) .map(|v| v.as_slice())
-    children_of-->>unwrap_or: self.children .get(id) .map(|v| v.as_slice()) .unwrap_or(&[])
+    participant map_or as map_or
+    children_of-->>get: self.children.get(id)
+    children_of-->>map_or: self.children.get(id).map_or(&[], std::vec::Vec::as_slice)
 ```
 
-4 steps · 0 observed · 4 possible only
+2 steps · 0 observed · 2 possible only
 
 **Edges**
 

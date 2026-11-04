@@ -73,8 +73,7 @@ impl Renderer for TuiRenderer {
                 } => {
                     from_width = from_width.max(UnicodeWidthStr::width(name(from).as_str()));
                     to_width = to_width.max(UnicodeWidthStr::width(name(to).as_str()));
-                    label_width =
-                        label_width.max(UnicodeWidthStr::width(clip(label, 52).as_str()));
+                    label_width = label_width.max(UnicodeWidthStr::width(clip(label, 52).as_str()));
                 }
                 ProcessEvent::Else { .. } => {}
             }
@@ -115,11 +114,7 @@ impl Renderer for TuiRenderer {
                 }
                 ProcessEvent::Begin { keyword, label } => {
                     let guide = "│ ".repeat(depth);
-                    let _ = writeln!(
-                        out,
-                        "{gutter}{guide}┌─ {keyword} {}",
-                        clip(label, 60)
-                    );
+                    let _ = writeln!(out, "{gutter}{guide}┌─ {keyword} {}", clip(label, 60));
                     depth += 1;
                 }
                 ProcessEvent::Interaction {
@@ -139,7 +134,7 @@ impl Renderer for TuiRenderer {
                         pad(&name(from), from_width),
                         pad(&name(to), to_width),
                         pad(&clip(label, 52), label_width),
-                        step_tag(*kind),
+                        kind.as_str(),
                     );
                 }
             }
@@ -288,11 +283,7 @@ impl Renderer for TuiRenderer {
                 } else {
                     format!(" — {} items", link.items.len())
                 };
-                let _ = writeln!(
-                    out,
-                    "  {} → {}{detail}",
-                    link.kind_label, link.module_fqn
-                );
+                let _ = writeln!(out, "  {} → {}{detail}", link.kind_label, link.module_fqn);
             }
             out.push('\n');
         }
@@ -495,8 +486,7 @@ fn process(&self, view: &ProcessView) -> String {
                 } => {
                     from_width = from_width.max(UnicodeWidthStr::width(name(from).as_str()));
                     to_width = to_width.max(UnicodeWidthStr::width(name(to).as_str()));
-                    label_width =
-                        label_width.max(UnicodeWidthStr::width(clip(label, 52).as_str()));
+                    label_width = label_width.max(UnicodeWidthStr::width(clip(label, 52).as_str()));
                 }
                 ProcessEvent::Else { .. } => {}
             }
@@ -537,11 +527,7 @@ fn process(&self, view: &ProcessView) -> String {
                 }
                 ProcessEvent::Begin { keyword, label } => {
                     let guide = "│ ".repeat(depth);
-                    let _ = writeln!(
-                        out,
-                        "{gutter}{guide}┌─ {keyword} {}",
-                        clip(label, 60)
-                    );
+                    let _ = writeln!(out, "{gutter}{guide}┌─ {keyword} {}", clip(label, 60));
                     depth += 1;
                 }
                 ProcessEvent::Interaction {
@@ -561,7 +547,7 @@ fn process(&self, view: &ProcessView) -> String {
                         pad(&name(from), from_width),
                         pad(&name(to), to_width),
                         pad(&clip(label, 52), label_width),
-                        step_tag(*kind),
+                        kind.as_str(),
                     );
                 }
             }
@@ -659,7 +645,7 @@ sequenceDiagram
     process-->>process: writeln!(out, '{gutter}{guide}├─ else {}', clip(label, 60))
     else ProcessEvent::Begin { keyword, label }
     process-->>repeat: '│ '.repeat(depth)
-    process-->>process: writeln!( out, '{gutter}{guide}┌─ {keyword} {}', clip(label, 60) )
+    process-->>process: writeln!(out, '{gutter}{guide}┌─ {keyword} {}', clip(label, 60))
     else ProcessEvent::Interaction { index, from, to, label, observed, kind, }
     process-->>repeat: '│ '.repeat(depth)
     process-->>process: writeln!( out, '{:>number_width$} {guide}{} {arrow} {} {} {}', index,...
@@ -673,15 +659,15 @@ sequenceDiagram
 
 - calls → [`robby_render::view::links::impl LinkGraph::is_empty`](../../view/links/index.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../../robby_ir/kind/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::render::tui::clip`](clip.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::render::tui::clip`](clip.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](index.md)
 - calls → [`robby_render::render::tui::clip`](clip.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
@@ -693,7 +679,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn types(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:248`](../../../../../crates/robby-render/src/render/tui.rs#L248) |
+| location | [`crates/robby-render/src/render/tui.rs:243`](../../../../../crates/robby-render/src/render/tui.rs#L243) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -770,7 +756,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn package_deps(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:282`](../../../../../crates/robby-render/src/render/tui.rs#L282) |
+| location | [`crates/robby-render/src/render/tui.rs:277`](../../../../../crates/robby-render/src/render/tui.rs#L277) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -799,7 +785,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn coupling_deps(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:286`](../../../../../crates/robby-render/src/render/tui.rs#L286) |
+| location | [`crates/robby-render/src/render/tui.rs:281`](../../../../../crates/robby-render/src/render/tui.rs#L281) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -828,7 +814,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn dependency_matrix(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:290`](../../../../../crates/robby-render/src/render/tui.rs#L290) |
+| location | [`crates/robby-render/src/render/tui.rs:285`](../../../../../crates/robby-render/src/render/tui.rs#L285) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -857,7 +843,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn externals(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:294`](../../../../../crates/robby-render/src/render/tui.rs#L294) |
+| location | [`crates/robby-render/src/render/tui.rs:289`](../../../../../crates/robby-render/src/render/tui.rs#L289) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -907,7 +893,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn comments(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:308`](../../../../../crates/robby-render/src/render/tui.rs#L308) |
+| location | [`crates/robby-render/src/render/tui.rs:303`](../../../../../crates/robby-render/src/render/tui.rs#L303) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -1014,7 +1000,7 @@ sequenceDiagram
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](index.md)
 - calls → [`robby_render::view::comments::apply_highlights`](../../view/comments/apply-highlights.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::render::tui::clip`](clip.md)
 - calls → [`robby_render::view::comments::apply_highlights`](../../view/comments/apply-highlights.md)
 
@@ -1024,7 +1010,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn hierarchy(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:345`](../../../../../crates/robby-render/src/render/tui.rs#L345) |
+| location | [`crates/robby-render/src/render/tui.rs:340`](../../../../../crates/robby-render/src/render/tui.rs#L340) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -1084,7 +1070,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn links(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:377`](../../../../../crates/robby-render/src/render/tui.rs#L377) |
+| location | [`crates/robby-render/src/render/tui.rs:372`](../../../../../crates/robby-render/src/render/tui.rs#L372) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -1098,11 +1084,7 @@ fn links(&self, view: &LinkGraph) -> String {
                 } else {
                     format!(" — {} items", link.items.len())
                 };
-                let _ = writeln!(
-                    out,
-                    "  {} → {}{detail}",
-                    link.kind_label, link.module_fqn
-                );
+                let _ = writeln!(out, "  {} → {}{detail}", link.kind_label, link.module_fqn);
             }
             out.push('\n');
         }
@@ -1139,7 +1121,7 @@ sequenceDiagram
     else else
     links-->>links: format!(' — {} items', link.items.len())
     end
-    links-->>links: writeln!( out, ' {} → {}{detail}', link.kind_label, link.module_fqn )
+    links-->>links: writeln!(out, ' {} → {}{detail}', link.kind_label, link.module_fqn)
     end
     links-->>push: out.push('\n')
     end
@@ -1170,7 +1152,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn sibling_graph(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:406`](../../../../../crates/robby-render/src/render/tui.rs#L406) |
+| location | [`crates/robby-render/src/render/tui.rs:397`](../../../../../crates/robby-render/src/render/tui.rs#L397) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -1287,12 +1269,12 @@ sequenceDiagram
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../../robby_ir/kind/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
 - calls → [`robby_render::render::tui::impl TuiRenderer::new`](index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_render::view::select::collect`](../../view/select/collect.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../../view/comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../../view/comments/index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 
@@ -1302,7 +1284,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn source(2)` |
-| location | [`crates/robby-render/src/render/tui.rs:449`](../../../../../crates/robby-render/src/render/tui.rs#L449) |
+| location | [`crates/robby-render/src/render/tui.rs:440`](../../../../../crates/robby-render/src/render/tui.rs#L440) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

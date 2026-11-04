@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn write_report(loaded: &Loaded, out_dir: &Path) -> std::io::Result<usize>` |
-| location | [`crates/robby-render/src/pipeline.rs:129`](../../../../crates/robby-render/src/pipeline.rs#L129) |
+| location | [`crates/robby-render/src/pipeline.rs:135`](../../../../crates/robby-render/src/pipeline.rs#L135) |
 | provenance | extractor · confidence 1.00 |
 
 > Render the self-model as a linked tree of Markdown pages.

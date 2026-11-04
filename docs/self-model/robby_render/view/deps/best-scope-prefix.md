@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn best_scope_prefix<'a>(     doc: &'a Document,     node: &Node,     scope: &BTreeSet<NodeId>, ) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/deps.rs:761`](../../../../../crates/robby-render/src/view/deps.rs#L761) |
+| location | [`crates/robby-render/src/view/deps.rs:741`](../../../../../crates/robby-render/src/view/deps.rs#L741) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

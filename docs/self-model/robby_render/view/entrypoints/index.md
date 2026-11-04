@@ -163,10 +163,10 @@ flowchart TB
 | [`MAX_CALL_DEPTH`](max-call-depth.md) | `code.const` | — | `crates/robby-render/src/view/entrypoints.rs:11:1` |
 | [`CallTree`](calltree.md) | `code.struct` | — | `crates/robby-render/src/view/entrypoints.rs:14:1` |
 | [`impl CallTree`](impl-calltree.md) | `code.impl` | — | `crates/robby-render/src/view/entrypoints.rs:27:1` |
-| [`collect_cross_edges`](collect-cross-edges.md) | `code.function` | 18 | `crates/robby-render/src/view/entrypoints.rs:98:1` |
+| [`collect_cross_edges`](collect-cross-edges.md) | `code.function` | 18 | `crates/robby-render/src/view/entrypoints.rs:93:1` |
 
 ## Imports
 
 - `use std::collections::{BTreeMap, BTreeSet};`
-- [`use robby_ir::{CodePath, Document, EdgeKind, NodeId, DEFAULT_MAX_DEPTH, find_entrypoints};`](../../../robby_ir/index.md)
+- [`use robby_ir::{CodePath, DEFAULT_MAX_DEPTH, Document, EdgeKind, NodeId, find_entrypoints};`](../../../robby_ir/index.md)
 

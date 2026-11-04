@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn push_step(process: &mut Process, frames: &[Block], kind: StepKind, from: &str, to: &str)` |
-| location | [`crates/robby-extract/src/typescript.rs:979`](../../../../crates/robby-extract/src/typescript.rs#L979) |
+| location | [`crates/robby-extract/src/typescript.rs:972`](../../../../crates/robby-extract/src/typescript.rs#L972) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

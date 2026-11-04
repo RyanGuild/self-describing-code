@@ -84,7 +84,7 @@ sequenceDiagram
     process-->>process: writeln!(out, '{gutter}{guide}├─ else {}', clip(label, 60))
     else ProcessEvent::Begin { keyword, label }
     process-->>repeat: '│ '.repeat(depth)
-    process-->>process: writeln!( out, '{gutter}{guide}┌─ {keyword} {}', clip(label, 60) )
+    process-->>process: writeln!(out, '{gutter}{guide}┌─ {keyword} {}', clip(label, 60))
     else ProcessEvent::Interaction { index, from, to, label, observed, kind, }
     process-->>repeat: '│ '.repeat(depth)
     process-->>process: writeln!( out, '{:>number_width$} {guide}{} {arrow} {} {} {}', index,...

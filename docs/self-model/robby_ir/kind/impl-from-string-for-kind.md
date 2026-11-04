@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-ir/src/kind.rs:49`](../../../../crates/robby-ir/src/kind.rs#L49) |
+| location | [`crates/robby-ir/src/kind.rs:51`](../../../../crates/robby-ir/src/kind.rs#L51) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -22,7 +22,7 @@ impl From<String> for Kind {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from(1)` |
-| location | [`crates/robby-ir/src/kind.rs:50`](../../../../crates/robby-ir/src/kind.rs#L50) |
+| location | [`crates/robby-ir/src/kind.rs:52`](../../../../crates/robby-ir/src/kind.rs#L52) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

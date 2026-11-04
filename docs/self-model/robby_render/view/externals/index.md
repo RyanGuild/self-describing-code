@@ -57,7 +57,7 @@ flowchart TB
 
 | | externals | robby_ir | robby_render |
 |---|---:|---:|---:|
-| **externals** | · | 6 | 8 |
+| **externals** | · | 6 | 7 |
 | **robby_ir** | | · | |
 | **robby_render** | | | · |
 ## References
@@ -75,9 +75,9 @@ flowchart TB
 | [`ExternalsView`](externalsview.md) | `code.struct` | — | `crates/robby-render/src/view/externals.rs:9:1` |
 | [`ExternalEntry`](externalentry.md) | `code.struct` | — | `crates/robby-render/src/view/externals.rs:14:1` |
 | [`impl ExternalsView`](impl-externalsview.md) | `code.impl` | — | `crates/robby-render/src/view/externals.rs:21:1` |
-| [`is_external_package`](is-external-package.md) | `code.function` | 9 | `crates/robby-render/src/view/externals.rs:72:1` |
-| [`import_spec`](import-spec.md) | `code.function` | 4 | `crates/robby-render/src/view/externals.rs:81:1` |
-| [`owning_container_fqn`](owning-container-fqn.md) | `code.function` | 11 | `crates/robby-render/src/view/externals.rs:86:1` |
+| [`is_external_package`](is-external-package.md) | `code.function` | 8 | `crates/robby-render/src/view/externals.rs:72:1` |
+| [`import_spec`](import-spec.md) | `code.function` | 4 | `crates/robby-render/src/view/externals.rs:85:1` |
+| [`owning_container_fqn`](owning-container-fqn.md) | `code.function` | 11 | `crates/robby-render/src/view/externals.rs:90:1` |
 
 ## Imports
 

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn module_pages(     doc: &Document,     node: &Node,     crate_dir: &str,     pages: &mut Vec<Page>,     sources: Option<&BTreeMap<String, String>>,     out_rel: &str, )` |
-| location | [`crates/robby-render/src/tree.rs:66`](../../../../crates/robby-render/src/tree.rs#L66) |
+| location | [`crates/robby-render/src/tree.rs:62`](../../../../crates/robby-render/src/tree.rs#L62) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -32,14 +32,18 @@ fn module_pages(
     let slugs = item_slugs(&items);
 
     for child in &node.children {
-        let Some(child) = doc.get(child) else { continue };
+        let Some(child) = doc.get(child) else {
+            continue;
+        };
         if is_module(child) {
             module_pages(doc, child, crate_dir, pages, sources, out_rel);
         }
     }
 
     for item in items {
-        let Some(slug) = slugs.get(&item.id) else { continue };
+        let Some(slug) = slugs.get(&item.id) else {
+            continue;
+        };
         let path = module_dir.join(format!("{slug}.md"));
         pages.push(Page {
             path: path.clone(),

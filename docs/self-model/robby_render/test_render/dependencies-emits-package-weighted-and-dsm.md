@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn dependencies_emits_package_weighted_and_dsm()` |
-| location | [`crates/robby-render/tests/render.rs:166`](../../../../crates/robby-render/tests/render.rs#L166) |
+| location | [`crates/robby-render/tests/render.rs:169`](../../../../crates/robby-render/tests/render.rs#L169) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -19,12 +19,19 @@ fn dependencies_emits_package_weighted_and_dsm() {
     doc.insert(krate);
 
     // Third arg is FQN (name is derived); mirror extractor shape.
-    let mut left = Node::new(NodeId::symbol("rust", "demo::left"), code::MODULE, "demo::left");
+    let mut left = Node::new(
+        NodeId::symbol("rust", "demo::left"),
+        code::MODULE,
+        "demo::left",
+    );
     left.parent = Some(NodeId::from("rust://demo"));
     doc.insert(left);
 
-    let mut right =
-        Node::new(NodeId::symbol("rust", "demo::right"), code::MODULE, "demo::right");
+    let mut right = Node::new(
+        NodeId::symbol("rust", "demo::right"),
+        code::MODULE,
+        "demo::right",
+    );
     right.parent = Some(NodeId::from("rust://demo"));
     doc.insert(right);
 
@@ -50,26 +57,11 @@ fn dependencies_emits_package_weighted_and_dsm() {
         "demo::right::b",
     );
     b.parent = Some(NodeId::symbol("rust", "demo::right"));
-    b.edges
-        .push(Edge::new(NodeId::symbol("rust", "demo::left::a"), EdgeKind::Calls));
+    b.edges.push(Edge::new(
+        NodeId::symbol("rust", "demo::left::a"),
+        EdgeKind::Calls,
+    ));
     doc.insert(b);
-
-    // Keep parent→child links consistent with how the extractor builds the tree.
-    if let Some(krate) = doc.nodes.get_mut(&NodeId::from("rust://demo")) {
-        krate.children = vec![
-            NodeId::symbol("rust", "demo::left"),
-            NodeId::symbol("rust", "demo::right"),
-        ];
-    }
-    if let Some(left) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::left")) {
-        left.children = vec![
-            NodeId::symbol("rust", "demo::left::Point"),
-            NodeId::symbol("rust", "demo::left::a"),
-        ];
-    }
-    if let Some(right) = doc.nodes.get_mut(&NodeId::symbol("rust", "demo::right")) {
-        right.children = vec![NodeId::symbol("rust", "demo::right::b")];
-    }
 
     let out = dependencies(&doc, &NodeId::from("rust://demo"));
 
@@ -81,13 +73,16 @@ fn dependencies_emits_package_weighted_and_dsm() {
         !out.contains("Point"),
         "types belong in the class diagram, not module deps"
     );
-    assert!(!out.contains("[\"a\"]"), "functions stay out of the package diagram");
+    assert!(
+        !out.contains("[\"a\"]"),
+        "functions stay out of the package diagram"
+    );
 
     let coupled = coupling(&doc, &NodeId::from("rust://demo"));
     assert!(coupled.starts_with("flowchart TB\n"));
     assert!(coupled.contains("subgraph"), "coupling nests modules");
-    assert!(coupled.contains("a"), "coupling shows callee");
-    assert!(coupled.contains("b"), "coupling shows caller");
+    assert!(coupled.contains('a'), "coupling shows callee");
+    assert!(coupled.contains('b'), "coupling shows caller");
     assert!(coupled.contains("-->"), "coupling draws the call edge");
     assert!(!coupled.contains("Point"), "types stay out of coupling");
 
@@ -117,7 +112,6 @@ sequenceDiagram
     participant Some as Some
     participant Edge__new as Edge::new
     participant push as push
-    participant get_mut as get_mut
     participant dependencies as dependencies
     participant coupling as coupling
     participant class_diagram as class_diagram
@@ -128,12 +122,12 @@ sequenceDiagram
     dependencies_emits_package_weighted_and_dsm-->>Kind__from: Kind::from(code::CRATE)
     dependencies_emits_package_weighted_and_dsm-->>insert: doc.insert(krate)
     dependencies_emits_package_weighted_and_dsm-->>NodeId__symbol: NodeId::symbol('rust', 'demo::left')
-    dependencies_emits_package_weighted_and_dsm-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::left'), code::MODULE, 'demo::...
+    dependencies_emits_package_weighted_and_dsm-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::left'), code::MODULE, 'demo:...
     dependencies_emits_package_weighted_and_dsm-->>NodeId__from: NodeId::from('rust://demo')
     dependencies_emits_package_weighted_and_dsm-->>Some: Some(NodeId::from('rust://demo'))
     dependencies_emits_package_weighted_and_dsm-->>insert: doc.insert(left)
     dependencies_emits_package_weighted_and_dsm-->>NodeId__symbol: NodeId::symbol('rust', 'demo::right')
-    dependencies_emits_package_weighted_and_dsm-->>Node__new: Node::new(NodeId::symbol('rust', 'demo::right'), code::MODULE, 'demo:...
+    dependencies_emits_package_weighted_and_dsm-->>Node__new: Node::new( NodeId::symbol('rust', 'demo::right'), code::MODULE, 'demo...
     dependencies_emits_package_weighted_and_dsm-->>NodeId__from: NodeId::from('rust://demo')
     dependencies_emits_package_weighted_and_dsm-->>Some: Some(NodeId::from('rust://demo'))
     dependencies_emits_package_weighted_and_dsm-->>insert: doc.insert(right)
@@ -152,24 +146,9 @@ sequenceDiagram
     dependencies_emits_package_weighted_and_dsm-->>NodeId__symbol: NodeId::symbol('rust', 'demo::right')
     dependencies_emits_package_weighted_and_dsm-->>Some: Some(NodeId::symbol('rust', 'demo::right'))
     dependencies_emits_package_weighted_and_dsm-->>NodeId__symbol: NodeId::symbol('rust', 'demo::left::a')
-    dependencies_emits_package_weighted_and_dsm-->>Edge__new: Edge::new(NodeId::symbol('rust', 'demo::left::a'), EdgeKind::Calls)
-    dependencies_emits_package_weighted_and_dsm-->>push: b.edges .push(Edge::new(NodeId::symbol('rust', 'demo::left::a'), Edge...
+    dependencies_emits_package_weighted_and_dsm-->>Edge__new: Edge::new( NodeId::symbol('rust', 'demo::left::a'), EdgeKind::Calls, )
+    dependencies_emits_package_weighted_and_dsm-->>push: b.edges.push(Edge::new( NodeId::symbol('rust', 'demo::left::a'), Edge...
     dependencies_emits_package_weighted_and_dsm-->>insert: doc.insert(b)
-    dependencies_emits_package_weighted_and_dsm-->>NodeId__from: NodeId::from('rust://demo')
-    dependencies_emits_package_weighted_and_dsm-->>get_mut: doc.nodes.get_mut(&NodeId::from('rust://demo'))
-    alt let Some(krate) = doc.nodes.get_mut(&NodeId::from('rust://demo'))
-    dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: vec![ NodeId::symbol('rust', 'demo::left'), NodeId::symbol('rust', 'd...
-    end
-    dependencies_emits_package_weighted_and_dsm-->>NodeId__symbol: NodeId::symbol('rust', 'demo::left')
-    dependencies_emits_package_weighted_and_dsm-->>get_mut: doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::left'))
-    alt let Some(left) = doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::lef...
-    dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: vec![ NodeId::symbol('rust', 'demo::left::Point'), NodeId::symbol('ru...
-    end
-    dependencies_emits_package_weighted_and_dsm-->>NodeId__symbol: NodeId::symbol('rust', 'demo::right')
-    dependencies_emits_package_weighted_and_dsm-->>get_mut: doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::right'))
-    alt let Some(right) = doc.nodes.get_mut(&NodeId::symbol('rust', 'demo::ri...
-    dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: vec![NodeId::symbol('rust', 'demo::right::b')]
-    end
     dependencies_emits_package_weighted_and_dsm-->>NodeId__from: NodeId::from('rust://demo')
     dependencies_emits_package_weighted_and_dsm-->>dependencies: dependencies(&doc, &NodeId::from('rust://demo'))
     dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!(out.starts_with('flowchart TB\n'))
@@ -177,7 +156,7 @@ sequenceDiagram
     dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!(out.contains('left'), 'package digraph names modules')
     dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!(out.contains('right'), 'package digraph names modules')
     dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!( !out.contains('Point'), 'types belong in the class diagram, ...
-    dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!(!out.contains('[\'a\']'), 'functions stay out of the package ...
+    dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!( !out.contains('[\'a\']'), 'functions stay out of the package...
     dependencies_emits_package_weighted_and_dsm-->>NodeId__from: NodeId::from('rust://demo')
     dependencies_emits_package_weighted_and_dsm-->>coupling: coupling(&doc, &NodeId::from('rust://demo'))
     dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!(coupled.starts_with('flowchart TB\n'))
@@ -198,7 +177,7 @@ sequenceDiagram
     dependencies_emits_package_weighted_and_dsm-->>dependencies_emits_package_weighted_and_dsm: assert!(!workspace.contains('Point'))
 ```
 
-68 steps · 0 observed · 68 possible only
+59 steps · 0 observed · 59 possible only
 
 **Edges**
 
@@ -230,9 +209,6 @@ sequenceDiagram
 - calls → [`robby_render::report::impl Report::new`](../report/index.md)
 - calls → [`robby_render::report::impl Report::push`](../report/index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
-- calls → [`robby_ir::model::impl NodeId::symbol`](../../robby_ir/model/index.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)
 - calls → [`robby_render::dependencies`](../dependencies.md)
 - calls → [`robby_ir::kind::impl From<&str> for Kind::from`](../../robby_ir/kind/index.md)

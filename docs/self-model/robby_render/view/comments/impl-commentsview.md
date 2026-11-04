@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | kind | `code.impl` |
-| location | [`crates/robby-render/src/view/comments.rs:45`](../../../../../crates/robby-render/src/view/comments.rs#L45) |
+| location | [`crates/robby-render/src/view/comments.rs:33`](../../../../../crates/robby-render/src/view/comments.rs#L33) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -26,7 +26,11 @@ impl CommentsView {
             if text.is_empty() {
                 continue;
             }
-            let kind = match node.annotations.get("comment_kind").map(|s| s.as_str()) {
+            let kind = match node
+                .annotations
+                .get("comment_kind")
+                .map(std::string::String::as_str)
+            {
                 Some("line") => CommentKind::Line,
                 _ => CommentKind::Block,
             };
@@ -38,11 +42,11 @@ impl CommentsView {
             }
             let owner = nearest_following_item(doc, node);
             let code = sources.and_then(|s| code_window(s, node, owner));
-            let (note_kind, note, highlights) = decision
-                .map(|d| enrichment_fields(d, code.as_deref()))
-                .unwrap_or((None, None, Vec::new()));
+            let (note_kind, note, highlights) = decision.map_or((None, None, Vec::new()), |d| {
+                enrichment_fields(d, code.as_deref())
+            });
             entries.push(CommentEntry {
-                location: node.span.as_ref().map(|s| s.location()),
+                location: node.span.as_ref().map(robby_ir::Span::location),
                 kind,
                 text,
                 owner_fqn: owner.map(|n| n.fqn.clone()),
@@ -70,11 +74,11 @@ impl CommentsView {
                 continue;
             }
             let code = sources.and_then(|s| slice_node(s, node));
-            let (note_kind, note, highlights) = decision
-                .map(|d| enrichment_fields(d, code.as_deref()))
-                .unwrap_or((None, None, Vec::new()));
+            let (note_kind, note, highlights) = decision.map_or((None, None, Vec::new()), |d| {
+                enrichment_fields(d, code.as_deref())
+            });
             entries.push(CommentEntry {
-                location: node.span.as_ref().map(|s| s.location()),
+                location: node.span.as_ref().map(robby_ir::Span::location),
                 kind: CommentKind::Docs,
                 text: docs.clone(),
                 owner_fqn: Some(node.fqn.clone()),
@@ -110,7 +114,6 @@ impl CommentsView {
 ## References
 
 - calls → [`robby_ir::model`](../../../robby_ir/model/index.md) — get, insert, subtree
-- calls → [`robby_ir::span`](../../../robby_ir/span/index.md) — location
 - calls → [`robby_render::report`](../../report/index.md) — push
 - calls → [`robby_render::view::comments`](index.md) — 6 items
 - calls → [`robby_render::view::scene`](../scene/index.md) — contains, new
@@ -126,7 +129,7 @@ impl CommentsView {
 |---|---|
 | kind | `code.method` |
 | signature | `fn from_root(3)` |
-| location | [`crates/robby-render/src/view/comments.rs:46`](../../../../../crates/robby-render/src/view/comments.rs#L46) |
+| location | [`crates/robby-render/src/view/comments.rs:34`](../../../../../crates/robby-render/src/view/comments.rs#L34) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -146,7 +149,11 @@ pub fn from_root(
             if text.is_empty() {
                 continue;
             }
-            let kind = match node.annotations.get("comment_kind").map(|s| s.as_str()) {
+            let kind = match node
+                .annotations
+                .get("comment_kind")
+                .map(std::string::String::as_str)
+            {
                 Some("line") => CommentKind::Line,
                 _ => CommentKind::Block,
             };
@@ -158,11 +165,11 @@ pub fn from_root(
             }
             let owner = nearest_following_item(doc, node);
             let code = sources.and_then(|s| code_window(s, node, owner));
-            let (note_kind, note, highlights) = decision
-                .map(|d| enrichment_fields(d, code.as_deref()))
-                .unwrap_or((None, None, Vec::new()));
+            let (note_kind, note, highlights) = decision.map_or((None, None, Vec::new()), |d| {
+                enrichment_fields(d, code.as_deref())
+            });
             entries.push(CommentEntry {
-                location: node.span.as_ref().map(|s| s.location()),
+                location: node.span.as_ref().map(robby_ir::Span::location),
                 kind,
                 text,
                 owner_fqn: owner.map(|n| n.fqn.clone()),
@@ -190,11 +197,11 @@ pub fn from_root(
                 continue;
             }
             let code = sources.and_then(|s| slice_node(s, node));
-            let (note_kind, note, highlights) = decision
-                .map(|d| enrichment_fields(d, code.as_deref()))
-                .unwrap_or((None, None, Vec::new()));
+            let (note_kind, note, highlights) = decision.map_or((None, None, Vec::new()), |d| {
+                enrichment_fields(d, code.as_deref())
+            });
             entries.push(CommentEntry {
-                location: node.span.as_ref().map(|s| s.location()),
+                location: node.span.as_ref().map(robby_ir::Span::location),
                 kind: CommentKind::Docs,
                 text: docs.clone(),
                 owner_fqn: Some(node.fqn.clone()),
@@ -243,12 +250,12 @@ sequenceDiagram
     participant code_window as code_window
     participant as_deref as as_deref
     participant enrichment_fields as enrichment_fields
-    participant unwrap_or as unwrap_or
+    participant map_or as map_or
     participant as_ref as as_ref
-    participant location as location
     participant push as push
     participant contains as contains
     participant slice_node as slice_node
+    participant unwrap_or as unwrap_or
     participant cmp as cmp
     participant sort_by as sort_by
     from_root-->>Vec__new: Vec::new()
@@ -259,9 +266,8 @@ sequenceDiagram
     from_root-->>clone: node.docs.clone()
     from_root-->>unwrap_or_default: node.docs.clone().unwrap_or_default()
     from_root-->>is_empty: text.is_empty()
-    from_root-->>get: node.annotations.get('comment_kind')
-    from_root-->>as_str: s.as_str()
-    from_root-->>map: node.annotations.get('comment_kind').map(|s| s.as_str())
+    from_root-->>get: node .annotations .get('comment_kind')
+    from_root-->>map: node .annotations .get('comment_kind') .map(std::string::String::as_str)
     from_root-->>clone: text.clone()
     from_root-->>insert: covered_docs.insert(text.clone())
     from_root-->>decision_child: decision_child(doc, node)
@@ -270,17 +276,15 @@ sequenceDiagram
     from_root-->>nearest_following_item: nearest_following_item(doc, node)
     from_root-->>code_window: code_window(s, node, owner)
     from_root-->>and_then: sources.and_then(|s| code_window(s, node, owner))
+    from_root-->>Vec__new: Vec::new()
     from_root-->>as_deref: code.as_deref()
     from_root-->>enrichment_fields: enrichment_fields(d, code.as_deref())
-    from_root-->>map: decision .map(|d| enrichment_fields(d, code.as_deref()))
-    from_root-->>Vec__new: Vec::new()
-    from_root-->>unwrap_or: decision .map(|d| enrichment_fields(d, code.as_deref())) .unwrap_or((...
+    from_root-->>map_or: decision.map_or((None, None, Vec::new()), |d| { enrichment_fields(d, ...
     from_root-->>as_ref: node.span.as_ref()
-    from_root-->>location: s.location()
-    from_root-->>map: node.span.as_ref().map(|s| s.location())
+    from_root-->>map: node.span.as_ref().map(robby_ir::Span::location)
     from_root-->>clone: n.fqn.clone()
     from_root-->>map: owner.map(|n| n.fqn.clone())
-    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(|s| s.lo...
+    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(robby_ir...
     end
     from_root-->>subtree: doc.subtree(root)
     loop doc.subtree(root)
@@ -292,18 +296,16 @@ sequenceDiagram
     from_root-->>Some: Some(Verdict::Noise)
     from_root-->>slice_node: slice_node(s, node)
     from_root-->>and_then: sources.and_then(|s| slice_node(s, node))
+    from_root-->>Vec__new: Vec::new()
     from_root-->>as_deref: code.as_deref()
     from_root-->>enrichment_fields: enrichment_fields(d, code.as_deref())
-    from_root-->>map: decision .map(|d| enrichment_fields(d, code.as_deref()))
-    from_root-->>Vec__new: Vec::new()
-    from_root-->>unwrap_or: decision .map(|d| enrichment_fields(d, code.as_deref())) .unwrap_or((...
+    from_root-->>map_or: decision.map_or((None, None, Vec::new()), |d| { enrichment_fields(d, ...
     from_root-->>as_ref: node.span.as_ref()
-    from_root-->>location: s.location()
-    from_root-->>map: node.span.as_ref().map(|s| s.location())
+    from_root-->>map: node.span.as_ref().map(robby_ir::Span::location)
     from_root-->>clone: docs.clone()
     from_root-->>clone: node.fqn.clone()
     from_root-->>Some: Some(node.fqn.clone())
-    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(|s| s.lo...
+    from_root-->>push: entries.push(CommentEntry { location: node.span.as_ref().map(robby_ir...
     end
     from_root-->>as_deref: a.location.as_deref()
     from_root-->>unwrap_or: a.location.as_deref().unwrap_or('')
@@ -319,37 +321,34 @@ sequenceDiagram
     from_root-->>sort_by: entries.sort_by(|a, b| { ( a.location.as_deref().unwrap_or(''), a.own...
 ```
 
-62 steps · 0 observed · 62 possible only
+57 steps · 0 observed · 57 possible only
 
 **Edges**
 
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](index.md)
 - calls → [`robby_render::view::comments::impl CommentsView::is_empty`](index.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](index.md)
 - calls → [`robby_ir::model::impl Document::insert`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::comments::decision_child`](decision-child.md)
 - calls → [`robby_render::view::comments::nearest_following_item`](nearest-following-item.md)
 - calls → [`robby_render::view::comments::code_window`](code-window.md)
-- calls → [`robby_render::view::comments::enrichment_fields`](enrichment-fields.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
-- calls → [`robby_ir::span::impl Span::location`](../../../robby_ir/span/index.md)
+- calls → [`robby_render::view::comments::enrichment_fields`](enrichment-fields.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](index.md)
 - calls → [`robby_render::view::comments::impl CommentsView::is_empty`](index.md)
 - calls → [`robby_render::view::scene::impl WorldRect::contains`](../scene/index.md)
 - calls → [`robby_render::view::comments::decision_child`](decision-child.md)
 - calls → [`robby_render::view::comments::slice_node`](slice-node.md)
-- calls → [`robby_render::view::comments::enrichment_fields`](enrichment-fields.md)
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
-- calls → [`robby_ir::span::impl Span::location`](../../../robby_ir/span/index.md)
+- calls → [`robby_render::view::comments::enrichment_fields`](enrichment-fields.md)
 - calls → [`robby_render::report::impl Report::push`](../../report/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](index.md)
 
 ### `is_empty`
 
@@ -357,7 +356,7 @@ sequenceDiagram
 |---|---|
 | kind | `code.method` |
 | signature | `fn is_empty(1)` |
-| location | [`crates/robby-render/src/view/comments.rs:137`](../../../../../crates/robby-render/src/view/comments.rs#L137) |
+| location | [`crates/robby-render/src/view/comments.rs:129`](../../../../../crates/robby-render/src/view/comments.rs#L129) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

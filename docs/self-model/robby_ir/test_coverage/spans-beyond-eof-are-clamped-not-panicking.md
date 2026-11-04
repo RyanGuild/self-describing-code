@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn spans_beyond_eof_are_clamped_not_panicking()` |
-| location | [`crates/robby-ir/tests/coverage.rs:99`](../../../../crates/robby-ir/tests/coverage.rs#L99) |
+| location | [`crates/robby-ir/tests/coverage.rs:100`](../../../../crates/robby-ir/tests/coverage.rs#L100) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn crate_index_path(crate_dir: &str) -> PathBuf` |
-| location | [`crates/robby-render/src/tree.rs:711`](../../../../crates/robby-render/src/tree.rs#L711) |
+| location | [`crates/robby-render/src/tree.rs:704`](../../../../crates/robby-render/src/tree.rs#L704) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust

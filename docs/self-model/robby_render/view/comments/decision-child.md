@@ -6,7 +6,7 @@
 |---|---|
 | kind | `code.function` |
 | signature | `fn decision_child<'a>(doc: &'a Document, node: &Node) -> Option<&'a Node>` |
-| location | [`crates/robby-render/src/view/comments.rs:168`](../../../../../crates/robby-render/src/view/comments.rs#L168) |
+| location | [`crates/robby-render/src/view/comments.rs:144`](../../../../../crates/robby-render/src/view/comments.rs#L144) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
@@ -40,7 +40,7 @@ sequenceDiagram
 **Edges**
 
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](index.md)
 
 ## References
 

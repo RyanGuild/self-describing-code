@@ -5,11 +5,11 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| location | [`apps/site/src/viewer.ts:205`](../../../../../apps/site/src/viewer.ts#L205) |
+| location | [`apps/site/src/viewer.ts:197`](../../../../../apps/site/src/viewer.ts#L197) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-function cameraForFocus(id: string): Camera {
+function cameraForFocus(id: string) {
   const f = frame(id);
   const vw = window.innerWidth;
   const vh = window.innerHeight;

@@ -188,7 +188,7 @@ sequenceDiagram
 
 - calls → [`robby_render::view::scene::impl Rect::new`](../scene/index.md)
 - calls → [`robby_ir::model::impl Document::subtree`](../../../robby_ir/model/index.md)
-- calls → [`robby_render::view::comments::impl NoteKind::as_str`](../comments/index.md)
+- calls → [`robby_render::view::comments::impl CommentKind::as_str`](../comments/index.md)
 - calls → [`robby_render::view::externals::import_spec`](import-spec.md)
 - calls → [`robby_ir::model::impl Document::get`](../../../robby_ir/model/index.md)
 - calls → [`robby_render::view::externals::is_external_package`](is-external-package.md)

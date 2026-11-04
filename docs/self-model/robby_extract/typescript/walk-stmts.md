@@ -5,13 +5,13 @@
 | | |
 |---|---|
 | kind | `code.function` |
-| signature | `fn walk_stmts<'a>(     stmts: &[Statement<'a>],     process: &mut Process,     frames: &[Block],     pending: &mut Vec<PendingCall>,     from: &NodeId,     ctx: &Ctx<'_>, )` |
-| location | [`crates/robby-extract/src/typescript.rs:764`](../../../../crates/robby-extract/src/typescript.rs#L764) |
+| signature | `fn walk_stmts(     stmts: &[Statement<'_>],     process: &mut Process,     frames: &[Block],     pending: &mut Vec<PendingCall>,     from: &NodeId,     ctx: &Ctx<'_>, )` |
+| location | [`crates/robby-extract/src/typescript.rs:750`](../../../../crates/robby-extract/src/typescript.rs#L750) |
 | provenance | extractor · confidence 1.00 |
 
 ```rust
-fn walk_stmts<'a>(
-    stmts: &[Statement<'a>],
+fn walk_stmts(
+    stmts: &[Statement<'_>],
     process: &mut Process,
     frames: &[Block],
     pending: &mut Vec<PendingCall>,
