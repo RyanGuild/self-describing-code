@@ -18,6 +18,8 @@
 import {
   catalogSeedRows,
   companionStatKeys,
+  expandFilesystemRows,
+  fsScopeFor,
   isPrimaryMetricStatKey,
   type MetricObservation,
   type MetricRow,
@@ -28,6 +30,7 @@ import {
   normalizePathHint,
   parseMetricProduct,
   primaryMetricIdFromStatKey,
+  type SourceFileInventory,
   sortMetricRows,
 } from "./metricsCatalog";
 import {
@@ -192,7 +195,7 @@ interface RunRecord {
 
 const HINT_RUNS = "pipeline + cursor.cloud + reviews · Allow/Cancel review_view · live rows poll";
 const HINT_METRICS =
-  "improvement metrics · click a row for calculation · sort by type or filesystem";
+  "improvement metrics · by filesystem shows which metrics apply to which source files";
 const WATCH_POLL_MS = 1500;
 const RUNS_POLL_MS = 2000;
 
@@ -233,6 +236,8 @@ let runsFilter: RunsFilter = "all";
 let lastRunsIndexJson = "";
 let metricsSort: MetricsSort = "type";
 let metricsRows: MetricRow[] = [];
+let metricsDisplayRows: MetricRow[] = [];
+let metricsFileInventory: SourceFileInventory[] = [];
 let metricsLoaded = false;
 let selectedMetricKey: string | null = null;
 const cancelCooldownUntil = new Map<string, number>();
@@ -682,12 +687,14 @@ async function showMetricsPanel(): Promise<void> {
   syncOrgChrome("metrics");
   crumbEl.textContent = "Metrics";
   if (!metricsLoaded) {
-    metricsRows = await collectMetricRows();
+    const [rows, files] = await Promise.all([collectMetricRows(), loadMetricFileInventory()]);
+    metricsRows = rows;
+    metricsFileInventory = files;
     metricsLoaded = true;
   }
   renderMetricsTable();
   if (selectedMetricKey) {
-    const still = metricsRows.find((r) => metricRowKey(r) === selectedMetricKey);
+    const still = metricsDisplayRows.find((r) => metricRowKey(r) === selectedMetricKey);
     if (still) {
       void selectMetricRow(still);
     } else {
@@ -707,8 +714,10 @@ function initMetricsSort(): void {
         return;
       }
       metricsSort = sort;
+      selectedMetricKey = null;
       syncMetricsSortButtons();
       renderMetricsTable();
+      renderMetricDetailPlaceholder();
     });
   }
 }
@@ -719,30 +728,79 @@ function syncMetricsSortButtons(): void {
   }
 }
 
+async function loadMetricFileInventory(): Promise<SourceFileInventory[]> {
+  try {
+    const fromApi = await fetchJson<{ files: SourceFileInventory[] }>(
+      `/api/metric-files?t=${Date.now()}`,
+    );
+    if (Array.isArray(fromApi.files) && fromApi.files.length > 0) {
+      return fromApi.files;
+    }
+  } catch {
+    // static files.json from robby web
+  }
+  try {
+    const fromSite = await fetchJson<{ files: SourceFileInventory[] }>(
+      `files.json?t=${Date.now()}`,
+    );
+    if (Array.isArray(fromSite.files)) {
+      return fromSite.files;
+    }
+  } catch {
+    // empty inventory — filesystem view still shows workspace/runs buckets
+  }
+  return [];
+}
+
 function renderMetricsTable(): void {
-  const sorted = sortMetricRows(metricsRows, metricsSort);
+  metricsDisplayRows =
+    metricsSort === "path"
+      ? expandFilesystemRows(metricsRows, metricsFileInventory)
+      : sortMetricRows(metricsRows, "type");
+  const sorted = metricsDisplayRows;
   const scored = sorted.filter((r) => r.score !== null).length;
-  metricsSummaryEl.textContent = `${sorted.length} metrics · ${scored} scored · sort ${
-    metricsSort === "path" ? "filesystem" : "type"
-  } · click a row for calculation`;
+  const fileCount = metricsFileInventory.length;
+  metricsSummaryEl.textContent =
+    metricsSort === "path"
+      ? `${sorted.length} metric×file rows · ${fileCount} source files · click for calculation`
+      : `${sorted.length} metrics · ${scored} scored · by type · click for calculation`;
   metricsTbodyEl.replaceChildren();
   if (sorted.length === 0) {
     const tr = document.createElement("tr");
     tr.className = "metrics-empty";
     const td = document.createElement("td");
     td.colSpan = 6;
-    td.textContent = "No metrics in catalog or runs yet.";
+    td.textContent =
+      metricsSort === "path"
+        ? "No source-file inventory yet — run robby web or open Metrics with the Vite API."
+        : "No metrics in catalog or runs yet.";
     tr.appendChild(td);
     metricsTbodyEl.appendChild(tr);
     return;
   }
+  let lastPath = "\0";
   for (const row of sorted) {
+    if (metricsSort === "path" && row.path !== lastPath) {
+      lastPath = row.path;
+      const group = document.createElement("tr");
+      group.className = "metrics-path-group";
+      const td = document.createElement("td");
+      td.colSpan = 6;
+      td.textContent = row.path || "(no path)";
+      group.appendChild(td);
+      metricsTbodyEl.appendChild(group);
+    }
     const key = metricRowKey(row);
     const tr = document.createElement("tr");
     tr.tabIndex = 0;
     tr.dataset.metricKey = key;
     tr.setAttribute("role", "button");
-    tr.setAttribute("aria-label", `Show calculation for ${row.id}`);
+    tr.setAttribute(
+      "aria-label",
+      metricsSort === "path"
+        ? `${row.id} on ${row.path || "workspace"}`
+        : `Show calculation for ${row.id}`,
+    );
     if (key === selectedMetricKey) {
       tr.classList.add("is-selected");
     }
@@ -829,6 +887,29 @@ async function renderMetricDetail(row: MetricRow): Promise<void> {
   }
   if (row.runId) {
     pairs.push(["Run", row.runId]);
+  }
+  const scope = fsScopeFor(row.id);
+  const applies: string[] = [];
+  if (scope.workspace) {
+    applies.push("workspace");
+  }
+  if (scope.anyFile) {
+    applies.push("any source file");
+  }
+  if (scope.kinds?.length) {
+    applies.push(`files with ${scope.kinds.join(" / ")}`);
+  }
+  if (scope.runs) {
+    applies.push("runs / reviews");
+  }
+  if (scope.productPaths?.length) {
+    applies.push(...scope.productPaths);
+  }
+  if (applies.length) {
+    pairs.push(["Applies to", applies.join(" · ")]);
+  }
+  if (row.path && row.path !== "(workspace)" && row.path !== "(runs)") {
+    pairs.push(["This row", row.path]);
   }
   for (const [k, v] of pairs) {
     const dt = document.createElement("dt");

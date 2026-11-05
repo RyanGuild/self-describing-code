@@ -233,5 +233,42 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
     // Recipe catalog for Runs / pipeline HUD (same shape as schema/pipelines.json).
     fs::write(out.join("pipelines.json"), robby_ir::pipelines_json())?;
 
+    // Source-file inventory for Metrics "By filesystem" (path → kind tags present).
+    fs::write(out.join("files.json"), files_inventory_json(doc))?;
+
     Ok(count)
+}
+
+/// Compact `{ "files": [ { "path", "kinds" } ] }` for Metrics filesystem scope.
+fn files_inventory_json(doc: &Document) -> String {
+    let mut by_file: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for node in doc.nodes.values() {
+        let Some(span) = node.span.as_ref() else {
+            continue;
+        };
+        if span.file.is_empty() {
+            continue;
+        }
+        let kind = node.kind.as_str();
+        let tag = kind
+            .strip_prefix("code.")
+            .or_else(|| kind.strip_prefix("agent."))
+            .or_else(|| kind.strip_prefix("runtime."))
+            .unwrap_or(kind);
+        by_file
+            .entry(span.file.clone())
+            .or_default()
+            .insert(tag.to_owned());
+    }
+    let files: Vec<serde_json::Value> = by_file
+        .into_iter()
+        .map(|(path, kinds)| {
+            serde_json::json!({
+                "path": path,
+                "kinds": kinds.into_iter().collect::<Vec<_>>(),
+            })
+        })
+        .collect();
+    serde_json::to_string_pretty(&serde_json::json!({ "files": files }))
+        .unwrap_or_else(|_| "{\"files\":[]}".to_owned())
 }

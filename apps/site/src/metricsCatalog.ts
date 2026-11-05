@@ -38,6 +38,26 @@ export interface MetricCatalogEntry {
   subject?: string | undefined;
 }
 
+/** Where a metric can be applied for the filesystem view. */
+export interface MetricFsScope {
+  /** Document / workspace-wide (shown under `(workspace)`). */
+  workspace?: boolean;
+  /** Run / review products (shown under `(runs)` unless productPaths set). */
+  runs?: boolean;
+  /** Applies to every extracted source file. */
+  anyFile?: boolean;
+  /** Applies to source files that contain at least one of these kind tags. */
+  kinds?: readonly string[];
+  /** Explicit product/filesystem paths (e.g. runs/). */
+  productPaths?: readonly string[];
+}
+
+/** One source file from IR / frame inventory. */
+export interface SourceFileInventory {
+  path: string;
+  kinds: string[];
+}
+
 export interface MetricRow {
   id: string;
   type: string;
@@ -310,6 +330,126 @@ export type MetricsSort = "type" | "path";
 
 export function catalogEntry(id: string): MetricCatalogEntry | undefined {
   return CATALOG_BY_ID.get(id);
+}
+
+/** Filesystem applicability derived from catalog family / attachment. */
+export function fsScopeFor(id: string): MetricFsScope {
+  const e = CATALOG_BY_ID.get(id);
+  if (!e) {
+    return { anyFile: true };
+  }
+  switch (e.type) {
+    case "doc":
+      return { workspace: true };
+    case "file":
+      return { anyFile: true };
+    case "module":
+      return { kinds: ["module", "crate", "package"] };
+    case "type":
+      return {
+        kinds: ["struct", "enum", "trait", "interface", "impl", "type_alias", "class", "union"],
+      };
+    case "fn":
+      return { kinds: ["function", "method", "macro"] };
+    case "edge":
+      // Document-wide, and per-node when scoped to a subject in a file.
+      return { workspace: true, anyFile: true };
+    case "process":
+      return { kinds: ["function", "method"] };
+    case "path":
+      return { workspace: true };
+    case "comment":
+      return { anyFile: true };
+    case "agent":
+      return { runs: true };
+    case "ui":
+      return {
+        runs: true,
+        productPaths: e.path ? [e.path] : ["apps/site/public/runs"],
+      };
+    case "prov":
+      return { anyFile: true };
+    default:
+      return { anyFile: true };
+  }
+}
+
+export function metricAppliesToFile(metricId: string, file: SourceFileInventory): boolean {
+  const scope = fsScopeFor(metricId);
+  if (scope.anyFile) {
+    return true;
+  }
+  if (scope.kinds?.some((k) => file.kinds.includes(k))) {
+    return true;
+  }
+  if (scope.productPaths?.includes(file.path)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Expand catalog metrics into path × metric rows: which metrics can score
+ * which source files (plus workspace / runs buckets).
+ */
+export function expandFilesystemRows(
+  scoredRows: MetricRow[],
+  files: SourceFileInventory[],
+): MetricRow[] {
+  const scoreById = new Map<string, MetricRow>();
+  for (const row of scoredRows) {
+    const prev = scoreById.get(row.id);
+    if (!prev || (row.score !== null && prev.score === null)) {
+      scoreById.set(row.id, row);
+    }
+  }
+
+  const out: MetricRow[] = [];
+
+  const push = (entry: MetricCatalogEntry, path: string, subject: string): void => {
+    const scored = scoreById.get(entry.id);
+    out.push({
+      id: entry.id,
+      type: entry.type,
+      score: scored?.score ?? null,
+      direction: entry.direction,
+      subject,
+      path,
+      source: scored?.source ?? "catalog",
+      runId: scored?.runId,
+    });
+  };
+
+  for (const entry of METRIC_CATALOG) {
+    const scope = fsScopeFor(entry.id);
+    if (scope.workspace) {
+      push(entry, "(workspace)", "workspace");
+    }
+  }
+
+  const sortedFiles = [...files].sort((a, b) => a.path.localeCompare(b.path));
+  for (const file of sortedFiles) {
+    const kindLabel = file.kinds.length ? file.kinds.slice().sort().join(", ") : "file";
+    for (const entry of METRIC_CATALOG) {
+      if (!metricAppliesToFile(entry.id, file)) {
+        continue;
+      }
+      push(entry, file.path, kindLabel);
+    }
+  }
+
+  for (const entry of METRIC_CATALOG) {
+    const scope = fsScopeFor(entry.id);
+    if (scope.productPaths && scope.productPaths.length > 0) {
+      for (const productPath of scope.productPaths) {
+        push(entry, productPath, entry.subject ?? "product");
+      }
+    } else if (scope.runs) {
+      push(entry, "(runs)", entry.subject ?? "runs");
+    }
+  }
+
+  return sortMetricRows(out, "path");
 }
 
 /** Fallback detail text for ids discovered only from runs. */
