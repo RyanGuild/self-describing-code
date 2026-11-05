@@ -37,12 +37,12 @@ pub fn write_improve_run(
 ) -> Result<(RunRecord, PathBuf)> {
     let started = now_ms();
     let run_id = crate::runs::mint_run_id("improve");
-    fs::create_dir_all(patches_dir)
-        .with_context(|| format!("mkdir {}", patches_dir.display()))?;
+    fs::create_dir_all(patches_dir).with_context(|| format!("mkdir {}", patches_dir.display()))?;
     let rel_name = format!("{run_id}.propose.diff");
     let proposal_path = patches_dir.join(&rel_name);
     let body = format!("# {summary}\n\n{unified_diff}");
-    fs::write(&proposal_path, body).with_context(|| format!("write {}", proposal_path.display()))?;
+    fs::write(&proposal_path, body)
+        .with_context(|| format!("write {}", proposal_path.display()))?;
 
     let status = if unified_diff.trim().is_empty() {
         RunStatus::Fail
@@ -50,7 +50,11 @@ pub fn write_improve_run(
         RunStatus::Pass
     };
 
-    let mut record = RunRecord::new(run_id.clone(), RecipeId::from(recipes::IMPROVE_PATCH), status);
+    let mut record = RunRecord::new(
+        run_id.clone(),
+        RecipeId::from(recipes::IMPROVE_PATCH),
+        status,
+    );
     if let Some(subject) = subject {
         record.subject = Some(subject.to_owned());
     }
@@ -62,10 +66,9 @@ pub fn write_improve_run(
     record
         .stats
         .insert("improve_model".to_owned(), improve_model.to_owned());
-    record.stats.insert(
-        "metrics_targeted".to_owned(),
-        metrics_targeted.join(","),
-    );
+    record
+        .stats
+        .insert("metrics_targeted".to_owned(), metrics_targeted.join(","));
     record
         .stats
         .insert("mode".to_owned(), "propose_patch".to_owned());
@@ -106,15 +109,13 @@ pub fn write_integrate_run(
 ) -> Result<(RunRecord, Option<PathBuf>)> {
     let started = now_ms();
     let run_id = crate::runs::mint_run_id("integrate");
-    fs::create_dir_all(patches_dir)
-        .with_context(|| format!("mkdir {}", patches_dir.display()))?;
+    fs::create_dir_all(patches_dir).with_context(|| format!("mkdir {}", patches_dir.display()))?;
 
     let status = match verdict {
         "accept" | "revise" if integrated_diff.is_some_and(|d| !d.trim().is_empty()) => {
             RunStatus::Pass
         }
-        "reject" => RunStatus::Fail,
-        "accept" | "revise" => RunStatus::Fail,
+        "reject" | "accept" | "revise" => RunStatus::Fail,
         _ => RunStatus::Error,
     };
 
@@ -127,11 +128,7 @@ pub fn write_integrate_run(
         integrated_path = Some(path);
     }
 
-    let mut record = RunRecord::new(
-        run_id,
-        RecipeId::from(recipes::INTEGRATE_PATCH),
-        status,
-    );
+    let mut record = RunRecord::new(run_id, RecipeId::from(recipes::INTEGRATE_PATCH), status);
     if let Some(subject) = subject.or(improve_run.subject.as_deref()) {
         record.subject = Some(subject.to_owned());
     }
@@ -161,9 +158,7 @@ pub fn write_integrate_run(
     record
         .stats
         .insert("parent_run_id".to_owned(), improve_run.run_id.clone());
-    record
-        .products
-        .push(format!("run:{}", improve_run.run_id));
+    record.products.push(format!("run:{}", improve_run.run_id));
     record
         .products
         .push(format!("recipe:{}", recipes::INTEGRATE_PATCH));
@@ -228,9 +223,7 @@ pub fn spawn_improve_integrate(
     integrated_diff: Option<&str>,
 ) -> Result<ImproveLoopResult> {
     if improve_model.trim() == integrate_model.trim() {
-        bail!(
-            "improve_model and integrate_model must differ (got `{improve_model}`)"
-        );
+        bail!("improve_model and integrate_model must differ (got `{improve_model}`)");
     }
     let (improve, proposal_path) = write_improve_run(
         store,
@@ -271,9 +264,10 @@ fn display_patch_product(path: &Path) -> String {
     if let Some(idx) = s.find(".robby\\patches\\") {
         return s[idx..].replace('\\', "/");
     }
-    path.file_name()
-        .map(|n| format!(".robby/patches/{}", n.to_string_lossy()))
-        .unwrap_or_else(|| s.replace('\\', "/"))
+    path.file_name().map_or_else(
+        || s.replace('\\', "/"),
+        |n| format!(".robby/patches/{}", n.to_string_lossy()),
+    )
 }
 
 fn improve_process() -> Process {
@@ -341,9 +335,7 @@ mod tests {
         let (store, patches) = temp_store();
         let mut metric = RunRecord::new("metric-1", recipes::METRIC_TEST, RunStatus::Fail)
             .with_subject("rust://a");
-        metric
-            .products
-            .push("metric:edge.resolve_rate:0.5".into());
+        metric.products.push("metric:edge.resolve_rate:0.5".into());
         store.put(&metric).unwrap();
 
         let result = spawn_improve_integrate(

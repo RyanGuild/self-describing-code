@@ -21,9 +21,7 @@ pub use improve::{
     ImproveContext, ImproveModel, PatchFile, ProposedPatch, default_improve_model,
     default_integrate_model, ensure_distinct_models, stub_propose,
 };
-pub use integrate::{
-    IntegrateDecision, IntegrateModel, IntegrateVerdict, stub_integrate,
-};
+pub use integrate::{IntegrateDecision, IntegrateModel, IntegrateVerdict, stub_integrate};
 pub use model::{
     ChatClient, ChatMessage, DEFAULT_DECISION_MODEL, DEFAULT_IMPROVE_MODEL,
     DEFAULT_INTEGRATE_MODEL, DEFAULT_NOTE_MODEL, Decision, DecisionModel, Highlight, Note,

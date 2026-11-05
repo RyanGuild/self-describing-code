@@ -1,11 +1,11 @@
 //! `robby.improve_patch` — first model proposes a source patch for metrics.
 
+use std::fmt::Write as _;
+
 use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 
-use crate::model::{
-    ChatClient, ChatMessage, DEFAULT_IMPROVE_MODEL, DEFAULT_INTEGRATE_MODEL,
-};
+use crate::model::{ChatClient, ChatMessage, DEFAULT_IMPROVE_MODEL, DEFAULT_INTEGRATE_MODEL};
 
 /// Env / CLI defaults for the improve model (must differ from integrate).
 pub fn default_improve_model() -> String {
@@ -64,7 +64,7 @@ impl ProposedPatch {
     pub fn unified_diff_text(&self) -> String {
         let mut out = String::new();
         if !self.summary.is_empty() {
-            out.push_str(&format!("# {}\n\n", self.summary));
+            let _ = write!(out, "# {}\n\n", self.summary);
         }
         for file in &self.files {
             if !out.is_empty() && !out.ends_with('\n') {
@@ -112,13 +112,9 @@ impl<'a, C: ChatClient + ?Sized> ImproveModel<'a, C> {
         ];
         let raw = self.client.chat(&self.model, &messages, true)?;
         let mut patch = parse_proposed_patch(&raw)?;
-        patch.model = self.model.clone();
+        patch.model.clone_from(&self.model);
         if patch.metrics_targeted.is_empty() {
-            patch.metrics_targeted = ctx
-                .metric_scores
-                .iter()
-                .map(|(id, _)| id.clone())
-                .collect();
+            patch.metrics_targeted = ctx.metric_scores.iter().map(|(id, _)| id.clone()).collect();
         }
         Ok(patch)
     }
@@ -126,11 +122,7 @@ impl<'a, C: ChatClient + ?Sized> ImproveModel<'a, C> {
 
 /// Deterministic offline proposal when OpenRouter is unavailable.
 pub fn stub_propose(ctx: &ImproveContext) -> ProposedPatch {
-    let metrics: Vec<String> = ctx
-        .metric_scores
-        .iter()
-        .map(|(id, _)| id.clone())
-        .collect();
+    let metrics: Vec<String> = ctx.metric_scores.iter().map(|(id, _)| id.clone()).collect();
     let subject = ctx
         .subject_name
         .as_deref()
@@ -307,7 +299,7 @@ mod tests {
             .unwrap();
         assert_eq!(patch.files.len(), 1);
         assert_eq!(patch.model, "openai/gpt-4o-mini");
-        assert!(!patch.unified_diff_text().is_empty());
+        assert_ne!(patch.unified_diff_text(), "");
     }
 
     #[test]

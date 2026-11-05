@@ -104,7 +104,7 @@ impl<'a, C: ChatClient + ?Sized> IntegrateModel<'a, C> {
         ];
         let raw = self.client.chat(&self.model, &messages, true)?;
         let mut decision = parse_integrate_decision(&raw)?;
-        decision.model = self.model.clone();
+        decision.model.clone_from(&self.model);
         Ok(decision)
     }
 }
@@ -217,7 +217,11 @@ mod tests {
         let model = IntegrateModel::new(&client, "openai/gpt-4o");
         let proposal = sample_proposal();
         let decision = model
-            .review(&proposal, "openai/gpt-4o-mini", &["edge.resolve_rate".into()])
+            .review(
+                &proposal,
+                "openai/gpt-4o-mini",
+                &["edge.resolve_rate".into()],
+            )
             .unwrap();
         assert_eq!(decision.verdict, IntegrateVerdict::Accept);
         assert_eq!(decision.model, "openai/gpt-4o");
