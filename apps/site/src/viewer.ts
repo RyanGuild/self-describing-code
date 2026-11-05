@@ -616,10 +616,55 @@ function filteredRunEntries(): RunIndexEntry[] {
   );
 }
 
+function runsFilterLabel(filter: RunsFilter): string {
+  if (filter === "live") {
+    return "Live";
+  }
+  if (filter === "cursor") {
+    return "cursor.*";
+  }
+  if (filter === "reviews") {
+    return "Soft / Reviews";
+  }
+  return "All";
+}
+
+function formatRunsListPlain(runs: RunIndexEntry[], filter: RunsFilter): string {
+  const soft = runs.filter((r) => r.status === "queued").length;
+  const live = runs.filter((r) => r.status === "running" || r.status === "queued").length;
+  const lines = [
+    `filter: ${runsFilterLabel(filter)}`,
+    `count: ${runs.length}`,
+    `soft_queued: ${soft}`,
+    `live: ${live}`,
+    "",
+  ];
+  for (const entry of runs) {
+    lines.push([entry.status, entry.recipe, entry.run_id, shortRunLabel(entry)].join("\t"));
+  }
+  return lines.join("\n");
+}
+
 function renderRunsList(): void {
   runsListEl.innerHTML = "";
   const all = runsIndex?.runs ?? [];
   const runs = filteredRunEntries();
+
+  const summary = document.createElement("div");
+  summary.className = "runs-list-summary";
+  const summaryLabel = document.createElement("span");
+  summaryLabel.className = "runs-list-summary-label";
+  const soft = runs.filter((r) => r.status === "queued").length;
+  const live = runs.filter((r) => r.status === "running" || r.status === "queued").length;
+  summaryLabel.textContent =
+    `${runsFilterLabel(runsFilter)} · ${runs.length}` +
+    (runs.length ? ` · soft ${soft} · live ${live}` : "");
+  summary.appendChild(summaryLabel);
+  if (runs.length > 0) {
+    summary.appendChild(makeCopyButton(() => formatRunsListPlain(runs, runsFilter)));
+  }
+  runsListEl.appendChild(summary);
+
   if (all.length === 0) {
     const empty = document.createElement("div");
     empty.className = "runs-empty";
@@ -646,8 +691,8 @@ function renderRunsList(): void {
     const subject = shortRunLabel(entry);
     const started = entry.started_at ?? 0;
     const finished = entry.finished_at ?? entry.started_at ?? 0;
-    const live = entry.status === "running" || entry.status === "queued";
-    const timeLabel = live
+    const isLive = entry.status === "running" || entry.status === "queued";
+    const timeLabel = isLive
       ? "live"
       : `${formatDuration(started, finished)} · ${formatRelative(finished || started)}`;
     btn.innerHTML =
@@ -690,60 +735,118 @@ async function selectRun(runId: string): Promise<void> {
   renderRunDetail(detail);
 }
 
+function formatRunOverviewPlain(detail: RunRecord, duration: string): string {
+  const lines = [
+    `run_id: ${detail.run_id}`,
+    `recipe: ${detail.recipe}`,
+    `status: ${detail.status}`,
+    `subject: ${detail.subject ?? "—"}`,
+    `duration: ${duration}`,
+    `started: ${detail.started_at !== undefined ? formatAbsolute(detail.started_at) : "—"}`,
+    `finished: ${detail.finished_at !== undefined ? formatAbsolute(detail.finished_at) : "—"}`,
+  ];
+  if (detail.exit_code !== undefined) {
+    lines.push(`exit_code: ${detail.exit_code}`);
+  }
+  if (detail.stats && Object.keys(detail.stats).length > 0) {
+    lines.push("", "stats:");
+    for (const [key, value] of Object.entries(detail.stats)) {
+      lines.push(`  ${key}: ${value}`);
+    }
+  }
+  return lines.join("\n");
+}
+
+function formatRunStagesPlain(detail: RunRecord): string {
+  const steps = detail.process?.steps ?? [];
+  const lines = [`run_id: ${detail.run_id}`, `stages: ${steps.length}`, ""];
+  for (const step of steps) {
+    const label = step.label && step.label !== step.to ? ` · ${step.label}` : "";
+    const planned = step.observed ? "" : " (planned)";
+    lines.push(`${step.from} → ${step.to}${label}${planned}`);
+  }
+  return lines.join("\n");
+}
+
+function formatRunProductsPlain(detail: RunRecord): string {
+  const products = detail.products ?? [];
+  const lines = [`run_id: ${detail.run_id}`, `products: ${products.length}`, ""];
+  for (const product of products) {
+    lines.push(product);
+  }
+  return lines.join("\n");
+}
+
+function appendCopyBlockHead(host: HTMLElement, title: string, getText: () => string): void {
+  const head = document.createElement("div");
+  head.className = "copy-block-head";
+  const heading = document.createElement("h2");
+  heading.textContent = title;
+  head.appendChild(heading);
+  head.appendChild(makeCopyButton(getText));
+  host.appendChild(head);
+}
+
+function makeCopyButton(getText: () => string): HTMLButtonElement {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "copy-btn";
+  btn.textContent = "Copy";
+  btn.title = "Copy as plain text";
+  btn.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    void copyPlainText(getText(), btn);
+  });
+  return btn;
+}
+
+async function copyPlainText(text: string, btn: HTMLButtonElement): Promise<void> {
+  const previous = btn.textContent ?? "Copy";
+  try {
+    if (!navigator.clipboard?.writeText) {
+      throw new Error("clipboard unavailable");
+    }
+    await navigator.clipboard.writeText(text);
+    btn.textContent = "Copied";
+    btn.classList.add("is-copied");
+  } catch {
+    btn.textContent = "Copy failed";
+    btn.classList.remove("is-copied");
+  }
+  window.setTimeout(() => {
+    btn.textContent = previous;
+    btn.classList.remove("is-copied");
+  }, 1200);
+}
+
 function renderRunDetail(detail: RunRecord): void {
   runsDetailEl.hidden = false;
+  runsDetailEl.replaceChildren();
+
   const started = detail.started_at ?? 0;
   const finished = detail.finished_at ?? detail.started_at ?? 0;
   const live = detail.status === "running" || detail.status === "queued";
   const duration = live ? "live" : formatDuration(started, finished);
-  const stats = detail.stats
-    ? Object.entries(detail.stats)
-        .map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(String(v))}</dd>`)
-        .join("")
-    : "";
-  const products = (detail.products ?? [])
-    .map((p) => {
-      if (p.startsWith("url:")) {
-        const href = p.slice(4);
-        return `<li><a href="${escapeHtml(href)}" target="_blank" rel="noreferrer">${escapeHtml(href)}</a></li>`;
-      }
-      return `<li>${escapeHtml(p)}</li>`;
-    })
-    .join("");
-  const stages = (detail.process?.steps ?? [])
-    .map(
-      (s) =>
-        `<li>${escapeHtml(s.from)} → ${escapeHtml(s.to)}` +
-        (s.label && s.label !== s.to ? ` · ${escapeHtml(s.label)}` : "") +
-        (s.observed ? "" : " (planned)") +
-        `</li>`,
-    )
-    .join("");
   const canGate =
     detail.recipe === RECIPE_REVIEW_VIEW &&
     (detail.status === "running" || detail.status === "queued");
-  runsDetailEl.innerHTML =
-    `<h2>${escapeHtml(detail.recipe)}</h2>` +
-    `<div class="meta"><span class="run-status ${statusClass(detail.status)}">${escapeHtml(detail.status)}</span>` +
-    ` · ${escapeHtml(detail.run_id)} · ${escapeHtml(duration)}</div>` +
-    (canGate
-      ? `<div class="run-actions" data-run-actions="${escapeHtml(detail.run_id)}"></div>`
-      : "") +
-    `<dl class="run-kv">` +
-    `<dt>subject</dt><dd>${escapeHtml(detail.subject ?? "—")}</dd>` +
-    `<dt>started</dt><dd>${escapeHtml(formatAbsolute(started))}</dd>` +
-    `<dt>${live ? "updated" : "finished"}</dt><dd>${escapeHtml(detail.finished_at !== undefined ? formatAbsolute(detail.finished_at) : "—")}</dd>` +
-    (detail.exit_code !== undefined
-      ? `<dt>exit_code</dt><dd>${escapeHtml(String(detail.exit_code))}</dd>`
-      : "") +
-    stats +
-    `</dl>` +
-    (detail.stdout_tail ? `<div class="stdout">${escapeHtml(detail.stdout_tail)}</div>` : "") +
-    (products ? `<div class="stages"><h2>Products</h2><ol>${products}</ol></div>` : "") +
-    (stages ? `<div class="stages"><h2>Stages</h2><ol>${stages}</ol></div>` : "");
 
-  const actions = runsDetailEl.querySelector("[data-run-actions]");
-  if (actions && canGate) {
+  const overview = document.createElement("section");
+  overview.className = "run-block";
+  appendCopyBlockHead(overview, detail.recipe, () => formatRunOverviewPlain(detail, duration));
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.innerHTML =
+    `<span class="run-status ${statusClass(detail.status)}">${escapeHtml(detail.status)}</span>` +
+    ` · ${escapeHtml(detail.run_id)} · ${escapeHtml(duration)}`;
+  overview.appendChild(meta);
+
+  if (canGate) {
+    const actions = document.createElement("div");
+    actions.className = "run-actions";
+    actions.dataset.runActions = detail.run_id;
     if (detail.status === "queued") {
       const allow = document.createElement("button");
       allow.type = "button";
@@ -763,6 +866,101 @@ function renderRunDetail(detail: RunRecord): void {
       void postRunAction(detail.run_id, "cancel");
     });
     actions.appendChild(cancel);
+    overview.appendChild(actions);
+  }
+
+  const kv = document.createElement("dl");
+  kv.className = "run-kv";
+  const kvRows: Array<[string, string]> = [
+    ["subject", detail.subject ?? "—"],
+    ["started", formatAbsolute(started)],
+    [
+      live ? "updated" : "finished",
+      detail.finished_at !== undefined ? formatAbsolute(detail.finished_at) : "—",
+    ],
+  ];
+  if (detail.exit_code !== undefined) {
+    kvRows.push(["exit_code", String(detail.exit_code)]);
+  }
+  if (detail.stats) {
+    for (const [key, value] of Object.entries(detail.stats)) {
+      kvRows.push([key, String(value)]);
+    }
+  }
+  for (const [key, value] of kvRows) {
+    const dt = document.createElement("dt");
+    dt.textContent = key;
+    const dd = document.createElement("dd");
+    dd.textContent = value;
+    kv.appendChild(dt);
+    kv.appendChild(dd);
+  }
+  overview.appendChild(kv);
+  runsDetailEl.appendChild(overview);
+
+  if (detail.stdout_tail) {
+    const block = document.createElement("section");
+    block.className = "run-block";
+    appendCopyBlockHead(block, "Stdout", () => detail.stdout_tail ?? "");
+    const stdout = document.createElement("div");
+    stdout.className = "stdout";
+    stdout.textContent = detail.stdout_tail;
+    block.appendChild(stdout);
+    runsDetailEl.appendChild(block);
+  }
+
+  const products = detail.products ?? [];
+  if (products.length > 0) {
+    const block = document.createElement("section");
+    block.className = "run-block stages";
+    appendCopyBlockHead(block, "Products / patches", () => formatRunProductsPlain(detail));
+    const list = document.createElement("ol");
+    for (const product of products) {
+      const li = document.createElement("li");
+      if (product.startsWith("url:")) {
+        const href = product.slice(4);
+        const link = document.createElement("a");
+        link.href = href;
+        link.target = "_blank";
+        link.rel = "noreferrer";
+        link.textContent = href;
+        li.appendChild(link);
+      } else {
+        li.textContent = product;
+      }
+      list.appendChild(li);
+    }
+    block.appendChild(list);
+    runsDetailEl.appendChild(block);
+  }
+
+  const steps = detail.process?.steps ?? [];
+  if (steps.length > 0) {
+    const block = document.createElement("section");
+    block.className = "run-block stages";
+    const participants = (detail.process?.participants ?? [])
+      .map((p) => `${p.id}${p.label && p.label !== p.id ? ` (${p.label})` : ""}`)
+      .join(", ");
+    appendCopyBlockHead(block, "Stages", () => {
+      const base = formatRunStagesPlain(detail);
+      return participants ? `${base}\n\nparticipants: ${participants}` : base;
+    });
+    if (participants) {
+      const summary = document.createElement("div");
+      summary.className = "meta run-chart-summary";
+      summary.textContent = `${steps.length} steps · ${participants}`;
+      block.appendChild(summary);
+    }
+    const list = document.createElement("ol");
+    for (const step of steps) {
+      const li = document.createElement("li");
+      const label = step.label && step.label !== step.to ? ` · ${step.label}` : "";
+      const planned = step.observed ? "" : " (planned)";
+      li.textContent = `${step.from} → ${step.to}${label}${planned}`;
+      list.appendChild(li);
+    }
+    block.appendChild(list);
+    runsDetailEl.appendChild(block);
   }
 }
 

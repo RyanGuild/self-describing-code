@@ -512,6 +512,65 @@ body {
   gap: 6px;
 }
 
+.runs-list-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 6px 8px;
+  border-bottom: 1px solid var(--frame-border);
+  margin-bottom: 2px;
+}
+
+.runs-list-summary-label {
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 0;
+}
+
+.copy-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+}
+
+.copy-block-head h2 {
+  margin: 0;
+}
+
+.copy-btn {
+  flex: 0 0 auto;
+  border: 1px solid var(--frame-border);
+  background: var(--frame);
+  color: var(--muted);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  color: var(--text);
+  border-color: var(--portal-border);
+}
+
+.copy-btn.is-copied {
+  color: #8fd6a8;
+  border-color: #1e3a2f;
+}
+
+.run-block + .run-block {
+  margin-top: 14px;
+}
+
+.run-chart-summary {
+  margin: 0 0 8px;
+}
+
 .run-row {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -623,9 +682,13 @@ body {
 }
 
 #runs-detail h2 {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 18px;
   font-weight: 600;
+}
+
+#runs-detail .stages h2 {
+  font-size: 15px;
 }
 
 #runs-detail .meta {
