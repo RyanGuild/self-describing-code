@@ -203,6 +203,7 @@ type RunsFilter = "all" | "live" | "cursor" | "reviews";
 
 const worldEl = requireElement("world");
 const viewportEl = requireElement("viewport");
+const chromeEl = requireElement("chrome");
 const crumbEl = requireElement("crumb");
 const hintEl = requireElement("hint");
 const watchBadgeEl = requireElement("watch-badge");
@@ -243,6 +244,7 @@ let selectedMetricKey: string | null = null;
 const cancelCooldownUntil = new Map<string, number>();
 
 async function main(): Promise<void> {
+  syncChromeSafeTop();
   try {
     const structure = await fetchJson<Scene>(ORG_MODES.structure.file);
     sceneCache.set("structure", structure);
@@ -250,6 +252,7 @@ async function main(): Promise<void> {
   } catch (err) {
     worldEl.textContent = "Could not load scene.json. Run `robby web` then serve this app (Vite).";
     console.error(err);
+    syncChromeSafeTop();
     return;
   }
 
@@ -298,7 +301,9 @@ async function main(): Promise<void> {
   orgEntrypointsBtn.addEventListener("click", () => void setOrgMode("entrypoints"));
   orgRunsBtn.addEventListener("click", () => void setOrgMode("runs"));
   orgMetricsBtn.addEventListener("click", () => void setOrgMode("metrics"));
+  syncChromeSafeTop();
   window.addEventListener("resize", () => {
+    syncChromeSafeTop();
     if (orgMode === "runs" || orgMode === "metrics" || !scene) {
       return;
     }
@@ -393,6 +398,11 @@ function showWatchBadge(stamp: BuildStamp, justRebuilt: boolean): void {
     : `live · ${stamp.frames} frames · ${nodes} nodes`;
   watchBadgeEl.textContent = label;
   watchBadgeEl.hidden = false;
+  syncChromeSafeTop();
+  if (orgMode !== "runs" && orgMode !== "metrics" && scene) {
+    camera = cameraForFocus(focusId);
+    placeAllFrames();
+  }
 }
 
 async function prefetchEntrypoints(): Promise<void> {
@@ -815,7 +825,7 @@ function renderMetricsTable(): void {
       tr.classList.add("is-selected");
     }
     tr.append(
-      cell(row.id, "metric-id"),
+      cell(row.id, "metric-id", row.id),
       cell(row.type),
       cell(row.score ?? "—", "metric-score"),
       cell(row.subject || "—", "metric-subject", row.subject),
@@ -1549,18 +1559,38 @@ function ancestors(id: string): string[] {
   return path.reverse();
 }
 
+/** Usable map rect under the fixed chrome (and side padding on narrow widths). */
+function usableViewport(): { vw: number; vh: number; ox: number; oy: number } {
+  const chromeH = chromeEl.getBoundingClientRect().height || 52;
+  const narrow = window.innerWidth < 820;
+  const side = narrow ? 10 : 16;
+  const bottom = narrow ? 10 : 16;
+  const top = Math.ceil(chromeH + 8);
+  return {
+    vw: Math.max(window.innerWidth - side * 2, 120),
+    vh: Math.max(window.innerHeight - top - bottom, 120),
+    ox: side,
+    oy: top,
+  };
+}
+
+/** Keep dock insets in sync with wrapped chrome height. */
+function syncChromeSafeTop(): void {
+  const chromeH = chromeEl.getBoundingClientRect().height || 52;
+  document.documentElement.style.setProperty("--chrome-safe-top", `${Math.ceil(chromeH + 8)}px`);
+}
+
 function cameraForFocus(id: string): Camera {
   const f = frame(id);
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const pad = 0.92;
+  const { vw, vh, ox, oy } = usableViewport();
+  const pad = 0.96;
   const scale = Math.min(vw / f.world.w, vh / f.world.h) * pad;
   const cx = f.world.x + f.world.w / 2;
   const cy = f.world.y + f.world.h / 2;
   return {
     scale,
-    tx: vw / 2 - cx * scale,
-    ty: vh / 2 - cy * scale,
+    tx: ox + vw / 2 - cx * scale,
+    ty: oy + vh / 2 - cy * scale,
   };
 }
 
@@ -1602,10 +1632,23 @@ function screenRectFor(f: SceneFrame, cam: Camera): ScreenRect {
 
 function placeFrame(el: HTMLElement, f: SceneFrame, cam: Camera): void {
   const r = screenRectFor(f, cam);
-  el.style.width = `${r.w}px`;
-  el.style.height = `${r.h}px`;
-  el.style.left = `${r.x}px`;
-  el.style.top = `${r.y}px`;
+  let { x, y, w, h } = r;
+  // Narrow/tall viewports: grow the focus card past world aspect so the child
+  // grid / sequence panel have room (children live in CSS layout, not world).
+  if (el.classList.contains("is-focus")) {
+    const { vw, vh, oy } = usableViewport();
+    if (vh > vw * 1.15) {
+      const minH = Math.min(vh * 0.78, vh);
+      if (h < minH) {
+        h = minH;
+        y = oy + Math.max(0, (vh - h) / 2);
+      }
+    }
+  }
+  el.style.width = `${w}px`;
+  el.style.height = `${h}px`;
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
   el.style.transform = "none";
 }
 
@@ -1937,6 +1980,7 @@ function updateChrome(): void {
     .map((id) => frame(id).name)
     .join(" / ");
   zoomOutBtn.disabled = !frame(focusId).parent;
+  syncChromeSafeTop();
 }
 
 async function loadDetail(id: string): Promise<void> {
