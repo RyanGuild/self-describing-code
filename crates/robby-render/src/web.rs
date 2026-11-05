@@ -40,7 +40,11 @@ pub struct FrameDetail {
     /// Mermaid `sequenceDiagram` body for the process (same path as Markdown).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub process_mermaid: Option<String>,
-    /// Call-path or observed-runtime sequence — never a duplicate of [`Self::process_mermaid`].
+    /// Call-path or observed-runtime sequence — structured for the site canvas.
+    /// Never a duplicate of [`Self::process`].
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub execution: Option<ProcessView>,
+    /// Same sequence as Mermaid (Markdown / legacy) — never a duplicate of [`Self::process_mermaid`].
     #[serde(skip_serializing_if = "Option::is_none")]
     pub execution_mermaid: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -61,6 +65,7 @@ impl FrameDetail {
             confidence: 1.0,
             process: None,
             process_mermaid: None,
+            execution: None,
             execution_mermaid: None,
             source: None,
         }
@@ -89,7 +94,7 @@ impl FrameDetail {
         // 1) call-path sequence when Calls exist
         // 2) else observed-only absorb slice (runtime trace)
         // Never clone the definition process under a second label.
-        let execution_mermaid = {
+        let execution = {
             let from_path = doc.and_then(|d| {
                 let exec = execution_process(d, &node.id)?;
                 if exec.steps.is_empty() {
@@ -98,15 +103,22 @@ impl FrameDetail {
                 if node.process.as_ref() == Some(&exec) {
                     return None;
                 }
-                let view = ProcessView::from_process(&exec);
-                Some(MermaidRenderer.process(&view))
+                Some(ProcessView::from_process(&exec).with_targets_from_doc(d))
             });
             let from_observed = node.process.as_ref().and_then(|p| {
                 let obs = observed_process(p)?;
-                let view = ProcessView::from_process(&obs);
-                Some(MermaidRenderer.process(&view))
+                Some(ProcessView::from_process(&obs))
             });
             let candidate = from_path.or(from_observed);
+            match (&process, candidate) {
+                (Some(proc), Some(exec)) if proc == &exec => None,
+                (_, other) => other,
+            }
+        };
+        let execution_mermaid = {
+            let candidate = execution
+                .as_ref()
+                .map(|view| MermaidRenderer.process(view));
             match (&process_mermaid, candidate) {
                 (Some(proc), Some(exec)) if proc == &exec => None,
                 (_, other) => other,
@@ -127,6 +139,7 @@ impl FrameDetail {
             confidence: node.provenance.confidence,
             process,
             process_mermaid,
+            execution,
             execution_mermaid,
             source,
         }
