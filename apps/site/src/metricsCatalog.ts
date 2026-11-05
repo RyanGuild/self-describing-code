@@ -30,7 +30,7 @@ export interface MetricRow {
   /** Filesystem path when known (`path:…`, `doc_path`, review artifact). */
   path: string;
   source: "catalog" | "metric_test" | "review" | "run";
-  runId?: string;
+  runId?: string | undefined;
 }
 
 /** Built-in catalog — first-slice computers + review scores + plan families. */
@@ -137,11 +137,11 @@ export function catalogSeedRows(): MetricRow[] {
 export interface MetricObservation {
   id: string;
   score: string;
-  direction?: string;
-  subject?: string;
-  path?: string;
+  direction?: string | undefined;
+  subject?: string | undefined;
+  path?: string | undefined;
   source: MetricRow["source"];
-  runId?: string;
+  runId?: string | undefined;
 }
 
 /** Merge catalog seeds with live observations (latest score wins per id+subject+path). */
