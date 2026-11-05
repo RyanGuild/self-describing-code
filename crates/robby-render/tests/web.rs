@@ -364,9 +364,7 @@ fn frame_detail_includes_execution_mermaid_for_call_path() {
     );
     assert!(
         exec.participants.iter().any(|p| {
-            p.label.contains("shared")
-                || p.label.contains("helper")
-                || p.target.is_some()
+            p.label.contains("shared") || p.label.contains("helper") || p.target.is_some()
         }),
         "expected callees or portal targets in execution: {:?}",
         exec.participants

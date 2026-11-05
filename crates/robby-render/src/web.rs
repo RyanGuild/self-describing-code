@@ -116,9 +116,7 @@ impl FrameDetail {
             }
         };
         let execution_mermaid = {
-            let candidate = execution
-                .as_ref()
-                .map(|view| MermaidRenderer.process(view));
+            let candidate = execution.as_ref().map(|view| MermaidRenderer.process(view));
             match (&process_mermaid, candidate) {
                 (Some(proc), Some(exec)) if proc == &exec => None,
                 (_, other) => other,
