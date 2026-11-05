@@ -1127,7 +1127,9 @@ function remount(): void {
   updateChrome();
 }
 
-const PORTAL_PREVIEW = 8;
+/** Hard ceiling so a very wide strip still collapses early. */
+const PORTAL_PREVIEW_MAX = 6;
+const PORTAL_GAP = 8;
 
 function portalButton(portal: Portal): HTMLButtonElement {
   const btn = document.createElement("button");
@@ -1145,10 +1147,85 @@ function portalButton(portal: Portal): HTMLButtonElement {
   return btn;
 }
 
+function portalMoreButton(label: string, title: string, onClick: () => void): HTMLButtonElement {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "portal portal-more";
+  btn.textContent = label;
+  btn.title = title;
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    onClick();
+  });
+  return btn;
+}
+
+/** Measure an off-layout probe inside the strip so CSS portal styles apply. */
+function measurePortalWidth(strip: HTMLElement, el: HTMLElement): number {
+  el.style.position = "absolute";
+  el.style.visibility = "hidden";
+  el.style.pointerEvents = "none";
+  strip.appendChild(el);
+  const width = el.offsetWidth;
+  el.remove();
+  el.style.position = "";
+  el.style.visibility = "";
+  el.style.pointerEvents = "";
+  return width;
+}
+
+/**
+ * How many portals fit in the collapsed strip alongside a "+N more" control
+ * (or all of them when everything fits under the hard max).
+ */
+function fitVisiblePortalCount(strip: HTMLElement, portals: Portal[]): number {
+  const total = portals.length;
+  if (total === 0) {
+    return 0;
+  }
+
+  const avail = strip.clientWidth;
+  if (avail <= 0) {
+    return Math.min(PORTAL_PREVIEW_MAX, total);
+  }
+
+  const widths = portals.map((portal) => measurePortalWidth(strip, portalButton(portal)));
+
+  const rowWidth = (count: number, withMore: number | null): number => {
+    let used = 0;
+    for (let i = 0; i < count; i++) {
+      const width = widths[i] ?? 0;
+      used += width + (i > 0 ? PORTAL_GAP : 0);
+    }
+    if (withMore != null) {
+      const more = portalMoreButton(`+${withMore} more`, "", () => {});
+      const moreW = measurePortalWidth(strip, more);
+      used += (count > 0 ? PORTAL_GAP : 0) + moreW;
+    }
+    return used;
+  };
+
+  if (total <= PORTAL_PREVIEW_MAX && rowWidth(total, null) <= avail) {
+    return total;
+  }
+
+  let count = Math.min(PORTAL_PREVIEW_MAX, total - 1);
+  while (count >= 0) {
+    const hidden = total - count;
+    if (rowWidth(count, hidden) <= avail) {
+      return count;
+    }
+    count--;
+  }
+  return 0;
+}
+
 function buildPortalStrip(f: SceneFrame): HTMLElement {
   const strip = document.createElement("div");
   strip.className = "portal-strip";
   let expanded = false;
+  let visibleCount = Math.min(PORTAL_PREVIEW_MAX, f.portals.length);
+  let fitting = false;
 
   const syncFocusClass = (): void => {
     const focusWrap = strip.closest(".frame-wrap");
@@ -1159,38 +1236,73 @@ function buildPortalStrip(f: SceneFrame): HTMLElement {
     strip.innerHTML = "";
     strip.classList.toggle("is-expanded", expanded);
     syncFocusClass();
-    const list = expanded ? f.portals : f.portals.slice(0, PORTAL_PREVIEW);
+
+    if (expanded) {
+      for (const portal of f.portals) {
+        strip.appendChild(portalButton(portal));
+      }
+      if (f.portals.length > visibleCount) {
+        strip.appendChild(
+          portalMoreButton("Show less", "Collapse related views", () => {
+            expanded = false;
+            render();
+          }),
+        );
+      }
+      return;
+    }
+
+    const list = f.portals.slice(0, visibleCount);
     for (const portal of list) {
       strip.appendChild(portalButton(portal));
     }
-    if (!expanded && f.portals.length > PORTAL_PREVIEW) {
-      const more = document.createElement("button");
-      more.type = "button";
-      more.className = "portal portal-more";
-      more.textContent = `+${f.portals.length - PORTAL_PREVIEW} more`;
-      more.title = "Show all related views";
-      more.addEventListener("click", (e) => {
-        e.stopPropagation();
-        expanded = true;
-        render();
-      });
-      strip.appendChild(more);
-    } else if (expanded && f.portals.length > PORTAL_PREVIEW) {
-      const fewer = document.createElement("button");
-      fewer.type = "button";
-      fewer.className = "portal portal-more";
-      fewer.textContent = "Show less";
-      fewer.title = "Collapse related views";
-      fewer.addEventListener("click", (e) => {
-        e.stopPropagation();
-        expanded = false;
-        render();
-      });
-      strip.appendChild(fewer);
+    const hidden = f.portals.length - visibleCount;
+    if (hidden > 0) {
+      strip.appendChild(
+        portalMoreButton(`+${hidden} more`, "Show all related views", () => {
+          expanded = true;
+          render();
+        }),
+      );
+    }
+  };
+
+  const refit = (): void => {
+    if (!strip.isConnected || expanded || fitting) {
+      return;
+    }
+    fitting = true;
+    try {
+      // Clear children so measurement probes are the only strip content.
+      strip.innerHTML = "";
+      const next = fitVisiblePortalCount(strip, f.portals);
+      if (next !== visibleCount) {
+        visibleCount = next;
+      }
+      render();
+    } finally {
+      fitting = false;
     }
   };
 
   render();
+
+  const ro = new ResizeObserver(() => {
+    if (!strip.isConnected) {
+      ro.disconnect();
+      return;
+    }
+    refit();
+  });
+  // Observe after the strip is in the layout tree (next frame).
+  requestAnimationFrame(() => {
+    if (!strip.isConnected) {
+      return;
+    }
+    ro.observe(strip);
+    refit();
+  });
+
   return strip;
 }
 
