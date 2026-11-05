@@ -16,7 +16,14 @@ use crate::run::RunRecord;
 /// Well-known catalog metric ids (open strings; more ids land as computers grow).
 pub mod ids {
     /// `CoverageReport::is_complete()` as `1` / `0`.
+    ///
+    /// **`doc` here means Document / workspace source extract**, not Markdown.
+    /// Generated `docs/self-model/` pages are report *outputs*; closing this
+    /// metric means fixing Rust/TS extract coverage gaps (prefer `crates/`,
+    /// `apps/`), never hand-editing generated MD / `.mmd` / `.robby/`.
     pub const DOC_COVERAGE_COMPLETE: &str = "doc.coverage_complete";
+    /// Human-readable fix-surface label stamped into metric details / prompts.
+    pub const DOC_COVERAGE_FIX_SURFACE: &str = "source_extract";
     /// Resolved edges / all edges (document-wide or per-node).
     pub const EDGE_RESOLVE_RATE: &str = "edge.resolve_rate";
 }
@@ -89,6 +96,9 @@ impl MetricMeasurement {
 pub struct UnknownMetric(pub String);
 
 /// `doc.coverage_complete`: `1` if the coverage gate passes, else `0`.
+///
+/// Stamps `doc.coverage_fix_surface=source_extract` and gap source paths so
+/// improve/integrate do not treat generated Markdown as the edit surface.
 pub fn doc_coverage_complete(report: &CoverageReport) -> MetricMeasurement {
     let complete = report.is_complete();
     let unknown_gaps = report.failures().count();
@@ -98,6 +108,23 @@ pub fn doc_coverage_complete(report: &CoverageReport) -> MetricMeasurement {
         report.files.len().to_string(),
     );
     details.insert("doc.unknown_gap_count".to_owned(), unknown_gaps.to_string());
+    details.insert(
+        "doc.coverage_fix_surface".to_owned(),
+        ids::DOC_COVERAGE_FIX_SURFACE.to_owned(),
+    );
+    details.insert(
+        "doc.coverage_not".to_owned(),
+        "generated_markdown".to_owned(),
+    );
+    let gap_files: Vec<String> = {
+        let mut files: Vec<String> = report.failures().map(|(f, _)| f.file.clone()).collect();
+        files.sort();
+        files.dedup();
+        files
+    };
+    if !gap_files.is_empty() {
+        details.insert("doc.coverage_gap_files".to_owned(), gap_files.join(","));
+    }
     MetricMeasurement {
         id: ids::DOC_COVERAGE_COMPLETE.to_owned(),
         value: if complete { 1.0 } else { 0.0 },
@@ -232,6 +259,20 @@ mod tests {
         assert_eq!(
             m.details.get("doc.unknown_gap_count").map(String::as_str),
             Some("1")
+        );
+        assert_eq!(
+            m.details
+                .get("doc.coverage_fix_surface")
+                .map(String::as_str),
+            Some(ids::DOC_COVERAGE_FIX_SURFACE)
+        );
+        assert_eq!(
+            m.details.get("doc.coverage_not").map(String::as_str),
+            Some("generated_markdown")
+        );
+        assert_eq!(
+            m.details.get("doc.coverage_gap_files").map(String::as_str),
+            Some("src/a.rs")
         );
     }
 

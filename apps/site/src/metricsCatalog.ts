@@ -29,13 +29,13 @@ export interface MetricCatalogEntry {
   /** Where the computer lives today (or planned). */
   computer: MetricComputer;
   /** Empirical harness id when known. */
-  testId?: string;
+  testId?: string | undefined;
   /** Where the score appears in the product. */
-  appearsOn?: string;
+  appearsOn?: string | undefined;
   /** Optional default filesystem path or subject hint when no run is attached. */
-  path?: string;
+  path?: string | undefined;
   /** Short label for the subject/module column when unscored. */
-  subject?: string;
+  subject?: string | undefined;
 }
 
 export interface MetricRow {
@@ -318,8 +318,8 @@ export function metricCalculationDetail(id: string): {
   formula: string;
   attachment: string;
   computer: MetricComputer | "unknown";
-  testId?: string;
-  appearsOn?: string;
+  testId?: string | undefined;
+  appearsOn?: string | undefined;
   direction: MetricDirection | "";
 } {
   const known = CATALOG_BY_ID.get(id);

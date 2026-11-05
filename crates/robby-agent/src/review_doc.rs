@@ -227,22 +227,23 @@ fn score_metrics(
             }
             METRIC_DOC_COVERAGE_COMPLETE => {
                 let complete = doc_coverage_complete(doc, sources);
+                let preferred = preferred_coverage_source_subject(doc, sources);
                 out.push(MetricClaim {
                     metric: metric.clone(),
                     score: complete,
                     direction: "higher_better",
                     test_id: "metric_test.doc.coverage_complete".into(),
-                    action: if complete < 1.0 {
-                        "improve_extract"
-                    } else {
-                        "revise_doc"
-                    },
+                    // Coverage is source-extract completeness. Markdown under
+                    // docs/self-model is generated OUTPUT — never revise_doc.
+                    action: "improve_extract",
                     reason: if complete >= 1.0 {
-                        "doc.coverage_complete=1 (CoverageReport::is_complete)".into()
+                        "doc.coverage_complete=1 (source extract CoverageReport::is_complete; not markdown)"
+                            .into()
                     } else {
-                        "doc.coverage_complete=0 (unknown gaps remain)".into()
+                        "doc.coverage_complete=0 (unknown gaps in Rust/TS source extract — fix crates/apps extractors/spans, not docs/self-model)"
+                            .into()
                     },
-                    preferred_subject: None,
+                    preferred_subject: preferred,
                 });
             }
             other => {
@@ -442,8 +443,9 @@ fn pick_parent(
     {
         return preferred.clone();
     }
-    // Prefer a real IR subject (skip path:/mention: binders) when scoring edges.
-    if claim.metric == METRIC_EDGE_RESOLVE_RATE {
+    // Prefer a real IR subject (skip path:/mention: binders) for extract metrics.
+    // Markdown path binders are review inputs, not the coverage fix surface.
+    if claim.metric == METRIC_EDGE_RESOLVE_RATE || claim.metric == METRIC_DOC_COVERAGE_COMPLETE {
         for subject in subjects {
             if subject.starts_with("path:") || subject.starts_with("mention:") {
                 continue;
@@ -455,6 +457,32 @@ fn pick_parent(
         }
     }
     doc_parent.clone()
+}
+
+/// Prefer a source node that owns a coverage-gap file (Rust/TS), never a MD path.
+fn preferred_coverage_source_subject(
+    doc: &Document,
+    sources: &BTreeMap<String, String>,
+) -> Option<NodeId> {
+    if sources.is_empty() && doc.files.is_empty() {
+        return None;
+    }
+    let report = document_coverage(doc, sources);
+    let mut gap_files: Vec<&str> = report.failures().map(|(f, _)| f.file.as_str()).collect();
+    gap_files.sort_unstable();
+    gap_files.dedup();
+    for file in gap_files {
+        let mut candidates: Vec<&Node> = doc
+            .nodes
+            .values()
+            .filter(|n| n.span.as_ref().is_some_and(|s| s.file == file))
+            .collect();
+        candidates.sort_by(|a, b| a.id.as_str().cmp(b.id.as_str()));
+        if let Some(node) = candidates.first() {
+            return Some(node.id.clone());
+        }
+    }
+    None
 }
 
 fn insert_metric_decision(

@@ -38,6 +38,8 @@ pub struct ImproveContext {
     pub source_path: Option<String>,
     pub source_window: Option<String>,
     pub metric_stdout: Option<String>,
+    /// Source files with CoverageReport unknown gaps (retarget away from MD).
+    pub coverage_gap_files: Vec<String>,
 }
 
 /// One file edit in a proposed patch.
@@ -98,16 +100,17 @@ impl<'a, C: ChatClient + ?Sized> ImproveModel<'a, C> {
 
     pub fn propose(&self, ctx: &ImproveContext) -> Result<ProposedPatch> {
         let messages = [
-            ChatMessage::system(
+            ChatMessage::system(format!(
                 "You improve a codebase so IR metric scores move in the desired direction.\n\
                  Reply with JSON only:\n\
-                 {\"summary\":\"...\",\"metrics_targeted\":[\"doc.coverage_complete\"],\
-                 \"files\":[{\"path\":\"crates/.../file.rs\",\"unified_diff\":\"--- a/...\\n+++ b/...\\n@@ ...\"}]}\n\
+                 {{\"summary\":\"...\",\"metrics_targeted\":[\"doc.coverage_complete\"],\
+                 \"files\":[{{\"path\":\"crates/.../file.rs\",\"unified_diff\":\"--- a/...\\n+++ b/...\\n@@ ...\"}}]}}\n\
                  Rules:\n\
-                 - Edit source under crates/, apps/site/src/, fixtures/, schema/, docs/*.md (hand-written only).\n\
-                 - Never edit or invent .robby/, apps/site/public/frames|runs|scene*, docs/self-model/, or generated .mmd.\n\
-                 - Prefer a small, concrete unified diff. Empty files array only if nothing actionable.",
-            ),
+                 {}\n\
+                 - Prefer a small, concrete unified diff against Rust/TS source. Empty files array only if nothing actionable.\n\
+                 - Do not propose Markdown under docs/ as the fix for doc.coverage_complete — that metric is source extract coverage; generated self-model pages are outputs.",
+                crate::edit_paths::patch_path_rules_prompt()
+            )),
             ChatMessage::user(format_improve_user(ctx)),
         ];
         let raw = self.client.chat(&self.model, &messages, true)?;
@@ -115,6 +118,18 @@ impl<'a, C: ChatClient + ?Sized> ImproveModel<'a, C> {
         patch.model.clone_from(&self.model);
         if patch.metrics_targeted.is_empty() {
             patch.metrics_targeted = ctx.metric_scores.iter().map(|(id, _)| id.clone()).collect();
+        }
+        let removed =
+            crate::edit_paths::filter_forbidden_files(&mut patch.files, |f| f.path.as_str());
+        if removed > 0 {
+            let note = format!(
+                "stripped {removed} forbidden generated-path edit(s) (docs/self-model, .robby, *.mmd, scene artifacts)"
+            );
+            if patch.summary.is_empty() {
+                patch.summary = note;
+            } else {
+                patch.summary = format!("{}\n({note})", patch.summary);
+            }
         }
         Ok(patch)
     }
@@ -128,10 +143,7 @@ pub fn stub_propose(ctx: &ImproveContext) -> ProposedPatch {
         .as_deref()
         .or(ctx.subject.as_deref())
         .unwrap_or("subject");
-    let path = ctx
-        .source_path
-        .clone()
-        .unwrap_or_else(|| "docs/00-bootstrap.md".into());
+    let path = stub_source_path(ctx);
     let score_line = ctx
         .metric_scores
         .iter()
@@ -139,10 +151,11 @@ pub fn stub_propose(ctx: &ImproveContext) -> ProposedPatch {
         .collect::<Vec<_>>()
         .join(", ");
     let body = format!(
-        "Robby improve stub for `{subject}` ({score_line}). Replace with an OpenRouter proposal when OPENROUTER_API_KEY is set."
+        "Robby improve stub for `{subject}` ({score_line}). Source path `{path}` \
+         (never docs/self-model). Replace with an OpenRouter proposal when OPENROUTER_API_KEY is set."
     );
     let diff = format!(
-        "--- a/{path}\n+++ b/{path}\n@@ -1,1 +1,3 @@\n+<!-- robby.improve_patch stub: {subject} -->\n+<!-- metrics: {score_line} -->\n"
+        "--- a/{path}\n+++ b/{path}\n@@ -1,1 +1,3 @@\n+// robby.improve_patch stub: {subject}\n+// metrics: {score_line}\n"
     );
     ProposedPatch {
         summary: body,
@@ -153,6 +166,23 @@ pub fn stub_propose(ctx: &ImproveContext) -> ProposedPatch {
         metrics_targeted: metrics,
         model: "stub".into(),
     }
+}
+
+fn stub_source_path(ctx: &ImproveContext) -> String {
+    if let Some(path) = ctx.source_path.as_deref()
+        && !crate::edit_paths::is_forbidden_edit_path(path)
+        && !std::path::Path::new(path)
+            .extension()
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
+    {
+        return path.to_owned();
+    }
+    if let Some(gap) = ctx.coverage_gap_files.first()
+        && !crate::edit_paths::is_forbidden_edit_path(gap)
+    {
+        return gap.clone();
+    }
+    "crates/robby-extract/src/lib.rs".into()
 }
 
 fn format_improve_user(ctx: &ImproveContext) -> String {
@@ -171,6 +201,18 @@ fn format_improve_user(ctx: &ImproveContext) -> String {
             .collect::<Vec<_>>()
             .join(", ");
         parts.push(format!("metric_scores: {scores}"));
+        if ctx
+            .metric_scores
+            .iter()
+            .any(|(id, _)| id == "doc.coverage_complete" || id.starts_with("doc.coverage"))
+        {
+            parts.push(
+                "coverage_note: doc.coverage_complete is SOURCE extract CoverageReport::is_complete \
+                 (Rust/TS byte gaps). Generated Markdown under docs/self-model/ is report OUTPUT — \
+                 do not edit it to \"fix\" coverage. Improve extractors/spans/source instead."
+                    .into(),
+            );
+        }
     }
     if let Some(tail) = &ctx.metric_stdout {
         parts.push(format!("metric_stdout:\n{tail}"));
@@ -179,6 +221,12 @@ fn format_improve_user(ctx: &ImproveContext) -> String {
         parts.push(format!(
             "decision_products:\n{}",
             ctx.decision_notes.join("\n")
+        ));
+    }
+    if !ctx.coverage_gap_files.is_empty() {
+        parts.push(format!(
+            "coverage_gap_source_files (edit these / their extractors):\n{}",
+            ctx.coverage_gap_files.join("\n")
         ));
     }
     if let Some(path) = &ctx.source_path {
@@ -311,5 +359,38 @@ mod tests {
         });
         assert!(!patch.is_empty());
         assert_eq!(patch.model, "stub");
+        assert!(
+            patch.files[0].path.starts_with("crates/"),
+            "stub must target source crates, got {}",
+            patch.files[0].path
+        );
+        assert!(!patch.files[0].path.contains("docs/self-model"));
+        assert!(
+            !std::path::Path::new(&patch.files[0].path)
+                .extension()
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
+        );
+    }
+
+    #[test]
+    fn propose_strips_forbidden_self_model_paths() {
+        let client = FakeClient {
+            responses: Mutex::new(vec![
+                r#"{"summary":"bad md edit","metrics_targeted":["doc.coverage_complete"],"files":[{"path":"docs/self-model/README.md","unified_diff":"--- a/docs/self-model/README.md\n+++ b/docs/self-model/README.md\n@@ -1 +1 @@\n-a\n+b\n"},{"path":"crates/robby-ir/src/lib.rs","unified_diff":"--- a/crates/robby-ir/src/lib.rs\n+++ b/crates/robby-ir/src/lib.rs\n@@ -1 +1 @@\n-a\n+b\n"}]}"#
+                    .into(),
+            ]),
+        };
+        let model = ImproveModel::new(&client, "openai/gpt-4o-mini");
+        let patch = model
+            .propose(&ImproveContext {
+                subject: Some("path:docs/self-model/README.md".into()),
+                metric_scores: vec![("doc.coverage_complete".into(), "0".into())],
+                coverage_gap_files: vec!["crates/robby-extract/src/rust.rs".into()],
+                ..Default::default()
+            })
+            .unwrap();
+        assert_eq!(patch.files.len(), 1);
+        assert_eq!(patch.files[0].path, "crates/robby-ir/src/lib.rs");
+        assert!(patch.summary.contains("stripped"));
     }
 }

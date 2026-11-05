@@ -8,6 +8,7 @@
 //! `robby.integrate_patch`).
 
 mod context;
+mod edit_paths;
 mod enrich;
 mod improve;
 mod integrate;
@@ -16,6 +17,10 @@ mod openrouter;
 mod review_doc;
 
 pub use context::{CommentContext, collect_comment_contexts};
+pub use edit_paths::{
+    filter_forbidden_files, is_forbidden_edit_path, is_generated_or_markdown_subject,
+    is_preferred_source_path, normalize_repo_path, patch_path_rules_prompt,
+};
 pub use enrich::{EnrichOpts, EnrichStats, enrich_comments};
 pub use improve::{
     ImproveContext, ImproveModel, PatchFile, ProposedPatch, default_improve_model,

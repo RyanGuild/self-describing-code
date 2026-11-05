@@ -80,16 +80,37 @@ impl<'a, C: ChatClient + ?Sized> IntegrateModel<'a, C> {
         improve_model: &str,
         metrics: &[String],
     ) -> Result<IntegrateDecision> {
+        let forbidden: Vec<&str> = proposal
+            .files
+            .iter()
+            .filter(|f| crate::edit_paths::is_forbidden_edit_path(&f.path))
+            .map(|f| f.path.as_str())
+            .collect();
+        if !forbidden.is_empty() {
+            return Ok(IntegrateDecision {
+                verdict: IntegrateVerdict::Reject,
+                reason: format!(
+                    "proposal edits forbidden generated paths (markdown/IR/scene are outputs, not the fix surface): {}",
+                    forbidden.join(", ")
+                ),
+                unified_diff: None,
+                model: self.model.clone(),
+            });
+        }
+
         let messages = [
-            ChatMessage::system(
+            ChatMessage::system(format!(
                 "You are the integrate model for Robby. A different model already proposed a patch.\n\
                  Review it for safety and metric alignment. Reply with JSON only:\n\
-                 {\"verdict\":\"accept\"|\"reject\"|\"revise\",\"reason\":\"...\",\"unified_diff\":null}\n\
+                 {{\"verdict\":\"accept\"|\"reject\"|\"revise\",\"reason\":\"...\",\"unified_diff\":null}}\n\
                  - accept: write the proposal as-is.\n\
                  - reject: do not write a patch (explain why).\n\
                  - revise: supply an improved unified_diff string (source edits only).\n\
-                 Never approve edits under .robby/, apps/site/public generated paths, or docs/self-model/.",
-            ),
+                 {}\n\
+                 Reject any proposal that edits docs/self-model/, .robby/, *.mmd, or scene artifacts. \
+                 For doc.coverage_complete, accept only source (crates/apps) changes that close extract gaps.",
+                crate::edit_paths::patch_path_rules_prompt()
+            )),
             ChatMessage::user(format!(
                 "improve_model: {improve_model}\n\
                  integrate_model: {}\n\
@@ -111,6 +132,23 @@ impl<'a, C: ChatClient + ?Sized> IntegrateModel<'a, C> {
 
 /// Offline integrate: accept non-empty stubs/proposals.
 pub fn stub_integrate(proposal: &ProposedPatch) -> IntegrateDecision {
+    let forbidden: Vec<&str> = proposal
+        .files
+        .iter()
+        .filter(|f| crate::edit_paths::is_forbidden_edit_path(&f.path))
+        .map(|f| f.path.as_str())
+        .collect();
+    if !forbidden.is_empty() {
+        return IntegrateDecision {
+            verdict: IntegrateVerdict::Reject,
+            reason: format!(
+                "stub reject: forbidden generated paths {}",
+                forbidden.join(", ")
+            ),
+            unified_diff: None,
+            model: "stub".into(),
+        };
+    }
     if proposal.is_empty() {
         IntegrateDecision {
             verdict: IntegrateVerdict::Reject,
@@ -233,5 +271,35 @@ mod tests {
     fn stub_accepts_nonempty() {
         let d = stub_integrate(&sample_proposal());
         assert_eq!(d.verdict, IntegrateVerdict::Accept);
+    }
+
+    #[test]
+    fn rejects_self_model_markdown_edits() {
+        let client = FakeClient {
+            responses: Mutex::new(vec![
+                r#"{"verdict":"accept","reason":"should not reach model","unified_diff":null}"#
+                    .into(),
+            ]),
+        };
+        let model = IntegrateModel::new(&client, "openai/gpt-4o");
+        let proposal = ProposedPatch {
+            summary: "wrong surface".into(),
+            files: vec![PatchFile {
+                path: "docs/self-model/README.md".into(),
+                unified_diff: "--- a/docs/self-model/README.md\n+++ b/docs/self-model/README.md\n@@ -1 +1 @@\n-a\n+b\n"
+                    .into(),
+            }],
+            metrics_targeted: vec!["doc.coverage_complete".into()],
+            model: "openai/gpt-4o-mini".into(),
+        };
+        let decision = model
+            .review(
+                &proposal,
+                "openai/gpt-4o-mini",
+                &["doc.coverage_complete".into()],
+            )
+            .unwrap();
+        assert_eq!(decision.verdict, IntegrateVerdict::Reject);
+        assert!(decision.reason.contains("forbidden"));
     }
 }

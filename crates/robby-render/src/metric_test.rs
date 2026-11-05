@@ -5,6 +5,7 @@
 //! `runs/`, and spawns from an allowed `robby.review_view` only when
 //! [`SiteRunsStore::blocks_downstream`] is false.
 
+use std::fmt::Write as _;
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -288,7 +289,7 @@ fn summarize(observations: &[MetricMeasurement], errors: &[String]) -> String {
     let mut parts: Vec<String> = observations
         .iter()
         .map(|o| {
-            format!(
+            let mut line = format!(
                 "{}={} ({})",
                 o.id,
                 o.score_string(),
@@ -297,7 +298,17 @@ fn summarize(observations: &[MetricMeasurement], errors: &[String]) -> String {
                 } else {
                     "fail"
                 }
-            )
+            );
+            // Steer improve models: coverage is source extract, not markdown.
+            if o.id == ids::DOC_COVERAGE_COMPLETE {
+                line.push_str(
+                    " [fix_surface=source_extract; not generated docs/self-model markdown]",
+                );
+                if let Some(gaps) = o.details.get("doc.coverage_gap_files") {
+                    let _ = write!(line, " gap_files={gaps}");
+                }
+            }
+            line
         })
         .collect();
     for err in errors {
