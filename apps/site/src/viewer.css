@@ -298,7 +298,8 @@ body {
   flex-wrap: nowrap;
   gap: 8px;
   align-items: center;
-  overflow-x: auto;
+  /* Collapsed strip fits what it can; overflow goes into "+N more", not a scroller. */
+  overflow-x: hidden;
   overflow-y: hidden;
 }
 
