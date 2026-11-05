@@ -1,9 +1,9 @@
 /**
- * Mac-local Vite middleware for review queue + run allow/cancel.
+ * Mac-local Vite middleware for review queue + run allow/cancel + live sources.
  *
  * Persists the shared RunRecord JSON under `public/runs/` (same shape as
- * `robby_ir::run::RunRecord`). Prefer this path on a trusted laptop; cloud
- * Try Live is optional.
+ * `robby_ir::run::RunRecord`). Live feeds are declared in `runs/sources.json`
+ * (`LiveRunSource` IR); Cursor agents land via file poll / POST push.
  */
 
 import { spawnSync } from "node:child_process";
@@ -11,7 +11,12 @@ import fs from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
 import type { Connect, Plugin, ViteDevServer } from "vite";
-
+import {
+  cursorAgentToRunRecord,
+  defaultLiveRunSources,
+  type LiveRunSourcesFile,
+  parseCursorAgentsJson,
+} from "./src/liveRunSource";
 import {
   blocksDownstream,
   isTerminal,
@@ -42,6 +47,10 @@ function recordPath(publicDir: string, runId: string): string {
   return path.join(runsDir(publicDir), `${runFileStem(runId)}.json`);
 }
 
+function sourcesPath(publicDir: string): string {
+  return path.join(runsDir(publicDir), "sources.json");
+}
+
 function ensureLayout(publicDir: string): void {
   const dir = runsDir(publicDir);
   fs.mkdirSync(dir, { recursive: true });
@@ -49,6 +58,110 @@ function ensureLayout(publicDir: string): void {
   if (!fs.existsSync(idx)) {
     writeIndex(publicDir, { runs: [] });
   }
+  if (!fs.existsSync(sourcesPath(publicDir))) {
+    writeSources(publicDir, { sources: defaultLiveRunSources() });
+  }
+}
+
+function readSources(publicDir: string): LiveRunSourcesFile {
+  ensureLayout(publicDir);
+  const raw = fs.readFileSync(sourcesPath(publicDir), "utf8");
+  return JSON.parse(raw) as LiveRunSourcesFile;
+}
+
+function writeSources(publicDir: string, file: LiveRunSourcesFile): void {
+  fs.mkdirSync(runsDir(publicDir), { recursive: true });
+  fs.writeFileSync(sourcesPath(publicDir), `${JSON.stringify(file, null, 2)}\n`);
+}
+
+/** Repo root is three levels above `apps/site/public`. */
+function repoRootFromPublic(publicDir: string): string {
+  return path.resolve(publicDir, "..", "..", "..");
+}
+
+function resolveSourcePath(publicDir: string, relOrAbs: string): string {
+  if (path.isAbsolute(relOrAbs)) {
+    return relOrAbs;
+  }
+  return path.resolve(repoRootFromPublic(publicDir), relOrAbs);
+}
+
+function upsertCursorAgents(publicDir: string, raw: string): RunRecord[] {
+  const agents = parseCursorAgentsJson(raw);
+  const records = agents.map(cursorAgentToRunRecord);
+  for (const record of records) {
+    putRecord(publicDir, record);
+  }
+  return records;
+}
+
+function refreshFilePollSources(publicDir: string): {
+  refreshed: number;
+  records: number;
+  paths: string[];
+} {
+  const file = readSources(publicDir);
+  let refreshed = 0;
+  let records = 0;
+  const paths: string[] = [];
+  for (const source of file.sources) {
+    if (source.enabled === false) {
+      continue;
+    }
+    if (source.transport.kind !== "file_poll" && source.transport.kind !== "file_watch") {
+      continue;
+    }
+    if (source.adapter !== "cursor_agents_v1") {
+      continue;
+    }
+    const abs = resolveSourcePath(publicDir, source.transport.path);
+    paths.push(abs);
+    if (!fs.existsSync(abs)) {
+      continue;
+    }
+    const raw = fs.readFileSync(abs, "utf8");
+    const written = upsertCursorAgents(publicDir, raw);
+    refreshed += 1;
+    records += written.length;
+  }
+  return { refreshed, records, paths };
+}
+
+function watchLiveSources(publicDir: string): void {
+  const seen = new Map<string, number>();
+  const tick = () => {
+    try {
+      const file = readSources(publicDir);
+      let minInterval = 5_000;
+      for (const source of file.sources) {
+        if (source.enabled === false) {
+          continue;
+        }
+        if (source.transport.kind === "file_poll") {
+          minInterval = Math.min(minInterval, source.transport.interval_ms || 5_000);
+          const abs = resolveSourcePath(publicDir, source.transport.path);
+          if (!fs.existsSync(abs)) {
+            continue;
+          }
+          const mtime = fs.statSync(abs).mtimeMs;
+          const prev = seen.get(abs);
+          if (prev === undefined || mtime !== prev) {
+            seen.set(abs, mtime);
+            if (source.adapter === "cursor_agents_v1") {
+              const raw = fs.readFileSync(abs, "utf8");
+              upsertCursorAgents(publicDir, raw);
+            }
+          }
+        }
+      }
+      // Re-arm with the tightest configured interval.
+      setTimeout(tick, minInterval);
+    } catch (err) {
+      console.error("[robby-runs-api] live source watch failed", err);
+      setTimeout(tick, 5_000);
+    }
+  };
+  setTimeout(tick, 1_000);
 }
 
 function readIndex(publicDir: string): RunsIndex {
@@ -241,11 +354,6 @@ function queueReviewView(publicDir: string, body: QueueBody): RunRecord {
   };
   putRecord(publicDir, record);
   return record;
-}
-
-function repoRootFromPublic(publicDir: string): string {
-  // apps/site/public → repo root
-  return path.resolve(publicDir, "..", "..", "..");
 }
 
 function defaultIrPath(repoRoot: string): string {
@@ -750,6 +858,37 @@ function attachApi(server: ViteDevServer, publicDir: string): void {
           return;
         }
 
+        if (
+          method === "GET" &&
+          (url === "/api/runs/sources" || url.startsWith("/api/runs/sources?"))
+        ) {
+          sendJson(res, 200, readSources(publicDir));
+          return;
+        }
+
+        if (
+          method === "POST" &&
+          (url === "/api/runs/live/refresh" || url.startsWith("/api/runs/live/refresh?"))
+        ) {
+          sendJson(res, 200, refreshFilePollSources(publicDir));
+          return;
+        }
+
+        if (
+          method === "POST" &&
+          (url === "/api/runs/live/push" || url.startsWith("/api/runs/live/push?"))
+        ) {
+          const raw = await readBody(req);
+          const records = upsertCursorAgents(publicDir, raw || "{}");
+          // Keep the dump file in sync for file_poll sources / CLI watch.
+          const dumpRel = ".robby/external/cursor/agents.json";
+          const dumpAbs = resolveSourcePath(publicDir, dumpRel);
+          fs.mkdirSync(path.dirname(dumpAbs), { recursive: true });
+          fs.writeFileSync(dumpAbs, raw || "{}");
+          sendJson(res, 200, { upserted: records.length, run_ids: records.map((r) => r.run_id) });
+          return;
+        }
+
         const runMatch = url.match(/^\/api\/runs\/([^/?#]+)(?:\/(allow|cancel))?\/?(?:\?.*)?$/);
         if (runMatch) {
           const runId = decodeURIComponent(runMatch[1] ?? "");
@@ -813,7 +952,14 @@ export function robbyRunsApiPlugin(): Plugin {
     configureServer(server) {
       const publicDir = path.resolve(server.config.root, server.config.publicDir || "public");
       ensureLayout(publicDir);
+      // Ensure default LiveRunSource catalog exists even before `robby web`.
+      try {
+        readSources(publicDir);
+      } catch {
+        writeSources(publicDir, { sources: defaultLiveRunSources() });
+      }
       attachApi(server, publicDir);
+      watchLiveSources(publicDir);
     },
   };
 }
