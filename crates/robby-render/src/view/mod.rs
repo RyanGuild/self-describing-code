@@ -23,7 +23,9 @@ pub use deps::{
     PackageStructure, WeightedEdge,
 };
 pub use entrypoints::{CallTree, MAX_CALL_DEPTH};
-pub use execution::{execution_process, from_code_path as execution_from_code_path};
+pub use execution::{
+    execution_process, from_code_path as execution_from_code_path, observed_process,
+};
 pub use externals::{ExternalEntry, ExternalsView};
 pub use hierarchy::{HierarchyNode, HierarchyView};
 pub use links::{InboundRef, LinkGraph, OutboundRef};

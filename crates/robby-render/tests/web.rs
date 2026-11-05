@@ -372,6 +372,69 @@ fn frame_detail_includes_execution_mermaid_for_call_path() {
 }
 
 #[test]
+fn leaf_process_does_not_duplicate_as_execution() {
+    let (doc, sources) = demo_doc();
+    let node = doc.get(&NodeId::symbol("rust", "demo::left::a")).unwrap();
+    let detail = FrameDetail::from_node_in_doc(node, &sources, Some(&doc));
+    assert!(
+        detail.process_mermaid.is_some(),
+        "definition Process should still render"
+    );
+    assert!(
+        detail.execution_mermaid.is_none(),
+        "no Calls / no observations → Execution must stay empty, got {:?}",
+        detail.execution_mermaid
+    );
+}
+
+#[test]
+fn partial_observations_yield_distinct_execution() {
+    let sources = BTreeMap::new();
+    let mut doc = Document::new("test");
+    let id = NodeId::symbol("rust", "demo::left::a");
+    let mut node = Node::new(id.clone(), code::FUNCTION, "demo::left::a");
+    let mut proc = Process::new();
+    proc.participant("a", "a", Kind::from(code::FUNCTION));
+    proc.participant("helper", "helper", Kind::from(code::FUNCTION));
+    proc.step(Step {
+        from: "a".to_owned(),
+        to: "a".to_owned(),
+        label: "body".to_owned(),
+        kind: StepKind::Note,
+        observed: false,
+        span: None,
+        blocks: vec![],
+    });
+    proc.step(Step {
+        from: "a".to_owned(),
+        to: "helper".to_owned(),
+        label: "seen".to_owned(),
+        kind: StepKind::Call,
+        observed: true,
+        span: None,
+        blocks: vec![],
+    });
+    node.process = Some(proc);
+    doc.insert(node);
+
+    let node = doc.get(&id).unwrap();
+    let detail = FrameDetail::from_node_in_doc(node, &sources, Some(&doc));
+    let process = detail.process_mermaid.as_deref().expect("process_mermaid");
+    let execution = detail
+        .execution_mermaid
+        .as_deref()
+        .expect("execution_mermaid from observations");
+    assert_ne!(
+        process, execution,
+        "Process and Execution must not share the same Mermaid body"
+    );
+    assert!(
+        execution.contains("seen"),
+        "execution should include observed step: {execution}"
+    );
+}
+
+#[test]
 fn entrypoints_scene_roots_mains_and_nests_callees() {
     let doc = entrypoints_demo_doc();
     let scene = Scene::from_entrypoints(&doc);
