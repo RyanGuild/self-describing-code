@@ -7,6 +7,7 @@
 //! Running any path twice on the same document must produce byte-identical
 //! output: generated diagrams and pages are committed and diffed in CI.
 
+pub mod improve_loop;
 pub mod ingest;
 pub mod markdown;
 pub mod metric_test;
@@ -20,6 +21,10 @@ pub mod util;
 pub mod view;
 pub mod web;
 
+pub use improve_loop::{
+    ImproveLoopResult, link_metric_to_improve, spawn_improve_integrate, write_improve_run,
+    write_integrate_run,
+};
 pub use ingest::{CursorAgentStub, CursorEvent, ingest_cursor_agents, ingest_cursor_json};
 pub use metric_test::{
     MetricTestRequest, allow_and_spawn_metric_test, build_metric_test_run, write_metric_test_run,

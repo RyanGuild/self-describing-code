@@ -209,10 +209,65 @@ enum Command {
         /// Parent review run_id (Allow path / coordination via shared RunRecord).
         #[arg(long)]
         parent_run: Option<String>,
-        /// Allow a queued `robby.review_view` then spawn metric_test products.
+        /// Allow a queued `robby.review_view` then spawn metric_test → improve → integrate.
         #[arg(long)]
         allow_run: Option<String>,
+        /// Skip the two-model improve → integrate chain after Allow / metric_test.
+        #[arg(long)]
+        skip_improve: bool,
+        /// OpenRouter model for `robby.improve_patch` (default: ROBBY_IMPROVE_MODEL / gpt-4o-mini).
+        #[arg(long)]
+        improve_model: Option<String>,
+        /// OpenRouter model for `robby.integrate_patch` (default: ROBBY_INTEGRATE_MODEL / gpt-4o).
+        #[arg(long)]
+        integrate_model: Option<String>,
+        /// Directory for `.robby/patches/*.diff` (default: `<source_root>/.robby/patches`).
+        #[arg(long)]
+        patches_out: Option<PathBuf>,
         /// Print the RunRecord JSON to stdout as well as writing runs/.
+        #[arg(long)]
+        json: bool,
+    },
+    /// Propose a source patch for metric claims (`robby.improve_patch`).
+    ImprovePatch {
+        #[arg(long, default_value = ".robby/robby.ir.json")]
+        ir: PathBuf,
+        #[arg(long, default_value = ".")]
+        source_root: PathBuf,
+        #[arg(long, default_value = "apps/site/public")]
+        runs_out: PathBuf,
+        /// Parent metric_test (or review) run_id.
+        #[arg(long)]
+        parent_run: Option<String>,
+        #[arg(long)]
+        subject: Option<String>,
+        #[arg(long)]
+        improve_model: Option<String>,
+        #[arg(long)]
+        integrate_model: Option<String>,
+        /// Also run integrate after improve (default: true).
+        #[arg(long, default_value_t = true)]
+        integrate: bool,
+        #[arg(long)]
+        skip_integrate: bool,
+        #[arg(long)]
+        patches_out: Option<PathBuf>,
+        #[arg(long)]
+        json: bool,
+    },
+    /// Review/integrate an improve proposal (`robby.integrate_patch`).
+    IntegratePatch {
+        #[arg(long, default_value = "apps/site/public")]
+        runs_out: PathBuf,
+        /// Parent `robby.improve_patch` run_id.
+        #[arg(long)]
+        parent_run: String,
+        #[arg(long)]
+        integrate_model: Option<String>,
+        #[arg(long)]
+        patches_out: Option<PathBuf>,
+        #[arg(long, default_value = ".")]
+        source_root: PathBuf,
         #[arg(long)]
         json: bool,
     },
@@ -369,6 +424,10 @@ fn run() -> Result<ExitCode> {
             runs_out,
             parent_run,
             allow_run,
+            skip_improve,
+            improve_model,
+            integrate_model,
+            patches_out,
             json,
         } => metric_test(
             &ir,
@@ -378,6 +437,49 @@ fn run() -> Result<ExitCode> {
             &runs_out,
             parent_run.as_deref(),
             allow_run.as_deref(),
+            skip_improve,
+            improve_model.as_deref(),
+            integrate_model.as_deref(),
+            patches_out.as_deref(),
+            json,
+        ),
+        Command::ImprovePatch {
+            ir,
+            source_root,
+            runs_out,
+            parent_run,
+            subject,
+            improve_model,
+            integrate_model,
+            integrate,
+            skip_integrate,
+            patches_out,
+            json,
+        } => improve_patch_cmd(
+            &ir,
+            &source_root,
+            &runs_out,
+            parent_run.as_deref(),
+            subject.as_deref(),
+            improve_model.as_deref(),
+            integrate_model.as_deref(),
+            integrate && !skip_integrate,
+            patches_out.as_deref(),
+            json,
+        ),
+        Command::IntegratePatch {
+            runs_out,
+            parent_run,
+            integrate_model,
+            patches_out,
+            source_root,
+            json,
+        } => integrate_patch_cmd(
+            &runs_out,
+            &parent_run,
+            integrate_model.as_deref(),
+            patches_out.as_deref(),
+            &source_root,
             json,
         ),
     }
@@ -464,6 +566,10 @@ fn metric_test(
     runs_out: &std::path::Path,
     parent_run: Option<&str>,
     allow_run: Option<&str>,
+    skip_improve: bool,
+    improve_model: Option<&str>,
+    integrate_model: Option<&str>,
+    patches_out: Option<&std::path::Path>,
     json: bool,
 ) -> Result<ExitCode> {
     let loaded = pipeline::load(ir, source_root)?;
@@ -494,6 +600,25 @@ fn metric_test(
             metric_run.run_id,
             metric_run.status.as_str()
         );
+        if !skip_improve {
+            let loop_result = run_improve_integrate_chain(
+                &store,
+                &loaded.document,
+                source_root,
+                patches_out,
+                &metric_run,
+                &review,
+                improve_model,
+                integrate_model,
+            )?;
+            println!(
+                "→ improve_patch {} ({}) → integrate_patch {} ({})",
+                loop_result.improve.run_id,
+                loop_result.improve.status.as_str(),
+                loop_result.integrate.run_id,
+                loop_result.integrate.status.as_str()
+            );
+        }
         return Ok(exit_for_status(metric_run.status));
     }
 
@@ -526,6 +651,402 @@ fn metric_test(
     }
 
     Ok(exit_for_status(record.status))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn improve_patch_cmd(
+    ir: &std::path::Path,
+    source_root: &std::path::Path,
+    runs_out: &std::path::Path,
+    parent_run: Option<&str>,
+    subject: Option<&str>,
+    improve_model: Option<&str>,
+    integrate_model: Option<&str>,
+    do_integrate: bool,
+    patches_out: Option<&std::path::Path>,
+    json: bool,
+) -> Result<ExitCode> {
+    let loaded = pipeline::load(ir, source_root)?;
+    let store = robby_render::SiteRunsStore::new(runs_out);
+    store.ensure_layout()?;
+
+    let metric_run = if let Some(parent_id) = parent_run {
+        store.read(parent_id).with_context(|| format!("read parent run {parent_id}"))?
+    } else {
+        // Synthetic metric parent so standalone improve still lands in Runs.
+        let mut synthetic = robby_ir::RunRecord::new(
+            robby_render::mint_run_id("metric"),
+            robby_ir::run::recipes::METRIC_TEST,
+            robby_ir::RunStatus::Pass,
+        );
+        if let Some(subject) = subject {
+            synthetic.subject = Some(subject.to_owned());
+        } else if let Some(root) = loaded.document.roots.first() {
+            synthetic.subject = Some(root.as_str().to_owned());
+        }
+        synthetic
+            .stats
+            .insert("synthetic".to_owned(), "true".to_owned());
+        store.put(&synthetic)?;
+        synthetic
+    };
+
+    let review_stub = metric_run.clone();
+    let mut metric_for_chain = metric_run;
+    if let Some(subject) = subject {
+        metric_for_chain.subject = Some(subject.to_owned());
+    }
+
+    let improve_model = improve_model
+        .map(str::to_owned)
+        .unwrap_or_else(robby_agent::default_improve_model);
+    let integrate_model = integrate_model
+        .map(str::to_owned)
+        .unwrap_or_else(robby_agent::default_integrate_model);
+    robby_agent::ensure_distinct_models(&improve_model, &integrate_model)?;
+
+    let (proposal, _) = propose_patch_for_metric(
+        &loaded.document,
+        source_root,
+        &metric_for_chain,
+        &review_stub,
+        &improve_model,
+    )?;
+    let patches_dir = patches_dir(source_root, patches_out);
+    let metrics_targeted = proposal.metrics_targeted.clone();
+    let (improve, _) = robby_render::write_improve_run(
+        &store,
+        &patches_dir,
+        metric_for_chain.subject.as_deref(),
+        Some(metric_for_chain.run_id.as_str()),
+        Some(metric_for_chain.run_id.as_str()),
+        &improve_model,
+        &proposal.summary,
+        &proposal.unified_diff_text(),
+        &metrics_targeted,
+    )?;
+    robby_render::link_metric_to_improve(&store, &metric_for_chain.run_id, &improve)?;
+    print_metric_result(&improve, json);
+    println!(
+        "improve_patch {} ({}) model={}",
+        improve.run_id,
+        improve.status.as_str(),
+        improve_model
+    );
+
+    if do_integrate {
+        let decision = integrate_proposal(&proposal, &improve_model, &integrate_model)?;
+        let integrated = decision.integrated_diff(&proposal);
+        let (integrate, _) = robby_render::write_integrate_run(
+            &store,
+            &patches_dir,
+            metric_for_chain.subject.as_deref(),
+            &improve,
+            &integrate_model,
+            decision.verdict.as_str(),
+            &decision.reason,
+            integrated.as_deref(),
+        )?;
+        print_metric_result(&integrate, json);
+        println!(
+            "integrate_patch {} ({}) model={} verdict={}",
+            integrate.run_id,
+            integrate.status.as_str(),
+            integrate_model,
+            decision.verdict.as_str()
+        );
+        return Ok(exit_for_status(integrate.status));
+    }
+    Ok(exit_for_status(improve.status))
+}
+
+fn integrate_patch_cmd(
+    runs_out: &std::path::Path,
+    parent_run: &str,
+    integrate_model: Option<&str>,
+    patches_out: Option<&std::path::Path>,
+    source_root: &std::path::Path,
+    json: bool,
+) -> Result<ExitCode> {
+    let store = robby_render::SiteRunsStore::new(runs_out);
+    store.ensure_layout()?;
+    let improve = store
+        .read(parent_run)
+        .with_context(|| format!("read improve run {parent_run}"))?;
+    if improve.recipe.as_str() != robby_ir::run::recipes::IMPROVE_PATCH {
+        bail!(
+            "parent run {parent_run} is recipe {}, expected {}",
+            improve.recipe,
+            robby_ir::run::recipes::IMPROVE_PATCH
+        );
+    }
+    let improve_model = improve
+        .stats
+        .get("improve_model")
+        .cloned()
+        .unwrap_or_else(robby_agent::default_improve_model);
+    let integrate_model = integrate_model
+        .map(str::to_owned)
+        .unwrap_or_else(robby_agent::default_integrate_model);
+    robby_agent::ensure_distinct_models(&improve_model, &integrate_model)?;
+
+    let proposal_path = improve
+        .products
+        .iter()
+        .find_map(|p| p.strip_prefix("path:").map(str::to_owned));
+    let proposal_text = if let Some(rel) = &proposal_path {
+        let candidate = if PathBuf::from(rel).is_absolute() {
+            PathBuf::from(rel)
+        } else {
+            source_root.join(rel)
+        };
+        fs_read_optional(&candidate)?
+            .or_else(|| {
+                patches_dir(source_root, patches_out)
+                    .join(format!("{}.propose.diff", improve.run_id))
+                    .exists()
+                    .then(|| {
+                        std::fs::read_to_string(
+                            patches_dir(source_root, patches_out)
+                                .join(format!("{}.propose.diff", improve.run_id)),
+                        )
+                        .ok()
+                    })
+                    .flatten()
+            })
+            .unwrap_or_default()
+    } else {
+        String::new()
+    };
+    let proposal = robby_agent::ProposedPatch {
+        summary: improve
+            .stdout_tail
+            .clone()
+            .unwrap_or_else(|| "improve proposal".into()),
+        files: vec![robby_agent::PatchFile {
+            path: proposal_path.unwrap_or_else(|| "patch.diff".into()),
+            unified_diff: proposal_text,
+        }],
+        metrics_targeted: improve
+            .stats
+            .get("metrics_targeted")
+            .map(|s| {
+                s.split(',')
+                    .filter(|p| !p.is_empty())
+                    .map(str::to_owned)
+                    .collect()
+            })
+            .unwrap_or_default(),
+        model: improve_model.clone(),
+    };
+    let decision = integrate_proposal(&proposal, &improve_model, &integrate_model)?;
+    let integrated = decision.integrated_diff(&proposal);
+    let (integrate, _) = robby_render::write_integrate_run(
+        &store,
+        &patches_dir(source_root, patches_out),
+        improve.subject.as_deref(),
+        &improve,
+        &integrate_model,
+        decision.verdict.as_str(),
+        &decision.reason,
+        integrated.as_deref(),
+    )?;
+    print_metric_result(&integrate, json);
+    println!(
+        "integrate_patch {} ({}) verdict={}",
+        integrate.run_id,
+        integrate.status.as_str(),
+        decision.verdict.as_str()
+    );
+    Ok(exit_for_status(integrate.status))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn run_improve_integrate_chain(
+    store: &robby_render::SiteRunsStore,
+    doc: &Document,
+    source_root: &std::path::Path,
+    patches_out: Option<&std::path::Path>,
+    metric_run: &robby_ir::RunRecord,
+    review: &robby_ir::RunRecord,
+    improve_model: Option<&str>,
+    integrate_model: Option<&str>,
+) -> Result<robby_render::ImproveLoopResult> {
+    let improve_model = improve_model
+        .map(str::to_owned)
+        .unwrap_or_else(robby_agent::default_improve_model);
+    let integrate_model = integrate_model
+        .map(str::to_owned)
+        .unwrap_or_else(robby_agent::default_integrate_model);
+    robby_agent::ensure_distinct_models(&improve_model, &integrate_model)?;
+
+    let (proposal, _) =
+        propose_patch_for_metric(doc, source_root, metric_run, review, &improve_model)?;
+    // Integrate always uses the integrate model path (OpenRouter or stub).
+    let decision = integrate_proposal(&proposal, &improve_model, &integrate_model)?;
+
+    let metrics_targeted = proposal.metrics_targeted.clone();
+    let integrated = decision.integrated_diff(&proposal);
+    robby_render::spawn_improve_integrate(
+        store,
+        &patches_dir(source_root, patches_out),
+        metric_run
+            .subject
+            .as_deref()
+            .or(review.subject.as_deref()),
+        metric_run,
+        &improve_model,
+        &integrate_model,
+        &proposal.summary,
+        &proposal.unified_diff_text(),
+        &metrics_targeted,
+        decision.verdict.as_str(),
+        &decision.reason,
+        integrated.as_deref(),
+    )
+}
+
+fn propose_patch_for_metric(
+    doc: &Document,
+    source_root: &std::path::Path,
+    metric_run: &robby_ir::RunRecord,
+    review: &robby_ir::RunRecord,
+    improve_model: &str,
+) -> Result<(robby_agent::ProposedPatch, bool)> {
+    let ctx = build_improve_context(doc, source_root, metric_run, review);
+    match robby_agent::OpenRouterClient::from_env() {
+        Ok(client) => {
+            let model = robby_agent::ImproveModel::new(&client, improve_model);
+            match model.propose(&ctx) {
+                Ok(patch) => Ok((patch, false)),
+                Err(err) => {
+                    eprintln!("improve OpenRouter failed ({err}); using stub proposal");
+                    Ok((robby_agent::stub_propose(&ctx), true))
+                }
+            }
+        }
+        Err(_) => Ok((robby_agent::stub_propose(&ctx), true)),
+    }
+}
+
+fn integrate_proposal(
+    proposal: &robby_agent::ProposedPatch,
+    improve_model: &str,
+    integrate_model: &str,
+) -> Result<robby_agent::IntegrateDecision> {
+    robby_agent::ensure_distinct_models(improve_model, integrate_model)?;
+    match robby_agent::OpenRouterClient::from_env() {
+        Ok(client) => {
+            let model = robby_agent::IntegrateModel::new(&client, integrate_model);
+            match model.review(proposal, improve_model, &proposal.metrics_targeted) {
+                Ok(decision) => Ok(decision),
+                Err(err) => {
+                    eprintln!("integrate OpenRouter failed ({err}); using stub integrate");
+                    Ok(robby_agent::stub_integrate(proposal))
+                }
+            }
+        }
+        Err(_) => Ok(robby_agent::stub_integrate(proposal)),
+    }
+}
+
+fn build_improve_context(
+    doc: &Document,
+    source_root: &std::path::Path,
+    metric_run: &robby_ir::RunRecord,
+    review: &robby_ir::RunRecord,
+) -> robby_agent::ImproveContext {
+    let mut metric_scores = Vec::new();
+    for (key, value) in &metric_run.stats {
+        if key.contains('.') && !key.contains("test_id") && key != "parent_run_id" {
+            // Prefer catalog-looking keys / measured metrics.
+            if key.starts_with("doc.")
+                || key.starts_with("edge.")
+                || key.starts_with("agent.")
+                || key.starts_with("ui.")
+                || key.starts_with("fn.")
+            {
+                metric_scores.push((key.clone(), value.clone()));
+            }
+        }
+    }
+    for product in &metric_run.products {
+        if let Some(rest) = product.strip_prefix("metric:") {
+            let mut parts = rest.splitn(2, ':');
+            if let (Some(id), Some(score)) = (parts.next(), parts.next()) {
+                if !metric_scores.iter().any(|(k, _)| k == id) {
+                    metric_scores.push((id.to_owned(), score.to_owned()));
+                }
+            }
+        }
+    }
+
+    let mut decision_notes = Vec::new();
+    for product in &review.products {
+        if product.starts_with("ir:agent.decision:") || product.starts_with("path:runs/") {
+            decision_notes.push(product.clone());
+        }
+    }
+    if let Some(reason) = review.stats.get("metric.ui.runrecord_shape_compliance") {
+        decision_notes.push(format!("ui.runrecord_shape_compliance={reason}"));
+    }
+
+    let subject = metric_run
+        .subject
+        .clone()
+        .or_else(|| review.subject.clone());
+    let (source_path, source_window, subject_name) = subject
+        .as_deref()
+        .and_then(|id| source_window_for(doc, source_root, id))
+        .unwrap_or((None, None, None));
+
+    robby_agent::ImproveContext {
+        subject,
+        subject_name,
+        metric_scores,
+        decision_notes,
+        source_path,
+        source_window,
+        metric_stdout: metric_run.stdout_tail.clone(),
+    }
+}
+
+fn source_window_for(
+    doc: &Document,
+    source_root: &std::path::Path,
+    subject: &str,
+) -> Option<(Option<String>, Option<String>, Option<String>)> {
+    let node = doc.nodes.get(&robby_ir::NodeId::new(subject)).or_else(|| {
+        doc.nodes
+            .values()
+            .find(|n| n.fqn == subject || n.id.as_str() == subject)
+    })?;
+    let name = Some(node.name.clone());
+    let Some(span) = &node.span else {
+        return Some((None, None, name));
+    };
+    let path = span.file.clone();
+    let abs = source_root.join(&path);
+    let text = std::fs::read_to_string(&abs).ok()?;
+    let start = span.start.byte as usize;
+    let end = (span.end.byte as usize).min(text.len());
+    let window_start = start.saturating_sub(200);
+    let window_end = (end + 200).min(text.len());
+    let window = text.get(window_start..window_end).map(str::to_owned);
+    Some((Some(path), window, name))
+}
+
+fn patches_dir(source_root: &std::path::Path, override_dir: Option<&std::path::Path>) -> PathBuf {
+    override_dir
+        .map(PathBuf::from)
+        .unwrap_or_else(|| source_root.join(".robby/patches"))
+}
+
+fn fs_read_optional(path: &std::path::Path) -> Result<Option<String>> {
+    if !path.exists() {
+        return Ok(None);
+    }
+    Ok(Some(std::fs::read_to_string(path)?))
 }
 
 fn print_metric_result(record: &robby_ir::RunRecord, json: bool) {
