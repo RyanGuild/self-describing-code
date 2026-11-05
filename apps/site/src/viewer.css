@@ -532,7 +532,7 @@ body {
 }
 
 /* Title left, Copy right — shared by Runs list summary + detail block heads. */
-.copy-block-head {
+#runs-panel .copy-block-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -541,13 +541,13 @@ body {
   margin: 0 0 8px;
 }
 
-.copy-block-head h2 {
+#runs-panel .copy-block-head h2 {
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
 }
 
-.copy-btn {
+#runs-panel .copy-btn {
   flex: 0 0 auto;
   margin-inline-start: auto;
   appearance: none;
@@ -564,18 +564,18 @@ body {
   cursor: pointer;
 }
 
-.copy-btn:hover {
+#runs-panel .copy-btn:hover {
   color: var(--text);
   border-color: var(--portal-border);
   background: var(--portal);
 }
 
-.copy-btn:focus-visible {
+#runs-panel .copy-btn:focus-visible {
   outline: 1px solid var(--accent);
   outline-offset: 1px;
 }
 
-.copy-btn.is-copied {
+#runs-panel .copy-btn.is-copied {
   color: #8fd6a8;
   border-color: #1e3a2f;
   background: rgba(30, 58, 47, 0.45);
