@@ -16,7 +16,9 @@ use robby_ir::{Document, Node, Source};
 use crate::render::MermaidRenderer;
 use crate::render::Renderer;
 use crate::util::stable_id;
-use crate::view::{ProcessView, Scene, SourceSlice, WORKSPACE_ID, execution_process};
+use crate::view::{
+    ProcessView, Scene, SourceSlice, WORKSPACE_ID, execution_process, observed_process,
+};
 
 /// Lazy detail for one frame (fetched after the camera settles).
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -38,7 +40,7 @@ pub struct FrameDetail {
     /// Mermaid `sequenceDiagram` body for the process (same path as Markdown).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub process_mermaid: Option<String>,
-    /// Path-level execution sequence (Calls + owning types for methods).
+    /// Call-path or observed-runtime sequence — never a duplicate of [`Self::process_mermaid`].
     #[serde(skip_serializing_if = "Option::is_none")]
     pub execution_mermaid: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -83,15 +85,33 @@ impl FrameDetail {
             None => (None, None),
         };
 
-        let execution_mermaid = doc.and_then(|d| {
-            let exec = execution_process(d, &node.id)?;
-            // Prefer path diagram when it adds call hops beyond the local body.
-            if exec.steps.is_empty() {
-                return None;
+        // Execution must be distinct from Process:
+        // 1) call-path sequence when Calls exist
+        // 2) else observed-only absorb slice (runtime trace)
+        // Never clone the definition process under a second label.
+        let execution_mermaid = {
+            let from_path = doc.and_then(|d| {
+                let exec = execution_process(d, &node.id)?;
+                if exec.steps.is_empty() {
+                    return None;
+                }
+                if node.process.as_ref() == Some(&exec) {
+                    return None;
+                }
+                let view = ProcessView::from_process(&exec);
+                Some(MermaidRenderer.process(&view))
+            });
+            let from_observed = node.process.as_ref().and_then(|p| {
+                let obs = observed_process(p)?;
+                let view = ProcessView::from_process(&obs);
+                Some(MermaidRenderer.process(&view))
+            });
+            let candidate = from_path.or(from_observed);
+            match (&process_mermaid, candidate) {
+                (Some(proc), Some(exec)) if proc == &exec => None,
+                (_, other) => other,
             }
-            let view = ProcessView::from_process(&exec);
-            Some(MermaidRenderer.process(&view))
-        });
+        };
 
         let source = SourceSlice::from_node(node, sources);
 
@@ -161,6 +181,22 @@ pub fn write_site(doc: &Document, sources: &BTreeMap<String, String>, out: &Path
                 detail.to_json(),
             )?;
             count += 1;
+        }
+    }
+
+    // Drop orphan frame payloads from prior builds so stale identical
+    // Process/Execution Mermaid cannot linger under old stable ids.
+    for entry in fs::read_dir(&frames_dir)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.extension().and_then(|e| e.to_str()) != Some("json") {
+            continue;
+        }
+        let Some(stem) = path.file_stem().and_then(|s| s.to_str()) else {
+            continue;
+        };
+        if !written.contains(stem) {
+            fs::remove_file(path)?;
         }
     }
 

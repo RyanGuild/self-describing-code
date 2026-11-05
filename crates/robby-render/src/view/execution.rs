@@ -3,6 +3,10 @@
 //! Participants are callables on the path plus owning types for methods
 //! (structs/enums/traits parsed from `impl … for Type`), so the diagram
 //! connects type lifelines and function nodes that describe the run.
+//!
+//! This is intentionally distinct from a node's definition [`Process`]:
+//! empty call paths return [`None`] rather than cloning the body process
+//! (which previously made Execution and Process Mermaid charts identical).
 
 use robby_ir::{
     CodePath, DEFAULT_MAX_DEPTH, Document, Kind, Node, NodeId, Process, Step, StepKind, kind,
@@ -14,9 +18,50 @@ use crate::util::alias;
 const MAX_EDGES: usize = 48;
 
 /// Build an execution [`Process`] rooted at `root` (BFS Calls, depth-capped).
+///
+/// Returns [`None`] when there is no outbound call path — callers should not
+/// substitute the node's static body process (that belongs under Process).
 pub fn execution_process(doc: &Document, root: &NodeId) -> Option<Process> {
     let path = CodePath::from_entry(doc, root, DEFAULT_MAX_DEPTH)?;
     from_code_path(doc, &path)
+}
+
+/// Observed-only slice of a (possibly absorbed) definition process.
+///
+/// Used when there is no call-path execution yet, but runtime has stamped
+/// `observed` steps via [`Process::absorb`].
+pub fn observed_process(process: &Process) -> Option<Process> {
+    let steps: Vec<Step> = process
+        .steps
+        .iter()
+        .filter(|s| s.observed)
+        .cloned()
+        .collect();
+    if steps.is_empty() {
+        return None;
+    }
+    // Fully-observed absorb of the same body is still the definition graph —
+    // Process already shows it (solid arrows). Only emit when observation is a
+    // proper subset so Execution is visually distinct.
+    if steps.len() == process.steps.len() {
+        return None;
+    }
+
+    let used: std::collections::BTreeSet<&str> = steps
+        .iter()
+        .flat_map(|s| [s.from.as_str(), s.to.as_str()])
+        .collect();
+
+    let mut out = Process::new();
+    for p in &process.participants {
+        if used.contains(p.id.as_str()) {
+            out.participant(p.id.clone(), p.label.clone(), p.kind.clone());
+        }
+    }
+    for step in steps {
+        out.step(step);
+    }
+    Some(out)
 }
 
 pub fn from_code_path(doc: &Document, path: &CodePath) -> Option<Process> {
@@ -27,8 +72,8 @@ pub fn from_code_path(doc: &Document, path: &CodePath) -> Option<Process> {
 
     let edges: Vec<_> = path.edges.iter().take(MAX_EDGES).collect();
     if edges.is_empty() {
-        // No outbound path — fall back to the node's own process if any.
-        return entry.process.clone().filter(|p| !p.steps.is_empty());
+        // No outbound Calls — do not reuse the definition process.
+        return None;
     }
 
     for edge in edges {
@@ -170,5 +215,67 @@ mod tests {
             process.participants
         );
         assert!(process.steps.len() >= 2);
+    }
+
+    #[test]
+    fn empty_call_path_does_not_clone_definition_process() {
+        let mut doc = Document::new("test");
+        let mut leaf = Node::new(
+            NodeId::symbol("rust", "demo::leaf"),
+            kind::code::FUNCTION,
+            "demo::leaf",
+        );
+        let mut body = Process::new();
+        body.participant("leaf", "leaf()", Kind::from(kind::code::FUNCTION));
+        body.step(Step {
+            from: "leaf".into(),
+            to: "leaf".into(),
+            label: "body".into(),
+            kind: StepKind::Note,
+            observed: false,
+            span: None,
+            blocks: Vec::new(),
+        });
+        leaf.process = Some(body);
+        doc.insert(leaf);
+
+        assert!(
+            execution_process(&doc, &NodeId::symbol("rust", "demo::leaf")).is_none(),
+            "leaf with definition process but no Calls must not yield execution"
+        );
+    }
+
+    #[test]
+    fn observed_process_is_proper_subset_only() {
+        let mut process = Process::new();
+        process.participant("a", "a", Kind::from(kind::code::FUNCTION));
+        process.participant("b", "b", Kind::from(kind::code::FUNCTION));
+        process.step(Step {
+            from: "a".into(),
+            to: "b".into(),
+            label: "hit".into(),
+            kind: StepKind::Call,
+            observed: true,
+            span: None,
+            blocks: Vec::new(),
+        });
+        process.step(Step {
+            from: "a".into(),
+            to: "b".into(),
+            label: "miss".into(),
+            kind: StepKind::Call,
+            observed: false,
+            span: None,
+            blocks: Vec::new(),
+        });
+
+        let obs = observed_process(&process).expect("subset");
+        assert_eq!(obs.steps.len(), 1);
+        assert_eq!(obs.steps[0].label, "hit");
+        assert!(obs.steps[0].observed);
+
+        // All observed → None (Process already shows the solid graph).
+        process.steps[1].observed = true;
+        assert!(observed_process(&process).is_none());
     }
 }

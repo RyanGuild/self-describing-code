@@ -90,9 +90,9 @@ interface FrameDetail {
     step_count: number;
     observed_count: number;
   };
-  /** Mermaid sequenceDiagram from robby-render (same as Markdown). */
+  /** Mermaid sequenceDiagram for the definition Process (same as Markdown). */
   process_mermaid?: string;
-  /** Path-level Calls sequence (functions + owning types). */
+  /** Call-path or observed-runtime sequence — distinct from process_mermaid. */
   execution_mermaid?: string;
   source?: { file: string; text: string };
 }
@@ -1418,7 +1418,7 @@ function appendExecution(panel: HTMLElement, mermaidSrc: string, frameId: string
   proc.appendChild(heading);
   const summary = document.createElement("div");
   summary.className = "meta";
-  summary.textContent = "call path · functions and owning types";
+  summary.textContent = "call path or runtime observations · not the definition process";
   proc.appendChild(summary);
   const diagram = document.createElement("div");
   diagram.className = "process-mermaid";
