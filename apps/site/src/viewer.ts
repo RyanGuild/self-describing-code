@@ -11,7 +11,8 @@
  * downscale-then-upscale rasterization that keeps text pixelated after zoom.
  *
  * Soft-queues `robby.review_view` RunRecords on frame focus (Mac-local Vite
- * API → `public/runs/`). Runs mode can Allow or Cancel pending reviews.
+ * API → `public/runs/`) without leaving the map. Open Runs (dock) to Allow
+ * or Cancel pending reviews.
  */
 
 import {
@@ -1366,17 +1367,9 @@ async function maybeQueueReviewForFocus(id: string): Promise<void> {
     }
     const record = (await res.json()) as RunRecord;
     runDetailCache.set(record.run_id, record);
+    // Refresh the Runs index/badge only — stay on the structure map so a
+    // crate/frame click keeps flyTo focus instead of hijacking into Runs.
     await prefetchRuns(true);
-    // Surface the pending review in Runs mode.
-    if (orgMode !== "runs") {
-      await setOrgMode("runs");
-    }
-    runsFilter = "reviews";
-    for (const btn of runsPanelEl.querySelectorAll(".runs-filter")) {
-      btn.classList.toggle("is-active", (btn as HTMLElement).dataset.filter === "reviews");
-    }
-    selectedRunId = record.run_id;
-    showRunsPanel();
   } catch (err) {
     console.error(err);
   }
