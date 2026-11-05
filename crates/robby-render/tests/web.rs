@@ -357,6 +357,18 @@ fn frame_detail_includes_execution_mermaid_for_call_path() {
         .get(&NodeId::symbol("rust", "demo::bin_a::main"))
         .expect("main");
     let detail = FrameDetail::from_node_in_doc(node, &sources, Some(&doc));
+    let exec = detail.execution.as_ref().expect("execution");
+    assert!(
+        !exec.participants.is_empty(),
+        "expected execution participants"
+    );
+    assert!(
+        exec.participants.iter().any(|p| {
+            p.label.contains("shared") || p.label.contains("helper") || p.target.is_some()
+        }),
+        "expected callees or portal targets in execution: {:?}",
+        exec.participants
+    );
     let mermaid = detail
         .execution_mermaid
         .as_deref()

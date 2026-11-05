@@ -23,6 +23,13 @@ import {
   RECIPE_REVIEW_VIEW,
   runFileStem,
 } from "./runRecord";
+import {
+  modelFromMermaid,
+  modelFromProcess,
+  mountSequenceDiagram,
+  type SeqModel,
+  type SeqParticipant,
+} from "./sequenceDiagram";
 
 const CANVAS_W = 1600;
 const CANVAS_H = 1000;
@@ -74,6 +81,13 @@ interface ProcessEvent {
   kind?: string;
 }
 
+interface ProcessPayload {
+  participants: { id: string; label: string; target?: string }[];
+  events: ProcessEvent[];
+  step_count: number;
+  observed_count: number;
+}
+
 interface FrameDetail {
   stable_id: string;
   id: string;
@@ -84,15 +98,12 @@ interface FrameDetail {
   location?: string;
   provenance: string;
   confidence: number;
-  process?: {
-    participants: { id: string; label: string }[];
-    events: ProcessEvent[];
-    step_count: number;
-    observed_count: number;
-  };
-  /** Mermaid sequenceDiagram for the definition Process (same as Markdown). */
+  process?: ProcessPayload;
+  /** Mermaid sequenceDiagram for the definition Process (legacy / Markdown). */
   process_mermaid?: string;
-  /** Call-path or observed-runtime sequence — distinct from process_mermaid. */
+  /** Call-path or observed-runtime sequence (structured; preferred by the site canvas). */
+  execution?: ProcessPayload;
+  /** Same sequence as Mermaid — distinct from process_mermaid (legacy payloads). */
   execution_mermaid?: string;
   source?: { file: string; text: string };
 }
@@ -1446,10 +1457,17 @@ async function loadDetail(id: string): Promise<void> {
     for (const el of host.querySelectorAll(":scope > .detail")) {
       el.remove();
     }
-    if (detail.execution_mermaid) {
+    const execModel = resolveSequenceModel(detail, "execution");
+    if (execModel) {
       const panel = document.createElement("div");
       panel.className = "detail detail-execution";
-      appendExecution(panel, detail.execution_mermaid, id);
+      appendSequenceSection(
+        panel,
+        "Execution",
+        "call path or runtime observations · not the definition process",
+        execModel,
+        id,
+      );
       const grid = host.querySelector(".child-grid");
       if (grid) {
         host.insertBefore(panel, grid);
@@ -1479,27 +1497,26 @@ async function loadDetail(id: string): Promise<void> {
     panel.appendChild(docs);
   }
 
-  if (detail.execution_mermaid) {
-    appendExecution(panel, detail.execution_mermaid, id);
+  const execModel = resolveSequenceModel(detail, "execution");
+  if (execModel) {
+    appendSequenceSection(
+      panel,
+      "Execution",
+      "call path or runtime observations · not the definition process",
+      execModel,
+      id,
+    );
   }
 
-  if (detail.process_mermaid) {
-    const proc = document.createElement("div");
-    proc.className = "process";
-    const heading = document.createElement("h2");
-    heading.textContent = "Process";
-    proc.appendChild(heading);
-    if (detail.process) {
-      const summary = document.createElement("div");
-      summary.className = "meta";
-      summary.textContent = `${detail.process.step_count} steps · ${detail.process.observed_count} observed`;
-      proc.appendChild(summary);
-    }
-    const diagram = document.createElement("div");
-    diagram.className = "process-mermaid";
-    proc.appendChild(diagram);
-    panel.appendChild(proc);
-    void renderMermaid(diagram, detail.process_mermaid, `${id}-process`);
+  const processModel = resolveSequenceModel(detail, "process");
+  if (processModel) {
+    appendSequenceSection(
+      panel,
+      "Process",
+      `${processModel.stepCount} steps · ${processModel.observedCount} observed`,
+      processModel,
+      id,
+    );
   }
 
   if (detail.source) {
@@ -1512,7 +1529,7 @@ async function loadDetail(id: string): Promise<void> {
     panel.appendChild(src);
   }
 
-  if (!detail.execution_mermaid && !detail.process_mermaid && !detail.source && !detail.docs) {
+  if (!execModel && !processModel && !detail.source && !detail.docs) {
     const empty = document.createElement("div");
     empty.className = "empty-leaf";
     empty.textContent = "No process or source on this node.";
@@ -1522,58 +1539,118 @@ async function loadDetail(id: string): Promise<void> {
   host.appendChild(panel);
 }
 
-function appendExecution(panel: HTMLElement, mermaidSrc: string, frameId: string): void {
+function resolveSequenceModel(detail: FrameDetail, kind: "execution" | "process"): SeqModel | null {
+  if (kind === "execution") {
+    if (detail.execution && detail.execution.participants.length > 0) {
+      return modelFromProcess(detail.execution);
+    }
+    if (detail.execution_mermaid) {
+      return modelFromMermaid(detail.execution_mermaid);
+    }
+    return null;
+  }
+  if (detail.process && detail.process.participants.length > 0) {
+    return modelFromProcess(detail.process);
+  }
+  if (detail.process_mermaid) {
+    return modelFromMermaid(detail.process_mermaid);
+  }
+  return null;
+}
+
+function appendSequenceSection(
+  panel: HTMLElement,
+  title: string,
+  summaryText: string,
+  model: SeqModel,
+  frameId: string,
+): void {
   const proc = document.createElement("div");
-  proc.className = "process process-execution";
+  proc.className = title === "Execution" ? "process process-execution" : "process";
   const heading = document.createElement("h2");
-  heading.textContent = "Execution";
+  heading.textContent = title;
   proc.appendChild(heading);
   const summary = document.createElement("div");
   summary.className = "meta";
-  summary.textContent = "call path or runtime observations · not the definition process";
+  summary.textContent = summaryText;
   proc.appendChild(summary);
   const diagram = document.createElement("div");
-  diagram.className = "process-mermaid";
   proc.appendChild(diagram);
   panel.appendChild(proc);
-  void renderMermaid(diagram, mermaidSrc, `${frameId}-exec`);
+  mountSequenceDiagram(
+    diagram,
+    model,
+    (participant) => resolveParticipantTarget(participant, frameId),
+    (target) => flyTo(target),
+  );
 }
 
-let mermaidSeq = 0;
-let mermaidReady: Promise<typeof import("mermaid")> | null = null;
-
-function loadMermaid(): Promise<typeof import("mermaid")> {
-  if (!mermaidReady) {
-    mermaidReady = import("mermaid").then((mod) => {
-      mod.default.initialize({
-        startOnLoad: false,
-        theme: "dark",
-        securityLevel: "strict",
-        flowchart: { htmlLabels: false },
-      });
-      return mod;
-    });
-  }
-  return mermaidReady;
-}
-
-async function renderMermaid(
-  host: HTMLElement,
-  definition: string,
+/** Map a lifeline header to a portal / child / scene frame (same as portal clicks). */
+function resolveParticipantTarget(
+  participant: SeqParticipant,
   frameId: string,
-): Promise<void> {
-  try {
-    const { default: mermaid } = await loadMermaid();
-    const renderId = `mmd-${frameId.replace(/[^a-zA-Z0-9_-]/g, "_")}-${++mermaidSeq}`;
-    const { svg } = await mermaid.render(renderId, definition);
-    host.innerHTML = svg;
-  } catch (err) {
-    console.error(err);
-    const pre = document.createElement("pre");
-    pre.className = "process-mermaid-fallback";
-    pre.textContent = definition;
-    host.replaceChildren(pre);
+): string | undefined {
+  if (participant.target && scene?.frames[participant.target]) {
+    return participant.target;
   }
+  const f = frame(frameId);
+  const label = participant.label;
+  const norm = (s: string): string =>
+    s
+      .replace(/::impl\s+/g, "::")
+      .replace(/\s+/g, "")
+      .toLowerCase();
+  const want = norm(label);
+
+  if (norm(f.fqn) === want || norm(f.name) === want) {
+    return frameId;
+  }
+
+  for (const portal of f.portals) {
+    if (!portal.target) {
+      continue;
+    }
+    if (
+      portal.target_name === label ||
+      portal.label === label ||
+      norm(portal.target_name) === want ||
+      norm(portal.label) === want
+    ) {
+      return portal.target;
+    }
+  }
+
+  for (const childId of f.children) {
+    const child = frame(childId);
+    if (norm(child.fqn) === want || norm(child.name) === want) {
+      return childId;
+    }
+  }
+
+  // Type lifelines (e.g. CoverageReport) → first portal/child mentioning the type.
+  for (const portal of f.portals) {
+    if (!portal.target) {
+      continue;
+    }
+    const tn = portal.target_name;
+    if (
+      tn.endsWith(`::${label}`) ||
+      tn.includes(`::${label}::`) ||
+      tn.includes(`${label}::`) ||
+      tn.endsWith(label)
+    ) {
+      return portal.target;
+    }
+  }
+
+  if (scene) {
+    for (const fr of Object.values(scene.frames)) {
+      if (norm(fr.fqn) === want || norm(fr.name) === want) {
+        return fr.stable_id;
+      }
+    }
+  }
+  return undefined;
 }
 
 async function fetchJson<T>(path: string): Promise<T> {

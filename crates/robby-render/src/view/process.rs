@@ -2,12 +2,14 @@
 
 use serde::Serialize;
 
-use robby_ir::{Block, Process, StepKind};
+use robby_ir::{Block, Document, Process, StepKind};
+
+use crate::util::stable_id;
 
 /// Format-agnostic process diagram data.
 ///
-/// This is also the JSON shape under `FrameDetail.process`. There is no
-/// second DTO.
+/// This is also the JSON shape under `FrameDetail.process` / `execution`.
+/// There is no second DTO.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct ProcessView {
     pub participants: Vec<ParticipantView>,
@@ -20,6 +22,9 @@ pub struct ProcessView {
 pub struct ParticipantView {
     pub id: String,
     pub label: String,
+    /// Stable frame id when this lifeline maps to a navigable node (execution).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub target: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -51,6 +56,7 @@ impl ProcessView {
             .map(|p| ParticipantView {
                 id: p.id.clone(),
                 label: p.label.clone(),
+                target: None,
             })
             .collect();
 
@@ -109,6 +115,19 @@ impl ProcessView {
 
     pub fn is_empty(&self) -> bool {
         self.step_count == 0
+    }
+
+    /// Attach Prezi frame targets for participants whose label matches a node FQN.
+    pub fn with_targets_from_doc(mut self, doc: &Document) -> Self {
+        for participant in &mut self.participants {
+            if participant.target.is_some() {
+                continue;
+            }
+            if let Some(node) = doc.nodes.values().find(|n| n.fqn == participant.label) {
+                participant.target = Some(stable_id(node.id.as_str()));
+            }
+        }
+        self
     }
 }
 
