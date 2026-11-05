@@ -11,7 +11,12 @@ import fs from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
 import type { Connect, Plugin, ViteDevServer } from "vite";
-
+import {
+  cursorAgentToRunRecord,
+  defaultLiveRunSources,
+  type LiveRunSourcesFile,
+  parseCursorAgentsJson,
+} from "./src/liveRunSource";
 import {
   blocksDownstream,
   isTerminal,
@@ -29,13 +34,6 @@ import {
   runFileStem,
   type ScoredDecisionProduct,
 } from "./src/runRecord";
-import {
-  type LiveRunSource,
-  type LiveRunSourcesFile,
-  cursorAgentToRunRecord,
-  defaultLiveRunSources,
-  parseCursorAgentsJson,
-} from "./src/liveRunSource";
 
 function runsDir(publicDir: string): string {
   return path.join(publicDir, "runs");
@@ -356,11 +354,6 @@ function queueReviewView(publicDir: string, body: QueueBody): RunRecord {
   };
   putRecord(publicDir, record);
   return record;
-}
-
-function repoRootFromPublic(publicDir: string): string {
-  // apps/site/public → repo root
-  return path.resolve(publicDir, "..", "..", "..");
 }
 
 function defaultIrPath(repoRoot: string): string {

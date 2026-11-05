@@ -353,14 +353,9 @@ pub enum LiveRunTransport {
         interval_ms: u64,
     },
     /// HTTP GET returning an agents envelope or RunRecord list.
-    HttpPoll {
-        url: String,
-        interval_ms: u64,
-    },
+    HttpPoll { url: String, interval_ms: u64 },
     /// React to filesystem mtime (Claude / OpenCode session dirs later).
-    FileWatch {
-        path: String,
-    },
+    FileWatch { path: String },
 }
 
 /// A live feed that produces [`RunRecord`]s for a recipe family at runtime.

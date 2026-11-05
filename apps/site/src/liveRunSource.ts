@@ -3,12 +3,7 @@
  * Site `runs/sources.json` is the catalog the Vite middleware + viewer poll.
  */
 
-import {
-  RECIPE_CURSOR_CLOUD,
-  type RunRecord,
-  type RunStatus,
-  runFileStem,
-} from "./runRecord";
+import { RECIPE_CURSOR_CLOUD, type RunRecord, type RunStatus, runFileStem } from "./runRecord";
 
 export type LiveRunTransport =
   | { kind: "file_poll"; path: string; interval_ms: number }
@@ -93,8 +88,7 @@ export function mapCursorStatus(raw: string | null | undefined): RunStatus {
 export function cursorAgentToRunRecord(agent: CursorAgentStub): RunRecord {
   const status = mapCursorStatus(agent.status);
   const started = agent.createdAtMs ?? 0;
-  const activity =
-    agent.updatedAtMs ?? agent.lastMessageActivityAtMs ?? started;
+  const activity = agent.updatedAtMs ?? agent.lastMessageActivityAtMs ?? started;
   const name = agent.name ?? agent.bcId;
   const stats: Record<string, string> = {
     adapter: "cursor.cloud",
