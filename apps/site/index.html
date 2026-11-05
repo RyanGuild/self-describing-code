@@ -62,19 +62,22 @@
           <div id="metrics-summary" class="metrics-summary"></div>
         </div>
         <div class="metrics-panel-body">
-          <table id="metrics-table">
-            <thead>
-              <tr>
-                <th scope="col">Metric</th>
-                <th scope="col">Type</th>
-                <th scope="col">Score</th>
-                <th scope="col">Subject / module</th>
-                <th scope="col">Path</th>
-                <th scope="col">Source</th>
-              </tr>
-            </thead>
-            <tbody id="metrics-tbody"></tbody>
-          </table>
+          <div class="metrics-table-wrap">
+            <table id="metrics-table">
+              <thead>
+                <tr>
+                  <th scope="col">Metric</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Score</th>
+                  <th scope="col">Subject / module</th>
+                  <th scope="col">Path</th>
+                  <th scope="col">Source</th>
+                </tr>
+              </thead>
+              <tbody id="metrics-tbody"></tbody>
+            </table>
+          </div>
+          <div id="metrics-detail" hidden aria-live="polite"></div>
         </div>
       </aside>
     </main>

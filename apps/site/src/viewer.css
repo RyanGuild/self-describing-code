@@ -846,6 +846,14 @@ body {
 .metrics-panel-body {
   flex: 1;
   min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+  gap: 16px;
+  pointer-events: none;
+}
+
+.metrics-table-wrap,
+#metrics-detail {
   pointer-events: auto;
   background: rgba(14, 17, 22, 0.92);
   border: 1px solid var(--frame-border);
@@ -853,10 +861,87 @@ body {
   overflow: auto;
 }
 
+#metrics-detail[hidden] {
+  display: none;
+}
+
+#metrics-detail {
+  padding: 14px 16px 18px;
+}
+
+#metrics-detail h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: var(--accent);
+  word-break: break-word;
+}
+
+#metrics-detail .metrics-detail-lead {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+#metrics-detail .metrics-detail-empty {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+#metrics-detail .run-kv {
+  display: grid;
+  grid-template-columns: minmax(7rem, 9rem) 1fr;
+  gap: 6px 12px;
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+
+#metrics-detail .run-kv dt {
+  color: var(--muted);
+}
+
+#metrics-detail .run-kv dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+#metrics-detail .metrics-formula {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--source-bg);
+  border: 1px solid var(--frame-border);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+
+#metrics-detail .metrics-companions {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--text);
+}
+
 #metrics-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+}
+
+#metrics-table tbody tr {
+  cursor: pointer;
+}
+
+#metrics-table tbody tr:hover td {
+  background: rgba(108, 182, 255, 0.06);
+}
+
+#metrics-table tbody tr.is-selected td {
+  background: rgba(108, 182, 255, 0.12);
 }
 
 #metrics-table th,
@@ -898,10 +983,11 @@ body {
   white-space: nowrap;
 }
 
-#metrics-table .metrics-empty td {
+#metrics-table tbody tr.metrics-empty td {
   color: var(--muted);
   padding: 20px 12px;
   text-align: center;
+  background: transparent;
 }
 
 @media (max-width: 720px) {
@@ -910,7 +996,8 @@ body {
     inset: 64px 10px 10px;
   }
 
-  .runs-panel-body {
+  .runs-panel-body,
+  .metrics-panel-body {
     grid-template-columns: 1fr;
   }
 }

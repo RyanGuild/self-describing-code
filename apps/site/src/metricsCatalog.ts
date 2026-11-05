@@ -8,12 +8,30 @@
 
 export type MetricDirection = "higher_better" | "lower_better" | "context";
 
+export type MetricComputer =
+  | "robby_ir::metrics"
+  | "robby.review_view"
+  | "robby.metric_test"
+  | "planned";
+
 /** One catalog entry — type is the family prefix (`doc`, `edge`, `ui`, …). */
 export interface MetricCatalogEntry {
   id: string;
   /** Family / metric type used for "sort by type". */
   type: string;
   direction: MetricDirection;
+  /** How the score is computed (human-readable). */
+  definition: string;
+  /** Compact formula / expression. */
+  formula: string;
+  /** What the metric attaches to in IR / products. */
+  attachment: string;
+  /** Where the computer lives today (or planned). */
+  computer: MetricComputer;
+  /** Empirical harness id when known. */
+  testId?: string;
+  /** Where the score appears in the product. */
+  appearsOn?: string;
   /** Optional default filesystem path or subject hint when no run is attached. */
   path?: string;
   /** Short label for the subject/module column when unscored. */
@@ -33,59 +51,298 @@ export interface MetricRow {
   runId?: string | undefined;
 }
 
+function entry(
+  partial: Omit<MetricCatalogEntry, "definition" | "formula" | "attachment" | "computer"> & {
+    definition: string;
+    formula: string;
+    attachment: string;
+    computer: MetricComputer;
+  },
+): MetricCatalogEntry {
+  return partial;
+}
+
 /** Built-in catalog — first-slice computers + review scores + plan families. */
 export const METRIC_CATALOG: readonly MetricCatalogEntry[] = [
-  // robby_ir::metrics first slice
-  {
+  entry({
     id: "doc.coverage_complete",
     type: "doc",
     direction: "higher_better",
     subject: "workspace",
-  },
-  {
+    definition:
+      "Coverage gate for the workspace IR: 1 when CoverageReport::is_complete() (no unknown gaps), else 0.",
+    formula: "is_complete(CoverageReport) → 1 | 0",
+    attachment: "document / CoverageReport",
+    computer: "robby_ir::metrics",
+    testId: "metric_test.doc.coverage_complete",
+    appearsOn: "RunRecord.stats; robby check; metric_test",
+  }),
+  entry({
     id: "edge.resolve_rate",
     type: "edge",
     direction: "higher_better",
     subject: "workspace",
-  },
-  // review_view Allow products (robby_render::review_metrics)
-  {
+    definition:
+      "Share of IR edges with resolved=true. Document-wide by default; can scope to one node's outgoing edges. Empty edge sets score 1.0 (vacuous).",
+    formula: "resolved_edges / total_edges  (0 edges → 1.0)",
+    attachment: "document or node edges",
+    computer: "robby_ir::metrics",
+    testId: "metric_test.edge.resolve_rate",
+    appearsOn: "RunRecord.stats (+ edge.resolved / edge.total details)",
+  }),
+  entry({
     id: "ui.runrecord_shape_compliance",
     type: "ui",
     direction: "higher_better",
     subject: "runs/",
     path: "apps/site/public/runs",
-  },
-  {
+    definition:
+      "Scored on Allow for robby.review_view: 1 when the gate produced a shared RunRecord-shaped review product under runs/.",
+    formula: "Allow → RunRecord JSON parseable as shared shape → 1",
+    attachment: "run / product",
+    computer: "robby.review_view",
+    testId: "metric_test.ui.runrecord_shape_compliance",
+    appearsOn: "review *.decisions.json; RunRecord.stats metric.*",
+  }),
+  entry({
     id: "agent.action_or_process_stage_rate",
     type: "agent",
     direction: "higher_better",
     subject: "robby.review_view",
-  },
-  // Broader catalog (computers land over time; still listed for improvement map)
-  { id: "doc.code_ratio_mean", type: "doc", direction: "higher_better", subject: "workspace" },
-  { id: "doc.unknown_gap_bytes", type: "doc", direction: "lower_better", subject: "workspace" },
-  { id: "doc.validate_error_count", type: "doc", direction: "lower_better", subject: "workspace" },
-  { id: "doc.known_kind_rate", type: "doc", direction: "higher_better", subject: "workspace" },
-  { id: "file.code_ratio", type: "file", direction: "higher_better" },
-  { id: "module.child_span_rate", type: "module", direction: "higher_better" },
-  { id: "type.member_span_rate", type: "type", direction: "higher_better" },
-  { id: "type.relation_resolve_rate", type: "type", direction: "higher_better" },
-  { id: "fn.call_resolve_rate", type: "fn", direction: "higher_better" },
-  { id: "fn.process_coverage", type: "fn", direction: "higher_better" },
-  { id: "edge.confidence_mean", type: "edge", direction: "higher_better" },
-  { id: "edge.unresolved_calls", type: "edge", direction: "lower_better" },
-  { id: "process.observed_rate", type: "process", direction: "higher_better" },
-  { id: "path.entry_coverage", type: "path", direction: "higher_better" },
-  { id: "agent.decision_reason_rate", type: "agent", direction: "higher_better" },
-  { id: "agent.run_terminal_rate", type: "agent", direction: "higher_better" },
-  { id: "comment.decision_coverage", type: "comment", direction: "higher_better" },
-  { id: "prov.confidence_mean", type: "prov", direction: "higher_better" },
+    definition:
+      "1 when the review RunRecord carries a non-empty Process (bind_subjects / score_metrics / emit_decisions stages), else 0.",
+    formula: "process.steps.length > 0 → 1 | 0",
+    attachment: "run Process",
+    computer: "robby.review_view",
+    testId: "metric_test.agent.action_or_process_stage_rate",
+    appearsOn: "review decisions; Pipeline HUD",
+  }),
+  entry({
+    id: "doc.code_ratio_mean",
+    type: "doc",
+    direction: "higher_better",
+    subject: "workspace",
+    definition: "Mean of FileCoverage::code_ratio across all files in the coverage report.",
+    formula: "mean(file.code_ratio for file in CoverageReport.files)",
+    attachment: "document / CoverageReport",
+    computer: "planned",
+    appearsOn: "Report tables; workspace HUD",
+  }),
+  entry({
+    id: "doc.unknown_gap_bytes",
+    type: "doc",
+    direction: "lower_better",
+    subject: "workspace",
+    definition: "Sum of unknown-gap byte lengths reported by coverage failures.",
+    formula: "sum(unknown_gap_bytes)",
+    attachment: "document / CoverageReport",
+    computer: "planned",
+    appearsOn: "Coverage failures; immersive heat",
+  }),
+  entry({
+    id: "doc.validate_error_count",
+    type: "doc",
+    direction: "lower_better",
+    subject: "workspace",
+    definition: "Count of validate() diagnostics with Severity::Error.",
+    formula: "count(d in validate(doc) where d.severity == Error)",
+    attachment: "document",
+    computer: "planned",
+    appearsOn: "robby check; run observation",
+  }),
+  entry({
+    id: "doc.known_kind_rate",
+    type: "doc",
+    direction: "higher_better",
+    subject: "workspace",
+    definition: "Share of nodes whose kind passes kind::is_known.",
+    formula: "known_kind_nodes / total_nodes",
+    attachment: "document nodes",
+    computer: "planned",
+    appearsOn: "Soft gap list; Structure filter",
+  }),
+  entry({
+    id: "file.code_ratio",
+    type: "file",
+    direction: "higher_better",
+    definition: "Per-file covered code bytes over non-trivia bytes (FileCoverage::code_ratio).",
+    formula: "code_bytes / non_trivia_bytes",
+    attachment: "code.file",
+    computer: "planned",
+    appearsOn: "FileCoverage; frame tint",
+  }),
+  entry({
+    id: "module.child_span_rate",
+    type: "module",
+    direction: "higher_better",
+    definition: "Among a module's children, share that carry a source span.",
+    formula: "children_with_span / children",
+    attachment: "code.module / crate / package",
+    computer: "planned",
+    appearsOn: "Module cards; extract completeness",
+  }),
+  entry({
+    id: "type.member_span_rate",
+    type: "type",
+    direction: "higher_better",
+    definition: "Fields, variants, or methods with spans over total members.",
+    formula: "members_with_span / members",
+    attachment: "type-like nodes",
+    computer: "planned",
+    appearsOn: "Type frames; extract",
+  }),
+  entry({
+    id: "type.relation_resolve_rate",
+    type: "type",
+    direction: "higher_better",
+    definition: "Implements / Extends / Uses edges with resolved=true over those relation edges.",
+    formula: "resolved(Implements|Extends|Uses) / relation_edges",
+    attachment: "type relation edges",
+    computer: "planned",
+    appearsOn: "Portals; type diagrams",
+  }),
+  entry({
+    id: "fn.call_resolve_rate",
+    type: "fn",
+    direction: "higher_better",
+    definition: "Outgoing Calls edges with resolved=true over outgoing Calls.",
+    formula: "resolved(Calls) / Calls",
+    attachment: "code.function / method / macro",
+    computer: "planned",
+    appearsOn: "Entrypoints; unresolved portals",
+  }),
+  entry({
+    id: "fn.process_coverage",
+    type: "fn",
+    direction: "higher_better",
+    definition: "Process steps that cite a source span over total steps (scrubber ↔ source sync).",
+    formula: "steps_with_span / process.steps",
+    attachment: "callable Process",
+    computer: "planned",
+    appearsOn: "Scrubber; Process Mermaid",
+  }),
+  entry({
+    id: "edge.confidence_mean",
+    type: "edge",
+    direction: "higher_better",
+    definition: "Mean confidence across edges in scope.",
+    formula: "mean(edge.confidence)",
+    attachment: "edges",
+    computer: "planned",
+    appearsOn: "Frame meta; edge overlay",
+  }),
+  entry({
+    id: "edge.unresolved_calls",
+    type: "edge",
+    direction: "lower_better",
+    definition: "Count of Calls edges with resolved=false.",
+    formula: "count(Calls where !resolved)",
+    attachment: "Calls edges",
+    computer: "planned",
+    appearsOn: "Entrypoints org",
+  }),
+  entry({
+    id: "process.observed_rate",
+    type: "process",
+    direction: "higher_better",
+    definition: "Observed Process steps after absorb over total steps.",
+    formula: "observed_steps / steps",
+    attachment: "Process on any node",
+    computer: "planned",
+    appearsOn: "Mermaid solid/dashed",
+  }),
+  entry({
+    id: "path.entry_coverage",
+    type: "path",
+    direction: "higher_better",
+    definition:
+      "Tagged mains/tests (entrypoints) that have a non-empty code path over those entrypoints.",
+    formula: "entrypoints_with_path / tagged_entrypoints",
+    attachment: "Document.code_paths",
+    computer: "planned",
+    appearsOn: "Entrypoints scene",
+  }),
+  entry({
+    id: "agent.decision_reason_rate",
+    type: "agent",
+    direction: "higher_better",
+    definition: "agent.decision nodes with a non-empty reason annotation over decisions.",
+    formula: "decisions_with_reason / decisions",
+    attachment: "agent.decision",
+    computer: "planned",
+    appearsOn: "Enrich quality",
+  }),
+  entry({
+    id: "agent.run_terminal_rate",
+    type: "agent",
+    direction: "higher_better",
+    definition: "Runs that reached a terminal status over started runs.",
+    formula: "terminal_runs / started_runs",
+    attachment: "RunRecord",
+    computer: "planned",
+    appearsOn: "Runs mode UI",
+  }),
+  entry({
+    id: "comment.decision_coverage",
+    type: "comment",
+    direction: "higher_better",
+    definition: "Enrichable comments that have an agent.decision child.",
+    formula: "comments_with_decision / enrichable_comments",
+    attachment: "code.comment",
+    computer: "planned",
+    appearsOn: "Enrich theater; EnrichStats",
+  }),
+  entry({
+    id: "prov.confidence_mean",
+    type: "prov",
+    direction: "higher_better",
+    definition: "Mean provenance.confidence for extractor nodes in scope.",
+    formula: "mean(node.provenance.confidence)",
+    attachment: "nodes (cross-cutting)",
+    computer: "planned",
+    appearsOn: "Frame detail",
+  }),
 ];
 
 const CATALOG_BY_ID = new Map(METRIC_CATALOG.map((e) => [e.id, e]));
 
 export type MetricsSort = "type" | "path";
+
+export function catalogEntry(id: string): MetricCatalogEntry | undefined {
+  return CATALOG_BY_ID.get(id);
+}
+
+/** Fallback detail text for ids discovered only from runs. */
+export function metricCalculationDetail(id: string): {
+  definition: string;
+  formula: string;
+  attachment: string;
+  computer: MetricComputer | "unknown";
+  testId?: string;
+  appearsOn?: string;
+  direction: MetricDirection | "";
+} {
+  const known = CATALOG_BY_ID.get(id);
+  if (known) {
+    return {
+      definition: known.definition,
+      formula: known.formula,
+      attachment: known.attachment,
+      computer: known.computer,
+      testId: known.testId,
+      appearsOn: known.appearsOn,
+      direction: known.direction,
+    };
+  }
+  return {
+    definition:
+      "Open catalog id observed in run stats or products. No built-in computer description is registered in the site catalog yet.",
+    formula: id,
+    attachment: "unknown",
+    computer: "unknown",
+    direction: "",
+  };
+}
 
 export function metricTypeOf(id: string): string {
   const known = CATALOG_BY_ID.get(id);
@@ -144,21 +401,25 @@ export interface MetricObservation {
   runId?: string | undefined;
 }
 
+/** Stable key for a scored/catalog row instance. */
+export function metricRowKey(row: Pick<MetricRow, "id" | "subject" | "path">): string {
+  return `${row.id}\0${row.subject}\0${row.path}`;
+}
+
 /** Merge catalog seeds with live observations (latest score wins per id+subject+path). */
 export function mergeMetricRows(
   seeds: MetricRow[],
   observations: MetricObservation[],
 ): MetricRow[] {
-  const keyOf = (id: string, subject: string, path: string) => `${id}\0${subject}\0${path}`;
   const map = new Map<string, MetricRow>();
   for (const row of seeds) {
-    map.set(keyOf(row.id, row.subject, row.path), { ...row });
+    map.set(metricRowKey(row), { ...row });
   }
   for (const obs of observations) {
     const id = obs.id;
     const subject = obs.subject ?? CATALOG_BY_ID.get(id)?.subject ?? "";
     const path = normalizePathHint(obs.path) || CATALOG_BY_ID.get(id)?.path || "";
-    const key = keyOf(id, subject, path);
+    const key = metricRowKey({ id, subject, path });
     const prev = map.get(key);
     map.set(key, {
       id,
@@ -228,4 +489,16 @@ export function parseMetricProduct(product: string): { id: string; score: string
     return null;
   }
   return { id, score };
+}
+
+/** Companion detail keys often stamped beside a primary score in run stats. */
+export function companionStatKeys(metricId: string): string[] {
+  switch (metricId) {
+    case "doc.coverage_complete":
+      return ["doc.coverage_files", "doc.unknown_gap_count"];
+    case "edge.resolve_rate":
+      return ["edge.resolved", "edge.total"];
+    default:
+      return [];
+  }
 }

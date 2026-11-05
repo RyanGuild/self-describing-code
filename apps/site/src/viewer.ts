@@ -17,11 +17,14 @@
 
 import {
   catalogSeedRows,
+  companionStatKeys,
   isPrimaryMetricStatKey,
   type MetricObservation,
   type MetricRow,
   type MetricsSort,
   mergeMetricRows,
+  metricCalculationDetail,
+  metricRowKey,
   normalizePathHint,
   parseMetricProduct,
   primaryMetricIdFromStatKey,
@@ -178,7 +181,7 @@ interface RunRecord {
 
 const HINT_RUNS = "pipeline + cursor.cloud + reviews · Allow/Cancel review_view · live rows poll";
 const HINT_METRICS =
-  "improvement metrics · sort by type or filesystem · scores from metric_test / reviews / runs";
+  "improvement metrics · click a row for calculation · sort by type or filesystem";
 const WATCH_POLL_MS = 1500;
 const RUNS_POLL_MS = 2000;
 
@@ -200,6 +203,7 @@ const runsDetailEl = requireElement("runs-detail");
 const metricsPanelEl = requireElement("metrics-panel");
 const metricsTbodyEl = requireElement("metrics-tbody");
 const metricsSummaryEl = requireElement("metrics-summary");
+const metricsDetailEl = requireElement("metrics-detail");
 
 let scene: Scene | null = null;
 let orgMode: OrgMode = "structure";
@@ -219,6 +223,7 @@ let lastRunsIndexJson = "";
 let metricsSort: MetricsSort = "type";
 let metricsRows: MetricRow[] = [];
 let metricsLoaded = false;
+let selectedMetricKey: string | null = null;
 const cancelCooldownUntil = new Map<string, number>();
 
 async function main(): Promise<void> {
@@ -670,6 +675,17 @@ async function showMetricsPanel(): Promise<void> {
     metricsLoaded = true;
   }
   renderMetricsTable();
+  if (selectedMetricKey) {
+    const still = metricsRows.find((r) => metricRowKey(r) === selectedMetricKey);
+    if (still) {
+      void selectMetricRow(still);
+    } else {
+      selectedMetricKey = null;
+      renderMetricDetailPlaceholder();
+    }
+  } else {
+    renderMetricDetailPlaceholder();
+  }
 }
 
 function initMetricsSort(): void {
@@ -697,7 +713,7 @@ function renderMetricsTable(): void {
   const scored = sorted.filter((r) => r.score !== null).length;
   metricsSummaryEl.textContent = `${sorted.length} metrics · ${scored} scored · sort ${
     metricsSort === "path" ? "filesystem" : "type"
-  }`;
+  } · click a row for calculation`;
   metricsTbodyEl.replaceChildren();
   if (sorted.length === 0) {
     const tr = document.createElement("tr");
@@ -710,7 +726,15 @@ function renderMetricsTable(): void {
     return;
   }
   for (const row of sorted) {
+    const key = metricRowKey(row);
     const tr = document.createElement("tr");
+    tr.tabIndex = 0;
+    tr.dataset.metricKey = key;
+    tr.setAttribute("role", "button");
+    tr.setAttribute("aria-label", `Show calculation for ${row.id}`);
+    if (key === selectedMetricKey) {
+      tr.classList.add("is-selected");
+    }
     tr.append(
       cell(row.id, "metric-id"),
       cell(row.type),
@@ -719,6 +743,15 @@ function renderMetricsTable(): void {
       cell(row.path || "—", "metric-path", row.path),
       cell(row.source),
     );
+    tr.addEventListener("click", () => {
+      void selectMetricRow(row);
+    });
+    tr.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        void selectMetricRow(row);
+      }
+    });
     metricsTbodyEl.appendChild(tr);
   }
 }
@@ -733,6 +766,125 @@ function cell(text: string, className?: string, title?: string): HTMLTableCellEl
     td.title = title;
   }
   return td;
+}
+
+function renderMetricDetailPlaceholder(): void {
+  metricsDetailEl.hidden = false;
+  metricsDetailEl.replaceChildren();
+  const empty = document.createElement("div");
+  empty.className = "metrics-detail-empty";
+  empty.textContent = "Select a metric to see how it is calculated.";
+  metricsDetailEl.appendChild(empty);
+}
+
+async function selectMetricRow(row: MetricRow): Promise<void> {
+  selectedMetricKey = metricRowKey(row);
+  for (const tr of metricsTbodyEl.querySelectorAll("tr[data-metric-key]")) {
+    tr.classList.toggle("is-selected", tr.getAttribute("data-metric-key") === selectedMetricKey);
+  }
+  crumbEl.textContent = `Metrics · ${row.id}`;
+  await renderMetricDetail(row);
+}
+
+async function renderMetricDetail(row: MetricRow): Promise<void> {
+  const calc = metricCalculationDetail(row.id);
+  const direction = row.direction || calc.direction || "—";
+  metricsDetailEl.hidden = false;
+  metricsDetailEl.replaceChildren();
+
+  const title = document.createElement("h2");
+  title.textContent = row.id;
+  const lead = document.createElement("p");
+  lead.className = "metrics-detail-lead";
+  lead.textContent = calc.definition;
+
+  const kv = document.createElement("dl");
+  kv.className = "run-kv";
+  const pairs: [string, string][] = [
+    ["Type", row.type],
+    ["Direction", direction],
+    ["Score", row.score ?? "— (not measured yet)"],
+    ["Subject", row.subject || "—"],
+    ["Path", row.path || "—"],
+    ["Source", row.source],
+    ["Attachment", calc.attachment],
+    ["Computer", calc.computer],
+  ];
+  if (calc.testId) {
+    pairs.push(["Test id", calc.testId]);
+  }
+  if (calc.appearsOn) {
+    pairs.push(["Appears on", calc.appearsOn]);
+  }
+  if (row.runId) {
+    pairs.push(["Run", row.runId]);
+  }
+  for (const [k, v] of pairs) {
+    const dt = document.createElement("dt");
+    dt.textContent = k;
+    const dd = document.createElement("dd");
+    dd.textContent = v;
+    kv.append(dt, dd);
+  }
+
+  const formulaLabel = document.createElement("h2");
+  formulaLabel.textContent = "Formula";
+  formulaLabel.style.fontSize = "14px";
+  formulaLabel.style.color = "var(--muted)";
+  formulaLabel.style.fontFamily = "inherit";
+  const formula = document.createElement("pre");
+  formula.className = "metrics-formula";
+  formula.textContent = calc.formula;
+
+  metricsDetailEl.append(title, lead, kv, formulaLabel, formula);
+
+  const companions = companionStatKeys(row.id);
+  if (row.runId && companions.length > 0) {
+    let record = runDetailCache.get(row.runId);
+    if (!record) {
+      try {
+        const stem = runFileStem(row.runId);
+        record = await fetchJson<RunRecord>(
+          `runs/${encodeURIComponent(stem)}.json?t=${Date.now()}`,
+        );
+        runDetailCache.set(row.runId, record);
+      } catch {
+        record = undefined;
+      }
+    }
+    if (record?.stats) {
+      const measured: [string, string][] = [];
+      for (const key of companions) {
+        const val = record.stats[key];
+        if (val !== undefined) {
+          measured.push([key, val]);
+        }
+      }
+      const dirKey = `${row.id}.direction`;
+      if (record.stats[dirKey]) {
+        measured.push([dirKey, record.stats[dirKey]]);
+      }
+      const testKey = `${row.id}.test_id`;
+      if (record.stats[testKey]) {
+        measured.push([testKey, record.stats[testKey]]);
+      }
+      if (measured.length > 0) {
+        const h = document.createElement("h2");
+        h.textContent = "Measured details";
+        h.style.fontSize = "14px";
+        h.style.color = "var(--muted)";
+        h.style.fontFamily = "inherit";
+        const ul = document.createElement("ul");
+        ul.className = "metrics-companions";
+        for (const [k, v] of measured) {
+          const li = document.createElement("li");
+          li.textContent = `${k} = ${v}`;
+          ul.appendChild(li);
+        }
+        metricsDetailEl.append(h, ul);
+      }
+    }
+  }
 }
 
 /** Pull metric scores from catalog + runs (metric_test / review decisions / stats). */
