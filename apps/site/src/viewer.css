@@ -1039,6 +1039,16 @@ body {
   font-size: 13px;
 }
 
+#metrics-table tbody tr.metrics-path-group td {
+  cursor: default;
+  background: #151a24;
+  color: var(--accent);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  padding-top: 12px;
+  border-bottom-color: var(--frame-border);
+}
+
 #metrics-table tbody tr {
   cursor: pointer;
 }

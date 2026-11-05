@@ -54,10 +54,17 @@
       <aside id="metrics-panel" hidden aria-label="Improvement metrics">
         <div class="metrics-panel-header">
           <fieldset class="metrics-sort" aria-label="Sort metrics">
-            <button type="button" class="metrics-sort-btn is-active" data-sort="type">
+            <button type="button" class="metrics-sort-btn is-active" data-sort="type" title="Group by metric family">
               By type
             </button>
-            <button type="button" class="metrics-sort-btn" data-sort="path">By filesystem</button>
+            <button
+              type="button"
+              class="metrics-sort-btn"
+              data-sort="path"
+              title="Which metrics can score which source files"
+            >
+              By filesystem
+            </button>
           </fieldset>
           <div id="metrics-summary" class="metrics-summary"></div>
         </div>

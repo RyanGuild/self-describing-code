@@ -20,6 +20,7 @@ apps/site/public/scene.json
 apps/site/public/scene-entrypoints.json
 apps/site/public/build.json
 apps/site/public/pipelines.json
+apps/site/public/files.json
 apps/site/public/frames/
 apps/site/public/runs/**
 !apps/site/public/runs/.gitkeep

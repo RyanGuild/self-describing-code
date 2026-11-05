@@ -671,6 +671,65 @@ function sendJson(res: ServerResponse, status: number, body: unknown): void {
   res.end(raw);
 }
 
+interface MetricFilesIndex {
+  files: { path: string; kinds: string[] }[];
+}
+
+/** Prefer `files.json` from `robby web`; else scan frame details for source.file. */
+function readMetricFiles(publicDir: string): MetricFilesIndex {
+  const stampPath = path.join(publicDir, "files.json");
+  if (fs.existsSync(stampPath)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(stampPath, "utf8")) as MetricFilesIndex;
+      if (Array.isArray(parsed.files)) {
+        return parsed;
+      }
+    } catch {
+      // fall through to frame scan
+    }
+  }
+  const framesDir = path.join(publicDir, "frames");
+  const byFile = new Map<string, Set<string>>();
+  if (!fs.existsSync(framesDir)) {
+    return { files: [] };
+  }
+  for (const name of fs.readdirSync(framesDir)) {
+    if (!name.endsWith(".json")) {
+      continue;
+    }
+    try {
+      const detail = JSON.parse(fs.readFileSync(path.join(framesDir, name), "utf8")) as {
+        kind?: string;
+        source?: { file?: string };
+        location?: string;
+      };
+      const file =
+        detail.source?.file ||
+        (typeof detail.location === "string" ? detail.location.split(":")[0] : undefined);
+      if (!file) {
+        continue;
+      }
+      const kindRaw = detail.kind ?? "";
+      const tag = kindRaw.replace(/^(code|agent|runtime)\./, "") || "unknown";
+      let set = byFile.get(file);
+      if (!set) {
+        set = new Set();
+        byFile.set(file, set);
+      }
+      set.add(tag);
+    } catch {
+      // skip bad frame payload
+    }
+  }
+  const files = [...byFile.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([filePath, kinds]) => ({
+      path: filePath,
+      kinds: [...kinds].sort(),
+    }));
+  return { files };
+}
+
 function attachApi(server: ViteDevServer, publicDir: string): void {
   const middleware: Connect.NextHandleFunction = (req, res, next) => {
     void (async () => {
@@ -680,6 +739,14 @@ function attachApi(server: ViteDevServer, publicDir: string): void {
       try {
         if (method === "GET" && (url === "/api/runs" || url.startsWith("/api/runs?"))) {
           sendJson(res, 200, readIndex(publicDir));
+          return;
+        }
+
+        if (
+          method === "GET" &&
+          (url === "/api/metric-files" || url.startsWith("/api/metric-files?"))
+        ) {
+          sendJson(res, 200, readMetricFiles(publicDir));
           return;
         }
 
