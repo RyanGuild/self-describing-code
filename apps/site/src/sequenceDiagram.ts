@@ -43,11 +43,25 @@ export interface SeqProcessLike {
 }
 
 const COL_W = 132;
+const COL_W_MIN = 72;
 const HEADER_H = 52;
 const ROW_H = 30;
 const PAD_X = 16;
 const PAD_TOP = 8;
 const MAX_LABEL = 42;
+
+/** Column width that prefers fitting the host; falls back to scroll when crowded. */
+function columnWidthFor(host: HTMLElement, cols: number): number {
+  const avail = host.clientWidth;
+  if (avail <= 0 || cols <= 0) {
+    return COL_W;
+  }
+  const fit = Math.floor((avail - PAD_X * 2) / cols);
+  if (fit >= COL_W_MIN) {
+    return Math.min(COL_W, fit);
+  }
+  return COL_W_MIN;
+}
 
 let markerSeq = 0;
 
@@ -152,7 +166,8 @@ export function mountSequenceDiagram(
 
   const cols = Math.max(1, model.participants.length);
   const rows = Math.max(1, model.interactions.length);
-  const width = PAD_X * 2 + cols * COL_W;
+  const colW = columnWidthFor(host, cols);
+  const width = PAD_X * 2 + cols * colW;
   const height = PAD_TOP + HEADER_H + rows * ROW_H + 24;
 
   const indexOf = new Map(model.participants.map((p, i) => [p.id, i]));
@@ -170,7 +185,7 @@ export function mountSequenceDiagram(
     const target = participant.target ?? resolveTarget(participant);
     const head = document.createElement(target ? "button" : "div");
     head.className = `seq-head${target ? " is-portal" : ""}`;
-    head.style.width = `${COL_W}px`;
+    head.style.width = `${colW}px`;
     head.title = participant.label;
     head.textContent = shortLabel(participant.label);
     if (target && head instanceof HTMLButtonElement) {
@@ -214,7 +229,7 @@ export function mountSequenceDiagram(
 
   const bodyH = height - HEADER_H;
   for (let i = 0; i < cols; i++) {
-    const x = PAD_X + i * COL_W + COL_W / 2;
+    const x = PAD_X + i * colW + colW / 2;
     const line = document.createElementNS(svgNs, "line");
     line.setAttribute("x1", String(x));
     line.setAttribute("y1", "0");
@@ -231,8 +246,8 @@ export function mountSequenceDiagram(
       return;
     }
     const y = 18 + row * ROW_H;
-    const x1 = PAD_X + fromIdx * COL_W + COL_W / 2;
-    const x2 = PAD_X + toIdx * COL_W + COL_W / 2;
+    const x1 = PAD_X + fromIdx * colW + colW / 2;
+    const x2 = PAD_X + toIdx * colW + colW / 2;
     const self = fromIdx === toIdx;
 
     if (self) {
