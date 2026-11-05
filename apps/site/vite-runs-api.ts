@@ -443,8 +443,11 @@ function spawnImproveIntegrateLocalFallback(publicDir: string, metricRun: RunRec
   const improveId = `improve-${started}`;
   const scoreLine = (metricRun.products ?? []).filter((p) => p.startsWith("metric:")).join(", ");
   const subject = metricRun.subject ?? "subject";
+  // Prefer source crates — never stub against docs/self-model or hand MD.
+  // doc.coverage_complete is source-extract CoverageReport, not markdown.
+  const stubPath = "crates/robby-extract/src/lib.rs";
   const proposeName = `${improveId}.propose.diff`;
-  const proposeBody = `# stub improve for ${subject}\n\n--- a/docs/00-bootstrap.md\n+++ b/docs/00-bootstrap.md\n@@ -1,1 +1,3 @@\n+<!-- robby.improve_patch stub: ${subject} -->\n+<!-- ${scoreLine || "metrics"} -->\n`;
+  const proposeBody = `# stub improve for ${subject}\n\n--- a/${stubPath}\n+++ b/${stubPath}\n@@ -1,1 +1,3 @@\n+// robby.improve_patch stub: ${subject}\n+// ${scoreLine || "metrics"} (fix_surface=source_extract; not docs/self-model)\n`;
   fs.writeFileSync(path.join(patchesDir, proposeName), proposeBody);
 
   const improveRun: RunRecord = {

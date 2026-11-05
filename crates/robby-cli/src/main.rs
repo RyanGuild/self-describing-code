@@ -604,6 +604,7 @@ fn metric_test(
             let loop_result = run_improve_integrate_chain(
                 &store,
                 &loaded.document,
+                &loaded.coverage,
                 source_root,
                 patches_out,
                 &metric_run,
@@ -707,6 +708,7 @@ fn improve_patch_cmd(
 
     let (proposal, _) = propose_patch_for_metric(
         &loaded.document,
+        &loaded.coverage,
         source_root,
         &metric_for_chain,
         &review_stub,
@@ -714,10 +716,12 @@ fn improve_patch_cmd(
     );
     let patches_dir = patches_dir(source_root, patches_out);
     let metrics_targeted = proposal.metrics_targeted.clone();
+    let improve_subject =
+        improve_subject_for_run(&loaded.document, &loaded.coverage, &metric_for_chain, &review_stub);
     let (improve, _) = robby_render::write_improve_run(
         &store,
         &patches_dir,
-        metric_for_chain.subject.as_deref(),
+        improve_subject.as_deref(),
         Some(metric_for_chain.run_id.as_str()),
         Some(metric_for_chain.run_id.as_str()),
         &improve_model,
@@ -864,6 +868,7 @@ fn integrate_patch_cmd(
 fn run_improve_integrate_chain(
     store: &robby_render::SiteRunsStore,
     doc: &Document,
+    coverage: &robby_ir::CoverageReport,
     source_root: &std::path::Path,
     patches_out: Option<&std::path::Path>,
     metric_run: &robby_ir::RunRecord,
@@ -878,16 +883,17 @@ fn run_improve_integrate_chain(
     robby_agent::ensure_distinct_models(&improve_model, &integrate_model)?;
 
     let (proposal, _) =
-        propose_patch_for_metric(doc, source_root, metric_run, review, &improve_model);
+        propose_patch_for_metric(doc, coverage, source_root, metric_run, review, &improve_model);
     // Integrate always uses the integrate model path (OpenRouter or stub).
     let decision = integrate_proposal(&proposal, &improve_model, &integrate_model)?;
 
     let metrics_targeted = proposal.metrics_targeted.clone();
     let integrated = decision.integrated_diff(&proposal);
+    let subject = improve_subject_for_run(doc, coverage, metric_run, review);
     robby_render::spawn_improve_integrate(
         store,
         &patches_dir(source_root, patches_out),
-        metric_run.subject.as_deref().or(review.subject.as_deref()),
+        subject.as_deref(),
         metric_run,
         &improve_model,
         &integrate_model,
@@ -902,12 +908,13 @@ fn run_improve_integrate_chain(
 
 fn propose_patch_for_metric(
     doc: &Document,
+    coverage: &robby_ir::CoverageReport,
     source_root: &std::path::Path,
     metric_run: &robby_ir::RunRecord,
     review: &robby_ir::RunRecord,
     improve_model: &str,
 ) -> (robby_agent::ProposedPatch, bool) {
-    let ctx = build_improve_context(doc, source_root, metric_run, review);
+    let ctx = build_improve_context(doc, coverage, source_root, metric_run, review);
     match robby_agent::OpenRouterClient::from_env() {
         Ok(client) => {
             let model = robby_agent::ImproveModel::new(&client, improve_model);
@@ -946,6 +953,7 @@ fn integrate_proposal(
 
 fn build_improve_context(
     doc: &Document,
+    coverage: &robby_ir::CoverageReport,
     source_root: &std::path::Path,
     metric_run: &robby_ir::RunRecord,
     review: &robby_ir::RunRecord,
@@ -984,15 +992,38 @@ fn build_improve_context(
     if let Some(reason) = review.stats.get("metric.ui.runrecord_shape_compliance") {
         decision_notes.push(format!("ui.runrecord_shape_compliance={reason}"));
     }
+    decision_notes.push(
+        "fix_surface=source_extract; never edit docs/self-model/, .robby/, *.mmd, or scene artifacts"
+            .into(),
+    );
 
-    let subject = metric_run
-        .subject
-        .clone()
-        .or_else(|| review.subject.clone());
-    let (source_path, source_window, subject_name) = subject
+    let coverage_gap_files = coverage_gap_source_files(coverage, metric_run);
+    let subject = improve_subject_for_run(doc, coverage, metric_run, review);
+    let (mut source_path, source_window, subject_name) = subject
         .as_deref()
         .and_then(|id| source_window_for(doc, source_root, id))
         .unwrap_or((None, None, None));
+
+    // If the review subject was markdown / generated, retarget the window to a gap file.
+    if source_path
+        .as_deref()
+        .is_some_and(robby_agent::is_forbidden_edit_path)
+        || subject
+            .as_deref()
+            .is_some_and(robby_agent::is_generated_or_markdown_subject)
+    {
+        source_path = coverage_gap_files.first().cloned().or_else(|| {
+            source_path.filter(|p| {
+                !robby_agent::is_forbidden_edit_path(p)
+                    && !std::path::Path::new(p)
+                        .extension()
+                        .is_some_and(|ext| ext.eq_ignore_ascii_case("md"))
+            })
+        });
+    }
+    if source_path.is_none() {
+        source_path = coverage_gap_files.first().cloned();
+    }
 
     robby_agent::ImproveContext {
         subject,
@@ -1002,7 +1033,69 @@ fn build_improve_context(
         source_path,
         source_window,
         metric_stdout: metric_run.stdout_tail.clone(),
+        coverage_gap_files,
     }
+}
+
+/// Prefer IR / source subjects over markdown path binders for improve runs.
+fn improve_subject_for_run(
+    doc: &Document,
+    coverage: &robby_ir::CoverageReport,
+    metric_run: &robby_ir::RunRecord,
+    review: &robby_ir::RunRecord,
+) -> Option<String> {
+    let raw = metric_run
+        .subject
+        .clone()
+        .or_else(|| review.subject.clone());
+    if let Some(ref subject) = raw
+        && !robby_agent::is_generated_or_markdown_subject(subject)
+        && doc
+            .nodes
+            .contains_key(&robby_ir::NodeId::new(subject.as_str()))
+    {
+        return Some(subject.clone());
+    }
+    if let Some(file) = coverage_gap_source_files(coverage, metric_run).into_iter().next() {
+        if let Some(node) = doc.nodes.values().find(|n| {
+            n.span
+                .as_ref()
+                .is_some_and(|s| s.file == file)
+        }) {
+            return Some(node.id.as_str().to_owned());
+        }
+        return Some(format!("path:{file}"));
+    }
+    raw.filter(|s| !robby_agent::is_generated_or_markdown_subject(s))
+        .or_else(|| doc.roots.first().map(|r| r.as_str().to_owned()))
+}
+
+fn coverage_gap_source_files(
+    coverage: &robby_ir::CoverageReport,
+    metric_run: &robby_ir::RunRecord,
+) -> Vec<String> {
+    if let Some(listed) = metric_run.stats.get("doc.coverage_gap_files") {
+        let mut files: Vec<String> = listed
+            .split(',')
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .filter(|s| !robby_agent::is_forbidden_edit_path(s))
+            .map(str::to_owned)
+            .collect();
+        if !files.is_empty() {
+            files.sort();
+            files.dedup();
+            return files;
+        }
+    }
+    let mut files: Vec<String> = coverage
+        .failures()
+        .map(|(f, _)| f.file.clone())
+        .filter(|f| !robby_agent::is_forbidden_edit_path(f))
+        .collect();
+    files.sort();
+    files.dedup();
+    files
 }
 
 fn source_window_for(
