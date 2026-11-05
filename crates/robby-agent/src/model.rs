@@ -10,6 +10,11 @@ pub use robby_ir::{Highlight, NoteKind, Verdict};
 pub const DEFAULT_DECISION_MODEL: &str = "openai/gpt-4o-mini";
 pub const DEFAULT_NOTE_MODEL: &str = "openai/gpt-4o";
 
+/// Default OpenRouter slug for `robby.improve_patch` (must differ from integrate).
+pub const DEFAULT_IMPROVE_MODEL: &str = DEFAULT_DECISION_MODEL;
+/// Default OpenRouter slug for `robby.integrate_patch` (must differ from improve).
+pub const DEFAULT_INTEGRATE_MODEL: &str = DEFAULT_NOTE_MODEL;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Role {
     System,

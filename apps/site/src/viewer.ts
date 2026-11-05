@@ -14,7 +14,14 @@
  * API → `public/runs/`). Runs mode can Allow or Cancel pending reviews.
  */
 
-import { RECIPE_CURSOR_CLOUD, RECIPE_REVIEW_VIEW, runFileStem } from "./runRecord";
+import {
+  RECIPE_CURSOR_CLOUD,
+  RECIPE_IMPROVE_PATCH,
+  RECIPE_INTEGRATE_PATCH,
+  RECIPE_METRIC_TEST,
+  RECIPE_REVIEW_VIEW,
+  runFileStem,
+} from "./runRecord";
 
 const CANVAS_W = 1600;
 const CANVAS_H = 1000;
@@ -598,7 +605,14 @@ function filteredRunEntries(): RunIndexEntry[] {
   if (runsFilter === "cursor") {
     return runs.filter((r) => r.recipe === RECIPE_CURSOR_CLOUD || r.recipe.startsWith("cursor."));
   }
-  return runs.filter((r) => r.recipe === RECIPE_REVIEW_VIEW);
+  // Soft-queue reviews plus the Allow chain (metric → improve → integrate).
+  return runs.filter(
+    (r) =>
+      r.recipe === RECIPE_REVIEW_VIEW ||
+      r.recipe === RECIPE_METRIC_TEST ||
+      r.recipe === RECIPE_IMPROVE_PATCH ||
+      r.recipe === RECIPE_INTEGRATE_PATCH,
+  );
 }
 
 function renderRunsList(): void {
@@ -733,7 +747,8 @@ function renderRunDetail(detail: RunRecord): void {
       const allow = document.createElement("button");
       allow.type = "button";
       allow.textContent = "Allow / Continue";
-      allow.title = "Score decisions and spawn robby.metric_test";
+      allow.title =
+        "Score decisions, spawn robby.metric_test, then improve_patch → integrate_patch";
       allow.addEventListener("click", () => {
         void postRunAction(detail.run_id, "allow");
       });

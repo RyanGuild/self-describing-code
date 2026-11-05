@@ -176,6 +176,10 @@ pub mod recipes {
     pub const REVIEW_DOC: &str = "robby.review_doc";
     /// Empirical gate spawned only after an allowed review.
     pub const METRIC_TEST: &str = "robby.metric_test";
+    /// First model: propose a source patch for claimed metrics.
+    pub const IMPROVE_PATCH: &str = "robby.improve_patch";
+    /// Second, different model: review/integrate the proposed patch.
+    pub const INTEGRATE_PATCH: &str = "robby.integrate_patch";
 
     /// Parent / umbrella for the GitHub Actions `rust` job.
     pub const CI_RUST: &str = "ci.rust";
@@ -247,6 +251,16 @@ pub fn builtin_recipes() -> Vec<Recipe> {
             id: RecipeId::from(recipes::METRIC_TEST),
             label: "Metric test".into(),
             allowlist: Some("test".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::IMPROVE_PATCH),
+            label: "Improve patch".into(),
+            allowlist: Some("openrouter".into()),
+        },
+        Recipe {
+            id: RecipeId::from(recipes::INTEGRATE_PATCH),
+            label: "Integrate patch".into(),
+            allowlist: Some("openrouter".into()),
         },
         Recipe {
             id: RecipeId::from(recipes::CURSOR_CLOUD),
@@ -382,6 +396,8 @@ mod tests {
             recipes::CI_ARTIFACTS,
             recipes::CI_SITE,
             recipes::CI_RUST,
+            recipes::IMPROVE_PATCH,
+            recipes::INTEGRATE_PATCH,
         ] {
             assert!(
                 catalog.get(&RecipeId::from(id)).is_some(),

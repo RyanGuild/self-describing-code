@@ -15,6 +15,8 @@ import type { Connect, Plugin, ViteDevServer } from "vite";
 import {
   blocksDownstream,
   isTerminal,
+  RECIPE_IMPROVE_PATCH,
+  RECIPE_INTEGRATE_PATCH,
   RECIPE_METRIC_TEST,
   RECIPE_REVIEW_VIEW,
   REVIEW_METRIC_AGENT_PROCESS_STAGE,
@@ -430,6 +432,122 @@ function spawnMetricTestLocalFallback(publicDir: string, review: RunRecord): Run
   return metricRun;
 }
 
+/** Offline stub chain when Rust CLI cannot run (still distinct model ids). */
+function spawnImproveIntegrateLocalFallback(publicDir: string, metricRun: RunRecord): void {
+  const repoRoot = repoRootFromPublic(publicDir);
+  const patchesDir = path.join(repoRoot, ".robby", "patches");
+  fs.mkdirSync(patchesDir, { recursive: true });
+  const improveModel = process.env.ROBBY_IMPROVE_MODEL || "openai/gpt-4o-mini";
+  const integrateModel = process.env.ROBBY_INTEGRATE_MODEL || "openai/gpt-4o";
+  const started = nowMs();
+  const improveId = `improve-${started}`;
+  const scoreLine = (metricRun.products ?? []).filter((p) => p.startsWith("metric:")).join(", ");
+  const subject = metricRun.subject ?? "subject";
+  const proposeName = `${improveId}.propose.diff`;
+  const proposeBody = `# stub improve for ${subject}\n\n--- a/docs/00-bootstrap.md\n+++ b/docs/00-bootstrap.md\n@@ -1,1 +1,3 @@\n+<!-- robby.improve_patch stub: ${subject} -->\n+<!-- ${scoreLine || "metrics"} -->\n`;
+  fs.writeFileSync(path.join(patchesDir, proposeName), proposeBody);
+
+  const improveRun: RunRecord = {
+    run_id: improveId,
+    recipe: RECIPE_IMPROVE_PATCH,
+    status: "pass",
+    started_at: started,
+    finished_at: nowMs(),
+    exit_code: 0,
+    stdout_tail: `stub improve for ${subject}`,
+    stats: {
+      parent_run_id: metricRun.run_id,
+      metric_test_run_id: metricRun.run_id,
+      improve_model: improveModel,
+      mode: "propose_patch",
+      fallback: "vite-ts",
+    },
+    products: [
+      `run:${metricRun.run_id}`,
+      `path:.robby/patches/${proposeName}`,
+      `recipe:${RECIPE_IMPROVE_PATCH}`,
+    ],
+    process: {
+      participants: [
+        { id: "improve", label: "improve_patch", kind: "agent.action" },
+        { id: "source", label: "workspace", kind: "agent.observation" },
+      ],
+      steps: [
+        { from: "improve", to: "source", label: "gather_context", kind: "call", observed: true },
+        { from: "improve", to: "source", label: "propose_patch", kind: "call", observed: true },
+        { from: "improve", to: "source", label: "write_run", kind: "call", observed: true },
+      ],
+    },
+  };
+  if (metricRun.subject !== undefined) {
+    improveRun.subject = metricRun.subject;
+  }
+  putRecord(publicDir, improveRun);
+
+  const integrateId = `integrate-${nowMs()}`;
+  const integratedName = `${integrateId}.integrated.diff`;
+  fs.writeFileSync(
+    path.join(patchesDir, integratedName),
+    `# integrate accept: stub\n\n${proposeBody}`,
+  );
+  const integrateRun: RunRecord = {
+    run_id: integrateId,
+    recipe: RECIPE_INTEGRATE_PATCH,
+    status: "pass",
+    started_at: nowMs(),
+    finished_at: nowMs(),
+    exit_code: 0,
+    stdout_tail: "accept: stub integrate accepts non-empty proposal",
+    stats: {
+      parent_run_id: improveId,
+      improve_run_id: improveId,
+      improve_model: improveModel,
+      integrate_model: integrateModel,
+      verdict: "accept",
+      mode: "write_patch_file",
+      fallback: "vite-ts",
+    },
+    products: [
+      `run:${improveId}`,
+      `path:.robby/patches/${integratedName}`,
+      `recipe:${RECIPE_INTEGRATE_PATCH}`,
+    ],
+    process: {
+      participants: [
+        { id: "integrate", label: "integrate_patch", kind: "agent.action" },
+        { id: "patch", label: "proposal", kind: "agent.observation" },
+      ],
+      steps: [
+        { from: "integrate", to: "patch", label: "review_patch", kind: "call", observed: true },
+        { from: "integrate", to: "patch", label: "write_patch_file", kind: "call", observed: true },
+        { from: "integrate", to: "patch", label: "write_run", kind: "call", observed: true },
+      ],
+    },
+  };
+  if (metricRun.subject !== undefined) {
+    integrateRun.subject = metricRun.subject;
+  }
+  putRecord(publicDir, integrateRun);
+
+  const metric = readRecord(publicDir, metricRun.run_id);
+  metric.products = [
+    ...(metric.products ?? []),
+    `run:${improveId}`,
+    `recipe:${RECIPE_IMPROVE_PATCH}`,
+  ];
+  metric.stats = { ...(metric.stats ?? {}), improve_run_id: improveId };
+  putRecord(publicDir, metric);
+
+  const improveLinked = readRecord(publicDir, improveId);
+  improveLinked.products = [
+    ...(improveLinked.products ?? []),
+    `run:${integrateId}`,
+    `recipe:${RECIPE_INTEGRATE_PATCH}`,
+  ];
+  improveLinked.stats = { ...(improveLinked.stats ?? {}), integrate_run_id: integrateId };
+  putRecord(publicDir, improveLinked);
+}
+
 function allowRun(publicDir: string, runId: string): RunRecord {
   const record = readRecord(publicDir, runId);
   if (record.status === "cancelled") {
@@ -506,7 +624,11 @@ function allowRun(publicDir: string, runId: string): RunRecord {
     allowed.exit_code = metricRun.exit_code;
   }
   putRecord(publicDir, allowed);
-  return allowed;
+
+  // TS fallback also spawns improve → integrate so Soft queue Allow still
+  // surfaces the two-model chain when the Rust CLI is unavailable.
+  spawnImproveIntegrateLocalFallback(publicDir, metricRun);
+  return readRecord(publicDir, runId);
 }
 
 function cancelRun(publicDir: string, runId: string): RunRecord {

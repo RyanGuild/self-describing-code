@@ -7,6 +7,8 @@ export type RunStatus = "queued" | "running" | "pass" | "fail" | "error" | "canc
 
 export const RECIPE_REVIEW_VIEW = "robby.review_view";
 export const RECIPE_METRIC_TEST = "robby.metric_test";
+export const RECIPE_IMPROVE_PATCH = "robby.improve_patch";
+export const RECIPE_INTEGRATE_PATCH = "robby.integrate_patch";
 export const RECIPE_CURSOR_CLOUD = "cursor.cloud";
 
 /** Disk stem for `runs/<stem>.json` — mirrors Rust `run_file_stem` (`:` → `_`). */

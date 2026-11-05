@@ -45,6 +45,16 @@
       "allowlist": "test"
     },
     {
+      "id": "robby.improve_patch",
+      "label": "Improve patch",
+      "allowlist": "openrouter"
+    },
+    {
+      "id": "robby.integrate_patch",
+      "label": "Integrate patch",
+      "allowlist": "openrouter"
+    },
+    {
       "id": "cursor.cloud",
       "label": "Cursor cloud agent",
       "allowlist": "cursor"
