@@ -19,6 +19,15 @@
         <button type="button" id="org-runs" class="org-btn" data-org="runs" title="Runs / Reviews">
           Runs
         </button>
+        <button
+          type="button"
+          id="org-metrics"
+          class="org-btn"
+          data-org="metrics"
+          title="Improvement metrics"
+        >
+          Metrics
+        </button>
       </fieldset>
       <div id="crumb"></div>
       <div id="hint">click a card to zoom · portals jump to related views</div>
@@ -40,6 +49,35 @@
         <div class="runs-panel-body">
           <ul id="runs-list"></ul>
           <div id="runs-detail" hidden></div>
+        </div>
+      </aside>
+      <aside id="metrics-panel" hidden aria-label="Improvement metrics">
+        <div class="metrics-panel-header">
+          <fieldset class="metrics-sort" aria-label="Sort metrics">
+            <button type="button" class="metrics-sort-btn is-active" data-sort="type">
+              By type
+            </button>
+            <button type="button" class="metrics-sort-btn" data-sort="path">By filesystem</button>
+          </fieldset>
+          <div id="metrics-summary" class="metrics-summary"></div>
+        </div>
+        <div class="metrics-panel-body">
+          <div class="metrics-table-wrap">
+            <table id="metrics-table">
+              <thead>
+                <tr>
+                  <th scope="col">Metric</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Score</th>
+                  <th scope="col">Subject / module</th>
+                  <th scope="col">Path</th>
+                  <th scope="col">Source</th>
+                </tr>
+              </thead>
+              <tbody id="metrics-tbody"></tbody>
+            </table>
+          </div>
+          <div id="metrics-detail" hidden aria-live="polite"></div>
         </div>
       </aside>
     </main>

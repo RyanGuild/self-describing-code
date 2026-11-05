@@ -542,8 +542,9 @@ body {
   padding: 16px 0;
 }
 
-/* Runs mode: list + detail over the map (map stays dimmed underneath). */
-#viewport.runs-open #world {
+/* Runs / Metrics modes: dock over the map (map stays dimmed underneath). */
+#viewport.runs-open #world,
+#viewport.metrics-open #world {
   opacity: 0.18;
   pointer-events: none;
   filter: saturate(0.4);
@@ -892,12 +893,218 @@ body {
   padding: 16px;
 }
 
+#metrics-panel {
+  position: absolute;
+  z-index: 10;
+  inset: 56px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+#metrics-panel[hidden] {
+  display: none;
+}
+
+.metrics-panel-header {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.metrics-sort {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+  border: 1px solid var(--frame-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(14, 17, 22, 0.92);
+}
+
+.metrics-sort-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.metrics-sort-btn + .metrics-sort-btn {
+  border-left: 1px solid var(--frame-border);
+}
+
+.metrics-sort-btn.is-active {
+  background: var(--frame);
+  color: var(--text);
+}
+
+.metrics-summary {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.metrics-panel-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
+  gap: 16px;
+  pointer-events: none;
+}
+
+.metrics-table-wrap,
+#metrics-detail {
+  pointer-events: auto;
+  background: rgba(14, 17, 22, 0.92);
+  border: 1px solid var(--frame-border);
+  border-radius: 10px;
+  overflow: auto;
+}
+
+#metrics-detail[hidden] {
+  display: none;
+}
+
+#metrics-detail {
+  padding: 14px 16px 18px;
+}
+
+#metrics-detail h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: var(--accent);
+  word-break: break-word;
+}
+
+#metrics-detail .metrics-detail-lead {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+#metrics-detail .metrics-detail-empty {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+#metrics-detail .run-kv {
+  display: grid;
+  grid-template-columns: minmax(7rem, 9rem) 1fr;
+  gap: 6px 12px;
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+
+#metrics-detail .run-kv dt {
+  color: var(--muted);
+}
+
+#metrics-detail .run-kv dd {
+  margin: 0;
+  word-break: break-word;
+}
+
+#metrics-detail .metrics-formula {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--source-bg);
+  border: 1px solid var(--frame-border);
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+
+#metrics-detail .metrics-companions {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+#metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+#metrics-table tbody tr {
+  cursor: pointer;
+}
+
+#metrics-table tbody tr:hover td {
+  background: rgba(108, 182, 255, 0.06);
+}
+
+#metrics-table tbody tr.is-selected td {
+  background: rgba(108, 182, 255, 0.12);
+}
+
+#metrics-table th,
+#metrics-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: top;
+}
+
+#metrics-table th {
+  position: sticky;
+  top: 0;
+  background: #151a24;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+#metrics-table td.metric-id {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+#metrics-table td.metric-score {
+  font-variant-numeric: tabular-nums;
+}
+
+#metrics-table td.metric-path,
+#metrics-table td.metric-subject {
+  color: var(--muted);
+  max-width: 28ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#metrics-table tbody tr.metrics-empty td {
+  color: var(--muted);
+  padding: 20px 12px;
+  text-align: center;
+  background: transparent;
+}
+
 @media (max-width: 720px) {
-  #runs-panel {
+  #runs-panel,
+  #metrics-panel {
     inset: 64px 10px 10px;
   }
 
-  .runs-panel-body {
+  .runs-panel-body,
+  .metrics-panel-body {
     grid-template-columns: 1fr;
   }
 }
