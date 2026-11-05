@@ -117,19 +117,13 @@ pub fn doc_coverage_complete(report: &CoverageReport) -> MetricMeasurement {
         "generated_markdown".to_owned(),
     );
     let gap_files: Vec<String> = {
-        let mut files: Vec<String> = report
-            .failures()
-            .map(|(f, _)| f.file.clone())
-            .collect();
+        let mut files: Vec<String> = report.failures().map(|(f, _)| f.file.clone()).collect();
         files.sort();
         files.dedup();
         files
     };
     if !gap_files.is_empty() {
-        details.insert(
-            "doc.coverage_gap_files".to_owned(),
-            gap_files.join(","),
-        );
+        details.insert("doc.coverage_gap_files".to_owned(), gap_files.join(","));
     }
     MetricMeasurement {
         id: ids::DOC_COVERAGE_COMPLETE.to_owned(),

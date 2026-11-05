@@ -46,8 +46,7 @@ pub fn is_preferred_source_path(path: &str) -> bool {
     let normalized = normalize_repo_path(path);
     normalized.starts_with("crates/")
         || normalized.starts_with("apps/site/src/")
-        || normalized.starts_with("apps/")
-            && !normalized.starts_with("apps/site/public/")
+        || normalized.starts_with("apps/") && !normalized.starts_with("apps/site/public/")
         || normalized.starts_with("fixtures/")
         || normalized.starts_with("schema/")
         || normalized.starts_with("scripts/")
@@ -164,10 +163,18 @@ mod tests {
 
     #[test]
     fn markdown_subjects_flagged_for_coverage_retarget() {
-        assert!(is_generated_or_markdown_subject("path:docs/self-model/README.md"));
-        assert!(is_generated_or_markdown_subject("path:docs/00-bootstrap.md"));
-        assert!(!is_generated_or_markdown_subject("rust://robby_ir::metrics"));
-        assert!(!is_generated_or_markdown_subject("crates/robby-ir/src/lib.rs"));
+        assert!(is_generated_or_markdown_subject(
+            "path:docs/self-model/README.md"
+        ));
+        assert!(is_generated_or_markdown_subject(
+            "path:docs/00-bootstrap.md"
+        ));
+        assert!(!is_generated_or_markdown_subject(
+            "rust://robby_ir::metrics"
+        ));
+        assert!(!is_generated_or_markdown_subject(
+            "crates/robby-ir/src/lib.rs"
+        ));
     }
 
     #[test]

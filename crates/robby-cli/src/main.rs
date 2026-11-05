@@ -716,8 +716,12 @@ fn improve_patch_cmd(
     );
     let patches_dir = patches_dir(source_root, patches_out);
     let metrics_targeted = proposal.metrics_targeted.clone();
-    let improve_subject =
-        improve_subject_for_run(&loaded.document, &loaded.coverage, &metric_for_chain, &review_stub);
+    let improve_subject = improve_subject_for_run(
+        &loaded.document,
+        &loaded.coverage,
+        &metric_for_chain,
+        &review_stub,
+    );
     let (improve, _) = robby_render::write_improve_run(
         &store,
         &patches_dir,
@@ -882,8 +886,14 @@ fn run_improve_integrate_chain(
         integrate_model.map_or_else(robby_agent::default_integrate_model, str::to_owned);
     robby_agent::ensure_distinct_models(&improve_model, &integrate_model)?;
 
-    let (proposal, _) =
-        propose_patch_for_metric(doc, coverage, source_root, metric_run, review, &improve_model);
+    let (proposal, _) = propose_patch_for_metric(
+        doc,
+        coverage,
+        source_root,
+        metric_run,
+        review,
+        &improve_model,
+    );
     // Integrate always uses the integrate model path (OpenRouter or stub).
     let decision = integrate_proposal(&proposal, &improve_model, &integrate_model)?;
 
@@ -1056,12 +1066,15 @@ fn improve_subject_for_run(
     {
         return Some(subject.clone());
     }
-    if let Some(file) = coverage_gap_source_files(coverage, metric_run).into_iter().next() {
-        if let Some(node) = doc.nodes.values().find(|n| {
-            n.span
-                .as_ref()
-                .is_some_and(|s| s.file == file)
-        }) {
+    if let Some(file) = coverage_gap_source_files(coverage, metric_run)
+        .into_iter()
+        .next()
+    {
+        if let Some(node) = doc
+            .nodes
+            .values()
+            .find(|n| n.span.as_ref().is_some_and(|s| s.file == file))
+        {
             return Some(node.id.as_str().to_owned());
         }
         return Some(format!("path:{file}"));
