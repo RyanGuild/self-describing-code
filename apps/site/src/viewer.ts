@@ -16,12 +16,25 @@
  */
 
 import {
+  catalogSeedRows,
+  isPrimaryMetricStatKey,
+  type MetricObservation,
+  type MetricRow,
+  type MetricsSort,
+  mergeMetricRows,
+  normalizePathHint,
+  parseMetricProduct,
+  primaryMetricIdFromStatKey,
+  sortMetricRows,
+} from "./metricsCatalog";
+import {
   RECIPE_CURSOR_CLOUD,
   RECIPE_IMPROVE_PATCH,
   RECIPE_INTEGRATE_PATCH,
   RECIPE_METRIC_TEST,
   RECIPE_REVIEW_VIEW,
   runFileStem,
+  type ScoredDecisionProduct,
 } from "./runRecord";
 
 const CANVAS_W = 1600;
@@ -115,7 +128,7 @@ const ORG_MODES = {
 } as const;
 
 type SceneOrgMode = keyof typeof ORG_MODES;
-type OrgMode = SceneOrgMode | "runs";
+type OrgMode = SceneOrgMode | "runs" | "metrics";
 
 interface BuildStamp {
   rebuilt_at: number;
@@ -164,6 +177,8 @@ interface RunRecord {
 }
 
 const HINT_RUNS = "pipeline + cursor.cloud + reviews · Allow/Cancel review_view · live rows poll";
+const HINT_METRICS =
+  "improvement metrics · sort by type or filesystem · scores from metric_test / reviews / runs";
 const WATCH_POLL_MS = 1500;
 const RUNS_POLL_MS = 2000;
 
@@ -178,9 +193,13 @@ const zoomOutBtn = requireButton("zoom-out");
 const orgStructureBtn = requireButton("org-structure");
 const orgEntrypointsBtn = requireButton("org-entrypoints");
 const orgRunsBtn = requireButton("org-runs");
+const orgMetricsBtn = requireButton("org-metrics");
 const runsPanelEl = requireElement("runs-panel");
 const runsListEl = requireElement("runs-list");
 const runsDetailEl = requireElement("runs-detail");
+const metricsPanelEl = requireElement("metrics-panel");
+const metricsTbodyEl = requireElement("metrics-tbody");
+const metricsSummaryEl = requireElement("metrics-summary");
 
 let scene: Scene | null = null;
 let orgMode: OrgMode = "structure";
@@ -197,6 +216,9 @@ let selectedRunId: string | null = null;
 const runDetailCache = new Map<string, RunRecord>();
 let runsFilter: RunsFilter = "all";
 let lastRunsIndexJson = "";
+let metricsSort: MetricsSort = "type";
+let metricsRows: MetricRow[] = [];
+let metricsLoaded = false;
 const cancelCooldownUntil = new Map<string, number>();
 
 async function main(): Promise<void> {
@@ -219,6 +241,13 @@ async function main(): Promise<void> {
     syncOrgChrome("runs");
     showRunsPanel();
     syncLocationHash();
+  } else if (initialOrg === "metrics") {
+    await prefetchRuns();
+    void prefetchEntrypoints();
+    orgMode = "metrics";
+    syncOrgChrome("metrics");
+    await showMetricsPanel();
+    syncLocationHash();
   } else if (initialOrg === "entrypoints") {
     await prefetchEntrypoints();
     if (!sceneCache.has("entrypoints")) {
@@ -239,14 +268,17 @@ async function main(): Promise<void> {
   void startBuildWatch();
   void startRunsWatch();
   initRunsFilters();
+  initMetricsSort();
   syncRunsFilterButtons();
+  syncMetricsSortButtons();
 
   zoomOutBtn.addEventListener("click", () => zoomOut());
   orgStructureBtn.addEventListener("click", () => void setOrgMode("structure"));
   orgEntrypointsBtn.addEventListener("click", () => void setOrgMode("entrypoints"));
   orgRunsBtn.addEventListener("click", () => void setOrgMode("runs"));
+  orgMetricsBtn.addEventListener("click", () => void setOrgMode("metrics"));
   window.addEventListener("resize", () => {
-    if (orgMode === "runs" || !scene) {
+    if (orgMode === "runs" || orgMode === "metrics" || !scene) {
       return;
     }
     camera = cameraForFocus(focusId);
@@ -255,7 +287,7 @@ async function main(): Promise<void> {
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" || e.key === "Backspace") {
       e.preventDefault();
-      if (orgMode === "runs") {
+      if (orgMode === "runs" || orgMode === "metrics") {
         return;
       }
       zoomOut();
@@ -316,6 +348,10 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
     syncOrgChrome(keepOrg);
     if (keepOrg === "runs") {
       showRunsPanel();
+      syncLocationHash();
+    } else if (keepOrg === "metrics") {
+      metricsLoaded = false;
+      await showMetricsPanel();
       syncLocationHash();
     } else {
       const next = sceneCache.get(keepOrg) ?? structure;
@@ -381,6 +417,9 @@ async function prefetchRuns(force = false): Promise<boolean> {
   }
   if (orgMode === "runs") {
     renderRunsList();
+  } else if (orgMode === "metrics") {
+    metricsLoaded = false;
+    await showMetricsPanel();
   }
   return true;
 }
@@ -393,6 +432,8 @@ async function startRunsWatch(): Promise<void> {
       if (changed && orgMode === "runs") {
         runDetailCache.clear();
         showRunsPanel();
+      } else if (changed && orgMode === "metrics") {
+        // prefetchRuns already rebuilds the metrics table when org is metrics
       } else {
         updateRunsLiveChrome();
       }
@@ -430,14 +471,19 @@ function syncOrgChrome(mode: OrgMode): void {
   orgStructureBtn.classList.toggle("is-active", mode === "structure");
   orgEntrypointsBtn.classList.toggle("is-active", mode === "entrypoints");
   orgRunsBtn.classList.toggle("is-active", mode === "runs");
+  orgMetricsBtn.classList.toggle("is-active", mode === "metrics");
   if (mode === "runs") {
     hintEl.textContent = HINT_RUNS;
+  } else if (mode === "metrics") {
+    hintEl.textContent = HINT_METRICS;
   } else {
     hintEl.textContent = ORG_MODES[mode].hint;
   }
   viewportEl.classList.toggle("runs-open", mode === "runs");
+  viewportEl.classList.toggle("metrics-open", mode === "metrics");
   runsPanelEl.hidden = mode !== "runs";
-  zoomOutBtn.disabled = mode === "runs" || !scene || !frameSafeParent();
+  metricsPanelEl.hidden = mode !== "metrics";
+  zoomOutBtn.disabled = mode === "runs" || mode === "metrics" || !scene || !frameSafeParent();
 }
 
 function frameSafeParent(): boolean {
@@ -460,6 +506,14 @@ async function setOrgMode(next: OrgMode): Promise<void> {
     syncLocationHash();
     return;
   }
+  if (next === "metrics") {
+    await prefetchRuns();
+    orgMode = "metrics";
+    syncOrgChrome("metrics");
+    await showMetricsPanel();
+    syncLocationHash();
+    return;
+  }
   let cached = sceneCache.get(next);
   if (!cached) {
     if (next === "entrypoints") {
@@ -476,7 +530,7 @@ async function setOrgMode(next: OrgMode): Promise<void> {
 }
 
 /**
- * URL hash: `#frame=<stable_id>` and optional `&org=structure|entrypoints|runs`.
+ * URL hash: `#frame=<stable_id>` and optional `&org=structure|entrypoints|runs|metrics`.
  * Updated with replaceState so navigation does not spam history.
  */
 interface LocationHash {
@@ -493,7 +547,9 @@ function readLocationHash(): LocationHash {
   const frame = params.get("frame") || params.get("location") || undefined;
   const orgRaw = params.get("org");
   const org: OrgMode | undefined =
-    orgRaw === "entrypoints" || orgRaw === "structure" || orgRaw === "runs" ? orgRaw : undefined;
+    orgRaw === "entrypoints" || orgRaw === "structure" || orgRaw === "runs" || orgRaw === "metrics"
+      ? orgRaw
+      : undefined;
   const out: LocationHash = {};
   if (frame) {
     out.frame = frame;
@@ -514,10 +570,13 @@ function locationHashFor(focus: string, org: OrgMode): string {
 }
 
 function syncLocationHash(): void {
-  if (!focusId) {
+  // Dock modes (runs / metrics) may open before a frame focus is set; still
+  // persist `org=` so reload restores the panel.
+  const focus = focusId || scene?.root || "";
+  if (!focus && orgMode === "structure") {
     return;
   }
-  const next = locationHashFor(focusId, orgMode);
+  const next = focus ? locationHashFor(focus, orgMode) : `#org=${orgMode}`;
   if (window.location.hash === next) {
     return;
   }
@@ -545,6 +604,14 @@ async function applyLocationFromHash(): Promise<void> {
       orgMode = "runs";
       syncOrgChrome("runs");
       showRunsPanel();
+      syncLocationHash();
+      return;
+    }
+    if (wantOrg === "metrics") {
+      await prefetchRuns();
+      orgMode = "metrics";
+      syncOrgChrome("metrics");
+      await showMetricsPanel();
       syncLocationHash();
       return;
     }
@@ -593,6 +660,202 @@ function showRunsPanel(): void {
     runsDetailEl.hidden = true;
     runsDetailEl.innerHTML = "";
   }
+}
+
+async function showMetricsPanel(): Promise<void> {
+  syncOrgChrome("metrics");
+  crumbEl.textContent = "Metrics";
+  if (!metricsLoaded) {
+    metricsRows = await collectMetricRows();
+    metricsLoaded = true;
+  }
+  renderMetricsTable();
+}
+
+function initMetricsSort(): void {
+  for (const btn of metricsPanelEl.querySelectorAll<HTMLButtonElement>(".metrics-sort-btn")) {
+    btn.addEventListener("click", () => {
+      const sort = btn.dataset.sort;
+      if (sort !== "type" && sort !== "path") {
+        return;
+      }
+      metricsSort = sort;
+      syncMetricsSortButtons();
+      renderMetricsTable();
+    });
+  }
+}
+
+function syncMetricsSortButtons(): void {
+  for (const btn of metricsPanelEl.querySelectorAll<HTMLButtonElement>(".metrics-sort-btn")) {
+    btn.classList.toggle("is-active", btn.dataset.sort === metricsSort);
+  }
+}
+
+function renderMetricsTable(): void {
+  const sorted = sortMetricRows(metricsRows, metricsSort);
+  const scored = sorted.filter((r) => r.score !== null).length;
+  metricsSummaryEl.textContent = `${sorted.length} metrics · ${scored} scored · sort ${
+    metricsSort === "path" ? "filesystem" : "type"
+  }`;
+  metricsTbodyEl.replaceChildren();
+  if (sorted.length === 0) {
+    const tr = document.createElement("tr");
+    tr.className = "metrics-empty";
+    const td = document.createElement("td");
+    td.colSpan = 6;
+    td.textContent = "No metrics in catalog or runs yet.";
+    tr.appendChild(td);
+    metricsTbodyEl.appendChild(tr);
+    return;
+  }
+  for (const row of sorted) {
+    const tr = document.createElement("tr");
+    tr.append(
+      cell(row.id, "metric-id"),
+      cell(row.type),
+      cell(row.score ?? "—", "metric-score"),
+      cell(row.subject || "—", "metric-subject", row.subject),
+      cell(row.path || "—", "metric-path", row.path),
+      cell(row.source),
+    );
+    metricsTbodyEl.appendChild(tr);
+  }
+}
+
+function cell(text: string, className?: string, title?: string): HTMLTableCellElement {
+  const td = document.createElement("td");
+  if (className) {
+    td.className = className;
+  }
+  td.textContent = text;
+  if (title) {
+    td.title = title;
+  }
+  return td;
+}
+
+/** Pull metric scores from catalog + runs (metric_test / review decisions / stats). */
+async function collectMetricRows(): Promise<MetricRow[]> {
+  const observations: MetricObservation[] = [];
+  const entries = runsIndex?.runs ?? [];
+  // Prefer recipes that actually carry metric claims; cap fan-out.
+  const interesting = entries
+    .filter(
+      (e) =>
+        e.recipe === RECIPE_METRIC_TEST ||
+        e.recipe === RECIPE_REVIEW_VIEW ||
+        e.recipe === "robby.review_doc" ||
+        e.recipe === RECIPE_IMPROVE_PATCH ||
+        e.recipe === RECIPE_INTEGRATE_PATCH,
+    )
+    .slice(0, 40);
+  // Also scan a few recent runs for `metric.*` / catalog stats.
+  const recent = entries.slice(0, 24);
+  const seen = new Set<string>();
+  const toLoad: RunIndexEntry[] = [];
+  for (const e of [...interesting, ...recent]) {
+    if (seen.has(e.run_id)) {
+      continue;
+    }
+    seen.add(e.run_id);
+    toLoad.push(e);
+  }
+
+  await Promise.all(
+    toLoad.map(async (entry) => {
+      let record = runDetailCache.get(entry.run_id);
+      if (!record) {
+        try {
+          const stem = runFileStem(entry.run_id);
+          record = await fetchJson<RunRecord>(
+            `runs/${encodeURIComponent(stem)}.json?t=${Date.now()}`,
+          );
+          runDetailCache.set(entry.run_id, record);
+        } catch {
+          return;
+        }
+      }
+      observations.push(...observationsFromRun(record));
+      for (const product of record.products ?? []) {
+        if (!product.startsWith("path:runs/") || !product.endsWith(".decisions.json")) {
+          continue;
+        }
+        const rel = product.slice("path:".length);
+        try {
+          const decisions = await fetchJson<ScoredDecisionProduct[]>(`${rel}?t=${Date.now()}`);
+          for (const d of decisions) {
+            observations.push({
+              id: d.metric,
+              score: d.score,
+              direction: d.direction,
+              subject: d.subject || record.stats?.subject_name || "",
+              path: normalizePathHint(d.subject) || normalizePathHint(record.stats?.doc_path),
+              source: "review",
+              runId: d.run_id || record.run_id,
+            });
+          }
+        } catch {
+          // decisions file may be absent on older runs
+        }
+      }
+    }),
+  );
+
+  return mergeMetricRows(catalogSeedRows(), observations);
+}
+
+function observationsFromRun(record: RunRecord): MetricObservation[] {
+  const out: MetricObservation[] = [];
+  const stats = record.stats ?? {};
+  const subject =
+    stats.subject_name ||
+    record.subject ||
+    (record.recipe === RECIPE_METRIC_TEST ? "workspace" : "");
+  const path =
+    normalizePathHint(stats.doc_path) ||
+    normalizePathHint(record.subject) ||
+    normalizePathHint((record.products ?? []).find((p) => p.startsWith("path:")));
+
+  const source: MetricObservation["source"] =
+    record.recipe === RECIPE_METRIC_TEST
+      ? "metric_test"
+      : record.recipe === RECIPE_REVIEW_VIEW || record.recipe === "robby.review_doc"
+        ? "review"
+        : "run";
+
+  for (const [key, value] of Object.entries(stats)) {
+    if (!isPrimaryMetricStatKey(key)) {
+      continue;
+    }
+    const id = primaryMetricIdFromStatKey(key);
+    out.push({
+      id,
+      score: value,
+      direction: stats[`${id}.direction`] || stats[`metric.${id}.direction`],
+      subject,
+      path,
+      source,
+      runId: record.run_id,
+    });
+  }
+
+  for (const product of record.products ?? []) {
+    const parsed = parseMetricProduct(product);
+    if (!parsed) {
+      continue;
+    }
+    out.push({
+      id: parsed.id,
+      score: parsed.score,
+      direction: stats[`${parsed.id}.direction`],
+      subject,
+      path,
+      source: record.recipe === RECIPE_METRIC_TEST ? "metric_test" : source,
+      runId: record.run_id,
+    });
+  }
+  return out;
 }
 
 function filteredRunEntries(): RunIndexEntry[] {
