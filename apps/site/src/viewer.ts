@@ -302,14 +302,22 @@ async function main(): Promise<void> {
   orgRunsBtn.addEventListener("click", () => void setOrgMode("runs"));
   orgMetricsBtn.addEventListener("click", () => void setOrgMode("metrics"));
   syncChromeSafeTop();
-  window.addEventListener("resize", () => {
+  const onChromeLayout = (): void => {
     syncChromeSafeTop();
     if (orgMode === "runs" || orgMode === "metrics" || !scene) {
       return;
     }
     camera = cameraForFocus(focusId);
     placeAllFrames();
-  });
+  };
+  window.addEventListener("resize", onChromeLayout);
+  // Crumb / badge / org wrap changes chrome height without a window resize.
+  if (typeof ResizeObserver !== "undefined") {
+    const chromeRo = new ResizeObserver(() => {
+      onChromeLayout();
+    });
+    chromeRo.observe(chromeEl);
+  }
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" || e.key === "Backspace") {
       e.preventDefault();
@@ -393,10 +401,20 @@ async function reloadFromDisk(stamp: BuildStamp): Promise<void> {
 
 function showWatchBadge(stamp: BuildStamp, justRebuilt: boolean): void {
   const nodes = stamp.nodes ?? "?";
-  const label = justRebuilt
-    ? `IR rebuilt · ${stamp.frames} frames · ${nodes} nodes`
-    : `live · ${stamp.frames} frames · ${nodes} nodes`;
+  const narrow = window.innerWidth < 820;
+  const phone = window.innerWidth < 480;
+  let label: string;
+  if (phone) {
+    label = justRebuilt ? `IR · ${stamp.frames}f` : `live · ${stamp.frames}f`;
+  } else if (narrow) {
+    label = justRebuilt ? `IR · ${stamp.frames} frames` : `live · ${stamp.frames} frames`;
+  } else {
+    label = justRebuilt
+      ? `IR rebuilt · ${stamp.frames} frames · ${nodes} nodes`
+      : `live · ${stamp.frames} frames · ${nodes} nodes`;
+  }
   watchBadgeEl.textContent = label;
+  watchBadgeEl.title = `live · ${stamp.frames} frames · ${nodes} nodes`;
   watchBadgeEl.hidden = false;
   syncChromeSafeTop();
   if (orgMode !== "runs" && orgMode !== "metrics" && scene) {
@@ -694,6 +712,7 @@ function applyScene(next: Scene, preferredFocus?: string | null): void {
 function showRunsPanel(): void {
   syncOrgChrome("runs");
   crumbEl.textContent = "Runs";
+  syncChromeSafeTop();
   renderRunsList();
   if (selectedRunId) {
     void selectRun(selectedRunId);
@@ -706,6 +725,7 @@ function showRunsPanel(): void {
 async function showMetricsPanel(): Promise<void> {
   syncOrgChrome("metrics");
   crumbEl.textContent = "Metrics";
+  syncChromeSafeTop();
   if (!metricsLoaded) {
     const [rows, files] = await Promise.all([collectMetricRows(), loadMetricFileInventory()]);
     metricsRows = rows;
@@ -724,6 +744,16 @@ async function showMetricsPanel(): Promise<void> {
   } else {
     renderMetricDetailPlaceholder();
   }
+}
+
+/** Crumb stays short on narrow widths so chrome does not wrap onto extra rows. */
+function setMetricsCrumb(metricId?: string): void {
+  if (metricId && window.innerWidth >= 820) {
+    crumbEl.textContent = `Metrics · ${metricId}`;
+  } else {
+    crumbEl.textContent = "Metrics";
+  }
+  syncChromeSafeTop();
 }
 
 function initMetricsSort(): void {
@@ -858,6 +888,7 @@ function cell(text: string, className?: string, title?: string): HTMLTableCellEl
 }
 
 function renderMetricDetailPlaceholder(): void {
+  setMetricsCrumb();
   metricsDetailEl.hidden = false;
   metricsDetailEl.replaceChildren();
   const empty = document.createElement("div");
@@ -871,7 +902,7 @@ async function selectMetricRow(row: MetricRow): Promise<void> {
   for (const tr of metricsTbodyEl.querySelectorAll("tr[data-metric-key]")) {
     tr.classList.toggle("is-selected", tr.getAttribute("data-metric-key") === selectedMetricKey);
   }
-  crumbEl.textContent = `Metrics · ${row.id}`;
+  setMetricsCrumb(row.id);
   await renderMetricDetail(row);
 }
 

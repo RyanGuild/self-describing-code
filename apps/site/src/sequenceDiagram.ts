@@ -50,9 +50,21 @@ const PAD_X = 16;
 const PAD_TOP = 8;
 const MAX_LABEL = 42;
 
+/** Prefer the host width; walk ancestors when the host has not been laid out yet. */
+function hostContentWidth(host: HTMLElement): number {
+  let el: HTMLElement | null = host;
+  while (el) {
+    if (el.clientWidth > 0) {
+      return el.clientWidth;
+    }
+    el = el.parentElement;
+  }
+  return typeof window !== "undefined" ? window.innerWidth : 0;
+}
+
 /** Column width that prefers fitting the host; falls back to scroll when crowded. */
 function columnWidthFor(host: HTMLElement, cols: number): number {
-  const avail = host.clientWidth;
+  const avail = hostContentWidth(host);
   if (avail <= 0 || cols <= 0) {
     return COL_W;
   }
@@ -64,6 +76,7 @@ function columnWidthFor(host: HTMLElement, cols: number): number {
 }
 
 let markerSeq = 0;
+const seqResizeObservers = new WeakMap<HTMLElement, ResizeObserver>();
 
 export function modelFromProcess(process: SeqProcessLike): SeqModel {
   const interactions: SeqInteraction[] = [];
@@ -162,126 +175,146 @@ export function mountSequenceDiagram(
   onNavigate: (frameId: string) => void,
 ): void {
   host.classList.add("seq-diagram");
-  host.replaceChildren();
+  seqResizeObservers.get(host)?.disconnect();
 
-  const cols = Math.max(1, model.participants.length);
-  const rows = Math.max(1, model.interactions.length);
-  const colW = columnWidthFor(host, cols);
-  const width = PAD_X * 2 + cols * colW;
-  const height = PAD_TOP + HEADER_H + rows * ROW_H + 24;
+  const paint = (): void => {
+    host.replaceChildren();
 
-  const indexOf = new Map(model.participants.map((p, i) => [p.id, i]));
+    const cols = Math.max(1, model.participants.length);
+    const rows = Math.max(1, model.interactions.length);
+    const colW = columnWidthFor(host, cols);
+    const width = PAD_X * 2 + cols * colW;
+    const height = PAD_TOP + HEADER_H + rows * ROW_H + 24;
 
-  const inner = document.createElement("div");
-  inner.className = "seq-inner";
-  inner.style.width = `${width}px`;
-  inner.style.minHeight = `${height}px`;
+    const indexOf = new Map(model.participants.map((p, i) => [p.id, i]));
 
-  const heads = document.createElement("div");
-  heads.className = "seq-heads";
-  heads.style.height = `${HEADER_H}px`;
+    const inner = document.createElement("div");
+    inner.className = "seq-inner";
+    inner.style.width = `${width}px`;
+    inner.style.minHeight = `${height}px`;
 
-  for (const participant of model.participants) {
-    const target = participant.target ?? resolveTarget(participant);
-    const head = document.createElement(target ? "button" : "div");
-    head.className = `seq-head${target ? " is-portal" : ""}`;
-    head.style.width = `${colW}px`;
-    head.title = participant.label;
-    head.textContent = shortLabel(participant.label);
-    if (target && head instanceof HTMLButtonElement) {
-      head.type = "button";
-      head.addEventListener("click", (e) => {
-        e.stopPropagation();
-        onNavigate(target);
-      });
+    const heads = document.createElement("div");
+    heads.className = "seq-heads";
+    heads.style.height = `${HEADER_H}px`;
+
+    for (const participant of model.participants) {
+      const target = participant.target ?? resolveTarget(participant);
+      const head = document.createElement(target ? "button" : "div");
+      head.className = `seq-head${target ? " is-portal" : ""}`;
+      head.style.width = `${colW}px`;
+      head.title = participant.label;
+      head.textContent = shortLabel(participant.label);
+      if (target && head instanceof HTMLButtonElement) {
+        head.type = "button";
+        head.addEventListener("click", (e) => {
+          e.stopPropagation();
+          onNavigate(target);
+        });
+      }
+      heads.appendChild(head);
     }
-    heads.appendChild(head);
-  }
-  inner.appendChild(heads);
+    inner.appendChild(heads);
 
-  const svgNs = "http://www.w3.org/2000/svg";
-  const markerId = `seq-arrowhead-${++markerSeq}`;
-  const svg = document.createElementNS(svgNs, "svg");
-  svg.setAttribute("class", "seq-svg");
-  svg.setAttribute("width", String(width));
-  svg.setAttribute("height", String(height - HEADER_H));
-  svg.setAttribute("viewBox", `0 0 ${width} ${height - HEADER_H}`);
-  svg.setAttribute("role", "img");
-  svg.setAttribute(
-    "aria-label",
-    `Sequence with ${model.participants.length} lifelines and ${model.interactions.length} calls`,
-  );
+    const svgNs = "http://www.w3.org/2000/svg";
+    const markerId = `seq-arrowhead-${++markerSeq}`;
+    const svg = document.createElementNS(svgNs, "svg");
+    svg.setAttribute("class", "seq-svg");
+    svg.setAttribute("width", String(width));
+    svg.setAttribute("height", String(height - HEADER_H));
+    svg.setAttribute("viewBox", `0 0 ${width} ${height - HEADER_H}`);
+    svg.setAttribute("role", "img");
+    svg.setAttribute(
+      "aria-label",
+      `Sequence with ${model.participants.length} lifelines and ${model.interactions.length} calls`,
+    );
 
-  const defs = document.createElementNS(svgNs, "defs");
-  const marker = document.createElementNS(svgNs, "marker");
-  marker.setAttribute("id", markerId);
-  marker.setAttribute("markerWidth", "8");
-  marker.setAttribute("markerHeight", "8");
-  marker.setAttribute("refX", "7");
-  marker.setAttribute("refY", "3");
-  marker.setAttribute("orient", "auto");
-  const tip = document.createElementNS(svgNs, "path");
-  tip.setAttribute("d", "M0,0 L7,3 L0,6 Z");
-  tip.setAttribute("class", "seq-arrowhead");
-  marker.appendChild(tip);
-  defs.appendChild(marker);
-  svg.appendChild(defs);
+    const defs = document.createElementNS(svgNs, "defs");
+    const marker = document.createElementNS(svgNs, "marker");
+    marker.setAttribute("id", markerId);
+    marker.setAttribute("markerWidth", "8");
+    marker.setAttribute("markerHeight", "8");
+    marker.setAttribute("refX", "7");
+    marker.setAttribute("refY", "3");
+    marker.setAttribute("orient", "auto");
+    const tip = document.createElementNS(svgNs, "path");
+    tip.setAttribute("d", "M0,0 L7,3 L0,6 Z");
+    tip.setAttribute("class", "seq-arrowhead");
+    marker.appendChild(tip);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
 
-  const bodyH = height - HEADER_H;
-  for (let i = 0; i < cols; i++) {
-    const x = PAD_X + i * colW + colW / 2;
-    const line = document.createElementNS(svgNs, "line");
-    line.setAttribute("x1", String(x));
-    line.setAttribute("y1", "0");
-    line.setAttribute("x2", String(x));
-    line.setAttribute("y2", String(bodyH));
-    line.setAttribute("class", "seq-lifeline");
-    svg.appendChild(line);
-  }
-
-  model.interactions.forEach((msg, row) => {
-    const fromIdx = indexOf.get(msg.from);
-    const toIdx = indexOf.get(msg.to);
-    if (fromIdx === undefined || toIdx === undefined) {
-      return;
-    }
-    const y = 18 + row * ROW_H;
-    const x1 = PAD_X + fromIdx * colW + colW / 2;
-    const x2 = PAD_X + toIdx * colW + colW / 2;
-    const self = fromIdx === toIdx;
-
-    if (self) {
-      const path = document.createElementNS(svgNs, "path");
-      const r = 14;
-      path.setAttribute(
-        "d",
-        `M ${x1} ${y} C ${x1 + r * 2} ${y - 6}, ${x1 + r * 2} ${y + 14}, ${x1} ${y + 12}`,
-      );
-      path.setAttribute("class", msg.observed ? "seq-arrow is-observed" : "seq-arrow");
-      path.setAttribute("fill", "none");
-      path.setAttribute("marker-end", `url(#${markerId})`);
-      svg.appendChild(path);
-    } else {
+    const bodyH = height - HEADER_H;
+    for (let i = 0; i < cols; i++) {
+      const x = PAD_X + i * colW + colW / 2;
       const line = document.createElementNS(svgNs, "line");
-      line.setAttribute("x1", String(x1));
-      line.setAttribute("y1", String(y));
-      line.setAttribute("x2", String(x2));
-      line.setAttribute("y2", String(y));
-      line.setAttribute("class", msg.observed ? "seq-arrow is-observed" : "seq-arrow");
-      line.setAttribute("marker-end", `url(#${markerId})`);
+      line.setAttribute("x1", String(x));
+      line.setAttribute("y1", "0");
+      line.setAttribute("x2", String(x));
+      line.setAttribute("y2", String(bodyH));
+      line.setAttribute("class", "seq-lifeline");
       svg.appendChild(line);
     }
 
-    const label = document.createElementNS(svgNs, "text");
-    const midX = self ? x1 + 28 : (x1 + x2) / 2;
-    label.setAttribute("x", String(midX));
-    label.setAttribute("y", String(self ? y - 2 : y - 6));
-    label.setAttribute("text-anchor", "middle");
-    label.setAttribute("class", "seq-msg");
-    label.textContent = `${msg.index}. ${shortLabel(msg.label, 36)}`;
-    svg.appendChild(label);
-  });
+    model.interactions.forEach((msg, row) => {
+      const fromIdx = indexOf.get(msg.from);
+      const toIdx = indexOf.get(msg.to);
+      if (fromIdx === undefined || toIdx === undefined) {
+        return;
+      }
+      const y = 18 + row * ROW_H;
+      const x1 = PAD_X + fromIdx * colW + colW / 2;
+      const x2 = PAD_X + toIdx * colW + colW / 2;
+      const self = fromIdx === toIdx;
 
-  inner.appendChild(svg);
-  host.appendChild(inner);
+      if (self) {
+        const path = document.createElementNS(svgNs, "path");
+        const r = 14;
+        path.setAttribute(
+          "d",
+          `M ${x1} ${y} C ${x1 + r * 2} ${y - 6}, ${x1 + r * 2} ${y + 14}, ${x1} ${y + 12}`,
+        );
+        path.setAttribute("class", msg.observed ? "seq-arrow is-observed" : "seq-arrow");
+        path.setAttribute("fill", "none");
+        path.setAttribute("marker-end", `url(#${markerId})`);
+        svg.appendChild(path);
+      } else {
+        const line = document.createElementNS(svgNs, "line");
+        line.setAttribute("x1", String(x1));
+        line.setAttribute("y1", String(y));
+        line.setAttribute("x2", String(x2));
+        line.setAttribute("y2", String(y));
+        line.setAttribute("class", msg.observed ? "seq-arrow is-observed" : "seq-arrow");
+        line.setAttribute("marker-end", `url(#${markerId})`);
+        svg.appendChild(line);
+      }
+
+      const label = document.createElementNS(svgNs, "text");
+      const midX = self ? x1 + 28 : (x1 + x2) / 2;
+      label.setAttribute("x", String(midX));
+      label.setAttribute("y", String(self ? y - 2 : y - 6));
+      label.setAttribute("text-anchor", "middle");
+      label.setAttribute("class", "seq-msg");
+      label.textContent = `${msg.index}. ${shortLabel(msg.label, 36)}`;
+      svg.appendChild(label);
+    });
+
+    inner.appendChild(svg);
+    host.appendChild(inner);
+  };
+
+  paint();
+
+  if (typeof ResizeObserver !== "undefined") {
+    let lastW = hostContentWidth(host);
+    const ro = new ResizeObserver(() => {
+      const w = hostContentWidth(host);
+      if (Math.abs(w - lastW) < 12) {
+        return;
+      }
+      lastW = w;
+      paint();
+    });
+    ro.observe(host);
+    seqResizeObservers.set(host, ro);
+  }
 }
